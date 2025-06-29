@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { GraduationCap, Star, Trophy, Users, BookOpen, Target, Award, TrendingUp, ArrowRight, Play, CheckCircle, XCircle, DollarSign, Crown, Shield, Sparkles, Heart, Zap } from 'lucide-react'
+import { GraduationCap, Star, Trophy, Users, BookOpen, Target, Award, TrendingUp, ArrowRight, Play, CheckCircle, XCircle, DollarSign, Crown, Shield, Sparkles, Heart, Zap, Monitor, Smartphone } from 'lucide-react'
 import { Button } from '../ui/Button'
 
 export function LandingPage() {
@@ -430,6 +430,56 @@ export function LandingPage() {
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
             </Button>
             <p className="text-primary-200 text-xs sm:text-sm mt-3 sm:mt-4">No credit card required • Set up in 2 minutes</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Fun Footnote Section */}
+      <section className="py-8 sm:py-12 bg-gradient-to-r from-accent-100 via-primary-100 to-secondary-100 relative overflow-hidden">
+        <div className="absolute top-4 left-4 animate-pulse-soft opacity-30">
+          <Sparkles className="w-4 h-4 sm:w-6 sm:h-6 text-primary-400" />
+        </div>
+        <div className="absolute bottom-4 right-4 animate-bounce-gentle opacity-30">
+          <Heart className="w-4 h-4 sm:w-6 sm:h-6 text-secondary-400" />
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/30">
+            <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8">
+              
+              {/* Desktop Experience */}
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="bg-primary-500 rounded-full p-2 sm:p-3 shadow-fun">
+                  <Monitor className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                </div>
+                <div className="text-center md:text-left">
+                  <div className="text-base sm:text-lg font-bold text-primary-700">Best Experience on Desktop! 🖥️</div>
+                  <div className="text-xs sm:text-sm text-primary-600">Optimized for bigger screens & better learning</div>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="hidden md:block w-px h-12 bg-primary-300"></div>
+              <div className="md:hidden w-12 h-px bg-primary-300"></div>
+
+              {/* Mobile App Coming */}
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="bg-secondary-500 rounded-full p-2 sm:p-3 shadow-success">
+                  <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                </div>
+                <div className="text-center md:text-left">
+                  <div className="text-base sm:text-lg font-bold text-secondary-700">Mobile App Coming Soon! 📱</div>
+                  <div className="text-xs sm:text-sm text-secondary-600">Learning adventures on-the-go await!</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Fun tagline */}
+            <div className="mt-4 sm:mt-6 text-center">
+              <p className="text-xs sm:text-sm text-neutral-600 italic">
+                ✨ For now, grab your laptop and let's make learning magical together! ✨
+              </p>
+            </div>
           </div>
         </div>
       </section>
