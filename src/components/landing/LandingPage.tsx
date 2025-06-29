@@ -133,8 +133,8 @@ export function LandingPage() {
             <p className="text-xl text-primary-100 max-w-3xl mx-auto">
               Start with our free plan or unlock the full potential with premium features
             </p>
-            <div className="mt-6 inline-flex items-center px-4 py-2 bg-success-100 text-success-800 rounded-full text-sm font-medium">
-              <Crown className="w-4 h-4 mr-2" />
+            <div className="mt-6 inline-flex items-center px-4 py-2 bg-accent-100 text-neutral-800 rounded-full text-sm font-medium">
+              <Sparkles className="w-4 h-4 mr-2" />
               All users currently have premium access during launch!
             </div>
           </div>
@@ -416,13 +416,14 @@ export function LandingPage() {
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <div className="glass rounded-3xl p-8 border border-white/30">
             <h2 className="text-4xl font-bold text-white mb-6">Ready to Transform Learning?</h2>
-            <p className="text-xl text-primary-100 mb-8">
+            <p className="text-xl text-neutral-700 mb-8">
               Join thousands of Malaysian families who are making exam preparation fun and effective with KitaScore.
             </p>
             <Button 
               size="lg" 
               onClick={handleGetStarted}
-              className="bg-white text-primary-600 hover:bg-primary-50 px-8 py-4 text-lg shadow-xl"
+              variant="fun"
+              className="px-8 py-4 text-lg shadow-xl"
               icon={<Star className="w-5 h-5" />}
             >
               Start Free Today
