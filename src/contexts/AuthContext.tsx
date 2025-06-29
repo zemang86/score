@@ -116,67 +116,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    console.log('🚀 AuthContext: useEffect started - getting initial session')
+    console.log('🚀 AuthContext: useEffect started - setting up auth listener only')
     
-    const initializeAuth = async () => {
-      try {
-        // Get initial session
-        console.log('📡 AuthContext: Calling supabase.auth.getSession()...')
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-        
-        if (sessionError) {
-          console.error('❌ AuthContext: Error getting session:', sessionError)
-          return
-        }
-        
-        console.log('📡 AuthContext: getSession response:', session ? 'Session found' : 'No session')
-        console.log('📡 AuthContext: Session user:', session?.user ? {
-          id: session.user.id,
-          email: session.user.email,
-          metadata: session.user.user_metadata
-        } : 'No user')
-        
-        setSession(session)
-        setUser(session?.user ?? null)
-        
-        console.log('📝 AuthContext: Set user state to:', session?.user ? {
-          id: session.user.id,
-          email: session.user.email
-        } : 'null')
-        
-        if (session?.user) {
-          console.log('👤 AuthContext: User found, fetching profile for:', session.user.id)
-          console.log('👤 AuthContext: User email:', session.user.email)
-          
-          await getUserProfile(session.user.id)
-        } else {
-          console.log('👤 AuthContext: No user found, clearing profile')
-          setProfile(null)
-          setSubscriptionPlan(null)
-          setMaxStudents(1)
-          setDailyExamLimit(1)
-          setIsAdmin(false)
-        }
-      } catch (error) {
-        console.error('❌ AuthContext: Unexpected error during initialization:', error)
-        // Set defaults to prevent hanging
-        setSession(null)
-        setUser(null)
-        setProfile(null)
-        setSubscriptionPlan(null)
-        setMaxStudents(1)
-        setDailyExamLimit(1)
-        setIsAdmin(false)
-      } finally {
-        console.log('✅ AuthContext: Initial auth check completed, setting loading to false')
-        setLoading(false)
-      }
-    }
-
-    // Initialize auth
-    initializeAuth()
-
-    // Listen for auth changes
+    // Listen for auth changes - this handles both initial session and subsequent changes
     console.log('👂 AuthContext: Setting up auth state change listener')
     const {
       data: { subscription },
