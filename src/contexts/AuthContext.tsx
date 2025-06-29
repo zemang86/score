@@ -44,14 +44,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     try {
       const userProfile = await fetchUserProfile(userId)
-      console.log('✅ AuthContext: Profile fetched:', userProfile)
+      console.log('✅ AuthContext: Profile fetched from fetchUserProfile:', JSON.stringify(userProfile, null, 2))
       
       if (userProfile) {
+        console.log('📝 AuthContext: Setting profile state with:', {
+          subscription_plan: userProfile.subscription_plan,
+          max_students: userProfile.max_students,
+          daily_exam_limit: userProfile.daily_exam_limit,
+          isAdmin: userProfile.isAdmin
+        })
+        
         setProfile(userProfile)
         setSubscriptionPlan(userProfile.subscription_plan)
         setMaxStudents(userProfile.max_students)
         setDailyExamLimit(userProfile.daily_exam_limit)
         setIsAdmin(userProfile.isAdmin)
+        
+        console.log('✅ AuthContext: State updated. Current values:', {
+          subscriptionPlan: userProfile.subscription_plan,
+          maxStudents: userProfile.max_students,
+          dailyExamLimit: userProfile.daily_exam_limit,
+          isAdmin: userProfile.isAdmin
+        })
       } else {
         console.log('⚠️ AuthContext: No profile found, setting defaults')
         setProfile(null)
@@ -59,6 +73,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setMaxStudents(3)
         setDailyExamLimit(999)
         setIsAdmin(false)
+        
+        console.log('✅ AuthContext: Default values set:', {
+          subscriptionPlan: 'premium',
+          maxStudents: 3,
+          dailyExamLimit: 999,
+          isAdmin: false
+        })
       }
     } catch (error) {
       console.error('❌ AuthContext: Error in getUserProfile:', error)
@@ -68,6 +89,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setMaxStudents(3)
       setDailyExamLimit(999)
       setIsAdmin(false)
+      
+      console.log('✅ AuthContext: Error fallback values set:', {
+        subscriptionPlan: 'premium',
+        maxStudents: 3,
+        dailyExamLimit: 999,
+        isAdmin: false
+      })
     }
   }
 
@@ -304,11 +332,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   console.log('🔍 AuthContext: Current state:', {
     hasUser: !!user,
+    userEmail: user?.email,
     subscriptionPlan,
     maxStudents,
     dailyExamLimit,
     isAdmin,
-    loading
+    loading,
+    profileExists: !!profile
   })
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

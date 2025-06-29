@@ -133,8 +133,8 @@ export const fetchUserProfile = async (userId: string): Promise<UserWithAdminSta
       ])
 
       console.log('📡 fetchUserProfile: Database queries completed')
-      console.log('📊 fetchUserProfile: User result:', userResult)
-      console.log('📊 fetchUserProfile: Admin result:', adminResult)
+      console.log('📊 fetchUserProfile: Raw userResult:', JSON.stringify(userResult, null, 2))
+      console.log('📊 fetchUserProfile: Raw adminResult:', JSON.stringify(adminResult, null, 2))
 
       if (userResult.error) {
         console.error('❌ fetchUserProfile: User query error:', userResult.error)
@@ -148,17 +148,34 @@ export const fetchUserProfile = async (userId: string): Promise<UserWithAdminSta
         return null
       }
 
+      // Log the actual user data retrieved
+      console.log('✅ fetchUserProfile: User data retrieved:', {
+        id: userResult.data?.id,
+        email: userResult.data?.email,
+        full_name: userResult.data?.full_name,
+        subscription_plan: userResult.data?.subscription_plan,
+        max_students: userResult.data?.max_students,
+        daily_exam_limit: userResult.data?.daily_exam_limit
+      })
+
       // With maybeSingle(), adminResult.error should be null and adminResult.data should be null if not found
       // Only consider user as admin if data exists and no error occurred
       const isAdmin = !adminResult.error && !!adminResult.data
       
-      console.log('✅ fetchUserProfile: Profile fetched successfully')
-      console.log('👑 fetchUserProfile: Admin status:', isAdmin)
+      console.log('✅ fetchUserProfile: Admin check details:', {
+        adminError: adminResult.error,
+        adminData: adminResult.data,
+        isAdmin: isAdmin
+      })
       
-      return {
+      const finalProfile = {
         ...userResult.data as User,
         isAdmin
       }
+      
+      console.log('✅ fetchUserProfile: Final profile object being returned:', JSON.stringify(finalProfile, null, 2))
+      
+      return finalProfile
     } catch (raceError) {
       if (raceError instanceof Error && raceError.message === 'Query timeout') {
         console.error('❌ fetchUserProfile: Query timed out')
