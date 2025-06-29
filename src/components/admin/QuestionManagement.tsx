@@ -239,20 +239,20 @@ export function QuestionManagement() {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'MCQ': return 'bg-blue-100 text-blue-800'
-      case 'ShortAnswer': return 'bg-green-100 text-green-800'
-      case 'Subjective': return 'bg-purple-100 text-purple-800'
-      case 'Matching': return 'bg-orange-100 text-orange-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'MCQ': return 'bg-primary-100 text-primary-800'
+      case 'ShortAnswer': return 'bg-secondary-100 text-secondary-800'
+      case 'Subjective': return 'bg-accent-100 text-accent-800'
+      case 'Matching': return 'bg-warning-100 text-warning-800'
+      default: return 'bg-neutral-100 text-neutral-800'
     }
   }
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+      <div className="card-fun p-8">
         <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-2 text-gray-600">Loading questions...</span>
+          <div className="animate-spin rounded-full h-8 w-8 border-4 border-primary-200 border-t-primary-600"></div>
+          <span className="ml-2 text-neutral-600">Loading questions...</span>
         </div>
       </div>
     )
@@ -261,19 +261,17 @@ export function QuestionManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="card-fun">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Question Bank Management</h1>
-            <p className="text-gray-600">Manage exam questions across all subjects and levels</p>
+            <h1 className="text-2xl font-bold text-neutral-800">Question Bank Management</h1>
+            <p className="text-neutral-600">Manage exam questions across all subjects and levels</p>
           </div>
           <div className="flex space-x-3">
-            <Button variant="outline" onClick={() => setShowUploadModal(true)}>
-              <Upload className="w-4 h-4 mr-2" />
+            <Button variant="outline" onClick={() => setShowUploadModal(true)} icon={<Upload className="w-4 h-4" />}>
               Upload CSV
             </Button>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
+            <Button icon={<Plus className="w-4 h-4" />}>
               Add Question
             </Button>
           </div>
@@ -281,21 +279,20 @@ export function QuestionManagement() {
 
         {/* Search and Filters */}
         <div className="flex flex-col lg:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <div className="flex-1">
             <Input
               type="text"
               placeholder="Search questions by text or topic..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              icon={<Search className="w-4 h-4" />}
             />
           </div>
           
           <select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="px-3 py-2 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
           >
             <option value="">All Subjects</option>
             {subjects.map(subject => (
@@ -306,7 +303,7 @@ export function QuestionManagement() {
           <select
             value={selectedLevel}
             onChange={(e) => setSelectedLevel(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="px-3 py-2 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
           >
             <option value="">All Levels</option>
             {levels.map(level => (
@@ -314,8 +311,7 @@ export function QuestionManagement() {
             ))}
           </select>
 
-          <Button variant="outline">
-            <Filter className="w-4 h-4 mr-2" />
+          <Button variant="outline" icon={<Filter className="w-4 h-4" />}>
             More Filters
           </Button>
         </div>
@@ -323,109 +319,111 @@ export function QuestionManagement() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <BookOpen className="w-8 h-8 text-blue-600 mr-3" />
+            <div className="bg-primary-500 rounded-2xl p-3 mr-4 shadow-fun">
+              <BookOpen className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Questions</p>
-              <p className="text-2xl font-bold text-gray-900">{questions.length}</p>
+              <p className="text-sm font-medium text-primary-600">Total Questions</p>
+              <p className="text-2xl font-bold text-neutral-800">{questions.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-              <span className="text-green-600 font-bold text-sm">MCQ</span>
+            <div className="w-8 h-8 bg-secondary-100 rounded-2xl flex items-center justify-center mr-3">
+              <span className="text-secondary-600 font-bold text-sm">MCQ</span>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">MCQ Questions</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-secondary-600">MCQ Questions</p>
+              <p className="text-2xl font-bold text-neutral-800">
                 {questions.filter(q => q.type === 'MCQ').length}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-              <span className="text-purple-600 font-bold text-xs">SUB</span>
+            <div className="w-8 h-8 bg-accent-100 rounded-2xl flex items-center justify-center mr-3">
+              <span className="text-accent-600 font-bold text-xs">SUB</span>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Subjects</p>
-              <p className="text-2xl font-bold text-gray-900">{subjects.length}</p>
+              <p className="text-sm font-medium text-accent-600">Subjects</p>
+              <p className="text-2xl font-bold text-neutral-800">{subjects.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3">
-              <span className="text-orange-600 font-bold text-xs">LVL</span>
+            <div className="w-8 h-8 bg-warning-100 rounded-2xl flex items-center justify-center mr-3">
+              <span className="text-warning-600 font-bold text-xs">LVL</span>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Levels</p>
-              <p className="text-2xl font-bold text-gray-900">{levels.length}</p>
+              <p className="text-sm font-medium text-warning-600">Levels</p>
+              <p className="text-2xl font-bold text-neutral-800">{levels.length}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Questions Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Questions ({filteredQuestions.length})</h2>
+      <div className="card-fun">
+        <div className="p-6 border-b border-neutral-200">
+          <h2 className="text-lg font-semibold text-neutral-800">Questions ({filteredQuestions.length})</h2>
         </div>
 
         {error && (
-          <div className="p-4 bg-red-50 border-b border-red-200">
-            <p className="text-red-600 text-sm">{error}</p>
+          <div className="p-4 bg-error-50 border-b border-error-200">
+            <p className="text-error-600 text-sm">{error}</p>
           </div>
         )}
 
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-neutral-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Question
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Subject
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Level
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Year
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-neutral-200">
               {filteredQuestions.map((question) => (
-                <tr key={question.id} className="hover:bg-gray-50">
+                <tr key={question.id} className="hover:bg-neutral-50">
                   <td className="px-6 py-4">
                     <div className="max-w-xs">
-                      <div className="text-sm font-medium text-gray-900 truncate">
+                      <div className="text-sm font-medium text-neutral-800 truncate">
                         {question.question_text}
                       </div>
                       {question.topic && (
-                        <div className="text-sm text-gray-500">Topic: {question.topic}</div>
+                        <div className="text-sm text-neutral-500">Topic: {question.topic}</div>
                       )}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{question.subject}</div>
+                    <div className="text-sm text-neutral-800">{question.subject}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{question.level}</div>
+                    <div className="text-sm text-neutral-800">{question.level}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTypeColor(question.type)}`}>
@@ -433,16 +431,12 @@ export function QuestionManagement() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{question.year}</div>
+                    <div className="text-sm text-neutral-800">{question.year}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end space-x-2">
-                      <Button variant="ghost" size="sm">
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <Button variant="ghost" size="sm" icon={<Edit className="w-4 h-4" />} />
+                      <Button variant="ghost" size="sm" className="text-error-600 hover:text-error-700" icon={<Trash2 className="w-4 h-4" />} />
                     </div>
                   </td>
                 </tr>
@@ -452,9 +446,11 @@ export function QuestionManagement() {
 
           {filteredQuestions.length === 0 && !loading && (
             <div className="text-center py-12">
-              <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No questions found</h3>
-              <p className="text-gray-600">
+              <div className="bg-primary-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="w-8 h-8 text-primary-600" />
+              </div>
+              <h3 className="text-lg font-medium text-neutral-800 mb-2">No questions found</h3>
+              <p className="text-neutral-600">
                 {searchTerm || selectedSubject || selectedLevel 
                   ? 'Try adjusting your search or filter criteria.' 
                   : 'No questions have been added yet.'}
@@ -467,13 +463,13 @@ export function QuestionManagement() {
       {/* CSV Upload Modal */}
       {showUploadModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
+          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-neutral-200">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">Upload Questions CSV</h2>
+                <h2 className="text-xl font-semibold text-neutral-800">Upload Questions CSV</h2>
                 <button
                   onClick={() => setShowUploadModal(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-neutral-400 hover:text-neutral-600 transition-colors"
                 >
                   ×
                 </button>
@@ -482,12 +478,12 @@ export function QuestionManagement() {
 
             <div className="p-6 space-y-6">
               {/* CSV Format Instructions */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-blue-900 mb-2">CSV Format Requirements</h3>
-                <p className="text-sm text-blue-800 mb-3">
+              <div className="bg-primary-50 border border-primary-200 rounded-xl p-4">
+                <h3 className="text-sm font-semibold text-primary-800 mb-2">CSV Format Requirements</h3>
+                <p className="text-sm text-primary-700 mb-3">
                   Your CSV file must have the following columns in this exact order:
                 </p>
-                <div className="text-xs text-blue-700 space-y-1">
+                <div className="text-xs text-primary-600 space-y-1">
                   <div><strong>level:</strong> Education level (e.g., "Darjah 1", "Tingkatan 5")</div>
                   <div><strong>subject:</strong> Subject name (e.g., "Mathematics", "Science")</div>
                   <div><strong>year:</strong> Year of the question (e.g., "2023")</div>
@@ -497,7 +493,7 @@ export function QuestionManagement() {
                   <div><strong>options:</strong> For MCQ: comma-separated options (e.g., "A,B,C,D"). For others: leave empty</div>
                   <div><strong>correct_answer:</strong> The correct answer</div>
                 </div>
-                <p className="text-xs text-blue-700 mt-3">
+                <p className="text-xs text-primary-600 mt-3">
                   <strong>Note:</strong> Use double quotes around fields that contain commas.
                 </p>
               </div>
@@ -505,7 +501,7 @@ export function QuestionManagement() {
               {/* File Upload */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
                     Select CSV File
                   </label>
                   <input
@@ -513,12 +509,12 @@ export function QuestionManagement() {
                     type="file"
                     accept=".csv"
                     onChange={handleFileSelect}
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    className="block w-full text-sm text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
                   />
                 </div>
 
                 {selectedFile && (
-                  <div className="flex items-center text-sm text-green-600">
+                  <div className="flex items-center text-sm text-success-600">
                     <FileText className="w-4 h-4 mr-2" />
                     <span>{selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)</span>
                   </div>
@@ -527,24 +523,24 @@ export function QuestionManagement() {
 
               {/* Upload Result */}
               {uploadResult && (
-                <div className={`rounded-lg p-4 ${uploadResult.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                <div className={`rounded-xl p-4 ${uploadResult.success ? 'bg-success-50 border border-success-200' : 'bg-error-50 border border-error-200'}`}>
                   <div className="flex items-center mb-2">
                     {uploadResult.success ? (
-                      <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
+                      <CheckCircle className="w-5 h-5 text-success-600 mr-2" />
                     ) : (
-                      <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
+                      <AlertCircle className="w-5 h-5 text-error-600 mr-2" />
                     )}
-                    <span className={`font-medium ${uploadResult.success ? 'text-green-800' : 'text-red-800'}`}>
+                    <span className={`font-medium ${uploadResult.success ? 'text-success-800' : 'text-error-800'}`}>
                       {uploadResult.message}
                     </span>
                   </div>
                   
                   {uploadResult.errors.length > 0 && (
                     <div className="mt-3">
-                      <p className="text-sm font-medium text-gray-700 mb-2">Issues found:</p>
+                      <p className="text-sm font-medium text-neutral-700 mb-2">Issues found:</p>
                       <div className="max-h-32 overflow-y-auto">
                         {uploadResult.errors.map((error, index) => (
-                          <p key={index} className="text-xs text-gray-600 mb-1">• {error}</p>
+                          <p key={index} className="text-xs text-neutral-600 mb-1">• {error}</p>
                         ))}
                       </div>
                     </div>
@@ -566,18 +562,10 @@ export function QuestionManagement() {
                   onClick={handleUploadCSV}
                   className="flex-1"
                   disabled={!selectedFile || uploading}
+                  loading={uploading}
+                  icon={!uploading ? <Upload className="w-4 h-4" /> : undefined}
                 >
-                  {uploading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Uploading...
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload CSV
-                    </>
-                  )}
+                  {uploading ? 'Uploading...' : 'Upload CSV'}
                 </Button>
               </div>
             </div>

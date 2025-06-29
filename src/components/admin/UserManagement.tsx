@@ -73,10 +73,10 @@ export function UserManagement() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+      <div className="card-fun p-8">
         <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-2 text-gray-600">Loading users...</span>
+          <div className="animate-spin rounded-full h-8 w-8 border-4 border-primary-200 border-t-primary-600"></div>
+          <span className="ml-2 text-neutral-600">Loading users...</span>
         </div>
       </div>
     )
@@ -85,32 +85,29 @@ export function UserManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="card-fun">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-            <p className="text-gray-600">Manage registered users and their accounts</p>
+            <h1 className="text-2xl font-bold text-neutral-800">User Management</h1>
+            <p className="text-neutral-600">Manage registered users and their accounts</p>
           </div>
-          <Button>
-            <UserPlus className="w-4 h-4 mr-2" />
+          <Button icon={<UserPlus className="w-4 h-4" />}>
             Add User
           </Button>
         </div>
 
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <div className="flex-1">
             <Input
               type="text"
               placeholder="Search users by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              icon={<Search className="w-4 h-4" />}
             />
           </div>
-          <Button variant="outline">
-            <Filter className="w-4 h-4 mr-2" />
+          <Button variant="outline" icon={<Filter className="w-4 h-4" />}>
             Filter
           </Button>
         </div>
@@ -118,22 +115,26 @@ export function UserManagement() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <User className="w-8 h-8 text-blue-600 mr-3" />
+            <div className="bg-primary-500 rounded-2xl p-3 mr-4 shadow-fun">
+              <User className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Users</p>
-              <p className="text-2xl font-bold text-gray-900">{users.length}</p>
+              <p className="text-sm font-medium text-primary-600">Total Users</p>
+              <p className="text-2xl font-bold text-neutral-800">{users.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <UserPlus className="w-8 h-8 text-green-600 mr-3" />
+            <div className="bg-secondary-500 rounded-2xl p-3 mr-4 shadow-success">
+              <UserPlus className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">New This Month</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-secondary-600">New This Month</p>
+              <p className="text-2xl font-bold text-neutral-800">
                 {users.filter(user => {
                   const userDate = new Date(user.created_at)
                   const now = new Date()
@@ -144,22 +145,26 @@ export function UserManagement() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <Calendar className="w-8 h-8 text-purple-600 mr-3" />
+            <div className="bg-accent-500 rounded-2xl p-3 mr-4 shadow-warning">
+              <Calendar className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Active Today</p>
-              <p className="text-2xl font-bold text-gray-900">-</p>
+              <p className="text-sm font-medium text-accent-600">Active Today</p>
+              <p className="text-2xl font-bold text-neutral-800">-</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <Mail className="w-8 h-8 text-orange-600 mr-3" />
+            <div className="bg-warning-500 rounded-2xl p-3 mr-4 shadow-warning">
+              <Mail className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Children</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-warning-600">Total Children</p>
+              <p className="text-2xl font-bold text-neutral-800">
                 {users.reduce((sum, user) => sum + (user.student_count || 0), 0)}
               </p>
             </div>
@@ -168,79 +173,77 @@ export function UserManagement() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">All Users</h2>
+      <div className="card-fun">
+        <div className="p-6 border-b border-neutral-200">
+          <h2 className="text-lg font-semibold text-neutral-800">All Users</h2>
         </div>
 
         {error && (
-          <div className="p-4 bg-red-50 border-b border-red-200">
-            <p className="text-red-600 text-sm">{error}</p>
+          <div className="p-4 bg-error-50 border-b border-error-200">
+            <p className="text-error-600 text-sm">{error}</p>
           </div>
         )}
 
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-neutral-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   User
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Children
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Joined
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Last Updated
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-neutral-200">
               {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
+                <tr key={user.id} className="hover:bg-neutral-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <User className="h-5 w-5 text-blue-600" />
+                        <div className="h-10 w-10 rounded-2xl bg-primary-100 flex items-center justify-center">
+                          <User className="h-5 w-5 text-primary-600" />
                         </div>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-neutral-800">
                           {user.full_name}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-neutral-500">
                           ID: {user.id.slice(0, 8)}...
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{user.email}</div>
+                    <div className="text-sm text-neutral-800">{user.email}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
                       {user.student_count || 0} children
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
                     {formatDate(user.created_at)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
                     {formatDate(user.updated_at)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Button variant="ghost" size="sm">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </Button>
+                    <Button variant="ghost" size="sm" icon={<MoreHorizontal className="w-4 h-4" />} />
                   </td>
                 </tr>
               ))}
@@ -249,9 +252,11 @@ export function UserManagement() {
 
           {filteredUsers.length === 0 && !loading && (
             <div className="text-center py-12">
-              <User className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No users found</h3>
-              <p className="text-gray-600">
+              <div className="bg-primary-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <User className="w-8 h-8 text-primary-600" />
+              </div>
+              <h3 className="text-lg font-medium text-neutral-800 mb-2">No users found</h3>
+              <p className="text-neutral-600">
                 {searchTerm ? 'Try adjusting your search terms.' : 'No users have registered yet.'}
               </p>
             </div>

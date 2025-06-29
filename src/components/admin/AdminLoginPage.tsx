@@ -35,178 +35,166 @@ export function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-red-900 to-black">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-error-900 to-neutral-800">
       <div className="flex min-h-screen">
         {/* Left side - Admin Branding */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-red-600 via-gray-800 to-black p-12 text-white relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-error-600 via-neutral-800 to-neutral-900 p-12 text-white relative overflow-hidden">
           {/* Security-themed decorative elements */}
-          <div className="absolute top-10 right-10 animate-pulse">
-            <Shield className="w-12 h-12 text-red-300 opacity-60" />
+          <div className="absolute top-10 right-10 animate-pulse-soft opacity-60">
+            <Shield className="w-12 h-12 text-error-300" />
           </div>
-          <div className="absolute top-32 right-32 animate-bounce-slow">
-            <Crown className="w-8 h-8 text-yellow-400 opacity-60" />
+          <div className="absolute top-32 right-32 animate-bounce-gentle opacity-60">
+            <Crown className="w-8 h-8 text-accent-400" />
           </div>
-          <div className="absolute bottom-20 right-20 animate-pulse">
-            <Zap className="w-10 h-10 text-red-400 opacity-60" />
+          <div className="absolute bottom-20 right-20 animate-pulse-soft opacity-60">
+            <Zap className="w-10 h-10 text-error-400" />
           </div>
 
           <div className="flex flex-col justify-center max-w-lg relative z-10">
             <div className="mb-8">
               <div className="flex items-center mb-6">
-                <div className="bg-red-600/30 backdrop-blur-sm rounded-3xl p-4 mr-4 shadow-roblox border-2 border-red-400/50">
-                  <Shield className="w-16 h-16 text-red-300" />
+                <div className="glass rounded-3xl p-4 mr-4 border border-white/30">
+                  <Shield className="w-16 h-16 text-error-300" />
                 </div>
                 <div>
-                  <h1 className="text-5xl font-bold-game text-white drop-shadow-lg">Admin Portal</h1>
-                  <p className="text-red-200 text-xl font-game">KitaScore System Control</p>
+                  <h1 className="text-5xl font-bold text-white">Admin Portal</h1>
+                  <p className="text-error-200 text-xl">KitaScore System Control</p>
                 </div>
               </div>
-              <div className="bg-red-600/20 backdrop-blur-sm rounded-3xl p-6 border-2 border-red-400/30 shadow-roblox">
-                <p className="text-3xl font-bold-game mb-3 text-red-300">🛡️ Secure Access Only 🛡️</p>
-                <p className="text-red-100 text-xl font-game leading-relaxed">
+              <div className="glass rounded-3xl p-6 border border-white/20">
+                <p className="text-3xl font-bold mb-3 text-error-300">Secure Access Only</p>
+                <p className="text-error-100 text-xl leading-relaxed">
                   Administrative access to KitaScore system management and controls.
                 </p>
               </div>
             </div>
 
             <div className="space-y-6">
-              <div className="flex items-start space-x-4 bg-red-600/20 backdrop-blur-sm rounded-2xl p-4 border border-red-400/30 hover:bg-red-600/30 transition-all duration-300">
-                <div className="bg-red-500 rounded-full p-3 shadow-roblox">
+              <div className="flex items-start space-x-4 glass rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <div className="bg-error-500 rounded-full p-3 shadow-error">
                   <Shield className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold-game text-xl text-red-300">🔐 System Management</h3>
-                  <p className="text-red-100 font-game">Full access to user management, question banks, and system analytics.</p>
+                  <h3 className="font-bold text-xl text-error-300">System Management</h3>
+                  <p className="text-error-100">Full access to user management, question banks, and system analytics.</p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4 bg-red-600/20 backdrop-blur-sm rounded-2xl p-4 border border-red-400/30 hover:bg-red-600/30 transition-all duration-300">
-                <div className="bg-yellow-500 rounded-full p-3 shadow-roblox">
+              <div className="flex items-start space-x-4 glass rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <div className="bg-accent-500 rounded-full p-3 shadow-warning">
                   <Crown className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold-game text-xl text-red-300">👑 Administrative Control</h3>
-                  <p className="text-red-100 font-game">Monitor platform performance and manage educational content.</p>
+                  <h3 className="font-bold text-xl text-error-300">Administrative Control</h3>
+                  <p className="text-error-100">Monitor platform performance and manage educational content.</p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4 bg-red-600/20 backdrop-blur-sm rounded-2xl p-4 border border-red-400/30 hover:bg-red-600/30 transition-all duration-300">
-                <div className="bg-gray-500 rounded-full p-3 shadow-roblox">
+              <div className="flex items-start space-x-4 glass rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <div className="bg-neutral-500 rounded-full p-3 shadow-medium">
                   <Zap className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold-game text-xl text-red-300">⚡ Advanced Analytics</h3>
-                  <p className="text-red-100 font-game">Deep insights into system usage and educational effectiveness.</p>
+                  <h3 className="font-bold text-xl text-error-300">Advanced Analytics</h3>
+                  <p className="text-error-100">Deep insights into system usage and educational effectiveness.</p>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 p-4 bg-yellow-600/20 border-2 border-yellow-400/50 rounded-2xl">
-              <p className="text-yellow-200 font-game text-center">
-                ⚠️ <strong>Authorized Personnel Only</strong> ⚠️
+            <div className="mt-8 p-4 bg-warning-100/20 border-2 border-warning-400/50 rounded-2xl glass">
+              <p className="text-warning-200 text-center font-medium">
+                <strong>Authorized Personnel Only</strong>
               </p>
             </div>
           </div>
         </div>
 
         {/* Right side - Admin Login Form */}
-        <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-gray-100 to-gray-200">
+        <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-neutral-100 to-neutral-200">
           <div className="w-full max-w-md">
             {/* Mobile branding */}
             <div className="lg:hidden text-center mb-8">
               <div className="flex items-center justify-center mb-6">
-                <div className="bg-red-600 rounded-3xl p-4 mr-3 shadow-roblox">
+                <div className="bg-error-600 rounded-3xl p-4 mr-3 shadow-error">
                   <Shield className="w-12 h-12 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold-game text-gray-800">Admin Portal</h1>
-                  <p className="text-red-600 font-game text-lg">🛡️ Secure Access 🛡️</p>
+                  <h1 className="text-4xl font-bold text-neutral-800">Admin Portal</h1>
+                  <p className="text-error-600 text-lg">Secure Access</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-roblox border-4 border-gray-300">
+            <div className="glass rounded-3xl p-8 border border-white/30">
               <div className="text-center mb-8">
                 <div className="flex items-center justify-center mb-4">
-                  <div className="bg-red-600 rounded-full p-3 mr-3 shadow-roblox">
+                  <div className="bg-error-600 rounded-full p-3 mr-3 shadow-error">
                     <Shield className="w-8 h-8 text-white" />
                   </div>
-                  <h1 className="text-3xl font-bold-game text-gray-800">Administrator Login</h1>
+                  <h1 className="text-3xl font-bold text-neutral-800">Administrator Login</h1>
                 </div>
-                <p className="text-gray-600 font-game text-lg">🔐 Enter your admin credentials to access the system 🔐</p>
+                <p className="text-neutral-600 text-lg">Enter your admin credentials to access the system</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {error && (
-                  <div className="bg-red-100 border-4 border-red-400 rounded-2xl p-4 shadow-roblox">
-                    <p className="text-red-700 font-game font-bold text-center">⚠️ {error}</p>
+                  <div className="bg-error-50 border-2 border-error-200 rounded-xl p-4">
+                    <p className="text-error-700 font-medium text-center">{error}</p>
                   </div>
                 )}
 
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-red-500 w-6 h-6" />
-                  <Input
-                    type="email"
-                    placeholder="Admin email address 📧"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-12 font-game border-4 border-gray-300 focus:border-red-500 focus:ring-4 focus:ring-red-200 rounded-2xl shadow-roblox bg-gradient-to-r from-white to-gray-50"
-                    required
-                  />
-                </div>
+                <Input
+                  type="email"
+                  placeholder="Admin email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  icon={<Mail className="w-5 h-5" />}
+                  required
+                />
 
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-red-500 w-6 h-6" />
                   <Input
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Admin password 🔐"
+                    placeholder="Admin password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-12 pr-12 font-game border-4 border-gray-300 focus:border-red-500 focus:ring-4 focus:ring-red-200 rounded-2xl shadow-roblox bg-gradient-to-r from-white to-gray-50"
+                    icon={<Lock className="w-5 h-5" />}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-red-500 hover:text-red-700 transition-colors"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
                   >
-                    {showPassword ? <EyeOff className="w-6 h-6" /> : <Eye className="w-6 h-6" />}
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full font-bold-game text-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border-2 border-red-800 shadow-roblox hover:shadow-roblox-hover"
+                  variant="error"
                   size="lg"
-                  disabled={loading}
+                  className="w-full"
+                  loading={loading}
+                  icon={!loading ? <Shield className="w-5 h-5" /> : undefined}
                 >
-                  {loading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3"></div>
-                      Authenticating... 🔐
-                    </>
-                  ) : (
-                    <>
-                      <Shield className="w-6 h-6 mr-3" />
-                      🛡️ Access Admin Panel 🛡️
-                    </>
-                  )}
+                  {loading ? 'Authenticating...' : 'Access Admin Panel'}
                 </Button>
 
                 <div className="text-center">
                   <button
                     type="button"
                     onClick={handleBackToHome}
-                    className="text-gray-600 hover:text-gray-800 font-game font-bold inline-flex items-center transition-colors hover:underline"
+                    className="text-neutral-600 hover:text-neutral-800 font-medium inline-flex items-center transition-colors hover:underline"
                   >
-                    <ArrowLeft className="w-5 h-5 mr-2" />
-                    🏠 Back to Home 🏠
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Home
                   </button>
                 </div>
 
-                <div className="bg-yellow-100 border-2 border-yellow-400 rounded-2xl p-4">
-                  <p className="text-yellow-800 font-game text-center text-sm">
-                    ⚠️ <strong>Security Notice:</strong> This area is restricted to authorized administrators only. 
+                <div className="bg-warning-50 border border-warning-200 rounded-xl p-4">
+                  <p className="text-warning-800 text-center text-sm">
+                    <strong>Security Notice:</strong> This area is restricted to authorized administrators only. 
                     All access attempts are logged and monitored.
                   </p>
                 </div>

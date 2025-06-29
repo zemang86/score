@@ -90,10 +90,10 @@ export function SystemStats() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+      <div className="card-fun p-8">
         <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-2 text-gray-600">Loading system statistics...</span>
+          <div className="animate-spin rounded-full h-8 w-8 border-4 border-primary-200 border-t-primary-600"></div>
+          <span className="ml-2 text-neutral-600">Loading system statistics...</span>
         </div>
       </div>
     )
@@ -102,52 +102,60 @@ export function SystemStats() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">System Dashboard</h1>
-        <p className="text-gray-600">Overview of KitaScore platform statistics and performance</p>
+      <div className="card-fun">
+        <h1 className="text-2xl font-bold text-neutral-800 mb-2">System Dashboard</h1>
+        <p className="text-neutral-600">Overview of KitaScore platform statistics and performance</p>
       </div>
 
       {/* Main Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <Users className="w-8 h-8 text-blue-600 mr-3" />
+            <div className="bg-primary-500 rounded-2xl p-3 mr-4 shadow-fun">
+              <Users className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Users</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalUsers.toLocaleString()}</p>
+              <p className="text-sm font-medium text-primary-600">Total Users</p>
+              <p className="text-2xl font-bold text-neutral-800">{stats.totalUsers.toLocaleString()}</p>
             </div>
           </div>
           <div className="mt-2">
-            <span className="text-sm text-green-600">+{stats.newUsersThisMonth} this month</span>
+            <span className="text-sm text-success-600">+{stats.newUsersThisMonth} this month</span>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <Target className="w-8 h-8 text-green-600 mr-3" />
+            <div className="bg-secondary-500 rounded-2xl p-3 mr-4 shadow-success">
+              <Target className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Students</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalStudents.toLocaleString()}</p>
+              <p className="text-sm font-medium text-secondary-600">Total Students</p>
+              <p className="text-2xl font-bold text-neutral-800">{stats.totalStudents.toLocaleString()}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <BookOpen className="w-8 h-8 text-purple-600 mr-3" />
+            <div className="bg-accent-500 rounded-2xl p-3 mr-4 shadow-warning">
+              <BookOpen className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Question Bank</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalQuestions.toLocaleString()}</p>
+              <p className="text-sm font-medium text-accent-600">Question Bank</p>
+              <p className="text-2xl font-bold text-neutral-800">{stats.totalQuestions.toLocaleString()}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <Trophy className="w-8 h-8 text-yellow-600 mr-3" />
+            <div className="bg-warning-500 rounded-2xl p-3 mr-4 shadow-warning">
+              <Trophy className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Available Badges</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalBadges.toLocaleString()}</p>
+              <p className="text-sm font-medium text-warning-600">Available Badges</p>
+              <p className="text-2xl font-bold text-neutral-800">{stats.totalBadges.toLocaleString()}</p>
             </div>
           </div>
         </div>
@@ -155,42 +163,50 @@ export function SystemStats() {
 
       {/* Secondary Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <Calendar className="w-8 h-8 text-indigo-600 mr-3" />
+            <div className="bg-primary-500 rounded-2xl p-3 mr-4 shadow-fun">
+              <Calendar className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Exams</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalExams.toLocaleString()}</p>
+              <p className="text-sm font-medium text-primary-600">Total Exams</p>
+              <p className="text-2xl font-bold text-neutral-800">{stats.totalExams.toLocaleString()}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <CheckCircle className="w-8 h-8 text-green-600 mr-3" />
+            <div className="bg-success-500 rounded-2xl p-3 mr-4 shadow-success">
+              <CheckCircle className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Completed Exams</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.completedExams.toLocaleString()}</p>
+              <p className="text-sm font-medium text-success-600">Completed Exams</p>
+              <p className="text-2xl font-bold text-neutral-800">{stats.completedExams.toLocaleString()}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <TrendingUp className="w-8 h-8 text-blue-600 mr-3" />
+            <div className="bg-secondary-500 rounded-2xl p-3 mr-4 shadow-success">
+              <TrendingUp className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Average Score</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.averageScore}%</p>
+              <p className="text-sm font-medium text-secondary-600">Average Score</p>
+              <p className="text-2xl font-bold text-neutral-800">{stats.averageScore}%</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="card-fun">
           <div className="flex items-center">
-            <Award className="w-8 h-8 text-orange-600 mr-3" />
+            <div className="bg-warning-500 rounded-2xl p-3 mr-4 shadow-warning">
+              <Award className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Completion Rate</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm font-medium text-warning-600">Completion Rate</p>
+              <p className="text-2xl font-bold text-neutral-800">
                 {stats.totalExams > 0 ? Math.round((stats.completedExams / stats.totalExams) * 100) : 0}%
               </p>
             </div>
@@ -200,44 +216,44 @@ export function SystemStats() {
 
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">System Health</h3>
+        <div className="card-fun">
+          <h3 className="text-lg font-semibold text-neutral-800 mb-4">System Health</h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Database Status</span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <span className="text-sm text-neutral-600">Database Status</span>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800">
                 Healthy
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">API Response Time</span>
-              <span className="text-sm font-medium text-gray-900">~150ms</span>
+              <span className="text-sm text-neutral-600">API Response Time</span>
+              <span className="text-sm font-medium text-neutral-800">~150ms</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Storage Usage</span>
-              <span className="text-sm font-medium text-gray-900">2.3 GB</span>
+              <span className="text-sm text-neutral-600">Storage Usage</span>
+              <span className="text-sm font-medium text-neutral-800">2.3 GB</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Active Sessions</span>
-              <span className="text-sm font-medium text-gray-900">-</span>
+              <span className="text-sm text-neutral-600">Active Sessions</span>
+              <span className="text-sm font-medium text-neutral-800">-</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <div className="card-fun">
+          <h3 className="text-lg font-semibold text-neutral-800 mb-4">Quick Actions</h3>
           <div className="space-y-3">
-            <button className="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-              <div className="font-medium text-gray-900">Backup Database</div>
-              <div className="text-sm text-gray-500">Create a system backup</div>
+            <button className="w-full text-left px-4 py-3 rounded-xl border border-neutral-200 hover:bg-neutral-50 transition-colors">
+              <div className="font-medium text-neutral-800">Backup Database</div>
+              <div className="text-sm text-neutral-500">Create a system backup</div>
             </button>
-            <button className="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-              <div className="font-medium text-gray-900">Generate Reports</div>
-              <div className="text-sm text-gray-500">Export system analytics</div>
+            <button className="w-full text-left px-4 py-3 rounded-xl border border-neutral-200 hover:bg-neutral-50 transition-colors">
+              <div className="font-medium text-neutral-800">Generate Reports</div>
+              <div className="text-sm text-neutral-500">Export system analytics</div>
             </button>
-            <button className="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-              <div className="font-medium text-gray-900">System Maintenance</div>
-              <div className="text-sm text-gray-500">Run maintenance tasks</div>
+            <button className="w-full text-left px-4 py-3 rounded-xl border border-neutral-200 hover:bg-neutral-50 transition-colors">
+              <div className="font-medium text-neutral-800">System Maintenance</div>
+              <div className="text-sm text-neutral-500">Run maintenance tasks</div>
             </button>
           </div>
         </div>

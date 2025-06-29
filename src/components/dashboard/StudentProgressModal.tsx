@@ -125,17 +125,17 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
   }
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-roblox-green-600'
-    if (score >= 70) return 'text-roblox-yellow-600'
-    if (score >= 50) return 'text-roblox-orange-600'
-    return 'text-roblox-red-600'
+    if (score >= 90) return 'text-success-600'
+    if (score >= 70) return 'text-accent-600'
+    if (score >= 50) return 'text-warning-600'
+    return 'text-error-600'
   }
 
   const getScoreBgColor = (score: number) => {
-    if (score >= 90) return 'bg-roblox-green-100 border-roblox-green-300'
-    if (score >= 70) return 'bg-roblox-yellow-100 border-roblox-yellow-300'
-    if (score >= 50) return 'bg-roblox-orange-100 border-roblox-orange-300'
-    return 'bg-roblox-red-100 border-roblox-red-300'
+    if (score >= 90) return 'bg-success-100 border-success-300'
+    if (score >= 70) return 'bg-accent-100 border-accent-300'
+    if (score >= 50) return 'bg-warning-100 border-warning-300'
+    return 'bg-error-100 border-error-300'
   }
 
   const formatDate = (dateString: string) => {
@@ -164,23 +164,23 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-roblox-hover max-w-4xl w-full max-h-[90vh] overflow-y-auto border-4 border-roblox-purple-300">
+      <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         
         {/* Header */}
-        <div className="p-6 border-b-4 border-roblox-purple-200 bg-gradient-to-r from-roblox-purple-100 to-roblox-blue-100">
+        <div className="p-6 border-b border-neutral-200 bg-gradient-to-r from-secondary-100 to-primary-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="bg-roblox-purple-500 rounded-full p-3 mr-4 shadow-neon-purple">
+              <div className="bg-secondary-500 rounded-full p-3 mr-4 shadow-success">
                 <TrendingUp className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold-game text-roblox-purple-600">📊 {student.name}'s Progress 📊</h2>
-                <p className="text-roblox-blue-600 font-game">{student.level} • {student.school}</p>
+                <h2 className="text-2xl font-bold text-secondary-600">{student.name}'s Progress</h2>
+                <p className="text-primary-600">{student.level} • {student.school}</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-roblox-purple-500 hover:text-roblox-purple-700 transition-colors bg-white rounded-full p-2 shadow-roblox"
+              className="text-neutral-400 hover:text-neutral-600 transition-colors bg-white rounded-full p-2 shadow-soft"
             >
               <X className="w-6 h-6" />
             </button>
@@ -188,23 +188,23 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
         </div>
 
         {/* Tab Navigation */}
-        <div className="border-b-4 border-roblox-purple-200 bg-roblox-purple-50">
+        <div className="border-b border-neutral-200 bg-neutral-50">
           <div className="flex">
             {[
-              { id: 'overview', label: '📈 Overview', icon: BarChart3 },
-              { id: 'exams', label: '📝 Exams', icon: BookOpen },
-              { id: 'subjects', label: '📚 Subjects', icon: Target },
-              { id: 'badges', label: '🏆 Badges', icon: Trophy }
+              { id: 'overview', label: 'Overview', icon: BarChart3 },
+              { id: 'exams', label: 'Exams', icon: BookOpen },
+              { id: 'subjects', label: 'Subjects', icon: Target },
+              { id: 'badges', label: 'Badges', icon: Trophy }
             ].map((tab) => {
               const Icon = tab.icon
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex-1 px-4 py-3 font-game font-bold transition-all duration-300 ${
+                  className={`flex-1 px-4 py-3 font-medium transition-all duration-300 ${
                     activeTab === tab.id
-                      ? 'bg-roblox-purple-500 text-white border-b-4 border-roblox-purple-700'
-                      : 'text-roblox-purple-600 hover:bg-roblox-purple-100'
+                      ? 'bg-secondary-500 text-white border-b-2 border-secondary-700'
+                      : 'text-secondary-600 hover:bg-secondary-100'
                   }`}
                 >
                   <Icon className="w-5 h-5 inline mr-2" />
@@ -219,8 +219,8 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
         <div className="p-6">
           {loading ? (
             <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-16 w-16 border-8 border-roblox-purple-200 border-t-roblox-purple-500 mx-auto mb-6 shadow-roblox"></div>
-              <p className="text-roblox-purple-600 font-game font-bold text-xl">🎮 Loading progress data... 🎮</p>
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-secondary-200 border-t-secondary-500 mx-auto mb-6"></div>
+              <p className="text-secondary-600 font-medium text-xl">Loading progress data...</p>
             </div>
           ) : (
             <>
@@ -228,29 +228,29 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
               {activeTab === 'overview' && (
                 <div className="space-y-6">
                   {/* XP and Level */}
-                  <div className="bg-gradient-to-r from-roblox-yellow-100 to-roblox-orange-100 border-4 border-roblox-yellow-400 rounded-2xl p-6 shadow-roblox">
+                  <div className="bg-gradient-to-r from-accent-100 to-warning-100 border-2 border-accent-400 rounded-2xl p-6 shadow-large">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center">
-                        <Star className="w-8 h-8 text-roblox-yellow-600 mr-3" />
+                        <Star className="w-8 h-8 text-accent-600 mr-3" />
                         <div>
-                          <h3 className="text-xl font-bold-game text-roblox-yellow-700">Level {xpInfo.level}</h3>
-                          <p className="text-roblox-orange-600 font-game">{student.xp} XP Total</p>
+                          <h3 className="text-xl font-bold text-accent-700">Level {xpInfo.level}</h3>
+                          <p className="text-warning-600">{student.xp} XP Total</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold-game text-roblox-yellow-700">{student.xp}</div>
-                        <div className="text-sm font-game text-roblox-orange-600">Experience Points</div>
+                        <div className="text-2xl font-bold text-accent-700">{student.xp}</div>
+                        <div className="text-sm text-warning-600">Experience Points</div>
                       </div>
                     </div>
                     {xpInfo.nextLevel > 0 && (
                       <div>
-                        <div className="flex justify-between text-sm font-game text-roblox-yellow-700 mb-2">
+                        <div className="flex justify-between text-sm text-accent-700 mb-2">
                           <span>Progress to Level {xpInfo.level + 1}</span>
                           <span>{xpInfo.progress}/{xpInfo.nextLevel} XP</span>
                         </div>
-                        <div className="w-full bg-roblox-yellow-200 rounded-full h-3 border-2 border-roblox-yellow-500">
+                        <div className="w-full bg-accent-200 rounded-full h-3 border border-accent-500">
                           <div 
-                            className="bg-roblox-yellow-500 h-full rounded-full transition-all duration-500"
+                            className="bg-accent-500 h-full rounded-full transition-all duration-500"
                             style={{ width: `${(xpInfo.progress / xpInfo.nextLevel) * 100}%` }}
                           ></div>
                         </div>
@@ -260,44 +260,56 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
 
                   {/* Quick Stats */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-roblox-blue-50 border-4 border-roblox-blue-200 rounded-2xl p-4 text-center shadow-roblox">
-                      <BookOpen className="w-8 h-8 text-roblox-blue-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold-game text-roblox-blue-700">{totalExams}</div>
-                      <div className="text-sm font-game text-roblox-blue-600">Total Exams</div>
+                    <div className="card-fun">
+                      <div className="flex items-center">
+                        <div className="bg-primary-500 rounded-2xl p-3 mr-4 shadow-fun">
+                          <BookOpen className="w-8 h-8 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-primary-600">Total Exams</p>
+                          <p className="text-3xl font-bold text-neutral-800">{totalExams}</p>
+                        </div>
+                      </div>
                     </div>
                     
-                    <div className={`border-4 rounded-2xl p-4 text-center shadow-roblox ${getScoreBgColor(averageScore)}`}>
+                    <div className={`border-2 rounded-2xl p-4 text-center shadow-soft ${getScoreBgColor(averageScore)}`}>
                       <Target className={`w-8 h-8 mx-auto mb-2 ${getScoreColor(averageScore)}`} />
-                      <div className={`text-2xl font-bold-game ${getScoreColor(averageScore)}`}>{averageScore}%</div>
-                      <div className={`text-sm font-game ${getScoreColor(averageScore)}`}>Average Score</div>
+                      <div className={`text-2xl font-bold ${getScoreColor(averageScore)}`}>{averageScore}%</div>
+                      <div className={`text-sm ${getScoreColor(averageScore)}`}>Average Score</div>
                     </div>
                     
-                    <div className="bg-roblox-purple-50 border-4 border-roblox-purple-200 rounded-2xl p-4 text-center shadow-roblox">
-                      <Trophy className="w-8 h-8 text-roblox-purple-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold-game text-roblox-purple-700">{badges.length}</div>
-                      <div className="text-sm font-game text-roblox-purple-600">Badges Earned</div>
+                    <div className="card-fun">
+                      <div className="flex items-center">
+                        <div className="bg-secondary-500 rounded-2xl p-3 mr-4 shadow-success">
+                          <Trophy className="w-8 h-8 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-secondary-600">Badges</p>
+                          <p className="text-3xl font-bold text-neutral-800">{badges.length}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   {/* Recent Activity */}
-                  <div className="bg-white border-4 border-roblox-blue-200 rounded-2xl p-6 shadow-roblox">
-                    <h3 className="text-lg font-bold-game text-roblox-blue-700 mb-4">📅 Recent Activity</h3>
+                  <div className="card-fun">
+                    <h3 className="text-lg font-bold text-primary-700 mb-4">Recent Activity</h3>
                     {examResults.slice(0, 5).length > 0 ? (
                       <div className="space-y-3">
                         {examResults.slice(0, 5).map((exam) => (
-                          <div key={exam.id} className="flex items-center justify-between p-3 bg-roblox-blue-50 rounded-xl border-2 border-roblox-blue-200">
+                          <div key={exam.id} className="flex items-center justify-between p-3 bg-primary-50 rounded-xl border border-primary-200">
                             <div>
-                              <div className="font-game font-bold text-roblox-blue-700">{exam.subject}</div>
-                              <div className="text-sm text-roblox-blue-600">{exam.mode} Mode • {formatDate(exam.date)}</div>
+                              <div className="font-medium text-primary-700">{exam.subject}</div>
+                              <div className="text-sm text-primary-600">{exam.mode} Mode • {formatDate(exam.date)}</div>
                             </div>
-                            <div className={`text-lg font-bold-game ${getScoreColor(exam.score || 0)}`}>
+                            <div className={`text-lg font-bold ${getScoreColor(exam.score || 0)}`}>
                               {exam.score || 0}%
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-roblox-blue-600 font-game text-center py-4">No exams completed yet! 🎯</p>
+                      <p className="text-primary-600 text-center py-4">No exams completed yet!</p>
                     )}
                   </div>
                 </div>
@@ -306,19 +318,19 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
               {/* Exams Tab */}
               {activeTab === 'exams' && (
                 <div className="space-y-4">
-                  <h3 className="text-xl font-bold-game text-roblox-blue-700">📝 All Exam Results 📝</h3>
+                  <h3 className="text-xl font-bold text-primary-700">All Exam Results</h3>
                   {examResults.length > 0 ? (
                     <div className="space-y-3 max-h-96 overflow-y-auto">
                       {examResults.map((exam) => (
-                        <div key={exam.id} className={`p-4 rounded-2xl border-4 shadow-roblox ${getScoreBgColor(exam.score || 0)}`}>
+                        <div key={exam.id} className={`p-4 rounded-2xl border-2 shadow-soft ${getScoreBgColor(exam.score || 0)}`}>
                           <div className="flex items-center justify-between">
                             <div>
-                              <div className="font-bold-game text-lg">{exam.subject}</div>
-                              <div className="font-game text-sm opacity-80">
+                              <div className="font-bold text-lg">{exam.subject}</div>
+                              <div className="text-sm opacity-80">
                                 {exam.mode} Mode • {exam.total_questions} questions • {formatDate(exam.date)}
                               </div>
                             </div>
-                            <div className={`text-2xl font-bold-game ${getScoreColor(exam.score || 0)}`}>
+                            <div className={`text-2xl font-bold ${getScoreColor(exam.score || 0)}`}>
                               {exam.score || 0}%
                             </div>
                           </div>
@@ -327,8 +339,10 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                     </div>
                   ) : (
                     <div className="text-center py-12">
-                      <BookOpen className="w-16 h-16 text-roblox-blue-300 mx-auto mb-4" />
-                      <p className="text-roblox-blue-600 font-game text-lg">No exams completed yet! 🎯</p>
+                      <div className="bg-primary-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <BookOpen className="w-8 h-8 text-primary-600" />
+                      </div>
+                      <p className="text-primary-600 text-lg">No exams completed yet!</p>
                     </div>
                   )}
                 </div>
@@ -337,17 +351,17 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
               {/* Subjects Tab */}
               {activeTab === 'subjects' && (
                 <div className="space-y-4">
-                  <h3 className="text-xl font-bold-game text-roblox-blue-700">📚 Subject Performance 📚</h3>
+                  <h3 className="text-xl font-bold text-primary-700">Subject Performance</h3>
                   {subjectStats.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {subjectStats.map((stat) => (
-                        <div key={stat.subject} className={`p-4 rounded-2xl border-4 shadow-roblox ${getScoreBgColor(stat.averageScore)}`}>
+                        <div key={stat.subject} className={`p-4 rounded-2xl border-2 shadow-soft ${getScoreBgColor(stat.averageScore)}`}>
                           <div className="text-center">
-                            <h4 className="font-bold-game text-lg mb-2">{stat.subject}</h4>
-                            <div className={`text-3xl font-bold-game mb-2 ${getScoreColor(stat.averageScore)}`}>
+                            <h4 className="font-bold text-lg mb-2">{stat.subject}</h4>
+                            <div className={`text-3xl font-bold mb-2 ${getScoreColor(stat.averageScore)}`}>
                               {stat.averageScore}%
                             </div>
-                            <div className="text-sm font-game opacity-80">
+                            <div className="text-sm opacity-80">
                               <div>Best: {stat.bestScore}%</div>
                               <div>{stat.totalExams} exams completed</div>
                               <div>Last: {formatDate(stat.lastExamDate)}</div>
@@ -358,8 +372,10 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                     </div>
                   ) : (
                     <div className="text-center py-12">
-                      <Target className="w-16 h-16 text-roblox-blue-300 mx-auto mb-4" />
-                      <p className="text-roblox-blue-600 font-game text-lg">No subject data available yet! 📚</p>
+                      <div className="bg-primary-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <Target className="w-8 h-8 text-primary-600" />
+                      </div>
+                      <p className="text-primary-600 text-lg">No subject data available yet!</p>
                     </div>
                   )}
                 </div>
@@ -368,15 +384,15 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
               {/* Badges Tab */}
               {activeTab === 'badges' && (
                 <div className="space-y-4">
-                  <h3 className="text-xl font-bold-game text-roblox-blue-700">🏆 Achievement Badges 🏆</h3>
+                  <h3 className="text-xl font-bold text-primary-700">Achievement Badges</h3>
                   {badges.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {badges.map((badge) => (
-                        <div key={badge.id} className="bg-gradient-to-r from-roblox-yellow-100 to-roblox-orange-100 border-4 border-roblox-yellow-400 rounded-2xl p-4 text-center shadow-roblox">
+                        <div key={badge.id} className="bg-gradient-to-r from-accent-100 to-warning-100 border-2 border-accent-400 rounded-2xl p-4 text-center shadow-large">
                           <div className="text-4xl mb-2">{badge.icon}</div>
-                          <h4 className="font-bold-game text-roblox-yellow-700 mb-1">{badge.name}</h4>
-                          <p className="text-sm font-game text-roblox-orange-600 mb-2">{badge.description}</p>
-                          <div className="text-xs font-game text-roblox-yellow-600">
+                          <h4 className="font-bold text-accent-700 mb-1">{badge.name}</h4>
+                          <p className="text-sm text-warning-600 mb-2">{badge.description}</p>
+                          <div className="text-xs text-accent-600">
                             Earned: {formatDate(badge.earned_at)}
                           </div>
                         </div>
@@ -384,9 +400,11 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                     </div>
                   ) : (
                     <div className="text-center py-12">
-                      <Award className="w-16 h-16 text-roblox-yellow-300 mx-auto mb-4" />
-                      <p className="text-roblox-yellow-600 font-game text-lg">No badges earned yet! 🎯</p>
-                      <p className="text-roblox-yellow-500 font-game">Complete exams to start earning awesome badges! 🏆</p>
+                      <div className="bg-accent-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <Award className="w-8 h-8 text-accent-600" />
+                      </div>
+                      <p className="text-accent-600 text-lg">No badges earned yet!</p>
+                      <p className="text-accent-500">Complete exams to start earning awesome badges!</p>
                     </div>
                   )}
                 </div>
@@ -396,15 +414,14 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t-4 border-roblox-purple-200 bg-roblox-purple-50">
+        <div className="p-6 border-t border-neutral-200 bg-neutral-50">
           <Button
             onClick={onClose}
-            className="w-full font-bold-game bg-gradient-to-r from-roblox-purple-400 to-roblox-blue-500"
+            className="w-full bg-gradient-to-r from-secondary-400 to-primary-500"
             size="lg"
-            glow={true}
+            icon={<Star className="w-6 h-6" />}
           >
-            <Star className="w-6 h-6 mr-2" />
-            🎯 Continue Learning Journey! 🎯
+            Continue Learning Journey!
           </Button>
         </div>
       </div>

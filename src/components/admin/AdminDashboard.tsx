@@ -17,10 +17,10 @@ export function AdminDashboard() {
   // Show loading while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-secondary-50 to-accent-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Verifying admin access...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-200 border-t-primary-600 mx-auto mb-4"></div>
+          <p className="text-neutral-600">Verifying admin access...</p>
         </div>
       </div>
     )
@@ -43,9 +43,9 @@ export function AdminDashboard() {
         return <BadgeManagement />
       case 'settings':
         return (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">System Settings</h2>
-            <p className="text-gray-600">System settings panel coming soon...</p>
+          <div className="card-fun">
+            <h2 className="text-2xl font-bold text-neutral-800 mb-4">System Settings</h2>
+            <p className="text-neutral-600">System settings panel coming soon...</p>
           </div>
         )
       default:
@@ -54,7 +54,7 @@ export function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-secondary-50 to-accent-50">
       <Header />
       
       <div className="flex">

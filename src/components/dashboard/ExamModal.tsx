@@ -178,43 +178,43 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   }
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-roblox-green-600'
-    if (score >= 70) return 'text-roblox-yellow-600'
-    if (score >= 50) return 'text-roblox-orange-600'
-    return 'text-roblox-red-600'
+    if (score >= 90) return 'text-success-600'
+    if (score >= 70) return 'text-accent-600'
+    if (score >= 50) return 'text-warning-600'
+    return 'text-error-600'
   }
 
   const getScoreMessage = (score: number) => {
-    if (score === 100) return '🏆 Perfect Score! Amazing! 🏆'
-    if (score >= 90) return '🌟 Excellent work! 🌟'
-    if (score >= 70) return '👍 Good job! 👍'
-    if (score >= 50) return '📚 Keep practicing! 📚'
-    return '💪 Don\'t give up! Try again! 💪'
+    if (score === 100) return 'Perfect Score! Amazing!'
+    if (score >= 90) return 'Excellent work!'
+    if (score >= 70) return 'Good job!'
+    if (score >= 50) return 'Keep practicing!'
+    return 'Don\'t give up! Try again!'
   }
 
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-roblox-hover max-w-4xl w-full max-h-[90vh] overflow-y-auto border-4 border-roblox-blue-300">
+      <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         
         {/* Setup Step */}
         {step === 'setup' && (
           <>
-            <div className="p-6 border-b-4 border-roblox-blue-200 bg-gradient-to-r from-roblox-blue-100 to-roblox-purple-100">
+            <div className="p-6 border-b border-neutral-200 bg-gradient-to-r from-primary-100 to-secondary-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="bg-roblox-blue-500 rounded-full p-3 mr-4 shadow-neon-blue">
+                  <div className="bg-primary-500 rounded-full p-3 mr-4 shadow-fun">
                     <BookOpen className="w-8 h-8 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold-game text-roblox-blue-600">🎯 Start New Exam 🎯</h2>
-                    <p className="text-roblox-purple-600 font-game">For {student.name} - {student.level}</p>
+                    <h2 className="text-2xl font-bold text-primary-600">Start New Exam</h2>
+                    <p className="text-secondary-600">For {student.name} - {student.level}</p>
                   </div>
                 </div>
                 <button
                   onClick={onClose}
-                  className="text-roblox-blue-500 hover:text-roblox-blue-700 transition-colors bg-white rounded-full p-2 shadow-roblox"
+                  className="text-neutral-400 hover:text-neutral-600 transition-colors bg-white rounded-full p-2 shadow-soft"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -223,25 +223,25 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
             <div className="p-6 space-y-6">
               {error && (
-                <div className="bg-roblox-red-100 border-4 border-roblox-red-400 rounded-2xl p-4 shadow-roblox">
-                  <p className="text-roblox-red-700 font-game font-bold text-center">⚠️ {error}</p>
+                <div className="bg-error-50 border-2 border-error-200 rounded-xl p-4">
+                  <p className="text-error-700 font-medium text-center">{error}</p>
                 </div>
               )}
 
               {/* Subject Selection */}
               <div>
-                <label className="block text-lg font-bold-game text-roblox-blue-700 mb-3">
-                  📚 Choose Subject 📚
+                <label className="block text-lg font-bold text-primary-700 mb-3">
+                  Choose Subject
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {subjects.map((subject) => (
                     <button
                       key={subject}
                       onClick={() => setSelectedSubject(subject)}
-                      className={`p-4 rounded-2xl border-4 font-game font-bold transition-all duration-300 ${
+                      className={`p-4 rounded-xl border-2 font-medium transition-all duration-300 ${
                         selectedSubject === subject
-                          ? 'bg-roblox-blue-500 text-white border-roblox-blue-700 shadow-roblox-hover'
-                          : 'bg-white text-roblox-blue-600 border-roblox-blue-300 hover:bg-roblox-blue-50'
+                          ? 'bg-primary-500 text-white border-primary-700 shadow-fun'
+                          : 'bg-white text-primary-600 border-primary-300 hover:bg-primary-50'
                       }`}
                     >
                       {subject}
@@ -252,8 +252,8 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
               {/* Mode Selection */}
               <div>
-                <label className="block text-lg font-bold-game text-roblox-blue-700 mb-3">
-                  🎮 Choose Difficulty 🎮
+                <label className="block text-lg font-bold text-primary-700 mb-3">
+                  Choose Difficulty
                 </label>
                 <div className="space-y-3">
                   {(['Easy', 'Medium', 'Full'] as ExamMode[]).map((mode) => {
@@ -262,10 +262,10 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                       <button
                         key={mode}
                         onClick={() => setSelectedMode(mode)}
-                        className={`w-full p-4 rounded-2xl border-4 font-game transition-all duration-300 text-left ${
+                        className={`w-full p-4 rounded-xl border-2 transition-all duration-300 text-left ${
                           selectedMode === mode
-                            ? 'bg-roblox-green-500 text-white border-roblox-green-700 shadow-roblox-hover'
-                            : 'bg-white text-roblox-green-600 border-roblox-green-300 hover:bg-roblox-green-50'
+                            ? 'bg-secondary-500 text-white border-secondary-700 shadow-success'
+                            : 'bg-white text-secondary-600 border-secondary-300 hover:bg-secondary-50'
                         }`}
                       >
                         <div className="flex items-center justify-between">
@@ -290,28 +290,19 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                 <Button
                   variant="outline"
                   onClick={onClose}
-                  className="flex-1 font-game border-4 border-roblox-blue-300"
+                  className="flex-1"
                   disabled={loading}
                 >
-                  ❌ Cancel
+                  Cancel
                 </Button>
                 <Button
                   onClick={startExam}
-                  className="flex-1 font-bold-game bg-gradient-to-r from-roblox-green-400 to-roblox-green-600"
+                  className="flex-1 bg-gradient-to-r from-secondary-400 to-secondary-600"
                   disabled={loading}
-                  glow={!loading}
+                  loading={loading}
+                  icon={!loading ? <Zap className="w-5 h-5" /> : undefined}
                 >
-                  {loading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
-                      Loading... 🎮
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-5 h-5 mr-2" />
-                      🚀 Start Exam! 🚀
-                    </>
-                  )}
+                  {loading ? 'Loading...' : 'Start Exam!'}
                 </Button>
               </div>
             </div>
@@ -321,23 +312,23 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
         {/* Exam Step */}
         {step === 'exam' && questions.length > 0 && (
           <>
-            <div className="p-6 border-b-4 border-roblox-blue-200 bg-gradient-to-r from-roblox-blue-100 to-roblox-green-100">
+            <div className="p-6 border-b border-neutral-200 bg-gradient-to-r from-primary-100 to-secondary-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="bg-roblox-green-500 rounded-full p-3 mr-4 shadow-neon-green">
+                  <div className="bg-secondary-500 rounded-full p-3 mr-4 shadow-success">
                     <BookOpen className="w-8 h-8 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold-game text-roblox-blue-600">
+                    <h2 className="text-xl font-bold text-primary-600">
                       Question {currentQuestionIndex + 1} of {questions.length}
                     </h2>
-                    <p className="text-roblox-green-600 font-game">{selectedSubject} - {selectedMode} Mode</p>
+                    <p className="text-secondary-600">{selectedSubject} - {selectedMode} Mode</p>
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="bg-roblox-red-500 text-white rounded-2xl px-4 py-2 shadow-roblox">
+                  <div className="bg-error-500 text-white rounded-xl px-4 py-2 shadow-error">
                     <Clock className="w-5 h-5 inline mr-2" />
-                    <span className="font-bold-game text-lg">{formatTime(timeLeft)}</span>
+                    <span className="font-bold text-lg">{formatTime(timeLeft)}</span>
                   </div>
                 </div>
               </div>
@@ -346,8 +337,8 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
             <div className="p-6">
               {questions[currentQuestionIndex] && (
                 <div className="space-y-6">
-                  <div className="bg-roblox-blue-50 border-4 border-roblox-blue-200 rounded-2xl p-6">
-                    <h3 className="text-xl font-bold-game text-roblox-blue-700 mb-4">
+                  <div className="bg-primary-50 border-2 border-primary-200 rounded-xl p-6">
+                    <h3 className="text-xl font-bold text-primary-700 mb-4">
                       {questions[currentQuestionIndex].question_text}
                     </h3>
                     
@@ -357,10 +348,10 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                           <button
                             key={index}
                             onClick={() => handleAnswerSelect(option)}
-                            className={`w-full p-4 rounded-2xl border-4 font-game text-left transition-all duration-300 ${
+                            className={`w-full p-4 rounded-xl border-2 text-left transition-all duration-300 ${
                               questions[currentQuestionIndex].userAnswer === option
-                                ? 'bg-roblox-yellow-400 border-roblox-yellow-600 text-roblox-blue-800 shadow-roblox-hover'
-                                : 'bg-white border-roblox-blue-300 text-roblox-blue-700 hover:bg-roblox-blue-50'
+                                ? 'bg-accent-400 border-accent-600 text-white shadow-warning'
+                                : 'bg-white border-primary-300 text-primary-700 hover:bg-primary-50'
                             }`}
                           >
                             <span className="font-bold mr-3">{String.fromCharCode(65 + index)}.</span>
@@ -376,7 +367,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                         placeholder="Type your answer here..."
                         value={questions[currentQuestionIndex].userAnswer || ''}
                         onChange={(e) => handleAnswerSelect(e.target.value)}
-                        className="w-full p-4 border-4 border-roblox-blue-300 rounded-2xl font-game text-lg focus:border-roblox-blue-500 focus:ring-4 focus:ring-roblox-blue-200"
+                        className="w-full p-4 border-2 border-primary-300 rounded-xl text-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
                       />
                     )}
                   </div>
@@ -386,17 +377,15 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                       variant="outline"
                       onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
                       disabled={currentQuestionIndex === 0}
-                      className="font-game border-4 border-roblox-purple-300"
                     >
                       ← Previous
                     </Button>
                     <Button
                       onClick={nextQuestion}
                       disabled={!questions[currentQuestionIndex].userAnswer}
-                      className="font-bold-game bg-gradient-to-r from-roblox-green-400 to-roblox-green-600"
-                      glow={!!questions[currentQuestionIndex].userAnswer}
+                      className="bg-gradient-to-r from-secondary-400 to-secondary-600"
                     >
-                      {currentQuestionIndex === questions.length - 1 ? '🏁 Finish Exam' : 'Next →'}
+                      {currentQuestionIndex === questions.length - 1 ? 'Finish Exam' : 'Next →'}
                     </Button>
                   </div>
                 </div>
@@ -408,20 +397,20 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
         {/* Results Step */}
         {step === 'results' && (
           <>
-            <div className="p-6 border-b-4 border-roblox-green-200 bg-gradient-to-r from-roblox-green-100 to-roblox-yellow-100">
+            <div className="p-6 border-b border-neutral-200 bg-gradient-to-r from-success-100 to-accent-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="bg-roblox-green-500 rounded-full p-3 mr-4 shadow-neon-green">
+                  <div className="bg-success-500 rounded-full p-3 mr-4 shadow-success">
                     <Trophy className="w-8 h-8 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold-game text-roblox-green-600">🎉 Exam Complete! 🎉</h2>
-                    <p className="text-roblox-blue-600 font-game">{student.name}'s Results</p>
+                    <h2 className="text-2xl font-bold text-success-600">Exam Complete!</h2>
+                    <p className="text-primary-600">{student.name}'s Results</p>
                   </div>
                 </div>
                 <button
                   onClick={onClose}
-                  className="text-roblox-green-500 hover:text-roblox-green-700 transition-colors bg-white rounded-full p-2 shadow-roblox"
+                  className="text-neutral-400 hover:text-neutral-600 transition-colors bg-white rounded-full p-2 shadow-soft"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -430,40 +419,40 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
             <div className="p-6 space-y-6">
               {/* Score Display */}
-              <div className="text-center bg-gradient-to-r from-roblox-yellow-100 to-roblox-orange-100 border-4 border-roblox-yellow-400 rounded-3xl p-8 shadow-roblox-hover">
-                <div className={`text-6xl font-bold-game mb-4 ${getScoreColor(questions.filter(q => q.isCorrect).length / questions.length * 100)}`}>
+              <div className="text-center bg-gradient-to-r from-accent-100 to-warning-100 border-2 border-accent-400 rounded-3xl p-8 shadow-large">
+                <div className={`text-6xl font-bold mb-4 ${getScoreColor(questions.filter(q => q.isCorrect).length / questions.length * 100)}`}>
                   {Math.round((questions.filter(q => q.isCorrect).length / questions.length) * 100)}%
                 </div>
-                <div className="text-2xl font-bold-game text-roblox-blue-700 mb-2">
+                <div className="text-2xl font-bold text-primary-700 mb-2">
                   {getScoreMessage(Math.round((questions.filter(q => q.isCorrect).length / questions.length) * 100))}
                 </div>
-                <div className="text-lg font-game text-roblox-purple-600">
+                <div className="text-lg text-secondary-600">
                   {questions.filter(q => q.isCorrect).length} out of {questions.length} correct
                 </div>
               </div>
 
               {/* Question Review */}
-              <div className="bg-white border-4 border-roblox-blue-200 rounded-2xl p-6">
-                <h3 className="text-xl font-bold-game text-roblox-blue-700 mb-4">📊 Question Review 📊</h3>
+              <div className="bg-white border-2 border-primary-200 rounded-xl p-6">
+                <h3 className="text-xl font-bold text-primary-700 mb-4">Question Review</h3>
                 <div className="space-y-3 max-h-60 overflow-y-auto">
                   {questions.map((question, index) => (
                     <div
                       key={index}
                       className={`p-3 rounded-xl border-2 ${
                         question.isCorrect
-                          ? 'bg-roblox-green-50 border-roblox-green-300'
-                          : 'bg-roblox-red-50 border-roblox-red-300'
+                          ? 'bg-success-50 border-success-300'
+                          : 'bg-error-50 border-error-300'
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-game text-sm">
+                        <span className="text-sm">
                           Q{index + 1}: {question.question_text.substring(0, 50)}...
                         </span>
                         <div className="flex items-center">
                           {question.isCorrect ? (
-                            <CheckCircle className="w-5 h-5 text-roblox-green-600" />
+                            <CheckCircle className="w-5 h-5 text-success-600" />
                           ) : (
-                            <AlertCircle className="w-5 h-5 text-roblox-red-600" />
+                            <AlertCircle className="w-5 h-5 text-error-600" />
                           )}
                         </div>
                       </div>
@@ -474,12 +463,11 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
               <Button
                 onClick={onClose}
-                className="w-full font-bold-game bg-gradient-to-r from-roblox-blue-400 to-roblox-purple-500"
+                className="w-full bg-gradient-to-r from-primary-400 to-secondary-500"
                 size="lg"
-                glow={true}
+                icon={<Star className="w-6 h-6" />}
               >
-                <Star className="w-6 h-6 mr-2" />
-                🎯 Continue Learning! 🎯
+                Continue Learning!
               </Button>
             </div>
           </>

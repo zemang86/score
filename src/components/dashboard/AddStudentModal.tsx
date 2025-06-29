@@ -101,18 +101,18 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-roblox-hover max-w-md w-full max-h-[90vh] overflow-y-auto border-4 border-roblox-blue-300">
-        <div className="p-6 border-b-4 border-roblox-blue-200 bg-gradient-to-r from-roblox-blue-100 to-roblox-purple-100">
+      <div className="bg-white rounded-3xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b border-neutral-200 bg-gradient-to-r from-primary-100 to-secondary-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="bg-roblox-blue-500 rounded-full p-3 mr-4 shadow-neon-blue">
+              <div className="bg-primary-500 rounded-full p-3 mr-4 shadow-fun">
                 <Star className="w-8 h-8 text-white" />
               </div>
-              <h2 className="text-2xl font-bold-game text-roblox-blue-600 animate-bounce-gentle">🎯 Add New Kid 🎯</h2>
+              <h2 className="text-2xl font-bold text-primary-600">Add New Kid</h2>
             </div>
             <button
               onClick={onClose}
-              className="text-roblox-blue-500 hover:text-roblox-blue-700 transition-colors bg-white rounded-full p-2 shadow-roblox transform hover:scale-110 duration-300"
+              className="text-neutral-400 hover:text-neutral-600 transition-colors bg-white rounded-full p-2 shadow-soft"
             >
               <X className="w-6 h-6" />
             </button>
@@ -121,40 +121,38 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
-            <div className="bg-roblox-red-100 border-4 border-roblox-red-400 rounded-2xl p-4 shadow-roblox animate-shake">
-              <p className="text-roblox-red-700 font-game font-bold text-center">⚠️ {error}</p>
+            <div className="bg-error-50 border-2 border-error-200 rounded-xl p-4">
+              <p className="text-error-700 font-medium text-center">{error}</p>
             </div>
           )}
 
           <Input
             type="text"
-            placeholder="Kid's full name 👤"
+            placeholder="Kid's full name"
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            fun={true}
-            icon={<User className="w-6 h-6" />}
+            icon={<User className="w-5 h-5" />}
             required
           />
 
           <Input
             type="text"
-            placeholder="School name 🏫"
+            placeholder="School name"
             value={formData.school}
             onChange={(e) => handleInputChange('school', e.target.value)}
-            fun={true}
-            icon={<School className="w-6 h-6" />}
+            icon={<School className="w-5 h-5" />}
             required
           />
 
           <div className="relative">
-            <GraduationCap className="absolute left-4 top-1/2 transform -translate-y-1/2 text-roblox-purple-500 w-6 h-6" />
+            <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5" />
             <select
               value={formData.level}
               onChange={(e) => handleInputChange('level', e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-4 border-roblox-blue-300 rounded-2xl focus:ring-4 focus:ring-roblox-blue-200 focus:border-roblox-blue-500 font-game text-base bg-gradient-to-r from-white to-roblox-blue-50 shadow-roblox hover:shadow-roblox-hover transition-all duration-300"
+              className="w-full pl-10 pr-4 py-3 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
               required
             >
-              <option value="">Select education level 🎓</option>
+              <option value="">Select education level</option>
               {levels.map(level => (
                 <option key={level} value={level}>{level}</option>
               ))}
@@ -163,23 +161,22 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
 
           <Input
             type="number"
-            placeholder="Age (5-18) 🎂"
+            placeholder="Age (5-18)"
             value={formData.age}
             onChange={(e) => handleInputChange('age', e.target.value)}
             min="5"
             max="18"
-            fun={true}
-            icon={<Calendar className="w-6 h-6" />}
+            icon={<Calendar className="w-5 h-5" />}
             required
           />
 
-          <div className="bg-gradient-to-r from-roblox-blue-100 to-roblox-purple-100 border-4 border-roblox-blue-300 rounded-2xl p-4 shadow-roblox">
+          <div className="bg-gradient-to-r from-primary-100 to-secondary-100 border-2 border-primary-300 rounded-xl p-4">
             <div className="flex items-center mb-2">
-              <Sparkles className="w-5 h-5 text-roblox-blue-600 mr-2" />
-              <p className="text-roblox-blue-800 font-bold-game">🎮 Plan Limit Info 🎮</p>
+              <Sparkles className="w-5 h-5 text-primary-600 mr-2" />
+              <p className="text-primary-800 font-medium">Plan Limit Info</p>
             </div>
-            <p className="text-roblox-blue-700 font-game">
-              You can add up to <strong>{maxStudents}</strong> {maxStudents === 1 ? 'kid' : 'kids'} with your current plan! 🚀
+            <p className="text-primary-700">
+              You can add up to <strong>{maxStudents}</strong> {maxStudents === 1 ? 'kid' : 'kids'} with your current plan!
             </p>
           </div>
 
@@ -188,30 +185,20 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1 font-game border-4 border-roblox-blue-300 text-roblox-blue-600 hover:bg-roblox-blue-50"
+              className="flex-1"
               disabled={loading}
             >
-              ❌ Cancel
+              Cancel
             </Button>
             <Button
               type="submit"
               variant="fun"
-              className="flex-1 font-bold-game"
+              className="flex-1"
               disabled={loading || !formData.name || !formData.school || !formData.level || !formData.age}
-              glow={!loading && formData.name && formData.school && formData.level && formData.age}
-              bounce={!loading && formData.name && formData.school && formData.level && formData.age}
+              loading={loading}
+              icon={!loading ? <Zap className="w-5 h-5" /> : undefined}
             >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
-                  🎮 Adding... 🎮
-                </>
-              ) : (
-                <>
-                  <Zap className="w-5 h-5 mr-2" />
-                  🌟 Add Kid! 🌟
-                </>
-              )}
+              {loading ? 'Adding...' : 'Add Kid!'}
             </Button>
           </div>
         </form>

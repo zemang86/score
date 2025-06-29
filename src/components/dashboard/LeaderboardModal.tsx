@@ -132,26 +132,26 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Crown className="w-6 h-6 text-roblox-yellow-500" />
+        return <Crown className="w-6 h-6 text-accent-500" />
       case 2:
-        return <Medal className="w-6 h-6 text-gray-400" />
+        return <Medal className="w-6 h-6 text-neutral-400" />
       case 3:
-        return <Medal className="w-6 h-6 text-orange-500" />
+        return <Medal className="w-6 h-6 text-warning-500" />
       default:
-        return <span className="w-6 h-6 flex items-center justify-center text-roblox-blue-600 font-bold-game">#{rank}</span>
+        return <span className="w-6 h-6 flex items-center justify-center text-primary-600 font-bold">#{rank}</span>
     }
   }
 
   const getRankBgColor = (rank: number) => {
     switch (rank) {
       case 1:
-        return 'bg-gradient-to-r from-roblox-yellow-100 to-roblox-orange-100 border-roblox-yellow-400'
+        return 'bg-gradient-to-r from-accent-100 to-warning-100 border-accent-400'
       case 2:
-        return 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-400'
+        return 'bg-gradient-to-r from-neutral-100 to-neutral-200 border-neutral-400'
       case 3:
-        return 'bg-gradient-to-r from-orange-100 to-red-100 border-orange-400'
+        return 'bg-gradient-to-r from-warning-100 to-error-100 border-warning-400'
       default:
-        return 'bg-white border-roblox-blue-200'
+        return 'bg-white border-primary-200'
     }
   }
 
@@ -181,23 +181,23 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-roblox-hover max-w-2xl w-full max-h-[90vh] overflow-y-auto border-4 border-roblox-yellow-300">
+      <div className="bg-white rounded-3xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         
         {/* Header */}
-        <div className="p-6 border-b-4 border-roblox-yellow-200 bg-gradient-to-r from-roblox-yellow-100 to-roblox-orange-100">
+        <div className="p-6 border-b border-neutral-200 bg-gradient-to-r from-accent-100 to-warning-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="bg-roblox-yellow-500 rounded-full p-3 mr-4 shadow-neon-yellow">
+              <div className="bg-accent-500 rounded-full p-3 mr-4 shadow-warning">
                 <Trophy className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold-game text-roblox-yellow-600">🏆 Leaderboard 🏆</h2>
-                <p className="text-roblox-orange-600 font-game">See how students are performing!</p>
+                <h2 className="text-2xl font-bold text-accent-600">Leaderboard</h2>
+                <p className="text-warning-600">See how students are performing!</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-roblox-yellow-500 hover:text-roblox-yellow-700 transition-colors bg-white rounded-full p-2 shadow-roblox"
+              className="text-neutral-400 hover:text-neutral-600 transition-colors bg-white rounded-full p-2 shadow-soft"
             >
               <X className="w-6 h-6" />
             </button>
@@ -205,22 +205,22 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         </div>
 
         {/* Type Selection */}
-        <div className="border-b-4 border-roblox-yellow-200 bg-roblox-yellow-50">
+        <div className="border-b border-neutral-200 bg-neutral-50">
           <div className="flex">
             {[
-              { id: 'xp', label: '⭐ XP Points', icon: Star },
-              { id: 'exams', label: '📝 Exams', icon: Target },
-              { id: 'scores', label: '📊 Scores', icon: TrendingUp }
+              { id: 'xp', label: 'XP Points', icon: Star },
+              { id: 'exams', label: 'Exams', icon: Target },
+              { id: 'scores', label: 'Scores', icon: TrendingUp }
             ].map((type) => {
               const Icon = type.icon
               return (
                 <button
                   key={type.id}
                   onClick={() => setActiveType(type.id as LeaderboardType)}
-                  className={`flex-1 px-4 py-3 font-game font-bold transition-all duration-300 ${
+                  className={`flex-1 px-4 py-3 font-medium transition-all duration-300 ${
                     activeType === type.id
-                      ? 'bg-roblox-yellow-500 text-white border-b-4 border-roblox-yellow-700'
-                      : 'text-roblox-yellow-600 hover:bg-roblox-yellow-100'
+                      ? 'bg-accent-500 text-white border-b-2 border-accent-700'
+                      : 'text-accent-600 hover:bg-accent-100'
                   }`}
                 >
                   <Icon className="w-5 h-5 inline mr-2" />
@@ -235,14 +235,14 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         <div className="p-6">
           {loading ? (
             <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-16 w-16 border-8 border-roblox-yellow-200 border-t-roblox-yellow-500 mx-auto mb-6 shadow-roblox"></div>
-              <p className="text-roblox-yellow-600 font-game font-bold text-xl">🎮 Loading leaderboard... 🎮</p>
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-accent-200 border-t-accent-500 mx-auto mb-6"></div>
+              <p className="text-accent-600 font-medium text-xl">Loading leaderboard...</p>
             </div>
           ) : (
             <>
               <div className="mb-4">
-                <h3 className="text-lg font-bold-game text-roblox-yellow-700 text-center">
-                  🏅 Top Students by {getTypeLabel(activeType)} 🏅
+                <h3 className="text-lg font-bold text-accent-700 text-center">
+                  Top Students by {getTypeLabel(activeType)}
                 </h3>
               </div>
 
@@ -254,9 +254,9 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                     return (
                       <div
                         key={entry.student_id}
-                        className={`p-4 rounded-2xl border-4 shadow-roblox transition-all duration-300 ${
+                        className={`p-4 rounded-2xl border-2 shadow-soft transition-all duration-300 ${
                           isUserStudent 
-                            ? 'bg-gradient-to-r from-roblox-blue-100 to-roblox-purple-100 border-roblox-blue-400 ring-4 ring-roblox-blue-200' 
+                            ? 'bg-gradient-to-r from-primary-100 to-secondary-100 border-primary-400 ring-2 ring-primary-200' 
                             : getRankBgColor(entry.rank)
                         }`}
                       >
@@ -266,31 +266,31 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                               {getRankIcon(entry.rank)}
                             </div>
                             <div>
-                              <div className={`font-bold-game text-lg ${isUserStudent ? 'text-roblox-blue-700' : 'text-gray-800'}`}>
+                              <div className={`font-bold text-lg ${isUserStudent ? 'text-primary-700' : 'text-neutral-800'}`}>
                                 {entry.student_name}
-                                {isUserStudent && <span className="ml-2 text-roblox-blue-500">👨‍👩‍👧‍👦</span>}
+                                {isUserStudent && <span className="ml-2 text-primary-500">👨‍👩‍👧‍👦</span>}
                               </div>
-                              <div className={`text-sm font-game ${isUserStudent ? 'text-roblox-purple-600' : 'text-gray-600'}`}>
+                              <div className={`text-sm ${isUserStudent ? 'text-secondary-600' : 'text-neutral-600'}`}>
                                 {entry.student_level}
                               </div>
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className={`text-xl font-bold-game ${isUserStudent ? 'text-roblox-blue-700' : 'text-gray-800'}`}>
+                            <div className={`text-xl font-bold ${isUserStudent ? 'text-primary-700' : 'text-neutral-800'}`}>
                               {getTypeValue(entry, activeType)}
                             </div>
                             {activeType === 'xp' && entry.total_exams > 0 && (
-                              <div className={`text-xs font-game ${isUserStudent ? 'text-roblox-purple-600' : 'text-gray-500'}`}>
+                              <div className={`text-xs ${isUserStudent ? 'text-secondary-600' : 'text-neutral-500'}`}>
                                 {entry.total_exams} exams • {entry.average_score}% avg
                               </div>
                             )}
                             {activeType === 'exams' && entry.total_xp > 0 && (
-                              <div className={`text-xs font-game ${isUserStudent ? 'text-roblox-purple-600' : 'text-gray-500'}`}>
+                              <div className={`text-xs ${isUserStudent ? 'text-secondary-600' : 'text-neutral-500'}`}>
                                 {entry.total_xp} XP • {entry.average_score}% avg
                               </div>
                             )}
                             {activeType === 'scores' && entry.total_exams > 0 && (
-                              <div className={`text-xs font-game ${isUserStudent ? 'text-roblox-purple-600' : 'text-gray-500'}`}>
+                              <div className={`text-xs ${isUserStudent ? 'text-secondary-600' : 'text-neutral-500'}`}>
                                 {entry.total_exams} exams • {entry.total_xp} XP
                               </div>
                             )}
@@ -302,9 +302,11 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <Trophy className="w-16 h-16 text-roblox-yellow-300 mx-auto mb-4" />
-                  <p className="text-roblox-yellow-600 font-game text-lg">No data available yet! 🎯</p>
-                  <p className="text-roblox-yellow-500 font-game">Students need to complete exams to appear on the leaderboard! 🏆</p>
+                  <div className="bg-accent-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <Trophy className="w-8 h-8 text-accent-600" />
+                  </div>
+                  <p className="text-accent-600 text-lg">No data available yet!</p>
+                  <p className="text-accent-500">Students need to complete exams to appear on the leaderboard!</p>
                 </div>
               )}
             </>
@@ -312,15 +314,14 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t-4 border-roblox-yellow-200 bg-roblox-yellow-50">
+        <div className="p-6 border-t border-neutral-200 bg-neutral-50">
           <Button
             onClick={onClose}
-            className="w-full font-bold-game bg-gradient-to-r from-roblox-yellow-400 to-roblox-orange-500"
+            className="w-full bg-gradient-to-r from-accent-400 to-warning-500"
             size="lg"
-            glow={true}
+            icon={<Trophy className="w-6 h-6" />}
           >
-            <Trophy className="w-6 h-6 mr-2" />
-            🎯 Keep Learning! 🎯
+            Keep Learning!
           </Button>
         </div>
       </div>
