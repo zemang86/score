@@ -4,132 +4,163 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Kid-friendly Roblox-inspired color palette
-        'roblox-blue': {
-          50: '#e6f3ff',
-          100: '#b3d9ff',
-          200: '#80bfff',
-          300: '#4da6ff',
-          400: '#1a8cff',
-          500: '#0073e6',
-          600: '#005bb3',
-          700: '#004280',
-          800: '#002a4d',
-          900: '#00111a'
+        // Modern, muted color palette inspired by Apple's design
+        primary: {
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e'
         },
-        'roblox-green': {
-          50: '#e6ffe6',
-          100: '#b3ffb3',
-          200: '#80ff80',
-          300: '#4dff4d',
-          400: '#1aff1a',
-          500: '#00e600',
-          600: '#00b300',
-          700: '#008000',
-          800: '#004d00',
-          900: '#001a00'
+        secondary: {
+          50: '#faf5ff',
+          100: '#f3e8ff',
+          200: '#e9d5ff',
+          300: '#d8b4fe',
+          400: '#c084fc',
+          500: '#a855f7',
+          600: '#9333ea',
+          700: '#7c3aed',
+          800: '#6b21a8',
+          900: '#581c87'
         },
-        'roblox-yellow': {
-          50: '#fffde6',
-          100: '#fff9b3',
-          200: '#fff580',
-          300: '#fff14d',
-          400: '#ffed1a',
-          500: '#ffe600',
-          600: '#ccb800',
-          700: '#998a00',
-          800: '#665c00',
-          900: '#332e00'
+        accent: {
+          50: '#fefce8',
+          100: '#fef9c3',
+          200: '#fef08a',
+          300: '#fde047',
+          400: '#facc15',
+          500: '#eab308',
+          600: '#ca8a04',
+          700: '#a16207',
+          800: '#854d0e',
+          900: '#713f12'
         },
-        'roblox-red': {
-          50: '#ffe6e6',
-          100: '#ffb3b3',
-          200: '#ff8080',
-          300: '#ff4d4d',
-          400: '#ff1a1a',
-          500: '#e60000',
-          600: '#b30000',
-          700: '#800000',
-          800: '#4d0000',
-          900: '#1a0000'
+        success: {
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#22c55e',
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d'
         },
-        'roblox-purple': {
-          50: '#f3e6ff',
-          100: '#d9b3ff',
-          200: '#bf80ff',
-          300: '#a64dff',
-          400: '#8c1aff',
-          500: '#7300e6',
-          600: '#5b00b3',
-          700: '#420080',
-          800: '#2a004d',
-          900: '#11001a'
+        warning: {
+          50: '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#f59e0b',
+          600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f'
         },
-        'roblox-orange': {
-          50: '#fff0e6',
-          100: '#ffd6b3',
-          200: '#ffbc80',
-          300: '#ffa24d',
-          400: '#ff881a',
-          500: '#e66e00',
-          600: '#b35500',
-          700: '#803c00',
-          800: '#4d2400',
-          900: '#1a0c00'
+        error: {
+          50: '#fef2f2',
+          100: '#fee2e2',
+          200: '#fecaca',
+          300: '#fca5a5',
+          400: '#f87171',
+          500: '#ef4444',
+          600: '#dc2626',
+          700: '#b91c1c',
+          800: '#991b1b',
+          900: '#7f1d1d'
+        },
+        neutral: {
+          50: '#fafafa',
+          100: '#f5f5f5',
+          200: '#e5e5e5',
+          300: '#d4d4d4',
+          400: '#a3a3a3',
+          500: '#737373',
+          600: '#525252',
+          700: '#404040',
+          800: '#262626',
+          900: '#171717'
         }
       },
       fontFamily: {
-        'game': ['Comic Sans MS', 'cursive', 'system-ui'],
-        'bold-game': ['Impact', 'Arial Black', 'sans-serif']
+        // Modern, clean typography
+        'sans': ['Inter', 'SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        'display': ['SF Pro Display', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif']
+      },
+      fontSize: {
+        'xs': ['0.75rem', { lineHeight: '1.5' }],
+        'sm': ['0.875rem', { lineHeight: '1.5' }],
+        'base': ['1rem', { lineHeight: '1.5' }],
+        'lg': ['1.125rem', { lineHeight: '1.5' }],
+        'xl': ['1.25rem', { lineHeight: '1.4' }],
+        '2xl': ['1.5rem', { lineHeight: '1.3' }],
+        '3xl': ['1.875rem', { lineHeight: '1.2' }],
+        '4xl': ['2.25rem', { lineHeight: '1.2' }],
+        '5xl': ['3rem', { lineHeight: '1.1' }],
+        '6xl': ['3.75rem', { lineHeight: '1.1' }],
+        '7xl': ['4.5rem', { lineHeight: '1' }],
+        '8xl': ['6rem', { lineHeight: '1' }],
+        '9xl': ['8rem', { lineHeight: '1' }]
+      },
+      spacing: {
+        // 8px spacing system
+        '18': '4.5rem',
+        '88': '22rem'
+      },
+      borderRadius: {
+        'xl': '0.75rem',
+        '2xl': '1rem',
+        '3xl': '1.5rem',
+        '4xl': '2rem'
       },
       boxShadow: {
-        'roblox': '0 8px 16px rgba(0, 0, 0, 0.2)',
-        'roblox-hover': '0 12px 24px rgba(0, 0, 0, 0.3)',
-        'roblox-pressed': '0 4px 8px rgba(0, 0, 0, 0.2)',
-        'neon-blue': '0 0 20px rgba(26, 140, 255, 0.5)',
-        'neon-green': '0 0 20px rgba(26, 255, 26, 0.5)',
-        'neon-yellow': '0 0 20px rgba(255, 237, 26, 0.5)',
-        'neon-purple': '0 0 20px rgba(140, 26, 255, 0.5)'
+        // Subtle, Apple-inspired shadows
+        'soft': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        'medium': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        'large': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        'inner-soft': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)'
       },
       animation: {
-        'bounce-slow': 'bounce 2s infinite',
-        'pulse-fast': 'pulse 1s infinite',
-        'wiggle': 'wiggle 1s ease-in-out infinite',
-        'glow': 'glow 2s ease-in-out infinite alternate',
-        'float': 'float 3s ease-in-out infinite',
-        'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite',
-        'shake': 'shake 0.5s ease-in-out',
-        'celebrate': 'celebrate 1s ease-in-out'
+        // Subtle, purposeful animations
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+        'scale-in': 'scaleIn 0.2s ease-out',
+        'float': 'float 6s ease-in-out infinite',
+        'pulse-soft': 'pulseSoft 2s ease-in-out infinite'
       },
       keyframes: {
-        wiggle: {
-          '0%, 100%': { transform: 'rotate(-3deg)' },
-          '50%': { transform: 'rotate(3deg)' }
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
         },
-        glow: {
-          '0%': { boxShadow: '0 0 5px rgba(26, 140, 255, 0.5)' },
-          '100%': { boxShadow: '0 0 20px rgba(26, 140, 255, 0.8)' }
+        slideUp: {
+          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' }
+        },
+        scaleIn: {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' }
         },
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-10px)' }
         },
-        'bounce-gentle': {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-5px)' }
-        },
-        shake: {
-          '0%, 100%': { transform: 'translateX(0)' },
-          '25%': { transform: 'translateX(-5px)' },
-          '75%': { transform: 'translateX(5px)' }
-        },
-        celebrate: {
-          '0%': { transform: 'scale(1) rotate(0deg)' },
-          '25%': { transform: 'scale(1.1) rotate(5deg)' },
-          '50%': { transform: 'scale(1.2) rotate(-5deg)' },
-          '75%': { transform: 'scale(1.1) rotate(3deg)' },
-          '100%': { transform: 'scale(1) rotate(0deg)' }
+        pulseSoft: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.8' }
         }
+      },
+      backdropBlur: {
+        'xs': '2px'
       }
     },
   },
