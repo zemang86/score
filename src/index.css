@@ -5,8 +5,8 @@
 /* Modern, clean global styles */
 @layer base {
   body {
-    font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    background: linear-gradient(135deg, #f0f9ff 0%, #faf5ff 50%, #fefce8 100%);
+    font-family: 'Poppins', 'Nunito', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: linear-gradient(135deg, #e6f3ff 0%, #e8f5e8 50%, #fff9e6 100%);
     min-height: 100vh;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     -webkit-font-smoothing: antialiased;
@@ -14,9 +14,9 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     font-weight: 600;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
   }
 
   /* Focus styles for accessibility */
@@ -54,6 +54,14 @@
     animation: pulseSoft 2s ease-in-out infinite;
   }
 
+  .animate-bounce-gentle {
+    animation: bounceGentle 2s ease-in-out infinite;
+  }
+
+  .animate-wiggle {
+    animation: wiggle 1s ease-in-out infinite;
+  }
+
   /* Smooth transitions */
   .transition-smooth {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -61,9 +69,9 @@
 
   /* Glass morphism effect */
   .glass {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
   }
 
   /* Subtle hover effects */
@@ -73,45 +81,39 @@
 
   .hover-lift:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
-}
 
-@keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-@keyframes slideUp {
-  0% { 
-    transform: translateY(10px); 
-    opacity: 0; 
+  /* Fun interactive elements */
+  .btn-fun {
+    background: linear-gradient(135deg, theme('colors.primary.400'), theme('colors.secondary.400'));
+    color: white;
+    border-radius: 1.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(26, 140, 255, 0.3);
+    transition: all 0.3s ease;
   }
-  100% { 
-    transform: translateY(0); 
-    opacity: 1; 
-  }
-}
 
-@keyframes scaleIn {
-  0% { 
-    transform: scale(0.95); 
-    opacity: 0; 
+  .btn-fun:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(26, 140, 255, 0.4);
   }
-  100% { 
-    transform: scale(1); 
-    opacity: 1; 
+
+  .card-fun {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
   }
-}
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulseSoft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+  .card-fun:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: theme('colors.primary.200');
+  }
 }
 
 /* Custom scrollbar with modern styling */
@@ -125,17 +127,44 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: theme('colors.neutral.300');
+  background: theme('colors.primary.300');
   border-radius: 4px;
   transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: theme('colors.neutral.400');
+  background: theme('colors.primary.400');
 }
 
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: theme('colors.neutral.300') theme('colors.neutral.100');
+  scrollbar-color: theme('colors.primary.300') theme('colors.neutral.100');
+}
+
+/* Emoji and icon styling */
+.emoji {
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Loading animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive design helpers */
+@media (max-width: 640px) {
+  .mobile-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
