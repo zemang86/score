@@ -19,8 +19,8 @@ export function AdminDashboard() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 via-secondary-50 to-accent-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-200 border-t-primary-600 mx-auto mb-4"></div>
-          <p className="text-neutral-600">Verifying admin access...</p>
+          <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-4 border-primary-200 border-t-primary-600 mx-auto mb-3 sm:mb-4"></div>
+          <p className="text-neutral-600 text-sm sm:text-base">Verifying admin access...</p>
         </div>
       </div>
     )
@@ -43,9 +43,9 @@ export function AdminDashboard() {
         return <BadgeManagement />
       case 'settings':
         return (
-          <div className="card-fun">
-            <h2 className="text-2xl font-bold text-neutral-800 mb-4">System Settings</h2>
-            <p className="text-neutral-600">System settings panel coming soon...</p>
+          <div className="card-fun p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-neutral-800 mb-3 sm:mb-4">System Settings</h2>
+            <p className="text-neutral-600 text-sm sm:text-base">System settings panel coming soon...</p>
           </div>
         )
       default:
@@ -60,7 +60,7 @@ export function AdminDashboard() {
       <div className="flex">
         <AdminSidebar activeView={activeView} onViewChange={setActiveView} />
         
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
             {renderContent()}
           </div>

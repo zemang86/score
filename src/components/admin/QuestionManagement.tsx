@@ -249,36 +249,36 @@ export function QuestionManagement() {
 
   if (loading) {
     return (
-      <div className="card-fun p-8">
+      <div className="card-fun p-6 sm:p-8">
         <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-4 border-primary-200 border-t-primary-600"></div>
-          <span className="ml-2 text-neutral-600">Loading questions...</span>
+          <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-4 border-primary-200 border-t-primary-600"></div>
+          <span className="ml-2 text-neutral-600 text-sm sm:text-base">Loading questions...</span>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="card-fun">
-        <div className="flex items-center justify-between mb-6">
+      <div className="card-fun p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-4 sm:mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-neutral-800">Question Bank Management</h1>
-            <p className="text-neutral-600">Manage exam questions across all subjects and levels</p>
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-neutral-800">Question Bank Management</h1>
+            <p className="text-neutral-600 text-sm sm:text-base">Manage exam questions across all subjects and levels</p>
           </div>
-          <div className="flex space-x-3">
-            <Button variant="outline" onClick={() => setShowUploadModal(true)} icon={<Upload className="w-4 h-4" />}>
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto mt-3 sm:mt-0">
+            <Button variant="outline" onClick={() => setShowUploadModal(true)} icon={<Upload className="w-4 h-4" />} className="text-sm sm:text-base">
               Upload CSV
             </Button>
-            <Button icon={<Plus className="w-4 h-4" />}>
+            <Button icon={<Plus className="w-4 h-4" />} className="text-sm sm:text-base">
               Add Question
             </Button>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
           <div className="flex-1">
             <Input
               type="text"
@@ -292,7 +292,7 @@ export function QuestionManagement() {
           <select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
-            className="px-3 py-2 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
+            className="px-2 py-2 sm:px-3 sm:py-2 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm sm:text-base"
           >
             <option value="">All Subjects</option>
             {subjects.map(subject => (
@@ -303,7 +303,7 @@ export function QuestionManagement() {
           <select
             value={selectedLevel}
             onChange={(e) => setSelectedLevel(e.target.value)}
-            className="px-3 py-2 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
+            className="px-2 py-2 sm:px-3 sm:py-2 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm sm:text-base"
           >
             <option value="">All Levels</option>
             {levels.map(level => (
@@ -311,60 +311,60 @@ export function QuestionManagement() {
             ))}
           </select>
 
-          <Button variant="outline" icon={<Filter className="w-4 h-4" />}>
+          <Button variant="outline" icon={<Filter className="w-4 h-4" />} className="text-sm sm:text-base">
             More Filters
           </Button>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="card-fun">
-          <div className="flex items-center">
-            <div className="bg-primary-500 rounded-2xl p-3 mr-4 shadow-fun">
-              <BookOpen className="w-8 h-8 text-white" />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+        <div className="card-fun p-3 sm:p-4 lg:p-6">
+          <div className="flex flex-col sm:flex-row items-center">
+            <div className="bg-primary-500 rounded-xl sm:rounded-2xl p-2 sm:p-3 mb-2 sm:mb-0 sm:mr-3 lg:mr-4 shadow-fun">
+              <BookOpen className="w-5 h-5 sm:w-6 lg:w-8 text-white" />
             </div>
-            <div>
-              <p className="text-sm font-medium text-primary-600">Total Questions</p>
-              <p className="text-2xl font-bold text-neutral-800">{questions.length}</p>
+            <div className="text-center sm:text-left">
+              <p className="text-xs sm:text-sm font-medium text-primary-600">Total Questions</p>
+              <p className="text-xl sm:text-2xl font-bold text-neutral-800">{questions.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="card-fun">
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-secondary-100 rounded-2xl flex items-center justify-center mr-3">
-              <span className="text-secondary-600 font-bold text-sm">MCQ</span>
+        <div className="card-fun p-3 sm:p-4 lg:p-6">
+          <div className="flex flex-col sm:flex-row items-center">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-secondary-100 rounded-xl sm:rounded-2xl flex items-center justify-center mb-2 sm:mb-0 sm:mr-2 lg:mr-3">
+              <span className="text-secondary-600 font-bold text-xs sm:text-sm">MCQ</span>
             </div>
-            <div>
-              <p className="text-sm font-medium text-secondary-600">MCQ Questions</p>
-              <p className="text-2xl font-bold text-neutral-800">
+            <div className="text-center sm:text-left">
+              <p className="text-xs sm:text-sm font-medium text-secondary-600">MCQ Questions</p>
+              <p className="text-xl sm:text-2xl font-bold text-neutral-800">
                 {questions.filter(q => q.type === 'MCQ').length}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="card-fun">
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-accent-100 rounded-2xl flex items-center justify-center mr-3">
+        <div className="card-fun p-3 sm:p-4 lg:p-6">
+          <div className="flex flex-col sm:flex-row items-center">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-accent-100 rounded-xl sm:rounded-2xl flex items-center justify-center mb-2 sm:mb-0 sm:mr-2 lg:mr-3">
               <span className="text-accent-600 font-bold text-xs">SUB</span>
             </div>
-            <div>
-              <p className="text-sm font-medium text-accent-600">Subjects</p>
-              <p className="text-2xl font-bold text-neutral-800">{subjects.length}</p>
+            <div className="text-center sm:text-left">
+              <p className="text-xs sm:text-sm font-medium text-accent-600">Subjects</p>
+              <p className="text-xl sm:text-2xl font-bold text-neutral-800">{subjects.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="card-fun">
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-warning-100 rounded-2xl flex items-center justify-center mr-3">
+        <div className="card-fun p-3 sm:p-4 lg:p-6">
+          <div className="flex flex-col sm:flex-row items-center">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-warning-100 rounded-xl sm:rounded-2xl flex items-center justify-center mb-2 sm:mb-0 sm:mr-2 lg:mr-3">
               <span className="text-warning-600 font-bold text-xs">LVL</span>
             </div>
-            <div>
-              <p className="text-sm font-medium text-warning-600">Levels</p>
-              <p className="text-2xl font-bold text-neutral-800">{levels.length}</p>
+            <div className="text-center sm:text-left">
+              <p className="text-xs sm:text-sm font-medium text-warning-600">Levels</p>
+              <p className="text-xl sm:text-2xl font-bold text-neutral-800">{levels.length}</p>
             </div>
           </div>
         </div>
@@ -372,13 +372,13 @@ export function QuestionManagement() {
 
       {/* Questions Table */}
       <div className="card-fun">
-        <div className="p-6 border-b border-neutral-200">
-          <h2 className="text-lg font-semibold text-neutral-800">Questions ({filteredQuestions.length})</h2>
+        <div className="p-4 sm:p-6 border-b border-neutral-200">
+          <h2 className="text-base sm:text-lg font-semibold text-neutral-800">Questions ({filteredQuestions.length})</h2>
         </div>
 
         {error && (
-          <div className="p-4 bg-error-50 border-b border-error-200">
-            <p className="text-error-600 text-sm">{error}</p>
+          <div className="p-3 sm:p-4 bg-error-50 border-b border-error-200">
+            <p className="text-error-600 text-xs sm:text-sm">{error}</p>
           </div>
         )}
 
@@ -386,22 +386,22 @@ export function QuestionManagement() {
           <table className="w-full">
             <thead className="bg-neutral-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Question
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Subject
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Level
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Year
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                <th className="px-3 py-2 sm:px-6 sm:py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -409,34 +409,34 @@ export function QuestionManagement() {
             <tbody className="bg-white divide-y divide-neutral-200">
               {filteredQuestions.map((question) => (
                 <tr key={question.id} className="hover:bg-neutral-50">
-                  <td className="px-6 py-4">
+                  <td className="px-3 py-3 sm:px-6 sm:py-4">
                     <div className="max-w-xs">
-                      <div className="text-sm font-medium text-neutral-800 truncate">
+                      <div className="text-xs sm:text-sm font-medium text-neutral-800 truncate">
                         {question.question_text}
                       </div>
                       {question.topic && (
-                        <div className="text-sm text-neutral-500">Topic: {question.topic}</div>
+                        <div className="text-xs text-neutral-500">Topic: {question.topic}</div>
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-neutral-800">{question.subject}</div>
+                  <td className="px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
+                    <div className="text-xs sm:text-sm text-neutral-800">{question.subject}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-neutral-800">{question.level}</div>
+                  <td className="px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
+                    <div className="text-xs sm:text-sm text-neutral-800">{question.level}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTypeColor(question.type)}`}>
+                  <td className="px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
+                    <span className={`inline-flex items-center px-2 py-1 sm:px-2.5 sm:py-0.5 rounded-full text-xs font-medium ${getTypeColor(question.type)}`}>
                       {question.type}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-neutral-800">{question.year}</div>
+                  <td className="px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
+                    <div className="text-xs sm:text-sm text-neutral-800">{question.year}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex items-center justify-end space-x-2">
-                      <Button variant="ghost" size="sm" icon={<Edit className="w-4 h-4" />} />
-                      <Button variant="ghost" size="sm" className="text-error-600 hover:text-error-700" icon={<Trash2 className="w-4 h-4" />} />
+                  <td className="px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
+                    <div className="flex items-center justify-end space-x-1 sm:space-x-2">
+                      <Button variant="ghost" size="sm" icon={<Edit className="w-3 h-3 sm:w-4 sm:h-4" />} />
+                      <Button variant="ghost" size="sm" className="text-error-600 hover:text-error-700" icon={<Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />} />
                     </div>
                   </td>
                 </tr>
@@ -445,12 +445,12 @@ export function QuestionManagement() {
           </table>
 
           {filteredQuestions.length === 0 && !loading && (
-            <div className="text-center py-12">
-              <div className="bg-primary-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-primary-600" />
+            <div className="text-center py-8 sm:py-12">
+              <div className="bg-primary-100 rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-primary-600" />
               </div>
-              <h3 className="text-lg font-medium text-neutral-800 mb-2">No questions found</h3>
-              <p className="text-neutral-600">
+              <h3 className="text-base sm:text-lg font-medium text-neutral-800 mb-1 sm:mb-2">No questions found</h3>
+              <p className="text-neutral-600 text-sm sm:text-base">
                 {searchTerm || selectedSubject || selectedLevel 
                   ? 'Try adjusting your search or filter criteria.' 
                   : 'No questions have been added yet.'}
@@ -463,10 +463,10 @@ export function QuestionManagement() {
       {/* CSV Upload Modal */}
       {showUploadModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-neutral-200">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-4 sm:p-6 border-b border-neutral-200">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-neutral-800">Upload Questions CSV</h2>
+                <h2 className="text-lg sm:text-xl font-semibold text-neutral-800">Upload Questions CSV</h2>
                 <button
                   onClick={() => setShowUploadModal(false)}
                   className="text-neutral-400 hover:text-neutral-600 transition-colors"
@@ -476,9 +476,9 @@ export function QuestionManagement() {
               </div>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* CSV Format Instructions */}
-              <div className="bg-primary-50 border border-primary-200 rounded-xl p-4">
+              <div className="bg-primary-50 border border-primary-200 rounded-xl p-3 sm:p-4">
                 <h3 className="text-sm font-semibold text-primary-800 mb-2">CSV Format Requirements</h3>
                 <p className="text-sm text-primary-700 mb-3">
                   Your CSV file must have the following columns in this exact order:
@@ -499,7 +499,7 @@ export function QuestionManagement() {
               </div>
 
               {/* File Upload */}
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 mb-2">
                     Select CSV File
@@ -523,14 +523,14 @@ export function QuestionManagement() {
 
               {/* Upload Result */}
               {uploadResult && (
-                <div className={`rounded-xl p-4 ${uploadResult.success ? 'bg-success-50 border border-success-200' : 'bg-error-50 border border-error-200'}`}>
+                <div className={`rounded-xl p-3 sm:p-4 ${uploadResult.success ? 'bg-success-50 border border-success-200' : 'bg-error-50 border border-error-200'}`}>
                   <div className="flex items-center mb-2">
                     {uploadResult.success ? (
-                      <CheckCircle className="w-5 h-5 text-success-600 mr-2" />
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-success-600 mr-2" />
                     ) : (
-                      <AlertCircle className="w-5 h-5 text-error-600 mr-2" />
+                      <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-error-600 mr-2" />
                     )}
-                    <span className={`font-medium ${uploadResult.success ? 'text-success-800' : 'text-error-800'}`}>
+                    <span className={`font-medium text-sm sm:text-base ${uploadResult.success ? 'text-success-800' : 'text-error-800'}`}>
                       {uploadResult.message}
                     </span>
                   </div>
@@ -549,18 +549,18 @@ export function QuestionManagement() {
               )}
 
               {/* Action Buttons */}
-              <div className="flex space-x-3">
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                 <Button
                   variant="outline"
                   onClick={() => setShowUploadModal(false)}
-                  className="flex-1"
+                  className="flex-1 text-sm sm:text-base"
                   disabled={uploading}
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleUploadCSV}
-                  className="flex-1"
+                  className="flex-1 text-sm sm:text-base"
                   disabled={!selectedFile || uploading}
                   loading={uploading}
                   icon={!uploading ? <Upload className="w-4 h-4" /> : undefined}
