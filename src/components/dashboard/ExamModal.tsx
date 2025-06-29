@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Student, Question } from '../../lib/supabase'
 import { Button } from '../ui/Button'
-import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle } from 'lucide-react'
+import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3 } from 'lucide-react'
 
 interface ExamModalProps {
   isOpen: boolean
@@ -12,8 +12,14 @@ interface ExamModalProps {
 }
 
 interface ExamQuestion extends Question {
-  userAnswer?: string
+  userAnswer?: string | string[]
   isCorrect?: boolean
+}
+
+interface MatchingPair {
+  left: string
+  right: string
+  matched?: boolean
 }
 
 type ExamMode = 'Easy' | 'Medium' | 'Full'
@@ -29,6 +35,10 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   const [examStarted, setExamStarted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  
+  // Matching question state
+  const [matchingPairs, setMatchingPairs] = useState<MatchingPair[]>([])
+  const [selectedLeftItem, setSelectedLeftItem] = useState<string | null>(null)
 
   const subjects: Subject[] = ['Bahasa Melayu', 'English', 'Mathematics', 'Science', 'History']
   
@@ -39,7 +49,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       case 'Medium':
         return { questionCount: 20, timeMinutes: 30, types: ['MCQ', 'ShortAnswer'] }
       case 'Full':
-        return { questionCount: 40, timeMinutes: 60, types: ['MCQ', 'ShortAnswer', 'Subjective'] }
+        return { questionCount: 40, timeMinutes: 60, types: ['MCQ', 'ShortAnswer', 'Subjective', 'Matching'] }
     }
   }
 
@@ -73,6 +83,10 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       setTimeLeft(config.timeMinutes * 60) // Convert to seconds
       setStep('exam')
       setExamStarted(true)
+      setCurrentQuestionIndex(0)
+      
+      // Initialize matching pairs for the first question if it's a matching type
+      initializeMatchingQuestion(selectedQuestions[0])
     } catch (err: any) {
       setError(err.message || 'Failed to start exam')
     } finally {
@@ -80,17 +94,120 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     }
   }
 
-  const handleAnswerSelect = (answer: string) => {
+  const initializeMatchingQuestion = (question: ExamQuestion) => {
+    if (question.type === 'Matching' && question.options.length > 0) {
+      // For matching questions, options should be in format: ["Left1:Right1", "Left2:Right2", ...]
+      const pairs = question.options.map(option => {
+        const [left, right] = option.split(':')
+        return { left: left?.trim() || '', right: right?.trim() || '', matched: false }
+      })
+      
+      // Shuffle the right side items
+      const shuffledRights = pairs.map(p => p.right).sort(() => 0.5 - Math.random())
+      const shuffledPairs = pairs.map((pair, index) => ({
+        ...pair,
+        right: shuffledRights[index]
+      }))
+      
+      setMatchingPairs(shuffledPairs)
+    } else {
+      setMatchingPairs([])
+    }
+  }
+
+  const handleAnswerSelect = (answer: string | string[]) => {
     const updatedQuestions = [...questions]
     updatedQuestions[currentQuestionIndex].userAnswer = answer
     setQuestions(updatedQuestions)
   }
 
+  const handleMatchingSelect = (leftItem: string, rightItem: string) => {
+    if (selectedLeftItem === leftItem) {
+      // Deselect if clicking the same left item
+      setSelectedLeftItem(null)
+      return
+    }
+
+    if (selectedLeftItem) {
+      // Make a match
+      const newPairs = matchingPairs.map(pair => {
+        if (pair.left === selectedLeftItem) {
+          return { ...pair, right: rightItem, matched: true }
+        }
+        if (pair.right === rightItem && pair.matched) {
+          return { ...pair, matched: false }
+        }
+        return pair
+      })
+      
+      setMatchingPairs(newPairs)
+      setSelectedLeftItem(null)
+      
+      // Update the answer in the format expected by the grading system
+      const matchedPairs = newPairs
+        .filter(pair => pair.matched)
+        .map(pair => `${pair.left}:${pair.right}`)
+      
+      handleAnswerSelect(matchedPairs)
+    } else {
+      // Select left item
+      setSelectedLeftItem(leftItem)
+    }
+  }
+
   const nextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1)
+      const nextIndex = currentQuestionIndex + 1
+      setCurrentQuestionIndex(nextIndex)
+      initializeMatchingQuestion(questions[nextIndex])
+      setSelectedLeftItem(null)
     } else {
       finishExam()
+    }
+  }
+
+  const previousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      const prevIndex = currentQuestionIndex - 1
+      setCurrentQuestionIndex(prevIndex)
+      initializeMatchingQuestion(questions[prevIndex])
+      setSelectedLeftItem(null)
+    }
+  }
+
+  const gradeQuestion = (question: ExamQuestion): boolean => {
+    if (!question.userAnswer) return false
+
+    switch (question.type) {
+      case 'MCQ':
+      case 'ShortAnswer':
+        return question.userAnswer === question.correct_answer
+
+      case 'Subjective':
+        // For subjective questions, we'll do a simple keyword-based check
+        // In a real system, this would need manual grading or AI assistance
+        const userText = (question.userAnswer as string).toLowerCase().trim()
+        const correctText = question.correct_answer.toLowerCase().trim()
+        
+        // Check if user answer contains key words from correct answer
+        const keyWords = correctText.split(/\s+/).filter(word => word.length > 3)
+        const matchedWords = keyWords.filter(word => userText.includes(word))
+        
+        // Consider correct if at least 60% of key words are present
+        return matchedWords.length >= Math.ceil(keyWords.length * 0.6)
+
+      case 'Matching':
+        if (!Array.isArray(question.userAnswer)) return false
+        
+        // Check if all pairs are correctly matched
+        const correctPairs = question.options.map(option => option.trim())
+        const userPairs = (question.userAnswer as string[]).map(pair => pair.trim())
+        
+        return correctPairs.length === userPairs.length && 
+               correctPairs.every(pair => userPairs.includes(pair))
+
+      default:
+        return false
     }
   }
 
@@ -100,7 +217,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     // Calculate score
     let correctAnswers = 0
     const gradedQuestions = questions.map(question => {
-      const isCorrect = question.userAnswer === question.correct_answer
+      const isCorrect = gradeQuestion(question)
       if (isCorrect) correctAnswers++
       return { ...question, isCorrect }
     })
@@ -133,7 +250,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       const attempts = questions.map(question => ({
         exam_id: examData.id,
         question_id: question.id,
-        answer_given: question.userAnswer || '',
+        answer_given: Array.isArray(question.userAnswer) 
+          ? question.userAnswer.join(';') 
+          : (question.userAnswer || ''),
         is_correct: question.isCorrect || false
       }))
 
@@ -190,6 +309,170 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     if (score >= 70) return 'Good job!'
     if (score >= 50) return 'Keep practicing!'
     return 'Don\'t give up! Try again!'
+  }
+
+  const hasUserAnswer = () => {
+    const question = questions[currentQuestionIndex]
+    if (!question) return false
+
+    switch (question.type) {
+      case 'MCQ':
+      case 'ShortAnswer':
+      case 'Subjective':
+        return !!question.userAnswer && question.userAnswer !== ''
+      case 'Matching':
+        return Array.isArray(question.userAnswer) && question.userAnswer.length > 0
+      default:
+        return false
+    }
+  }
+
+  const renderQuestionContent = () => {
+    const question = questions[currentQuestionIndex]
+    if (!question) return null
+
+    switch (question.type) {
+      case 'MCQ':
+        return (
+          <div className="space-y-2 sm:space-y-3">
+            {question.options.map((option, index) => (
+              <button
+                key={index}
+                onClick={() => handleAnswerSelect(option)}
+                className={`w-full p-3 sm:p-4 rounded-xl border-2 text-left transition-all duration-300 text-sm sm:text-base ${
+                  question.userAnswer === option
+                    ? 'bg-accent-400 border-accent-600 text-white shadow-warning'
+                    : 'bg-white border-primary-300 text-primary-700 hover:bg-primary-50'
+                }`}
+              >
+                <span className="font-bold mr-2 sm:mr-3">{String.fromCharCode(65 + index)}.</span>
+                {option}
+              </button>
+            ))}
+          </div>
+        )
+
+      case 'ShortAnswer':
+        return (
+          <div className="space-y-3">
+            <input
+              type="text"
+              placeholder="Type your answer here..."
+              value={(question.userAnswer as string) || ''}
+              onChange={(e) => handleAnswerSelect(e.target.value)}
+              className="w-full p-3 sm:p-4 border-2 border-primary-300 rounded-xl text-base sm:text-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
+            />
+            <div className="flex items-center text-sm text-primary-600">
+              <Edit3 className="w-4 h-4 mr-2" />
+              <span>Provide a concise answer</span>
+            </div>
+          </div>
+        )
+
+      case 'Subjective':
+        return (
+          <div className="space-y-3">
+            <textarea
+              placeholder="Write your detailed answer here..."
+              value={(question.userAnswer as string) || ''}
+              onChange={(e) => handleAnswerSelect(e.target.value)}
+              rows={6}
+              className="w-full p-3 sm:p-4 border-2 border-primary-300 rounded-xl text-base sm:text-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 resize-none"
+            />
+            <div className="flex items-center text-sm text-primary-600">
+              <Edit3 className="w-4 h-4 mr-2" />
+              <span>Provide a detailed explanation with examples where appropriate</span>
+            </div>
+          </div>
+        )
+
+      case 'Matching':
+        if (matchingPairs.length === 0) {
+          return <div className="text-center text-neutral-500">Loading matching pairs...</div>
+        }
+
+        const leftItems = matchingPairs.map(pair => pair.left)
+        const rightItems = [...new Set(matchingPairs.map(pair => pair.right))]
+
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center text-sm text-primary-600 mb-4">
+              <ArrowUpDown className="w-4 h-4 mr-2" />
+              <span>Click a left item, then click its matching right item</span>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Left Column */}
+              <div className="space-y-2">
+                <h4 className="font-semibold text-primary-700 text-center mb-3">Match these items:</h4>
+                {leftItems.map((leftItem, index) => {
+                  const pair = matchingPairs.find(p => p.left === leftItem)
+                  const isSelected = selectedLeftItem === leftItem
+                  const isMatched = pair?.matched
+                  
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedLeftItem(isSelected ? null : leftItem)}
+                      className={`w-full p-3 rounded-xl border-2 text-left transition-all duration-300 ${
+                        isMatched
+                          ? 'bg-success-100 border-success-400 text-success-800'
+                          : isSelected
+                          ? 'bg-accent-400 border-accent-600 text-white shadow-warning'
+                          : 'bg-white border-primary-300 text-primary-700 hover:bg-primary-50'
+                      }`}
+                      disabled={isMatched}
+                    >
+                      {leftItem}
+                      {isMatched && (
+                        <span className="ml-2 text-success-600">
+                          ✓ → {pair.right}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* Right Column */}
+              <div className="space-y-2">
+                <h4 className="font-semibold text-primary-700 text-center mb-3">With these options:</h4>
+                {rightItems.map((rightItem, index) => {
+                  const isMatchedToSelected = matchingPairs.some(
+                    pair => pair.right === rightItem && pair.matched
+                  )
+                  
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => selectedLeftItem && handleMatchingSelect(selectedLeftItem, rightItem)}
+                      className={`w-full p-3 rounded-xl border-2 text-left transition-all duration-300 ${
+                        isMatchedToSelected
+                          ? 'bg-success-100 border-success-400 text-success-800'
+                          : selectedLeftItem
+                          ? 'bg-white border-secondary-300 text-secondary-700 hover:bg-secondary-50'
+                          : 'bg-neutral-100 border-neutral-300 text-neutral-500 cursor-not-allowed'
+                      }`}
+                      disabled={!selectedLeftItem || isMatchedToSelected}
+                    >
+                      {rightItem}
+                      {isMatchedToSelected && <span className="ml-2 text-success-600">✓</span>}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Progress indicator */}
+            <div className="text-center text-sm text-neutral-600">
+              Matched: {matchingPairs.filter(p => p.matched).length} / {matchingPairs.length}
+            </div>
+          </div>
+        )
+
+      default:
+        return <div className="text-center text-error-600">Unsupported question type: {question.type}</div>
+    }
   }
 
   if (!isOpen) return null
@@ -274,6 +557,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                             <div className="text-xs sm:text-sm opacity-90">
                               {config.questionCount} questions • {config.timeMinutes} minutes
                             </div>
+                            <div className="text-xs opacity-75 mt-1">
+                              Types: {config.types.join(', ')}
+                            </div>
                           </div>
                           <div className="flex items-center space-x-1 sm:space-x-2">
                             <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -322,7 +608,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                     <h2 className="text-lg sm:text-xl font-bold text-primary-600">
                       Question {currentQuestionIndex + 1} of {questions.length}
                     </h2>
-                    <p className="text-sm sm:text-base text-secondary-600">{selectedSubject} - {selectedMode} Mode</p>
+                    <p className="text-sm sm:text-base text-secondary-600">
+                      {selectedSubject} - {selectedMode} Mode - {questions[currentQuestionIndex]?.type}
+                    </p>
                   </div>
                 </div>
                 <div className="text-center">
@@ -342,40 +630,13 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                       {questions[currentQuestionIndex].question_text}
                     </h3>
                     
-                    {questions[currentQuestionIndex].type === 'MCQ' && (
-                      <div className="space-y-2 sm:space-y-3">
-                        {questions[currentQuestionIndex].options.map((option, index) => (
-                          <button
-                            key={index}
-                            onClick={() => handleAnswerSelect(option)}
-                            className={`w-full p-3 sm:p-4 rounded-xl border-2 text-left transition-all duration-300 text-sm sm:text-base ${
-                              questions[currentQuestionIndex].userAnswer === option
-                                ? 'bg-accent-400 border-accent-600 text-white shadow-warning'
-                                : 'bg-white border-primary-300 text-primary-700 hover:bg-primary-50'
-                            }`}
-                          >
-                            <span className="font-bold mr-2 sm:mr-3">{String.fromCharCode(65 + index)}.</span>
-                            {option}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
-                    {questions[currentQuestionIndex].type === 'ShortAnswer' && (
-                      <input
-                        type="text"
-                        placeholder="Type your answer here..."
-                        value={questions[currentQuestionIndex].userAnswer || ''}
-                        onChange={(e) => handleAnswerSelect(e.target.value)}
-                        className="w-full p-3 sm:p-4 border-2 border-primary-300 rounded-xl text-base sm:text-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
-                      />
-                    )}
+                    {renderQuestionContent()}
                   </div>
 
                   <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0">
                     <Button
                       variant="outline"
-                      onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
+                      onClick={previousQuestion}
                       disabled={currentQuestionIndex === 0}
                       className="text-sm sm:text-base"
                     >
@@ -383,7 +644,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                     </Button>
                     <Button
                       onClick={nextQuestion}
-                      disabled={!questions[currentQuestionIndex].userAnswer}
+                      disabled={!hasUserAnswer()}
                       className="bg-gradient-to-r from-secondary-400 to-secondary-600 text-sm sm:text-base"
                     >
                       {currentQuestionIndex === questions.length - 1 ? 'Finish Exam' : 'Next →'}
@@ -432,30 +693,46 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                 </div>
               </div>
 
-              {/* Question Review */}
+              {/* Question Review with Correct Answers */}
               <div className="bg-white border-2 border-primary-200 rounded-xl p-4 sm:p-6">
                 <h3 className="text-lg sm:text-xl font-bold text-primary-700 mb-3 sm:mb-4">Question Review</h3>
-                <div className="space-y-2 sm:space-y-3 max-h-60 overflow-y-auto">
+                <div className="space-y-3 max-h-80 overflow-y-auto">
                   {questions.map((question, index) => (
                     <div
                       key={index}
-                      className={`p-2.5 sm:p-3 rounded-xl border-2 ${
+                      className={`p-3 sm:p-4 rounded-xl border-2 ${
                         question.isCorrect
                           ? 'bg-success-50 border-success-300'
                           : 'bg-error-50 border-error-300'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs sm:text-sm">
-                          Q{index + 1}: {question.question_text.substring(0, 50)}...
+                      <div className="flex items-start justify-between mb-2">
+                        <span className="text-sm font-medium">
+                          Q{index + 1}: {question.question_text.substring(0, 60)}...
                         </span>
-                        <div className="flex items-center">
+                        <div className="flex items-center ml-2">
                           {question.isCorrect ? (
-                            <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-success-600" />
+                            <CheckCircle className="w-5 h-5 text-success-600" />
                           ) : (
-                            <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-error-600" />
+                            <AlertCircle className="w-5 h-5 text-error-600" />
                           )}
                         </div>
+                      </div>
+                      
+                      {/* Show answers for review */}
+                      <div className="text-xs space-y-1">
+                        <div className={`${question.isCorrect ? 'text-success-700' : 'text-error-700'}`}>
+                          <strong>Your answer:</strong> {
+                            Array.isArray(question.userAnswer) 
+                              ? question.userAnswer.join(', ') 
+                              : (question.userAnswer || 'No answer')
+                          }
+                        </div>
+                        {!question.isCorrect && (
+                          <div className="text-success-700">
+                            <strong>Correct answer:</strong> {question.correct_answer}
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
