@@ -43,6 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     console.log('🔄 AuthContext: getUserProfile called for:', userId)
     
     try {
+      console.log('📡 AuthContext: About to call fetchUserProfile...')
       const userProfile = await fetchUserProfile(userId)
       console.log('✅ AuthContext: Profile fetched from fetchUserProfile:', JSON.stringify(userProfile, null, 2))
       
@@ -120,6 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const initializeAuth = async () => {
       try {
         // Get initial session
+        console.log('📡 AuthContext: Calling supabase.auth.getSession()...')
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
         
         if (sessionError) {
@@ -128,9 +130,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         
         console.log('📡 AuthContext: getSession response:', session ? 'Session found' : 'No session')
+        console.log('📡 AuthContext: Session user:', session?.user ? {
+          id: session.user.id,
+          email: session.user.email,
+          metadata: session.user.user_metadata
+        } : 'No user')
         
         setSession(session)
         setUser(session?.user ?? null)
+        
+        console.log('📝 AuthContext: Set user state to:', session?.user ? {
+          id: session.user.id,
+          email: session.user.email
+        } : 'null')
         
         if (session?.user) {
           console.log('👤 AuthContext: User found, fetching profile for:', session.user.id)
@@ -170,10 +182,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('🔔 AuthContext: Auth state changed:', event, session ? 'Session exists' : 'No session')
+      console.log('🔔 AuthContext: Auth change session user:', session?.user ? {
+        id: session.user.id,
+        email: session.user.email,
+        metadata: session.user.user_metadata
+      } : 'No user')
       
       try {
         setSession(session)
         setUser(session?.user ?? null)
+        
+        console.log('📝 AuthContext: Auth change - Set user state to:', session?.user ? {
+          id: session.user.id,
+          email: session.user.email
+        } : 'null')
         
         if (session?.user) {
           console.log('👤 AuthContext: Auth change - User found, fetching profile for:', session.user.id)
