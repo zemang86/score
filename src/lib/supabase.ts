@@ -106,9 +106,9 @@ export const fetchUserProfile = async (userId: string): Promise<UserWithAdminSta
   try {
     console.log('📡 fetchUserProfile: Making database queries')
     
-    // Add timeout to prevent hanging
+    // Add timeout to prevent hanging - Extended to 5 minutes
     const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Query timeout')), 15000)
+      setTimeout(() => reject(new Error('Query timeout')), 300000)
     })
     
     // Fetch user profile and admin status in parallel
@@ -202,9 +202,9 @@ export const checkIsAdmin = async (userId: string): Promise<boolean> => {
   try {
     console.log('📡 checkIsAdmin: Making database query to admins table')
     
-    // Add timeout to prevent hanging
+    // Add timeout to prevent hanging - Extended to 5 minutes
     const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Query timeout')), 10000)
+      setTimeout(() => reject(new Error('Query timeout')), 300000)
     })
     
     // Use maybeSingle() instead of single() to prevent errors when user is not admin
