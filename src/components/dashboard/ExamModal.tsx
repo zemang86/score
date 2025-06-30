@@ -53,6 +53,30 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     }
   }
 
+  // Function to determine allowed levels based on student's current level
+  const getAllowedLevels = (currentLevel: string): string[] => {
+    const levelMap: { [key: string]: string[] } = {
+      // Primary School - Lower Primary (Level 1)
+      'Darjah 1': ['Darjah 1'],
+      'Darjah 2': ['Darjah 1', 'Darjah 2'],
+      'Darjah 3': ['Darjah 1', 'Darjah 2', 'Darjah 3'],
+      
+      // Primary School - Upper Primary (Level 2)
+      'Darjah 4': ['Darjah 4'],
+      'Darjah 5': ['Darjah 4', 'Darjah 5'],
+      'Darjah 6': ['Darjah 4', 'Darjah 5', 'Darjah 6'],
+      
+      // Secondary School - Each level gets their own questions only for now
+      'Tingkatan 1': ['Tingkatan 1'],
+      'Tingkatan 2': ['Tingkatan 2'],
+      'Tingkatan 3': ['Tingkatan 3'],
+      'Tingkatan 4': ['Tingkatan 4'],
+      'Tingkatan 5': ['Tingkatan 5'],
+    }
+    
+    return levelMap[currentLevel] || [currentLevel] // Fallback to current level if not found
+  }
+
   const startExam = async () => {
     setLoading(true)
     setError('')
@@ -60,24 +84,36 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     try {
       const config = getModeConfig(selectedMode)
       
-      // Fetch questions from database
+      // Get allowed levels for this student
+      const allowedLevels = getAllowedLevels(student.level)
+      
+      console.log(`Student ${student.name} (${student.level}) can access questions from levels:`, allowedLevels)
+      
+      // Fetch questions from database using the allowed levels
       const { data: fetchedQuestions, error: fetchError } = await supabase
         .from('questions')
         .select('*')
-        .eq('level', student.level)
+        .in('level', allowedLevels) // Use 'in' instead of 'eq' to fetch from multiple levels
         .eq('subject', selectedSubject)
         .in('type', config.types)
-        .limit(config.questionCount * 2) // Fetch more to randomize
+        .limit(config.questionCount * 3) // Fetch more to ensure we have enough after filtering
 
       if (fetchError) throw fetchError
 
       if (!fetchedQuestions || fetchedQuestions.length < config.questionCount) {
-        throw new Error(`Not enough questions available for ${selectedSubject} at ${student.level} level`)
+        // Provide more detailed error message showing which levels were searched
+        throw new Error(
+          `Not enough questions available for ${selectedSubject} at levels: ${allowedLevels.join(', ')}. ` +
+          `Found ${fetchedQuestions?.length || 0} questions, need ${config.questionCount}.`
+        )
       }
 
       // Randomize and select questions
       const shuffled = fetchedQuestions.sort(() => 0.5 - Math.random())
       const selectedQuestions = shuffled.slice(0, config.questionCount)
+
+      console.log(`Selected ${selectedQuestions.length} questions from levels:`, 
+        [...new Set(selectedQuestions.map(q => q.level))].join(', '))
 
       setQuestions(selectedQuestions)
       setTimeLeft(config.timeMinutes * 60) // Convert to seconds
@@ -493,6 +529,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                   <div>
                     <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-primary-600">Start New Exam</h2>
                     <p className="text-sm sm:text-base text-secondary-600">For {student.name} - {student.level}</p>
+                    <p className="text-xs sm:text-sm text-primary-500 mt-1">
+                      Questions from: {getAllowedLevels(student.level).join(', ')}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -510,6 +549,24 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                   <p className="text-error-700 font-medium text-center text-sm sm:text-base">{error}</p>
                 </div>
               )}
+
+              {/* Level Information */}
+              <div className="bg-primary-50 border-2 border-primary-200 rounded-xl p-3 sm:p-4">
+                <h3 className="text-sm sm:text-base font-semibold text-primary-800 mb-2">Smart Question Selection</h3>
+                <p className="text-xs sm:text-sm text-primary-700 mb-2">
+                  Based on your level ({student.level}), you'll receive questions from:
+                </p>
+                <div className="flex flex-wrap gap-1 sm:gap-2">
+                  {getAllowedLevels(student.level).map((level, index) => (
+                    <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-200 text-primary-800">
+                      {level}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-xs text-primary-600 mt-2">
+                  This helps build a strong foundation by including questions from previous levels!
+                </p>
+              </div>
 
               {/* Subject Selection */}
               <div>
@@ -611,6 +668,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                     <p className="text-sm sm:text-base text-secondary-600">
                       {selectedSubject} - {selectedMode} Mode - {questions[currentQuestionIndex]?.type}
                     </p>
+                    <p className="text-xs text-primary-500">
+                      Level: {questions[currentQuestionIndex]?.level}
+                    </p>
                   </div>
                 </div>
                 <div className="text-center">
@@ -691,6 +751,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                 <div className="text-base sm:text-lg text-secondary-600">
                   {questions.filter(q => q.isCorrect).length} out of {questions.length} correct
                 </div>
+                <div className="text-sm text-primary-600 mt-2">
+                  Questions from levels: {[...new Set(questions.map(q => q.level))].join(', ')}
+                </div>
               </div>
 
               {/* Question Review with Correct Answers */}
@@ -707,9 +770,11 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                       }`}
                     >
                       <div className="flex items-start justify-between mb-2">
-                        <span className="text-sm font-medium">
-                          Q{index + 1}: {question.question_text.substring(0, 60)}...
-                        </span>
+                        <div className="flex-1">
+                          <span className="text-sm font-medium">
+                            Q{index + 1} ({question.level}): {question.question_text.substring(0, 60)}...
+                          </span>
+                        </div>
                         <div className="flex items-center ml-2">
                           {question.isCorrect ? (
                             <CheckCircle className="w-5 h-5 text-success-600" />
