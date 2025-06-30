@@ -4,6 +4,7 @@ import { User, School, GraduationCap, Calendar, Star, MoreHorizontal, Zap, Troph
 import { Button } from '../ui/Button'
 import { ExamModal } from './ExamModal'
 import { StudentProgressModal } from './StudentProgressModal'
+import { calculateAgeInYearsAndMonths } from '../../utils/dateUtils'
 
 interface StudentCardProps {
   student: Student
@@ -16,8 +17,8 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete }: Stude
   const [showExamModal, setShowExamModal] = useState(false)
   const [showProgressModal, setShowProgressModal] = useState(false)
 
-  const getAgeDisplay = (age: number) => {
-    return `${age} years old`
+  const getAgeDisplay = (dateOfBirth: string) => {
+    return calculateAgeInYearsAndMonths(dateOfBirth)
   }
 
   const getLevelColor = (level: string) => {
@@ -56,7 +57,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete }: Stude
             </div>
             <div className="text-center sm:text-left">
               <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-neutral-800">{student.name}</h3>
-              <p className="text-neutral-600 text-sm sm:text-base lg:text-lg">{getAgeDisplay(student.age)}</p>
+              <p className="text-neutral-600 text-sm sm:text-base lg:text-lg">{getAgeDisplay(student.date_of_birth)}</p>
             </div>
           </div>
           

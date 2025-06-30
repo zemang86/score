@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { X, User, School, Calendar, GraduationCap, Sparkles, Star, Zap } from 'lucide-react'
+import { validateDateOfBirth } from '../../utils/dateUtils'
 
 interface AddStudentModalProps {
   isOpen: boolean
@@ -17,7 +18,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
     name: '',
     school: '',
     level: '',
-    age: ''
+    dateOfBirth: ''
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -38,10 +39,10 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
       return
     }
 
-    // Validate age
-    const age = parseInt(formData.age)
-    if (isNaN(age) || age < 5 || age > 18) {
-      setError('Please enter a valid age between 5 and 18')
+    // Validate date of birth
+    const dateValidation = validateDateOfBirth(formData.dateOfBirth)
+    if (!dateValidation.isValid) {
+      setError(dateValidation.error || 'Invalid date of birth')
       setLoading(false)
       return
     }
@@ -72,7 +73,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
             name: formData.name.trim(),
             school: formData.school.trim(),
             level: formData.level,
-            age: age,
+            date_of_birth: formData.dateOfBirth,
             xp: 0
           }
         ])
@@ -82,7 +83,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
       }
 
       // Reset form and close modal
-      setFormData({ name: '', school: '', level: '', age: '' })
+      setFormData({ name: '', school: '', level: '', dateOfBirth: '' })
       onStudentAdded()
       onClose()
     } catch (err: any) {
@@ -101,28 +102,28 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-neutral-200 bg-gradient-to-r from-primary-100 to-secondary-100">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 border-b border-neutral-200 bg-gradient-to-r from-primary-100 to-secondary-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="bg-primary-500 rounded-full p-3 mr-4 shadow-fun">
-                <Star className="w-8 h-8 text-white" />
+              <div className="bg-primary-500 rounded-full p-2 sm:p-3 mr-3 sm:mr-4 shadow-fun">
+                <Star className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-primary-600">Add New Kid</h2>
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-primary-600">Add New Kid</h2>
             </div>
             <button
               onClick={onClose}
-              className="text-neutral-400 hover:text-neutral-600 transition-colors bg-white rounded-full p-2 shadow-soft"
+              className="text-neutral-400 hover:text-neutral-600 transition-colors bg-white rounded-full p-1.5 sm:p-2 shadow-soft"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
           {error && (
-            <div className="bg-error-50 border-2 border-error-200 rounded-xl p-4">
-              <p className="text-error-700 font-medium text-center">{error}</p>
+            <div className="bg-error-50 border-2 border-error-200 rounded-xl p-3 sm:p-4">
+              <p className="text-error-700 font-medium text-center text-sm sm:text-base">{error}</p>
             </div>
           )}
 
@@ -131,7 +132,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
             placeholder="Kid's full name"
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            icon={<User className="w-5 h-5" />}
+            icon={<User className="w-4 h-4 sm:w-5 sm:h-5" />}
             required
           />
 
@@ -140,16 +141,16 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
             placeholder="School name"
             value={formData.school}
             onChange={(e) => handleInputChange('school', e.target.value)}
-            icon={<School className="w-5 h-5" />}
+            icon={<School className="w-4 h-4 sm:w-5 sm:h-5" />}
             required
           />
 
           <div className="relative">
-            <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5" />
+            <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4 sm:w-5 sm:h-5" />
             <select
               value={formData.level}
               onChange={(e) => handleInputChange('level', e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
+              className="w-full pl-8 sm:pl-10 pr-4 py-2.5 sm:py-3 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm sm:text-base"
               required
             >
               <option value="">Select education level</option>
@@ -160,32 +161,31 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
           </div>
 
           <Input
-            type="number"
-            placeholder="Age (5-18)"
-            value={formData.age}
-            onChange={(e) => handleInputChange('age', e.target.value)}
-            min="5"
-            max="18"
-            icon={<Calendar className="w-5 h-5" />}
+            type="date"
+            placeholder="Date of birth"
+            value={formData.dateOfBirth}
+            onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+            icon={<Calendar className="w-4 h-4 sm:w-5 sm:h-5" />}
+            helper="We'll calculate their age automatically"
             required
           />
 
-          <div className="bg-gradient-to-r from-primary-100 to-secondary-100 border-2 border-primary-300 rounded-xl p-4">
+          <div className="bg-gradient-to-r from-primary-100 to-secondary-100 border-2 border-primary-300 rounded-xl p-3 sm:p-4">
             <div className="flex items-center mb-2">
-              <Sparkles className="w-5 h-5 text-primary-600 mr-2" />
-              <p className="text-primary-800 font-medium">Plan Limit Info</p>
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 mr-2" />
+              <p className="text-primary-800 font-medium text-sm sm:text-base">Plan Limit Info</p>
             </div>
-            <p className="text-primary-700">
+            <p className="text-primary-700 text-sm sm:text-base">
               You can add up to <strong>{maxStudents}</strong> {maxStudents === 1 ? 'kid' : 'kids'} with your current plan!
             </p>
           </div>
 
-          <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1"
+              className="flex-1 text-sm sm:text-base"
               disabled={loading}
             >
               Cancel
@@ -193,10 +193,10 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
             <Button
               type="submit"
               variant="fun"
-              className="flex-1"
-              disabled={loading || !formData.name || !formData.school || !formData.level || !formData.age}
+              className="flex-1 text-sm sm:text-base"
+              disabled={loading || !formData.name || !formData.school || !formData.level || !formData.dateOfBirth}
               loading={loading}
-              icon={!loading ? <Zap className="w-5 h-5" /> : undefined}
+              icon={!loading ? <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> : undefined}
             >
               {loading ? 'Adding...' : 'Add Kid!'}
             </Button>

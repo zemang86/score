@@ -31,7 +31,7 @@ export interface Student {
   name: string
   school: string
   level: string
-  age: number
+  date_of_birth: string
   xp: number
   created_at: string
   updated_at: string
