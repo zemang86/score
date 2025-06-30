@@ -132,23 +132,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       try {
         setSession(session)
-        setUser(session?.user ?? null)
         
-        console.log('📝 AuthContext: Auth change - Set user state to:', session?.user ? {
-          id: session.user.id,
-          email: session.user.email
-        } : 'null')
+        // OPTIMIZATION: Only update user state if the user ID actually changed
+        // This prevents unnecessary re-renders when only the token is refreshed
+        const newUserId = session?.user?.id
+        const currentUserId = user?.id
         
-        if (session?.user) {
-          console.log('👤 AuthContext: Auth change - User found, fetching profile for:', session.user.id)
-          await getUserProfile(session.user.id)
-        } else {
-          console.log('👤 AuthContext: Auth change - No user found, clearing profile')
-          setProfile(null)
-          setSubscriptionPlan(null)
-          setMaxStudents(1)
-          setDailyExamLimit(1)
-          setIsAdmin(false)
+        if (newUserId !== currentUserId) {
+          console.log('👤 AuthContext: User ID changed from', currentUserId, 'to', newUserId)
+          setUser(session?.user ?? null)
+          
+          console.log('📝 AuthContext: Auth change - Set user state to:', session?.user ? {
+            id: session.user.id,
+            email: session.user.email
+          } : 'null')
+          
+          if (session?.user) {
+            console.log('👤 AuthContext: Auth change - User found, fetching profile for:', session.user.id)
+            await getUserProfile(session.user.id)
+          } else {
+            console.log('👤 AuthContext: Auth change - No user found, clearing profile')
+            setProfile(null)
+            setSubscriptionPlan(null)
+            setMaxStudents(1)
+            setDailyExamLimit(1)
+            setIsAdmin(false)
+          }
+        } else if (newUserId) {
+          console.log('🔄 AuthContext: Same user ID, token refresh detected - skipping user state update')
+          // Still update the session object as it may contain updated tokens
+          // but don't trigger a user state change that would cause re-renders
         }
       } catch (error) {
         console.error('❌ AuthContext: Error processing auth state change:', error)
@@ -167,7 +180,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('🧹 AuthContext: Cleaning up auth listener')
       subscription.unsubscribe()
     }
-  }, [])
+  }, [user?.id]) // Add user?.id as dependency to track when user ID changes
 
   const signUp = async (email: string, password: string, fullName: string) => {
     console.log('📝 AuthContext: signUp called for:', email)
@@ -297,6 +310,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   console.log('🔍 AuthContext: Current state:', {
     hasUser: !!user,
     userEmail: user?.email,
+    userId: user?.id,
     subscriptionPlan,
     maxStudents,
     dailyExamLimit,
