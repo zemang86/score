@@ -5,6 +5,7 @@ import { Header } from '../layout/Header'
 import { AddStudentModal } from './AddStudentModal'
 import { StudentCard } from './StudentCard'
 import { LeaderboardModal } from './LeaderboardModal'
+import { FamilyReportsModal } from './FamilyReportsModal'
 import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target } from 'lucide-react'
 import { Button } from '../ui/Button'
 
@@ -14,6 +15,7 @@ export function ParentDashboard() {
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
+  const [showFamilyReports, setShowFamilyReports] = useState(false)
   const [error, setError] = useState('')
   const [dashboardStats, setDashboardStats] = useState({
     totalExams: 0,
@@ -408,6 +410,7 @@ export function ParentDashboard() {
                 <Button 
                   variant="outline" 
                   className="w-full justify-start text-sm sm:text-base lg:text-lg"
+                  onClick={() => setShowFamilyReports(true)}
                   icon={<TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />}
                 >
                   View Reports
@@ -522,6 +525,11 @@ export function ParentDashboard() {
       <LeaderboardModal
         isOpen={showLeaderboard}
         onClose={() => setShowLeaderboard(false)}
+      />
+
+      <FamilyReportsModal
+        isOpen={showFamilyReports}
+        onClose={() => setShowFamilyReports(false)}
       />
     </div>
   )
