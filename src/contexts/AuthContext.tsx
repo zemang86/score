@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase, fetchUserProfile } from '../lib/supabase'
 import type { UserWithAdminStatus } from '../lib/supabase'
@@ -38,6 +38,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [dailyExamLimit, setDailyExamLimit] = useState<number>(1)
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
   const [loading, setLoading] = useState(true)
+  
+  // Timeout management
+  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const hasTimedOutRef = useRef<boolean>(false)
+
+  const clearLoadingTimeout = () => {
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current)
+      loadingTimeoutRef.current = null
+    }
+  }
+
+  const startLoadingTimeout = () => {
+    clearLoadingTimeout()
+    hasTimedOutRef.current = false
+    
+    // Set 10-minute timeout (600,000 milliseconds)
+    loadingTimeoutRef.current = setTimeout(async () => {
+      console.log('⏰ AuthContext: Loading timeout reached (10 minutes), auto-logging out...')
+      hasTimedOutRef.current = true
+      
+      try {
+        // Force sign out due to timeout
+        await signOut()
+        console.log('✅ AuthContext: Auto-logout completed due to timeout')
+      } catch (error) {
+        console.error('❌ AuthContext: Error during timeout logout:', error)
+        // Force clear state even if signOut fails
+        setUser(null)
+        setSession(null)
+        setProfile(null)
+        setSubscriptionPlan(null)
+        setMaxStudents(1)
+        setDailyExamLimit(1)
+        setIsAdmin(false)
+        setLoading(false)
+      }
+    }, 600000) // 10 minutes
+    
+    console.log('⏰ AuthContext: Started 10-minute loading timeout')
+  }
 
   const getUserProfile = async (userId: string): Promise<void> => {
     console.log('🔄 AuthContext: getUserProfile called for:', userId)
@@ -118,6 +159,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     console.log('🚀 AuthContext: useEffect started - setting up auth listener')
     
+    // Start the loading timeout
+    startLoadingTimeout()
+    
     // Get initial session
     const getInitialSession = async () => {
       console.log('🔍 AuthContext: Getting initial session...')
@@ -149,8 +193,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (error) {
         console.error('❌ AuthContext: Error in getInitialSession:', error)
       } finally {
-        console.log('✅ AuthContext: Initial session processing complete, setting loading to false')
-        setLoading(false)
+        // Clear timeout and set loading to false only if we haven't timed out
+        if (!hasTimedOutRef.current) {
+          clearLoadingTimeout()
+          console.log('✅ AuthContext: Initial session processing complete, setting loading to false')
+          setLoading(false)
+        }
       }
     }
 
@@ -165,6 +213,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // as it's already handled by getInitialSession
       if (event === 'INITIAL_SESSION') {
         console.log('🔄 AuthContext: Skipping INITIAL_SESSION event - handled by getInitialSession')
+        return
+      }
+      
+      // Skip processing if we've already timed out
+      if (hasTimedOutRef.current) {
+        console.log('🔄 AuthContext: Skipping auth state change - already timed out')
         return
       }
       
@@ -192,9 +246,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setDailyExamLimit(1)
         setIsAdmin(false)
       } finally {
-        // Always ensure loading is false after processing auth changes
-        console.log('✅ AuthContext: Auth state change processed, ensuring loading is false')
-        setLoading(false)
+        // Always ensure loading is false after processing auth changes (if not timed out)
+        if (!hasTimedOutRef.current) {
+          clearLoadingTimeout()
+          console.log('✅ AuthContext: Auth state change processed, ensuring loading is false')
+          setLoading(false)
+        }
       }
     })
 
@@ -202,8 +259,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     getInitialSession()
 
     return () => {
-      console.log('🧹 AuthContext: Cleaning up auth listener')
+      console.log('🧹 AuthContext: Cleaning up auth listener and timeout')
       subscription.unsubscribe()
+      clearLoadingTimeout()
     }
   }, []) // Empty dependency array - listener should only be set up once
 
@@ -273,6 +331,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     console.log('🚪 AuthContext: signOut called')
     
+    // Clear timeout immediately when signing out
+    clearLoadingTimeout()
+    
     try {
       const { error } = await supabase.auth.signOut()
       
@@ -300,6 +361,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setMaxStudents(1)
     setDailyExamLimit(1)
     setIsAdmin(false)
+    setLoading(false) // Ensure loading is false after sign out
     console.log('✅ AuthContext: Local signOut state cleared')
   }
 
@@ -341,7 +403,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dailyExamLimit,
     isAdmin,
     loading,
-    profileExists: !!profile
+    profileExists: !!profile,
+    hasTimeout: !!loadingTimeoutRef.current,
+    hasTimedOut: hasTimedOutRef.current
   })
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
