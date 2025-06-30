@@ -103,6 +103,10 @@ export function ParentDashboard() {
     fetchStudents() // Refresh to update XP and stats
   }
 
+  const handleStudentUpdated = () => {
+    fetchStudents() // Refresh the students list after edit
+  }
+
   const getPlanDisplayName = (plan: string | null) => {
     switch (plan) {
       case 'free': return 'Free Plan'
@@ -365,6 +369,7 @@ export function ParentDashboard() {
                         key={student.id}
                         student={student}
                         onExamComplete={handleExamComplete}
+                        onStudentUpdated={handleStudentUpdated}
                       />
                     ))}
                   </div>

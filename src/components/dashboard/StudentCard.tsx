@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { Student } from '../../lib/supabase'
-import { User, School, GraduationCap, Calendar, Star, MoreHorizontal, Zap, Trophy } from 'lucide-react'
+import { User, School, GraduationCap, Calendar, Star, MoreHorizontal, Zap, Trophy, Edit } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { ExamModal } from './ExamModal'
 import { StudentProgressModal } from './StudentProgressModal'
+import { EditStudentModal } from './EditStudentModal'
 import { calculateAgeInYearsAndMonths } from '../../utils/dateUtils'
 
 interface StudentCardProps {
@@ -11,11 +12,14 @@ interface StudentCardProps {
   onEdit?: (student: Student) => void
   onDelete?: (student: Student) => void
   onExamComplete?: () => void
+  onStudentUpdated?: () => void
 }
 
-export function StudentCard({ student, onEdit, onDelete, onExamComplete }: StudentCardProps) {
+export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStudentUpdated }: StudentCardProps) {
   const [showExamModal, setShowExamModal] = useState(false)
   const [showProgressModal, setShowProgressModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [showDropdown, setShowDropdown] = useState(false)
 
   const getAgeDisplay = (dateOfBirth: string) => {
     return calculateAgeInYearsAndMonths(dateOfBirth)
@@ -45,6 +49,18 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete }: Stude
     }
   }
 
+  const handleStudentUpdated = () => {
+    setShowEditModal(false)
+    if (onStudentUpdated) {
+      onStudentUpdated()
+    }
+  }
+
+  const handleEditClick = () => {
+    setShowDropdown(false)
+    setShowEditModal(true)
+  }
+
   const xpInfo = getXPDisplay(student.xp)
 
   return (
@@ -57,12 +73,32 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete }: Stude
             </div>
             <div className="text-center sm:text-left">
               <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-neutral-800">{student.name}</h3>
-              <p className="text-neutral-600 text-sm sm:text-base lg:text-lg">{getAgeDisplay(student.date_of_birth)}</p>
+              <p className="text-neutral-600 text-xs sm:text-sm">{getAgeDisplay(student.date_of_birth)}</p>
             </div>
           </div>
           
-          <div className="flex items-center space-x-1 sm:space-x-2">
-            <Button variant="ghost" size="sm" className="text-neutral-500 hover:bg-neutral-100 p-1 sm:p-2" icon={<MoreHorizontal className="w-4 h-4 sm:w-5 sm:h-5" />} />
+          <div className="relative">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-neutral-500 hover:bg-neutral-100 p-1 sm:p-2" 
+              icon={<MoreHorizontal className="w-4 h-4 sm:w-5 sm:h-5" />}
+              onClick={() => setShowDropdown(!showDropdown)}
+            />
+            
+            {/* Dropdown Menu */}
+            {showDropdown && (
+              <div className="absolute right-0 top-full mt-1 bg-white border border-neutral-200 rounded-xl shadow-lg z-10 min-w-[120px]">
+                <button
+                  onClick={handleEditClick}
+                  className="w-full px-3 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-50 rounded-t-xl flex items-center"
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit Info
+                </button>
+                {/* Future: Add more options like Delete, Archive, etc. */}
+              </div>
+            )}
           </div>
         </div>
 
@@ -119,6 +155,14 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete }: Stude
         </div>
       </div>
 
+      {/* Close dropdown when clicking outside */}
+      {showDropdown && (
+        <div 
+          className="fixed inset-0 z-5" 
+          onClick={() => setShowDropdown(false)}
+        />
+      )}
+
       {/* Modals */}
       <ExamModal
         isOpen={showExamModal}
@@ -131,6 +175,13 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete }: Stude
         isOpen={showProgressModal}
         onClose={() => setShowProgressModal(false)}
         student={student}
+      />
+
+      <EditStudentModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        student={student}
+        onStudentUpdated={handleStudentUpdated}
       />
     </>
   )
