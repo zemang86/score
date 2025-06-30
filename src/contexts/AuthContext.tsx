@@ -218,9 +218,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session)
         
         if (session?.user) {
-          console.log('👤 AuthContext: Auth change - User found, setting state and fetching profile')
-          setUser(session.user)
-          await getUserProfile(session.user.id)
+          console.log('👤 AuthContext: Auth change - User found, checking if user changed')
+          
+          // CRITICAL FIX: Only update user state if the user ID actually changed
+          // This prevents unnecessary re-renders when the user object reference changes
+          // but the actual user data is the same
+          if (!user || user.id !== session.user.id) {
+            console.log('👤 AuthContext: User ID changed or new user, updating state and fetching profile')
+            setUser(session.user)
+            await getUserProfile(session.user.id)
+          } else {
+            console.log('👤 AuthContext: Same user ID, skipping user state update to prevent re-renders')
+          }
         } else {
           console.log('👤 AuthContext: Auth change - No user found, clearing state')
           setUser(null)
