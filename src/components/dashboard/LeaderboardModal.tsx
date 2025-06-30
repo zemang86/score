@@ -13,9 +13,12 @@ interface LeaderboardEntry {
   student_id: string
   student_name: string
   student_level: string
+  student_school: string
   total_xp: number
   total_exams: number
   average_score: number
+  best_score: number
+  last_exam_date: string | null
   rank: number
 }
 
@@ -27,6 +30,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   const [loading, setLoading] = useState(true)
   const [activeType, setActiveType] = useState<LeaderboardType>('xp')
   const [userStudents, setUserStudents] = useState<string[]>([])
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (isOpen && user) {
@@ -53,77 +57,67 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
 
   const fetchLeaderboard = async () => {
     setLoading(true)
+    setError('')
 
     try {
-      let query = `
-        students!inner (
-          id,
-          name,
-          level,
-          xp
-        ),
-        exams!left (
-          score,
-          completed
-        )
-      `
+      console.log('Fetching leaderboard data from view...')
+      
+      // Fetch data from the leaderboard_data view
+      const { data: leaderboardData, error } = await supabase
+        .from('leaderboard_data')
+        .select('*')
 
-      const { data: studentsData, error } = await supabase
-        .from('students')
-        .select(`
-          id,
-          name,
-          level,
-          xp,
-          exams!students_id_fkey (
-            score,
-            completed
-          )
-        `)
-        .order('xp', { ascending: false })
+      if (error) {
+        console.error('Error fetching leaderboard:', error)
+        throw error
+      }
 
-      if (error) throw error
+      console.log('Raw leaderboard data:', leaderboardData)
 
-      // Process the data to calculate leaderboard metrics
-      const processedData: LeaderboardEntry[] = (studentsData || []).map((student, index) => {
-        const completedExams = student.exams?.filter(exam => exam.completed) || []
-        const scores = completedExams.map(exam => exam.score).filter(score => score !== null)
-        const averageScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0
+      if (!leaderboardData || leaderboardData.length === 0) {
+        console.log('No leaderboard data found')
+        setLeaderboard([])
+        return
+      }
 
-        return {
-          student_id: student.id,
-          student_name: student.name,
-          student_level: student.level,
-          total_xp: student.xp || 0,
-          total_exams: completedExams.length,
-          average_score: averageScore,
-          rank: index + 1
-        }
-      })
+      // Process the data and sort based on active type
+      let processedData: LeaderboardEntry[] = leaderboardData.map(entry => ({
+        student_id: entry.student_id,
+        student_name: entry.student_name,
+        student_level: entry.student_level,
+        student_school: entry.student_school,
+        total_xp: entry.total_xp || 0,
+        total_exams: entry.total_exams || 0,
+        average_score: entry.average_score || 0,
+        best_score: entry.best_score || 0,
+        last_exam_date: entry.last_exam_date,
+        rank: 0 // Will be set after sorting
+      }))
 
       // Sort based on active type
-      let sortedData = [...processedData]
       switch (activeType) {
         case 'xp':
-          sortedData.sort((a, b) => b.total_xp - a.total_xp)
+          processedData.sort((a, b) => b.total_xp - a.total_xp)
           break
         case 'exams':
-          sortedData.sort((a, b) => b.total_exams - a.total_exams)
+          processedData.sort((a, b) => b.total_exams - a.total_exams)
           break
         case 'scores':
-          sortedData.sort((a, b) => b.average_score - a.average_score)
+          processedData.sort((a, b) => b.average_score - a.average_score)
           break
       }
 
-      // Update ranks after sorting
-      sortedData = sortedData.map((entry, index) => ({
+      // Assign ranks after sorting
+      processedData = processedData.map((entry, index) => ({
         ...entry,
         rank: index + 1
       }))
 
-      setLeaderboard(sortedData)
-    } catch (error) {
+      console.log('Processed leaderboard data:', processedData)
+      setLeaderboard(processedData)
+    } catch (error: any) {
       console.error('Error fetching leaderboard:', error)
+      setError(error.message || 'Failed to load leaderboard')
     } finally {
       setLoading(false)
     }
@@ -191,8 +185,8 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                 <Trophy className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-accent-600">Leaderboard</h2>
-                <p className="text-warning-600">See how students are performing!</p>
+                <h2 className="text-2xl font-bold text-accent-600">Global Leaderboard</h2>
+                <p className="text-warning-600">See how students are performing worldwide!</p>
               </div>
             </div>
             <button
@@ -236,7 +230,18 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-16 w-16 border-4 border-accent-200 border-t-accent-500 mx-auto mb-6"></div>
-              <p className="text-accent-600 font-medium text-xl">Loading leaderboard...</p>
+              <p className="text-accent-600 font-medium text-xl">Loading global leaderboard...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <div className="bg-error-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <X className="w-8 h-8 text-error-600" />
+              </div>
+              <h3 className="text-lg font-medium text-error-800 mb-2">Error Loading Leaderboard</h3>
+              <p className="text-error-600 mb-4">{error}</p>
+              <Button onClick={fetchLeaderboard} variant="error">
+                Try Again
+              </Button>
             </div>
           ) : (
             <>
@@ -244,11 +249,14 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                 <h3 className="text-lg font-bold text-accent-700 text-center">
                   Top Students by {getTypeLabel(activeType)}
                 </h3>
+                <p className="text-sm text-accent-600 text-center mt-1">
+                  Showing {leaderboard.length} students from around the world
+                </p>
               </div>
 
               {leaderboard.length > 0 ? (
                 <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {leaderboard.slice(0, 20).map((entry) => {
+                  {leaderboard.slice(0, 50).map((entry) => {
                     const isUserStudent = userStudents.includes(entry.student_id)
                     
                     return (
@@ -271,7 +279,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                 {isUserStudent && <span className="ml-2 text-primary-500">👨‍👩‍👧‍👦</span>}
                               </div>
                               <div className={`text-sm ${isUserStudent ? 'text-secondary-600' : 'text-neutral-600'}`}>
-                                {entry.student_level}
+                                {entry.student_level} • {entry.student_school}
                               </div>
                             </div>
                           </div>
