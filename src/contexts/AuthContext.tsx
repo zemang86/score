@@ -126,7 +126,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         if (error) {
           console.error('❌ AuthContext: Error getting initial session:', error)
-          setLoading(false)
           return
         }
         
@@ -162,6 +161,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('🔔 AuthContext: Auth state changed:', event, session ? 'Session exists' : 'No session')
       
+      // Skip processing if this is the initial session event
+      // as it's already handled by getInitialSession
+      if (event === 'INITIAL_SESSION') {
+        console.log('🔄 AuthContext: Skipping INITIAL_SESSION event - handled by getInitialSession')
+        return
+      }
+      
       try {
         setSession(session)
         
@@ -185,12 +191,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setMaxStudents(1)
         setDailyExamLimit(1)
         setIsAdmin(false)
-      }
-      
-      // Only set loading to false if this is not the initial load
-      // The initial load is handled by getInitialSession
-      if (event !== 'INITIAL_SESSION') {
-        console.log('✅ AuthContext: Auth state change processed (non-initial), loading remains as is')
+      } finally {
+        // Always ensure loading is false after processing auth changes
+        console.log('✅ AuthContext: Auth state change processed, ensuring loading is false')
+        setLoading(false)
       }
     })
 
