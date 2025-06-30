@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Student } from '../../lib/supabase'
-import { User, School, GraduationCap, Calendar, Star, MoreHorizontal, Zap, Trophy, Edit } from 'lucide-react'
+import { User, School, GraduationCap, Calendar, Star, Edit, Zap, Trophy } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { ExamModal } from './ExamModal'
 import { StudentProgressModal } from './StudentProgressModal'
@@ -19,7 +19,6 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
   const [showExamModal, setShowExamModal] = useState(false)
   const [showProgressModal, setShowProgressModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
-  const [showDropdown, setShowDropdown] = useState(false)
 
   const getAgeDisplay = (dateOfBirth: string) => {
     return calculateAgeInYearsAndMonths(dateOfBirth)
@@ -57,7 +56,6 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
   }
 
   const handleEditClick = () => {
-    setShowDropdown(false)
     setShowEditModal(true)
   }
 
@@ -77,29 +75,15 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
             </div>
           </div>
           
-          <div className="relative">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-neutral-500 hover:bg-neutral-100 p-1 sm:p-2" 
-              icon={<MoreHorizontal className="w-4 h-4 sm:w-5 sm:h-5" />}
-              onClick={() => setShowDropdown(!showDropdown)}
-            />
-            
-            {/* Dropdown Menu */}
-            {showDropdown && (
-              <div className="absolute right-0 top-full mt-1 bg-white border border-neutral-200 rounded-xl shadow-lg z-10 min-w-[120px]">
-                <button
-                  onClick={handleEditClick}
-                  className="w-full px-3 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-50 rounded-t-xl flex items-center"
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit Info
-                </button>
-                {/* Future: Add more options like Delete, Archive, etc. */}
-              </div>
-            )}
-          </div>
+          {/* Direct Edit Button */}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-neutral-500 hover:bg-neutral-100 hover:text-primary-600 p-2 sm:p-2.5 transition-colors" 
+            icon={<Edit className="w-4 h-4 sm:w-5 sm:h-5" />}
+            onClick={handleEditClick}
+            title="Edit student information"
+          />
         </div>
 
         <div className="space-y-3 sm:space-y-4">
@@ -154,14 +138,6 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
           </div>
         </div>
       </div>
-
-      {/* Close dropdown when clicking outside */}
-      {showDropdown && (
-        <div 
-          className="fixed inset-0 z-5" 
-          onClick={() => setShowDropdown(false)}
-        />
-      )}
 
       {/* Modals */}
       <ExamModal
