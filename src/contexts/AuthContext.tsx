@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       hasTimedOutRef.current = true
       
       try {
-        // Force sign out due to timeout
+        // Use the signOut method from this context instead of direct supabase call
         await signOut()
         console.log('✅ AuthContext: Auto-logout completed due to timeout')
       } catch (error) {
@@ -193,12 +193,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (error) {
         console.error('❌ AuthContext: Error in getInitialSession:', error)
       } finally {
-        // Clear timeout and set loading to false only if we haven't timed out
-        if (!hasTimedOutRef.current) {
-          clearLoadingTimeout()
-          console.log('✅ AuthContext: Initial session processing complete, setting loading to false')
-          setLoading(false)
-        }
+        // ALWAYS set loading to false, regardless of timeout status
+        clearLoadingTimeout()
+        console.log('✅ AuthContext: Initial session processing complete, setting loading to false')
+        setLoading(false)
       }
     }
 
@@ -213,12 +211,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // as it's already handled by getInitialSession
       if (event === 'INITIAL_SESSION') {
         console.log('🔄 AuthContext: Skipping INITIAL_SESSION event - handled by getInitialSession')
-        return
-      }
-      
-      // Skip processing if we've already timed out
-      if (hasTimedOutRef.current) {
-        console.log('🔄 AuthContext: Skipping auth state change - already timed out')
         return
       }
       
@@ -246,12 +238,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setDailyExamLimit(1)
         setIsAdmin(false)
       } finally {
-        // Always ensure loading is false after processing auth changes (if not timed out)
-        if (!hasTimedOutRef.current) {
-          clearLoadingTimeout()
-          console.log('✅ AuthContext: Auth state change processed, ensuring loading is false')
-          setLoading(false)
-        }
+        // ALWAYS set loading to false, regardless of timeout status
+        clearLoadingTimeout()
+        console.log('✅ AuthContext: Auth state change processed, setting loading to false')
+        setLoading(false)
       }
     })
 
