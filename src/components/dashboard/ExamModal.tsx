@@ -217,7 +217,30 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     if (!question.userAnswer) return false
 
     switch (question.type) {
-      case 'MCQ':
+      case 'MCQ': {
+        const userAnswer = (question.userAnswer as string)?.trim()
+        const correctAnswer = question.correct_answer?.trim()
+
+        // 1. Direct match
+        if (userAnswer === correctAnswer) {
+          return true
+        }
+
+        // 2. If correct answer is a single letter, map to the corresponding full option text
+        if (correctAnswer?.length === 1) {
+          const letter = correctAnswer.toUpperCase()
+          const matchedOption = question.options.find(option =>
+            option.trim().toUpperCase().startsWith(`${letter}.`)
+          )
+          if (matchedOption) {
+            return userAnswer === matchedOption.trim()
+          }
+        }
+
+        // 3. If neither match, mark as incorrect
+        return false
+      }
+
       case 'ShortAnswer':
         return question.userAnswer === question.correct_answer
 
