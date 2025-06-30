@@ -35,6 +35,8 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   const [examStarted, setExamStarted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [examScore, setExamScore] = useState(0)
+  const [totalQuestions, setTotalQuestions] = useState(0)
   
   // Matching question state
   const [matchingPairs, setMatchingPairs] = useState<MatchingPair[]>([])
@@ -262,6 +264,13 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     
     const score = Math.round((correctAnswers / questions.length) * 100)
     
+    // Store score and total questions for later use
+    setExamScore(score)
+    setTotalQuestions(questions.length)
+    
+    // IMPORTANT: Set step to results FIRST before any async operations
+    setStep('results')
+    
     try {
       // Save exam to database
       const { data: examData, error: examError } = await supabase
@@ -307,13 +316,17 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
       if (xpError) throw xpError
 
-      onExamComplete(score, questions.length)
+      console.log('Exam completed successfully:', {
+        score,
+        totalQuestions: questions.length,
+        xpGained,
+        newXP: student.xp + xpGained
+      })
+
     } catch (err: any) {
       console.error('Error saving exam:', err)
       setError('Failed to save exam results')
     }
-
-    setStep('results')
   }
 
   // Timer effect
@@ -325,6 +338,30 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       finishExam()
     }
   }, [examStarted, timeLeft])
+
+  // Handle modal close - reset all state
+  const handleModalClose = () => {
+    // Reset all state when modal closes
+    setStep('setup')
+    setQuestions([])
+    setCurrentQuestionIndex(0)
+    setTimeLeft(0)
+    setExamStarted(false)
+    setError('')
+    setExamScore(0)
+    setTotalQuestions(0)
+    setMatchingPairs([])
+    setSelectedLeftItem(null)
+    onClose()
+  }
+
+  // Handle results completion - notify parent and close
+  const handleResultsComplete = () => {
+    // Notify parent component to refresh student data
+    onExamComplete(examScore, totalQuestions)
+    // Close the modal
+    handleModalClose()
+  }
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -535,7 +572,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                   </div>
                 </div>
                 <button
-                  onClick={onClose}
+                  onClick={handleModalClose}
                   className="text-neutral-400 hover:text-neutral-600 transition-colors bg-white rounded-full p-1.5 sm:p-2 shadow-soft"
                 >
                   <X className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -632,7 +669,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
               <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                 <Button
                   variant="outline"
-                  onClick={onClose}
+                  onClick={handleModalClose}
                   className="flex-1 text-sm sm:text-base"
                   disabled={loading}
                 >
@@ -731,7 +768,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                   </div>
                 </div>
                 <button
-                  onClick={onClose}
+                  onClick={handleModalClose}
                   className="text-neutral-400 hover:text-neutral-600 transition-colors bg-white rounded-full p-1.5 sm:p-2 shadow-soft"
                 >
                   <X className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -742,17 +779,32 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
             <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Score Display */}
               <div className="text-center bg-gradient-to-r from-accent-100 to-warning-100 border-2 border-accent-400 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-large">
-                <div className={`text-4xl sm:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 ${getScoreColor(questions.filter(q => q.isCorrect).length / questions.length * 100)}`}>
-                  {Math.round((questions.filter(q => q.isCorrect).length / questions.length) * 100)}%
+                <div className={`text-4xl sm:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 ${getScoreColor(examScore)}`}>
+                  {examScore}%
                 </div>
                 <div className="text-lg sm:text-xl lg:text-2xl font-bold text-primary-700 mb-1 sm:mb-2">
-                  {getScoreMessage(Math.round((questions.filter(q => q.isCorrect).length / questions.length) * 100))}
+                  {getScoreMessage(examScore)}
                 </div>
                 <div className="text-base sm:text-lg text-secondary-600">
                   {questions.filter(q => q.isCorrect).length} out of {questions.length} correct
                 </div>
                 <div className="text-sm text-primary-600 mt-2">
                   Questions from levels: {[...new Set(questions.map(q => q.level))].join(', ')}
+                </div>
+                
+                {/* XP Gained Display */}
+                <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-primary-100 border-2 border-primary-300 rounded-xl">
+                  <div className="flex items-center justify-center text-primary-700 mb-2">
+                    <Star className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+                    <span className="font-bold text-base sm:text-lg">XP Earned!</span>
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-bold text-primary-800">
+                    +{questions.filter(q => q.isCorrect).length * 10 + (examScore === 100 ? 50 : 0)} XP
+                  </div>
+                  <div className="text-xs sm:text-sm text-primary-600 mt-1">
+                    {questions.filter(q => q.isCorrect).length * 10} for correct answers
+                    {examScore === 100 && ' + 50 perfect score bonus!'}
+                  </div>
                 </div>
               </div>
 
@@ -805,7 +857,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
               </div>
 
               <Button
-                onClick={onClose}
+                onClick={handleResultsComplete}
                 className="w-full bg-gradient-to-r from-primary-400 to-secondary-500 text-sm sm:text-base lg:text-lg"
                 size="lg"
                 icon={<Star className="w-5 h-5 sm:w-6 sm:h-6" />}
