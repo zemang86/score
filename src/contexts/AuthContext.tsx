@@ -116,52 +116,67 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    console.log('🚀 AuthContext: useEffect started - setting up auth listener only')
+    console.log('🚀 AuthContext: useEffect started - setting up auth listener')
     
-    // Listen for auth changes - this handles both initial session and subsequent changes
+    // Get initial session
+    const getInitialSession = async () => {
+      console.log('🔍 AuthContext: Getting initial session...')
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error) {
+          console.error('❌ AuthContext: Error getting initial session:', error)
+          setLoading(false)
+          return
+        }
+        
+        console.log('📡 AuthContext: Initial session retrieved:', session ? 'Session exists' : 'No session')
+        
+        if (session?.user) {
+          console.log('👤 AuthContext: Initial session - User found, setting state and fetching profile')
+          setSession(session)
+          setUser(session.user)
+          await getUserProfile(session.user.id)
+        } else {
+          console.log('👤 AuthContext: Initial session - No user found, clearing state')
+          setSession(null)
+          setUser(null)
+          setProfile(null)
+          setSubscriptionPlan(null)
+          setMaxStudents(1)
+          setDailyExamLimit(1)
+          setIsAdmin(false)
+        }
+      } catch (error) {
+        console.error('❌ AuthContext: Error in getInitialSession:', error)
+      } finally {
+        console.log('✅ AuthContext: Initial session processing complete, setting loading to false')
+        setLoading(false)
+      }
+    }
+
+    // Set up auth state change listener
     console.log('👂 AuthContext: Setting up auth state change listener')
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('🔔 AuthContext: Auth state changed:', event, session ? 'Session exists' : 'No session')
-      console.log('🔔 AuthContext: Auth change session user:', session?.user ? {
-        id: session.user.id,
-        email: session.user.email,
-        metadata: session.user.user_metadata
-      } : 'No user')
       
       try {
         setSession(session)
         
-        // OPTIMIZATION: Only update user state if the user ID actually changed
-        // This prevents unnecessary re-renders when only the token is refreshed
-        const newUserId = session?.user?.id
-        const currentUserId = user?.id
-        
-        if (newUserId !== currentUserId) {
-          console.log('👤 AuthContext: User ID changed from', currentUserId, 'to', newUserId)
-          setUser(session?.user ?? null)
-          
-          console.log('📝 AuthContext: Auth change - Set user state to:', session?.user ? {
-            id: session.user.id,
-            email: session.user.email
-          } : 'null')
-          
-          if (session?.user) {
-            console.log('👤 AuthContext: Auth change - User found, fetching profile for:', session.user.id)
-            await getUserProfile(session.user.id)
-          } else {
-            console.log('👤 AuthContext: Auth change - No user found, clearing profile')
-            setProfile(null)
-            setSubscriptionPlan(null)
-            setMaxStudents(1)
-            setDailyExamLimit(1)
-            setIsAdmin(false)
-          }
-        } else if (newUserId) {
-          console.log('🔄 AuthContext: Same user ID, token refresh detected - skipping user state update')
-          // Still update the session object as it may contain updated tokens
-          // but don't trigger a user state change that would cause re-renders
+        if (session?.user) {
+          console.log('👤 AuthContext: Auth change - User found, setting state and fetching profile')
+          setUser(session.user)
+          await getUserProfile(session.user.id)
+        } else {
+          console.log('👤 AuthContext: Auth change - No user found, clearing state')
+          setUser(null)
+          setProfile(null)
+          setSubscriptionPlan(null)
+          setMaxStudents(1)
+          setDailyExamLimit(1)
+          setIsAdmin(false)
         }
       } catch (error) {
         console.error('❌ AuthContext: Error processing auth state change:', error)
@@ -170,17 +185,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setMaxStudents(1)
         setDailyExamLimit(1)
         setIsAdmin(false)
-      } finally {
-        console.log('✅ AuthContext: Auth state change processed, setting loading to false')
-        setLoading(false)
+      }
+      
+      // Only set loading to false if this is not the initial load
+      // The initial load is handled by getInitialSession
+      if (event !== 'INITIAL_SESSION') {
+        console.log('✅ AuthContext: Auth state change processed (non-initial), loading remains as is')
       }
     })
+
+    // Get initial session
+    getInitialSession()
 
     return () => {
       console.log('🧹 AuthContext: Cleaning up auth listener')
       subscription.unsubscribe()
     }
-  }, [user?.id]) // Add user?.id as dependency to track when user ID changes
+  }, []) // Empty dependency array - listener should only be set up once
 
   const signUp = async (email: string, password: string, fullName: string) => {
     console.log('📝 AuthContext: signUp called for:', email)
