@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { BookOpen, Search, Filter, Plus, Edit, Trash2, Upload, FileText, CheckCircle, AlertCircle } from 'lucide-react'
+import { BookOpen, Search, Filter, Plus, Edit, Trash2, Upload, FileText, CheckCircle, AlertCircle, ArrowUpDown, Edit3, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 
@@ -32,6 +32,16 @@ export function QuestionManagement() {
   const [selectedLevel, setSelectedLevel] = useState('')
   const [error, setError] = useState('')
   
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalQuestions, setTotalQuestions] = useState(0)
+  const [questionsPerPage, setQuestionsPerPage] = useState(10)
+  const [totalPages, setTotalPages] = useState(1)
+  
+  // Subject list state
+  const [allSubjects, setAllSubjects] = useState<string[]>([])
+  const [allLevels, setAllLevels] = useState<string[]>([])
+  
   // CSV Upload states
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
@@ -40,22 +50,87 @@ export function QuestionManagement() {
 
   useEffect(() => {
     fetchQuestions()
-  }, [])
+    fetchAllSubjects()
+    fetchAllLevels()
+  }, [currentPage, questionsPerPage, selectedSubject, selectedLevel])
+
+  const fetchAllSubjects = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('questions')
+        .select('subject')
+        .order('subject')
+      
+      if (error) throw error
+      
+      // Extract unique subjects
+      const uniqueSubjects = [...new Set(data?.map(q => q.subject))].filter(Boolean)
+      setAllSubjects(uniqueSubjects)
+    } catch (err) {
+      console.error('Error fetching subjects:', err)
+    }
+  }
+
+  const fetchAllLevels = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('questions')
+        .select('level')
+        .order('level')
+      
+      if (error) throw error
+      
+      // Extract unique levels
+      const uniqueLevels = [...new Set(data?.map(q => q.level))].filter(Boolean)
+      setAllLevels(uniqueLevels)
+    } catch (err) {
+      console.error('Error fetching levels:', err)
+    }
+  }
 
   const fetchQuestions = async () => {
     try {
       setLoading(true)
       
-      const { data, error } = await supabase
+      // Build the query with filters
+      let query = supabase
         .from('questions')
-        .select('*')
+        .select('*', { count: 'exact' })
+      
+      // Apply filters if selected
+      if (selectedSubject) {
+        query = query.eq('subject', selectedSubject)
+      }
+      
+      if (selectedLevel) {
+        query = query.eq('level', selectedLevel)
+      }
+      
+      // Apply search term if provided
+      if (searchTerm) {
+        query = query.or(`question_text.ilike.%${searchTerm}%,topic.ilike.%${searchTerm}%`)
+      }
+      
+      // Get total count first
+      const { count, error: countError } = await query
+      
+      if (countError) throw countError
+      
+      setTotalQuestions(count || 0)
+      setTotalPages(Math.ceil((count || 0) / questionsPerPage))
+      
+      // Then get paginated data
+      const from = (currentPage - 1) * questionsPerPage
+      const to = from + questionsPerPage - 1
+      
+      const { data, error } = await query
         .order('created_at', { ascending: false })
-        .limit(100) // Limit for performance
+        .range(from, to)
 
       if (error) throw error
       setQuestions(data || [])
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || 'Failed to fetch questions')
       console.error('Error fetching questions:', err)
     } finally {
       setLoading(false)
@@ -225,17 +300,33 @@ export function QuestionManagement() {
     }
   }
 
-  const filteredQuestions = questions.filter(question => {
-    const matchesSearch = question.question_text.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         question.topic?.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesSubject = !selectedSubject || question.subject === selectedSubject
-    const matchesLevel = !selectedLevel || question.level === selectedLevel
-    
-    return matchesSearch && matchesSubject && matchesLevel
-  })
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return
+    setCurrentPage(page)
+  }
 
-  const subjects = [...new Set(questions.map(q => q.subject))]
-  const levels = [...new Set(questions.map(q => q.level))]
+  const handlePerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newPerPage = parseInt(e.target.value)
+    setQuestionsPerPage(newPerPage)
+    setCurrentPage(1) // Reset to first page when changing items per page
+  }
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setCurrentPage(1) // Reset to first page when searching
+    fetchQuestions()
+  }
+
+  const handleFilterChange = (type: 'subject' | 'level', value: string) => {
+    if (type === 'subject') {
+      setSelectedSubject(value)
+    } else {
+      setSelectedLevel(value)
+    }
+    setCurrentPage(1) // Reset to first page when changing filters
+  }
+
+  const filteredQuestions = questions
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -247,7 +338,7 @@ export function QuestionManagement() {
     }
   }
 
-  if (loading) {
+  if (loading && currentPage === 1) {
     return (
       <div className="card-fun p-6 sm:p-8">
         <div className="flex items-center justify-center">
@@ -278,7 +369,7 @@ export function QuestionManagement() {
         </div>
 
         {/* Search and Filters */}
-        <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
+        <form onSubmit={handleSearchSubmit} className="flex flex-col lg:flex-row gap-3 sm:gap-4">
           <div className="flex-1">
             <Input
               type="text"
@@ -291,30 +382,30 @@ export function QuestionManagement() {
           
           <select
             value={selectedSubject}
-            onChange={(e) => setSelectedSubject(e.target.value)}
+            onChange={(e) => handleFilterChange('subject', e.target.value)}
             className="px-2 py-2 sm:px-3 sm:py-2 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm sm:text-base"
           >
             <option value="">All Subjects</option>
-            {subjects.map(subject => (
+            {allSubjects.map(subject => (
               <option key={subject} value={subject}>{subject}</option>
             ))}
           </select>
 
           <select
             value={selectedLevel}
-            onChange={(e) => setSelectedLevel(e.target.value)}
+            onChange={(e) => handleFilterChange('level', e.target.value)}
             className="px-2 py-2 sm:px-3 sm:py-2 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm sm:text-base"
           >
             <option value="">All Levels</option>
-            {levels.map(level => (
+            {allLevels.map(level => (
               <option key={level} value={level}>{level}</option>
             ))}
           </select>
 
-          <Button variant="outline" icon={<Filter className="w-4 h-4" />} className="text-sm sm:text-base">
-            More Filters
+          <Button type="submit" variant="outline" icon={<Filter className="w-4 h-4" />} className="text-sm sm:text-base">
+            Apply Filters
           </Button>
-        </div>
+        </form>
       </div>
 
       {/* Stats */}
@@ -326,7 +417,7 @@ export function QuestionManagement() {
             </div>
             <div className="text-center sm:text-left">
               <p className="text-xs sm:text-sm font-medium text-primary-600">Total Questions</p>
-              <p className="text-xl sm:text-2xl font-bold text-neutral-800">{questions.length}</p>
+              <p className="text-xl sm:text-2xl font-bold text-neutral-800">{totalQuestions.toLocaleString()}</p>
             </div>
           </div>
         </div>
@@ -352,7 +443,7 @@ export function QuestionManagement() {
             </div>
             <div className="text-center sm:text-left">
               <p className="text-xs sm:text-sm font-medium text-accent-600">Subjects</p>
-              <p className="text-xl sm:text-2xl font-bold text-neutral-800">{subjects.length}</p>
+              <p className="text-xl sm:text-2xl font-bold text-neutral-800">{allSubjects.length}</p>
             </div>
           </div>
         </div>
@@ -364,7 +455,7 @@ export function QuestionManagement() {
             </div>
             <div className="text-center sm:text-left">
               <p className="text-xs sm:text-sm font-medium text-warning-600">Levels</p>
-              <p className="text-xl sm:text-2xl font-bold text-neutral-800">{levels.length}</p>
+              <p className="text-xl sm:text-2xl font-bold text-neutral-800">{allLevels.length}</p>
             </div>
           </div>
         </div>
@@ -373,7 +464,26 @@ export function QuestionManagement() {
       {/* Questions Table */}
       <div className="card-fun">
         <div className="p-4 sm:p-6 border-b border-neutral-200">
-          <h2 className="text-base sm:text-lg font-semibold text-neutral-800">Questions ({filteredQuestions.length})</h2>
+          <div className="flex flex-col sm:flex-row items-center justify-between">
+            <h2 className="text-base sm:text-lg font-semibold text-neutral-800">
+              Questions ({totalQuestions.toLocaleString()})
+            </h2>
+            
+            <div className="flex items-center space-x-2 mt-2 sm:mt-0">
+              <span className="text-sm text-neutral-600">Show:</span>
+              <select 
+                value={questionsPerPage} 
+                onChange={handlePerPageChange}
+                className="px-2 py-1 border border-neutral-200 rounded-lg text-sm"
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <span className="text-sm text-neutral-600">per page</span>
+            </div>
+          </div>
         </div>
 
         {error && (
@@ -458,11 +568,89 @@ export function QuestionManagement() {
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="p-4 sm:p-6 border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between">
+            <div className="text-sm text-neutral-600 mb-3 sm:mb-0">
+              Showing {(currentPage - 1) * questionsPerPage + 1} to {Math.min(currentPage * questionsPerPage, totalQuestions)} of {totalQuestions.toLocaleString()} questions
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                icon={<ChevronLeft className="w-4 h-4" />}
+              >
+                Previous
+              </Button>
+              
+              <div className="flex items-center space-x-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  // Show pages around current page
+                  let pageToShow = currentPage - 2 + i
+                  
+                  // Adjust if we're at the beginning
+                  if (currentPage < 3) {
+                    pageToShow = i + 1
+                  }
+                  
+                  // Adjust if we're at the end
+                  if (currentPage > totalPages - 2) {
+                    pageToShow = totalPages - 4 + i
+                  }
+                  
+                  // Ensure page is in valid range
+                  if (pageToShow > 0 && pageToShow <= totalPages) {
+                    return (
+                      <button
+                        key={pageToShow}
+                        onClick={() => handlePageChange(pageToShow)}
+                        className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm ${
+                          currentPage === pageToShow
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-white text-neutral-600 hover:bg-neutral-100'
+                        }`}
+                      >
+                        {pageToShow}
+                      </button>
+                    )
+                  }
+                  return null
+                })}
+                
+                {totalPages > 5 && currentPage < totalPages - 2 && (
+                  <>
+                    <span className="text-neutral-400">...</span>
+                    <button
+                      onClick={() => handlePageChange(totalPages)}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg text-sm bg-white text-neutral-600 hover:bg-neutral-100"
+                    >
+                      {totalPages}
+                    </button>
+                  </>
+                )}
+              </div>
+              
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                icon={<ChevronRight className="w-4 h-4" />}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* CSV Upload Modal */}
       {showUploadModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-4 sm:p-6 border-b border-neutral-200">
               <div className="flex items-center justify-between">
