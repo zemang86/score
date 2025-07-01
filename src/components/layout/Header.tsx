@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
-import { LogOut, User, Crown, Settings, BarChart3 } from 'lucide-react'
+import { LogOut, User, Crown, BarChart3 } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { EdventureLogo } from '../ui/EdventureLogo'
 
@@ -36,7 +36,7 @@ export function Header() {
 
           <div className="flex items-center space-x-4">
             {/* User Info */}
-            <div className="flex items-center space-x-3 bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 border border-slate-200/50 shadow-sm">
+            <div className="hidden sm:flex items-center space-x-3 bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 border border-slate-200/50 shadow-sm">
               <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full p-2">
                 <User className="w-4 h-4 text-white" />
               </div>
@@ -56,41 +56,27 @@ export function Header() {
             </div>
 
             {/* Navigation Buttons */}
-            {isAdmin ? (
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate('/admin')}
-                  icon={<Settings className="w-4 h-4" />}
-                  className="text-slate-600 hover:text-indigo-600"
-                >
-                  Admin Panel
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate('/dashboard')}
-                  icon={<BarChart3 className="w-4 h-4" />}
-                  className="text-slate-600 hover:text-indigo-600"
-                >
-                  Dashboard
-                </Button>
-              </div>
+            {!isAdminPage && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/dashboard')}
+                icon={<BarChart3 className="w-4 h-4" />}
+                className="text-slate-600 hover:text-indigo-600"
+              >
+                <span className="hidden sm:inline">Dashboard</span>
+              </Button>
             )}
             
             {/* Sign Out Button */}
             <Button
               variant="error"
-              size="md"
+              size="sm"
               onClick={handleSignOut}
               icon={<LogOut className="w-4 h-4" />}
               className="bg-red-500 hover:bg-red-600 text-white"
             >
-              Sign Out
+              <span className="hidden sm:inline">Sign Out</span>
             </Button>
           </div>
         </div>

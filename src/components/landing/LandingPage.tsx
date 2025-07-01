@@ -46,11 +46,6 @@ export function LandingPage() {
     navigate('/auth')
   }
 
-  const handleAdminAccess = () => {
-    console.log('🔐 Navigating to admin login...')
-    navigate('/admin-login')
-  }
-
   const handleWatchDemo = () => {
     // Smooth scroll to features section
     const featuresSection = document.getElementById('features-section')
@@ -90,14 +85,6 @@ export function LandingPage() {
                   className="text-slate-700 hover:text-indigo-600 font-medium px-6 py-3"
                 >
                   Sign In
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  onClick={handleAdminAccess} 
-                  className="text-red-600 hover:text-red-700 font-medium px-6 py-3"
-                >
-                  <Shield className="w-4 h-4 mr-2" />
-                  Admin
                 </Button>
                 <Button 
                   onClick={handleGetStarted} 
