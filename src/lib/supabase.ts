@@ -7,7 +7,34 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+console.log('🔧 Supabase Configuration:')
+console.log('URL:', supabaseUrl ? `${supabaseUrl.substring(0, 20)}...` : 'Missing')
+console.log('Anon Key:', supabaseAnonKey ? `${supabaseAnonKey.substring(0, 20)}...` : 'Missing')
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 10
+    }
+  }
+})
+
+// Test connection on initialization
+supabase.auth.getSession().then(({ data, error }) => {
+  if (error) {
+    console.error('❌ Supabase connection error:', error)
+  } else {
+    console.log('✅ Supabase connected successfully')
+    console.log('Session:', data.session ? 'Active session found' : 'No active session')
+  }
+}).catch(err => {
+  console.error('❌ Failed to test Supabase connection:', err)
+})
 
 // Database types
 export interface User {
@@ -106,9 +133,9 @@ export const fetchUserProfile = async (userId: string): Promise<UserWithAdminSta
   try {
     console.log('📡 fetchUserProfile: Making database queries')
     
-    // Add longer timeout to prevent hanging - 30 seconds
+    // Add timeout to prevent hanging - 15 seconds
     const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Query timeout')), 30000)
+      setTimeout(() => reject(new Error('Query timeout')), 15000)
     })
     
     // Fetch user profile and admin status in parallel
@@ -182,9 +209,9 @@ export const checkIsAdmin = async (userId: string): Promise<boolean> => {
   try {
     console.log('📡 checkIsAdmin: Making database query to admins table')
     
-    // Add longer timeout - 30 seconds
+    // Add timeout - 15 seconds
     const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Query timeout')), 30000)
+      setTimeout(() => reject(new Error('Query timeout')), 15000)
     })
     
     const queryPromise = supabase
@@ -267,3 +294,36 @@ export const removeUserAdmin = async (userId: string): Promise<{ success: boolea
     return { success: false, error: 'Unexpected error occurred' }
   }
 }
+
+// Test database connection
+export const testDatabaseConnection = async (): Promise<{ success: boolean; error?: string }> => {
+  console.log('🧪 Testing database connection...')
+  
+  try {
+    // Test basic query
+    const { data, error } = await supabase
+      .from('users')
+      .select('count')
+      .limit(1)
+    
+    if (error) {
+      console.error('❌ Database connection test failed:', error)
+      return { success: false, error: error.message }
+    }
+    
+    console.log('✅ Database connection test successful')
+    return { success: true }
+  } catch (error) {
+    console.error('❌ Database connection test error:', error)
+    return { success: false, error: 'Connection test failed' }
+  }
+}
+
+// Initialize connection test
+testDatabaseConnection().then(result => {
+  if (result.success) {
+    console.log('🎉 Supabase database is ready!')
+  } else {
+    console.error('💥 Supabase database connection failed:', result.error)
+  }
+})

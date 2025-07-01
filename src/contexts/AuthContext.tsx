@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { User, Session } from '@supabase/supabase-js'
-import { supabase, fetchUserProfile } from '../lib/supabase'
+import { supabase, fetchUserProfile, testDatabaseConnection } from '../lib/supabase'
 import type { UserWithAdminStatus } from '../lib/supabase'
 
 interface AuthContextType {
@@ -54,13 +54,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const startLoadingTimeout = () => {
     clearLoadingTimeout()
     
-    // Set 5-second timeout for auth check only
+    // Set 3-second timeout for auth check only
     loadingTimeoutRef.current = setTimeout(() => {
-      console.log('⏰ AuthContext: Auth loading timeout reached (5 seconds), setting loading to false')
+      console.log('⏰ AuthContext: Auth loading timeout reached (3 seconds), setting loading to false')
       setLoading(false)
-    }, 5000) // 5 seconds for auth only
+    }, 3000) // 3 seconds for auth only
     
-    console.log('⏰ AuthContext: Started 5-second auth loading timeout')
+    console.log('⏰ AuthContext: Started 3-second auth loading timeout')
   }
 
   const getUserProfile = async (userId: string): Promise<void> => {
@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Use a shorter timeout for profile fetch
       const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000) // 10 seconds
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 8000) // 8 seconds
       })
       
       const profilePromise = fetchUserProfile(userId)
@@ -120,6 +120,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     console.log('🚀 AuthContext: useEffect started - setting up auth listener')
+    
+    // Test database connection first
+    testDatabaseConnection().then(result => {
+      if (!result.success) {
+        console.error('💥 Database connection failed:', result.error)
+      }
+    })
     
     // Start the loading timeout for auth only
     startLoadingTimeout()
