@@ -106,9 +106,9 @@ export const fetchUserProfile = async (userId: string): Promise<UserWithAdminSta
   try {
     console.log('📡 fetchUserProfile: Making database queries')
     
-    // Add timeout to prevent hanging - Extended to 5 minutes
+    // Add longer timeout to prevent hanging - 30 seconds
     const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Query timeout')), 300000)
+      setTimeout(() => reject(new Error('Query timeout')), 30000)
     })
     
     // Fetch user profile and admin status in parallel
@@ -118,8 +118,6 @@ export const fetchUserProfile = async (userId: string): Promise<UserWithAdminSta
       .eq('id', userId)
       .single()
     
-    // Use maybeSingle() instead of single() for admin check
-    // This prevents errors when user is not found in admins table
     const adminPromise = supabase
       .from('admins')
       .select('id')
@@ -133,13 +131,10 @@ export const fetchUserProfile = async (userId: string): Promise<UserWithAdminSta
       ])
 
       console.log('📡 fetchUserProfile: Database queries completed')
-      console.log('📊 fetchUserProfile: Raw userResult:', JSON.stringify(userResult, null, 2))
-      console.log('📊 fetchUserProfile: Raw adminResult:', JSON.stringify(adminResult, null, 2))
 
       if (userResult.error) {
         console.error('❌ fetchUserProfile: User query error:', userResult.error)
         
-        // If it's a "not found" error, the user might not have a profile yet
         if (userResult.error.code === 'PGRST116') {
           console.log('⚠️ fetchUserProfile: User profile not found')
           return null
@@ -148,32 +143,18 @@ export const fetchUserProfile = async (userId: string): Promise<UserWithAdminSta
         return null
       }
 
-      // Log the actual user data retrieved
-      console.log('✅ fetchUserProfile: User data retrieved:', {
-        id: userResult.data?.id,
-        email: userResult.data?.email,
-        full_name: userResult.data?.full_name,
-        subscription_plan: userResult.data?.subscription_plan,
-        max_students: userResult.data?.max_students,
-        daily_exam_limit: userResult.data?.daily_exam_limit
-      })
+      console.log('✅ fetchUserProfile: User data retrieved')
 
-      // With maybeSingle(), adminResult.error should be null and adminResult.data should be null if not found
-      // Only consider user as admin if data exists and no error occurred
       const isAdmin = !adminResult.error && !!adminResult.data
       
-      console.log('✅ fetchUserProfile: Admin check details:', {
-        adminError: adminResult.error,
-        adminData: adminResult.data,
-        isAdmin: isAdmin
-      })
+      console.log('✅ fetchUserProfile: Admin check completed, isAdmin:', isAdmin)
       
       const finalProfile = {
         ...userResult.data as User,
         isAdmin
       }
       
-      console.log('✅ fetchUserProfile: Final profile object being returned:', JSON.stringify(finalProfile, null, 2))
+      console.log('✅ fetchUserProfile: Final profile object being returned')
       
       return finalProfile
     } catch (raceError) {
@@ -185,7 +166,6 @@ export const fetchUserProfile = async (userId: string): Promise<UserWithAdminSta
     }
   } catch (error) {
     console.error('❌ fetchUserProfile: Unexpected error:', error)
-    console.error('❌ fetchUserProfile: Error stack:', error instanceof Error ? error.stack : 'No stack trace')
     return null
   }
 }
@@ -202,12 +182,11 @@ export const checkIsAdmin = async (userId: string): Promise<boolean> => {
   try {
     console.log('📡 checkIsAdmin: Making database query to admins table')
     
-    // Add timeout to prevent hanging - Extended to 5 minutes
+    // Add longer timeout - 30 seconds
     const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Query timeout')), 300000)
+      setTimeout(() => reject(new Error('Query timeout')), 30000)
     })
     
-    // Use maybeSingle() instead of single() to prevent errors when user is not admin
     const queryPromise = supabase
       .from('admins')
       .select('id')
@@ -219,10 +198,7 @@ export const checkIsAdmin = async (userId: string): Promise<boolean> => {
       const { data, error } = result
 
       console.log('📡 checkIsAdmin: Database query completed')
-      console.log('📊 checkIsAdmin: Query result - data:', data)
-      console.log('📊 checkIsAdmin: Query result - error:', error)
 
-      // If no error and data exists, user is admin
       const isAdmin = !error && !!data
       console.log('✅ checkIsAdmin: Admin status determined:', isAdmin)
       return isAdmin
@@ -235,7 +211,6 @@ export const checkIsAdmin = async (userId: string): Promise<boolean> => {
     }
   } catch (error) {
     console.error('❌ checkIsAdmin: Unexpected error:', error)
-    console.error('❌ checkIsAdmin: Error stack:', error instanceof Error ? error.stack : 'No stack trace')
     return false
   }
 }

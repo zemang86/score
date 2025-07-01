@@ -12,6 +12,7 @@ interface AuthContextType {
   dailyExamLimit: number
   isAdmin: boolean
   loading: boolean
+  profileLoading: boolean
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signOut: () => Promise<void>
@@ -33,15 +34,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<UserWithAdminStatus | null>(null)
-  const [subscriptionPlan, setSubscriptionPlan] = useState<'free' | 'premium' | null>(null)
-  const [maxStudents, setMaxStudents] = useState<number>(1)
-  const [dailyExamLimit, setDailyExamLimit] = useState<number>(1)
+  const [subscriptionPlan, setSubscriptionPlan] = useState<'free' | 'premium' | null>('premium') // Default to premium
+  const [maxStudents, setMaxStudents] = useState<number>(3) // Default to premium limits
+  const [dailyExamLimit, setDailyExamLimit] = useState<number>(999) // Default to premium limits
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true) // Auth loading
+  const [profileLoading, setProfileLoading] = useState(false) // Separate profile loading state
   
-  // Timeout management
+  // Quick timeout for auth check only
   const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const hasTimedOutRef = useRef<boolean>(false)
 
   const clearLoadingTimeout = () => {
     if (loadingTimeoutRef.current) {
@@ -52,92 +53,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const startLoadingTimeout = () => {
     clearLoadingTimeout()
-    hasTimedOutRef.current = false
     
-    // Set 10-minute timeout (600,000 milliseconds)
-    loadingTimeoutRef.current = setTimeout(async () => {
-      console.log('⏰ AuthContext: Loading timeout reached (10 minutes), auto-logging out...')
-      hasTimedOutRef.current = true
-      
-      try {
-        // Use the signOut method from this context instead of direct supabase call
-        await signOut()
-        console.log('✅ AuthContext: Auto-logout completed due to timeout')
-      } catch (error) {
-        console.error('❌ AuthContext: Error during timeout logout:', error)
-        // Force clear state even if signOut fails
-        setUser(null)
-        setSession(null)
-        setProfile(null)
-        setSubscriptionPlan(null)
-        setMaxStudents(1)
-        setDailyExamLimit(1)
-        setIsAdmin(false)
-        setLoading(false)
-      }
-    }, 600000) // 10 minutes
+    // Set 5-second timeout for auth check only
+    loadingTimeoutRef.current = setTimeout(() => {
+      console.log('⏰ AuthContext: Auth loading timeout reached (5 seconds), setting loading to false')
+      setLoading(false)
+    }, 5000) // 5 seconds for auth only
     
-    console.log('⏰ AuthContext: Started 10-minute loading timeout')
+    console.log('⏰ AuthContext: Started 5-second auth loading timeout')
   }
 
   const getUserProfile = async (userId: string): Promise<void> => {
     console.log('🔄 AuthContext: getUserProfile called for:', userId)
     
+    // Don't block the UI - set profile loading state
+    setProfileLoading(true)
+    
     try {
       console.log('📡 AuthContext: About to call fetchUserProfile...')
-      const userProfile = await fetchUserProfile(userId)
-      console.log('✅ AuthContext: Profile fetched from fetchUserProfile:', JSON.stringify(userProfile, null, 2))
+      
+      // Use a shorter timeout for profile fetch
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000) // 10 seconds
+      })
+      
+      const profilePromise = fetchUserProfile(userId)
+      
+      const userProfile = await Promise.race([profilePromise, timeoutPromise])
+      console.log('✅ AuthContext: Profile fetched:', userProfile ? 'Profile found' : 'No profile')
       
       if (userProfile) {
-        console.log('📝 AuthContext: Setting profile state with:', {
-          subscription_plan: userProfile.subscription_plan,
-          max_students: userProfile.max_students,
-          daily_exam_limit: userProfile.daily_exam_limit,
-          isAdmin: userProfile.isAdmin
-        })
-        
+        console.log('📝 AuthContext: Setting profile state')
         setProfile(userProfile)
         setSubscriptionPlan(userProfile.subscription_plan)
         setMaxStudents(userProfile.max_students)
         setDailyExamLimit(userProfile.daily_exam_limit)
         setIsAdmin(userProfile.isAdmin)
-        
-        console.log('✅ AuthContext: State updated. Current values:', {
-          subscriptionPlan: userProfile.subscription_plan,
-          maxStudents: userProfile.max_students,
-          dailyExamLimit: userProfile.daily_exam_limit,
-          isAdmin: userProfile.isAdmin
-        })
       } else {
-        console.log('⚠️ AuthContext: No profile found, setting defaults')
+        console.log('⚠️ AuthContext: No profile found, keeping defaults')
         setProfile(null)
-        setSubscriptionPlan('premium') // Default to premium as requested
-        setMaxStudents(3)
-        setDailyExamLimit(999)
-        setIsAdmin(false)
-        
-        console.log('✅ AuthContext: Default values set:', {
-          subscriptionPlan: 'premium',
-          maxStudents: 3,
-          dailyExamLimit: 999,
-          isAdmin: false
-        })
+        // Keep existing premium defaults
       }
     } catch (error) {
       console.error('❌ AuthContext: Error in getUserProfile:', error)
-      // Set defaults on error
-      setProfile(null)
-      setSubscriptionPlan('premium')
-      setMaxStudents(3)
-      setDailyExamLimit(999)
-      setIsAdmin(false)
-      
-      console.log('✅ AuthContext: Error fallback values set:', {
-        subscriptionPlan: 'premium',
-        maxStudents: 3,
-        dailyExamLimit: 999,
-        isAdmin: false
-      })
+      // Keep defaults on error - don't change existing state
+      console.log('✅ AuthContext: Keeping default premium values due to profile fetch error')
+    } finally {
+      setProfileLoading(false)
     }
   }
 
@@ -149,9 +111,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       console.log('🔄 AuthContext: No user, clearing profile')
       setProfile(null)
-      setSubscriptionPlan(null)
-      setMaxStudents(1)
-      setDailyExamLimit(1)
+      setSubscriptionPlan('premium') // Keep premium as default
+      setMaxStudents(3)
+      setDailyExamLimit(999)
       setIsAdmin(false)
     }
   }
@@ -159,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     console.log('🚀 AuthContext: useEffect started - setting up auth listener')
     
-    // Start the loading timeout
+    // Start the loading timeout for auth only
     startLoadingTimeout()
     
     // Get initial session
@@ -170,30 +132,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         if (error) {
           console.error('❌ AuthContext: Error getting initial session:', error)
+          setLoading(false)
           return
         }
         
         console.log('📡 AuthContext: Initial session retrieved:', session ? 'Session exists' : 'No session')
         
         if (session?.user) {
-          console.log('👤 AuthContext: Initial session - User found, setting state and fetching profile')
+          console.log('👤 AuthContext: Initial session - User found, setting state')
           setSession(session)
           setUser(session.user)
-          await getUserProfile(session.user.id)
+          
+          // Load profile in background - don't block UI
+          getUserProfile(session.user.id).catch(error => {
+            console.error('❌ AuthContext: Background profile fetch failed:', error)
+          })
         } else {
           console.log('👤 AuthContext: Initial session - No user found, clearing state')
           setSession(null)
           setUser(null)
           setProfile(null)
-          setSubscriptionPlan(null)
-          setMaxStudents(1)
-          setDailyExamLimit(1)
+          setSubscriptionPlan('premium') // Keep premium as default for new users
+          setMaxStudents(3)
+          setDailyExamLimit(999)
           setIsAdmin(false)
         }
       } catch (error) {
         console.error('❌ AuthContext: Error in getInitialSession:', error)
       } finally {
-        // ALWAYS set loading to false, regardless of timeout status
         clearLoadingTimeout()
         console.log('✅ AuthContext: Initial session processing complete, setting loading to false')
         setLoading(false)
@@ -208,7 +174,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('🔔 AuthContext: Auth state changed:', event, session ? 'Session exists' : 'No session')
       
       // Skip processing if this is the initial session event
-      // as it's already handled by getInitialSession
       if (event === 'INITIAL_SESSION') {
         console.log('🔄 AuthContext: Skipping INITIAL_SESSION event - handled by getInitialSession')
         return
@@ -218,36 +183,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session)
         
         if (session?.user) {
-          console.log('👤 AuthContext: Auth change - User found, checking if user changed')
+          console.log('👤 AuthContext: Auth change - User found')
           
-          // CRITICAL FIX: Only update user state if the user ID actually changed
-          // This prevents unnecessary re-renders when the user object reference changes
-          // but the actual user data is the same
+          // Only update user state if the user ID actually changed
           if (!user || user.id !== session.user.id) {
-            console.log('👤 AuthContext: User ID changed or new user, updating state and fetching profile')
+            console.log('👤 AuthContext: User ID changed or new user, updating state')
             setUser(session.user)
-            await getUserProfile(session.user.id)
+            
+            // Load profile in background - don't block UI
+            getUserProfile(session.user.id).catch(error => {
+              console.error('❌ AuthContext: Background profile fetch failed during auth change:', error)
+            })
           } else {
-            console.log('👤 AuthContext: Same user ID, skipping user state update to prevent re-renders')
+            console.log('👤 AuthContext: Same user ID, skipping user state update')
           }
         } else {
           console.log('👤 AuthContext: Auth change - No user found, clearing state')
           setUser(null)
           setProfile(null)
-          setSubscriptionPlan(null)
-          setMaxStudents(1)
-          setDailyExamLimit(1)
+          setSubscriptionPlan('premium') // Keep premium as default
+          setMaxStudents(3)
+          setDailyExamLimit(999)
           setIsAdmin(false)
         }
       } catch (error) {
         console.error('❌ AuthContext: Error processing auth state change:', error)
-        setProfile(null)
-        setSubscriptionPlan(null)
-        setMaxStudents(1)
-        setDailyExamLimit(1)
-        setIsAdmin(false)
       } finally {
-        // ALWAYS set loading to false, regardless of timeout status
         clearLoadingTimeout()
         console.log('✅ AuthContext: Auth state change processed, setting loading to false')
         setLoading(false)
@@ -262,7 +223,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       subscription.unsubscribe()
       clearLoadingTimeout()
     }
-  }, []) // Empty dependency array - listener should only be set up once
+  }, []) // Empty dependency array
 
   const signUp = async (email: string, password: string, fullName: string) => {
     console.log('📝 AuthContext: signUp called for:', email)
@@ -288,7 +249,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             id: data.user.id,
             email: data.user.email,
             full_name: fullName,
-            subscription_plan: 'premium', // Default to premium as requested
+            subscription_plan: 'premium',
             max_students: 3,
             daily_exam_limit: 999,
           },
@@ -301,7 +262,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSubscriptionPlan('premium')
         setMaxStudents(3)
         setDailyExamLimit(999)
-        setIsAdmin(false) // New users are not admin by default
+        setIsAdmin(false)
       }
     } else if (error) {
       console.error('❌ AuthContext: Error during signUp:', error)
@@ -330,14 +291,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     console.log('🚪 AuthContext: signOut called')
     
-    // Clear timeout immediately when signing out
     clearLoadingTimeout()
     
     try {
       const { error } = await supabase.auth.signOut()
       
       if (error) {
-        // Check for expected errors that are normal during sign-out
         const isExpectedError = 
           (error.message && error.message.includes('Session from session_id claim in JWT does not exist')) ||
           (error.message && error.message.includes('Auth session missing!')) ||
@@ -346,7 +305,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!isExpectedError) {
           console.error('❌ AuthContext: Error during signOut:', error)
         }
-        // For expected errors, we don't log anything as they're normal sign-out scenarios
       } else {
         console.log('✅ AuthContext: signOut successful')
       }
@@ -354,13 +312,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('❌ AuthContext: Unexpected error during signOut:', error)
     }
     
-    // Always clear local state regardless of server response
+    // Always clear local state
     setProfile(null)
-    setSubscriptionPlan(null)
-    setMaxStudents(1)
-    setDailyExamLimit(1)
+    setSubscriptionPlan('premium') // Keep premium as default
+    setMaxStudents(3)
+    setDailyExamLimit(999)
     setIsAdmin(false)
-    setLoading(false) // Ensure loading is false after sign out
+    setLoading(false)
+    setProfileLoading(false)
     console.log('✅ AuthContext: Local signOut state cleared')
   }
 
@@ -386,6 +345,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dailyExamLimit,
     isAdmin,
     loading,
+    profileLoading,
     signUp,
     signIn,
     signOut,
@@ -402,9 +362,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dailyExamLimit,
     isAdmin,
     loading,
-    profileExists: !!profile,
-    hasTimeout: !!loadingTimeoutRef.current,
-    hasTimedOut: hasTimedOutRef.current
+    profileLoading,
+    profileExists: !!profile
   })
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

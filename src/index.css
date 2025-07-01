@@ -8,8 +8,8 @@
 /* Modern, clean global styles */
 @layer base {
   body {
-    font-family: 'Poppins', 'Nunito', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    background: linear-gradient(135deg, #e6f3ff 0%, #e8f5e8 50%, #fff9e6 100%);
+    font-family: 'Inter', 'Space Grotesk', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 50%, #f8fafc 100%);
     min-height: 100vh;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     -webkit-font-smoothing: antialiased;
@@ -17,21 +17,21 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-family: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     font-weight: 600;
     letter-spacing: -0.02em;
   }
 
   /* Focus styles for accessibility */
   *:focus {
-    outline: 2px solid theme('colors.primary.500');
+    outline: 2px solid theme('colors.blue.500');
     outline-offset: 2px;
   }
 
   /* Selection styles */
   ::selection {
-    background-color: theme('colors.primary.100');
-    color: theme('colors.primary.900');
+    background-color: theme('colors.blue.100');
+    color: theme('colors.blue.900');
   }
 }
 
@@ -87,22 +87,7 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 
-  /* Fun interactive elements */
-  .btn-fun {
-    background: linear-gradient(135deg, theme('colors.primary.400'), theme('colors.secondary.400'));
-    color: white;
-    border-radius: 1.5rem;
-    padding: 0.75rem 1.5rem;
-    font-weight: 600;
-    box-shadow: 0 4px 20px rgba(26, 140, 255, 0.3);
-    transition: all 0.3s ease;
-  }
-
-  .btn-fun:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(26, 140, 255, 0.4);
-  }
-
+  /* Professional card styles */
   .card-fun {
     background: white;
     border-radius: 1.5rem;
@@ -115,7 +100,7 @@
   .card-fun:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    border-color: theme('colors.primary.200');
+    border-color: theme('colors.slate.200');
   }
 
   /* Optimized scroll performance */
@@ -126,6 +111,21 @@
   .scroll-optimized.animation-complete {
     will-change: auto;
   }
+
+  /* Premium shadow effects */
+  .shadow-3xl {
+    box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Gradient radial utility */
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+
+  /* Premium border styles */
+  .border-3 {
+    border-width: 3px;
+  }
 }
 
 /* Custom scrollbar with modern styling */
@@ -134,24 +134,24 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: theme('colors.neutral.100');
+  background: theme('colors.slate.100');
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: theme('colors.primary.300');
+  background: theme('colors.slate.300');
   border-radius: 4px;
   transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: theme('colors.primary.400');
+  background: theme('colors.slate.400');
 }
 
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: theme('colors.primary.300') theme('colors.neutral.100');
+  scrollbar-color: theme('colors.slate.300') theme('colors.slate.100');
 }
 
 /* Emoji and icon styling */

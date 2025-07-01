@@ -64,6 +64,15 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
         return
       }
 
+      // Calculate age from date of birth
+      const birthDate = new Date(formData.dateOfBirth)
+      const today = new Date()
+      let age = today.getFullYear() - birthDate.getFullYear()
+      const monthDiff = today.getMonth() - birthDate.getMonth()
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--
+      }
+
       // Insert new student
       const { error: insertError } = await supabase
         .from('students')
@@ -74,6 +83,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
             school: formData.school.trim(),
             level: formData.level,
             date_of_birth: formData.dateOfBirth,
+            age: age,
             xp: 0
           }
         ])
@@ -102,28 +112,28 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-4 sm:p-6 border-b border-neutral-200 bg-gradient-to-r from-primary-100 to-secondary-100">
+      <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-white/30">
+        <div className="p-6 border-b border-white/20 bg-gradient-to-r from-indigo-100 to-purple-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="bg-primary-500 rounded-full p-2 sm:p-3 mr-3 sm:mr-4 shadow-fun">
-                <Star className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+              <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full p-3 mr-4 shadow-lg">
+                <Star className="w-8 text-white" />
               </div>
-              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-primary-600">Add New Kid</h2>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Add New Kid</h2>
             </div>
             <button
               onClick={onClose}
-              className="text-neutral-400 hover:text-neutral-600 transition-colors bg-white rounded-full p-1.5 sm:p-2 shadow-soft"
+              className="text-slate-400 hover:text-slate-600 transition-colors bg-white rounded-full p-2 shadow-lg"
             >
-              <X className="w-5 h-5 sm:w-6 sm:h-6" />
+              <X className="w-6 h-6" />
             </button>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
-            <div className="bg-error-50 border-2 border-error-200 rounded-xl p-3 sm:p-4">
-              <p className="text-error-700 font-medium text-center text-sm sm:text-base">{error}</p>
+            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+              <p className="text-red-700 font-medium text-center">{error}</p>
             </div>
           )}
 
@@ -132,7 +142,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
             placeholder="Kid's full name"
             value={formData.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            icon={<User className="w-4 h-4 sm:w-5 sm:h-5" />}
+            icon={<User className="w-5 h-5" />}
             required
           />
 
@@ -141,16 +151,16 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
             placeholder="School name"
             value={formData.school}
             onChange={(e) => handleInputChange('school', e.target.value)}
-            icon={<School className="w-4 h-4 sm:w-5 sm:h-5" />}
+            icon={<School className="w-5 h-5" />}
             required
           />
 
           <div className="relative">
-            <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4 sm:w-5 sm:h-5" />
+            <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
             <select
               value={formData.level}
               onChange={(e) => handleInputChange('level', e.target.value)}
-              className="w-full pl-8 sm:pl-10 pr-4 py-2.5 sm:py-3 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-sm sm:text-base"
+              className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-base"
               required
             >
               <option value="">Select education level</option>
@@ -165,17 +175,17 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
             placeholder="Date of birth"
             value={formData.dateOfBirth}
             onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-            icon={<Calendar className="w-4 h-4 sm:w-5 sm:h-5" />}
+            icon={<Calendar className="w-5 h-5" />}
             helper="We'll calculate their age automatically"
             required
           />
 
-          <div className="bg-gradient-to-r from-primary-100 to-secondary-100 border-2 border-primary-300 rounded-xl p-3 sm:p-4">
+          <div className="bg-gradient-to-r from-indigo-100 to-purple-100 border-2 border-indigo-300 rounded-xl p-4">
             <div className="flex items-center mb-2">
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary-600 mr-2" />
-              <p className="text-primary-800 font-medium text-sm sm:text-base">Plan Limit Info</p>
+              <Sparkles className="w-5 h-5 text-indigo-600 mr-2" />
+              <p className="text-indigo-800 font-medium">Plan Limit Info</p>
             </div>
-            <p className="text-primary-700 text-sm sm:text-base">
+            <p className="text-indigo-700">
               You can add up to <strong>{maxStudents}</strong> {maxStudents === 1 ? 'kid' : 'kids'} with your current plan!
             </p>
           </div>
@@ -185,18 +195,17 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1 text-sm sm:text-base"
+              className="flex-1 border-2 border-slate-200 hover:border-slate-300"
               disabled={loading}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              variant="fun"
-              className="flex-1 text-sm sm:text-base"
+              className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
               disabled={loading || !formData.name || !formData.school || !formData.level || !formData.dateOfBirth}
               loading={loading}
-              icon={!loading ? <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> : undefined}
+              icon={!loading ? <Zap className="w-5 h-5" /> : undefined}
             >
               {loading ? 'Adding...' : 'Add Kid!'}
             </Button>
