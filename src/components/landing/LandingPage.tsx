@@ -88,7 +88,7 @@ export function LandingPage() {
                 </Button>
                 <Button 
                   onClick={handleGetStarted} 
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2 sm:px-8 sm:py-3 rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 font-semibold text-sm sm:text-base"
+                  variant="gradient-primary"
                 >
                   Get Started
                 </Button>
@@ -145,7 +145,7 @@ export function LandingPage() {
                   <Button 
                     size="lg" 
                     onClick={handleGetStarted}
-                    className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 text-base sm:text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-bold rounded-xl sm:rounded-2xl border-0"
+                    variant="gradient-primary"
                     icon={<Rocket className="w-5 h-5 sm:w-6 sm:h-6" />}
                   >
                     <span className="flex items-center">
@@ -157,7 +157,6 @@ export function LandingPage() {
                     variant="outline" 
                     size="lg"
                     onClick={handleWatchDemo}
-                    className="w-full sm:w-auto border-2 border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-indigo-300 px-8 py-4 text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all duration-300"
                     icon={<Play className="w-5 h-5 sm:w-6 sm:h-6" />}
                   >
                     Watch Demo
@@ -467,8 +466,8 @@ export function LandingPage() {
                 </div>
 
                 <Button 
-                  variant="outline" 
-                  className="w-full py-3 sm:py-4 text-white border-white/30 hover:bg-white/10 font-semibold text-sm sm:text-base rounded-xl sm:rounded-2xl"
+                  variant="gradient-primary"
+                  className="w-full"
                   onClick={handleGetStarted}
                 >
                   Start Free
@@ -531,7 +530,8 @@ export function LandingPage() {
                 </div>
 
                 <Button 
-                  className="w-full py-3 sm:py-4 bg-white text-purple-600 hover:bg-purple-50 font-bold text-sm sm:text-base rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                  variant="white"
+                  className="w-full"
                   onClick={handleGetStarted}
                   icon={<Crown className="w-5 h-5 sm:w-6 sm:h-6" />}
                 >
@@ -691,7 +691,7 @@ export function LandingPage() {
               <Button 
                 size="lg" 
                 onClick={handleGetStarted}
-                className="bg-white text-purple-600 hover:bg-purple-50 px-8 py-4 text-base sm:text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-bold rounded-xl sm:rounded-2xl"
+                variant="white"
                 icon={<Rocket className="w-5 h-5 sm:w-6 sm:h-6" />}
               >
                 <span className="flex items-center">
