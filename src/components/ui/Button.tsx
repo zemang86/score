@@ -32,10 +32,10 @@ export function Button({
   }
   
   const sizeClasses = {
-    sm: 'px-4 py-2.5 text-sm rounded-xl',
-    md: 'px-6 py-3 text-base rounded-xl',
-    lg: 'px-8 py-4 text-lg rounded-2xl',
-    xl: 'px-10 py-5 text-xl rounded-2xl'
+    sm: 'px-3 py-2 text-xs sm:text-sm rounded-lg',
+    md: 'px-4 py-2.5 text-sm sm:text-base rounded-xl',
+    lg: 'px-6 py-3 text-base sm:text-lg rounded-xl sm:rounded-2xl',
+    xl: 'px-8 py-4 text-lg sm:text-xl rounded-xl sm:rounded-2xl'
   }
 
   const isDisabled = disabled || loading
@@ -47,9 +47,9 @@ export function Button({
       {...props}
     >
       {loading && (
-        <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-3"></div>
+        <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-2 border-white border-t-transparent mr-2 sm:mr-3"></div>
       )}
-      {icon && !loading && <span className="mr-3">{icon}</span>}
+      {icon && !loading && <span className="mr-2 sm:mr-3">{icon}</span>}
       {children}
     </button>
   )

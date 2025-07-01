@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
-import { LogOut, User, Crown, BarChart3 } from 'lucide-react'
+import { LogOut, User, Crown, BarChart3, Home } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { EdventureLogo } from '../ui/EdventureLogo'
 
@@ -13,11 +13,19 @@ export function Header() {
   const isAdminPage = location.pathname.startsWith('/admin')
 
   const handleLogoClick = () => {
-    if (isAdmin) {
-      navigate('/admin')
+    if (user) {
+      if (isAdmin) {
+        navigate('/admin')
+      } else {
+        navigate('/dashboard')
+      }
     } else {
-      navigate('/dashboard')
+      navigate('/')
     }
+  }
+
+  const handleDashboardClick = () => {
+    navigate('/dashboard')
   }
 
   const handleSignOut = async () => {
@@ -29,25 +37,25 @@ export function Header() {
   return (
     <header className="bg-white/90 backdrop-blur-lg border-b border-slate-200/50 sticky top-0 z-40 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14 sm:h-16">
           <button onClick={handleLogoClick} className="hover:opacity-80 transition-opacity">
-            <EdventureLogo size="md" />
+            <EdventureLogo size="sm" className="sm:scale-110" />
           </button>
 
-          <div className="flex items-center space-x-4">
-            {/* User Info */}
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            {/* User Info - Hidden on mobile */}
             <div className="hidden sm:flex items-center space-x-3 bg-white/80 backdrop-blur-sm rounded-xl px-4 py-2 border border-slate-200/50 shadow-sm">
               <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full p-2">
                 <User className="w-4 h-4 text-white" />
               </div>
               <div>
                 <span className="font-medium text-slate-700 text-sm">
-                  {user?.user_metadata?.full_name || user?.email}
+                  {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
                 </span>
                 {isAdmin && (
                   <div className="flex items-center mt-1">
                     <Crown className="w-3 h-3 text-amber-500 mr-1" />
-                    <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                    <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
                       ADMIN
                     </span>
                   </div>
@@ -56,13 +64,13 @@ export function Header() {
             </div>
 
             {/* Navigation Buttons */}
-            {!isAdminPage && (
+            {user && !isAdminPage && (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/dashboard')}
+                onClick={handleDashboardClick}
                 icon={<BarChart3 className="w-4 h-4" />}
-                className="text-slate-600 hover:text-indigo-600"
+                className="text-slate-600 hover:text-indigo-600 px-2 sm:px-3 py-1.5 sm:py-2"
               >
                 <span className="hidden sm:inline">Dashboard</span>
               </Button>
@@ -74,7 +82,7 @@ export function Header() {
               size="sm"
               onClick={handleSignOut}
               icon={<LogOut className="w-4 h-4" />}
-              className="bg-red-500 hover:bg-red-600 text-white"
+              className="bg-red-500 hover:bg-red-600 text-white px-2 sm:px-3 py-1.5 sm:py-2"
             >
               <span className="hidden sm:inline">Sign Out</span>
             </Button>
