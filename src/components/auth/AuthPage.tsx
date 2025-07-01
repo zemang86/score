@@ -37,16 +37,16 @@ export function AuthPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
       {/* Floating decorative elements */}
-      <div className="fixed top-20 right-10 animate-float z-10 opacity-30">
+      <div className="fixed top-20 right-10 animate-float z-10 opacity-10">
         <Star className="w-6 h-6 text-indigo-400" />
       </div>
-      <div className="fixed top-40 right-32 animate-bounce-gentle z-10 opacity-30">
+      <div className="fixed top-40 right-32 animate-bounce-gentle z-10 opacity-10">
         <Sparkles className="w-5 h-5 text-purple-400" />
       </div>
-      <div className="fixed bottom-20 left-10 animate-wiggle z-10 opacity-30">
+      <div className="fixed bottom-20 left-10 animate-wiggle z-10 opacity-10">
         <Heart className="w-7 h-7 text-pink-400" />
       </div>
-      <div className="fixed top-1/2 right-5 animate-pulse-soft z-10 opacity-30">
+      <div className="fixed top-1/2 right-5 animate-pulse-soft z-10 opacity-10">
         <Zap className="w-6 h-6 text-amber-400" />
       </div>
 
@@ -64,15 +64,15 @@ export function AuthPage() {
 
       <div className="flex min-h-screen relative z-20">
         {/* Left side - Branding */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-12 text-white relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-800 to-indigo-900 p-12 text-white relative overflow-hidden">
           {/* Floating decorative elements */}
-          <div className="absolute top-10 right-10 animate-bounce-gentle opacity-40">
+          <div className="absolute top-10 right-10 animate-bounce-gentle opacity-10">
             <Star className="w-8 h-8 text-amber-300" />
           </div>
-          <div className="absolute top-32 right-32 animate-pulse-soft opacity-40">
+          <div className="absolute top-32 right-32 animate-pulse-soft opacity-10">
             <Sparkles className="w-6 h-6 text-purple-200" />
           </div>
-          <div className="absolute bottom-20 right-20 animate-wiggle opacity-40">
+          <div className="absolute bottom-20 right-20 animate-wiggle opacity-10">
             <Heart className="w-8 h-8 text-pink-300" />
           </div>
 
@@ -81,48 +81,48 @@ export function AuthPage() {
               <div className="flex items-center mb-6">
                 <EdventureLogo size="xl" className="text-white" />
               </div>
-              <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20">
-                <p className="text-3xl font-bold mb-3 text-amber-300">Where Learning Becomes Adventure!</p>
-                <p className="text-purple-100 text-xl leading-relaxed">
+              <div className="bg-white/5 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
+                <p className="text-3xl font-bold mb-3 text-indigo-200">Where Learning Becomes Adventure!</p>
+                <p className="text-indigo-100 text-xl leading-relaxed">
                   Transform exam practice into an engaging learning adventure for Malaysian students.
                 </p>
               </div>
             </div>
 
             <div className="space-y-6">
-              <div className="flex items-start space-x-4 bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+              <div className="flex items-start space-x-4 bg-white/5 backdrop-blur-lg rounded-2xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-300">
                 <div className="bg-amber-400 rounded-full p-3 shadow-lg">
                   <Star className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xl text-amber-300">Gamified Learning</h3>
-                  <p className="text-purple-100">Earn XP, unlock badges, and level up your learning journey!</p>
+                  <h3 className="font-bold text-xl text-indigo-200">Gamified Learning</h3>
+                  <p className="text-indigo-100">Earn XP, unlock badges, and level up your learning journey!</p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4 bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+              <div className="flex items-start space-x-4 bg-white/5 backdrop-blur-lg rounded-2xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-300">
                 <div className="bg-green-400 rounded-full p-3 shadow-lg">
                   <Trophy className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xl text-amber-300">Track Progress</h3>
-                  <p className="text-purple-100">Watch your skills grow and celebrate every achievement!</p>
+                  <h3 className="font-bold text-xl text-indigo-200">Track Progress</h3>
+                  <p className="text-indigo-100">Watch your skills grow and celebrate every achievement!</p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4 bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+              <div className="flex items-start space-x-4 bg-white/5 backdrop-blur-lg rounded-2xl p-4 border border-white/10 hover:bg-white/10 transition-all duration-300">
                 <div className="bg-blue-400 rounded-full p-3 shadow-lg">
                   <Users className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xl text-amber-300">Family Dashboard</h3>
-                  <p className="text-purple-100">Parents and kids learning together as a team!</p>
+                  <h3 className="font-bold text-xl text-indigo-200">Family Dashboard</h3>
+                  <p className="text-indigo-100">Parents and kids learning together as a team!</p>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 p-4 bg-green-100/20 border-2 border-green-400/50 rounded-2xl backdrop-blur-lg">
-              <p className="text-green-200 text-center font-medium">
+            <div className="mt-8 p-4 bg-emerald-500/20 border-2 border-emerald-400/30 rounded-2xl backdrop-blur-lg">
+              <p className="text-emerald-200 text-center font-medium">
                 <strong>FREE Premium Access</strong> during launch period!
               </p>
             </div>
