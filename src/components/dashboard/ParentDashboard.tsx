@@ -6,10 +6,7 @@ import { AddStudentModal } from './AddStudentModal'
 import { StudentCard } from './StudentCard'
 import { LeaderboardModal } from './LeaderboardModal'
 import { FamilyReportsModal } from './FamilyReportsModal'
-import { OnboardingModal } from '../onboarding/OnboardingModal'
-import { QuickStartGuide } from '../onboarding/QuickStartGuide'
-import { WelcomeTooltip } from '../onboarding/WelcomeTooltip'
-import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, Calendar, Award, BarChart3, ArrowUp, ArrowDown, MoreHorizontal, Search, Filter, HelpCircle, Gift } from 'lucide-react'
+import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target } from 'lucide-react'
 import { Button } from '../ui/Button'
 
 export function ParentDashboard() {
@@ -20,67 +17,18 @@ export function ParentDashboard() {
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [showFamilyReports, setShowFamilyReports] = useState(false)
   const [error, setError] = useState('')
-  
-  // Onboarding states
-  const [showOnboarding, setShowOnboarding] = useState(false)
-  const [showQuickStart, setShowQuickStart] = useState(false)
-  const [showWelcomeTooltips, setShowWelcomeTooltips] = useState(false)
-  const [isNewUser, setIsNewUser] = useState(false)
-  
   const [dashboardStats, setDashboardStats] = useState({
     totalExams: 0,
     totalBadges: 0,
     averageScore: 0,
-    totalXP: 0,
-    weeklyProgress: 0,
-    monthlyGrowth: 0
+    totalXP: 0
   })
 
   useEffect(() => {
     if (user) {
       fetchStudents()
-      checkIfNewUser()
     }
   }, [user])
-
-  const checkIfNewUser = async () => {
-    if (!user) return
-
-    try {
-      // Check if user has any students
-      const { data: students } = await supabase
-        .from('students')
-        .select('id')
-        .eq('user_id', user.id)
-        .limit(1)
-
-      // Check if user has completed any exams
-      const { data: exams } = await supabase
-        .from('exams')
-        .select('id')
-        .in('student_id', students?.map(s => s.id) || [])
-        .limit(1)
-
-      // Check if user was created recently (within last 24 hours)
-      const userCreatedAt = new Date(user.created_at)
-      const now = new Date()
-      const hoursSinceCreation = (now.getTime() - userCreatedAt.getTime()) / (1000 * 60 * 60)
-
-      const isNewUser = hoursSinceCreation < 24 && (!students || students.length === 0) && (!exams || exams.length === 0)
-      
-      setIsNewUser(isNewUser)
-      
-      if (isNewUser) {
-        // Show onboarding for new users
-        setTimeout(() => setShowOnboarding(true), 1000)
-      } else if (students && students.length === 0) {
-        // Show quick start for users without students
-        setTimeout(() => setShowQuickStart(true), 500)
-      }
-    } catch (error) {
-      console.error('Error checking new user status:', error)
-    }
-  }
 
   const fetchStudents = async () => {
     if (!user) return
@@ -118,7 +66,7 @@ export function ParentDashboard() {
       // Fetch exam statistics
       const { data: exams, error: examsError } = await supabase
         .from('exams')
-        .select('score, completed, created_at')
+        .select('score, completed')
         .in('student_id', studentIds)
         .eq('completed', true)
 
@@ -138,26 +86,11 @@ export function ParentDashboard() {
       const averageScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0
       const totalXP = students.reduce((sum, student) => sum + (student.xp || 0), 0)
 
-      // Calculate weekly progress (last 7 days vs previous 7 days)
-      const now = new Date()
-      const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-      const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000)
-
-      const thisWeekExams = completedExams.filter(e => new Date(e.created_at) >= lastWeek).length
-      const lastWeekExams = completedExams.filter(e => {
-        const date = new Date(e.created_at)
-        return date >= twoWeeksAgo && date < lastWeek
-      }).length
-
-      const weeklyProgress = lastWeekExams > 0 ? Math.round(((thisWeekExams - lastWeekExams) / lastWeekExams) * 100) : 0
-
       setDashboardStats({
         totalExams: completedExams.length,
         totalBadges: badges?.length || 0,
         averageScore,
-        totalXP,
-        weeklyProgress,
-        monthlyGrowth: 15 // Mock data for now
+        totalXP
       })
     } catch (error) {
       console.error('Error fetching dashboard stats:', error)
@@ -166,8 +99,6 @@ export function ParentDashboard() {
 
   const handleStudentAdded = () => {
     fetchStudents() // Refresh the students list
-    setShowQuickStart(false) // Close quick start guide
-    setShowWelcomeTooltips(true) // Show welcome tooltips
   }
 
   const handleExamComplete = () => {
@@ -178,367 +109,299 @@ export function ParentDashboard() {
     fetchStudents() // Refresh the students list after edit
   }
 
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false)
-    setShowWelcomeTooltips(true)
+  const getPlanDisplayName = (plan: string | null) => {
+    switch (plan) {
+      case 'free': return 'Free Plan'
+      case 'premium': return 'Premium Plan'
+      default: return 'Unknown Plan'
+    }
+  }
+
+  const getPlanColor = (plan: string | null) => {
+    switch (plan) {
+      case 'free': return 'bg-gradient-to-r from-blue-100 to-indigo-100 border-blue-300'
+      case 'premium': return 'bg-gradient-to-r from-amber-100 via-orange-100 to-amber-100 border-amber-400'
+      default: return 'bg-gradient-to-r from-slate-100 to-slate-200 border-slate-300'
+    }
   }
 
   const canAddMoreStudents = students.length < maxStudents
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-4 border-transparent bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto mb-4 sm:mb-6">
-            <div className="absolute inset-2 bg-white rounded-full"></div>
-          </div>
-          <p className="text-indigo-600 font-medium text-lg sm:text-xl">Loading your dashboard...</p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
       
-      {/* Welcome Banner for New Users */}
-      {isNewUser && (
-        <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center mb-2 sm:mb-0">
-                <Gift className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-amber-300" />
-                <div>
-                  <h2 className="text-base sm:text-lg font-bold">Welcome to Edventure+! 🎉</h2>
-                  <p className="text-xs sm:text-sm text-purple-100">You have Premium access with unlimited exams and up to 3 children!</p>
-                </div>
-              </div>
-              <Button
-                onClick={() => setShowOnboarding(true)}
-                className="bg-white text-purple-600 hover:bg-purple-50 text-xs sm:text-sm py-1.5 sm:py-2 px-3 sm:px-4"
-                icon={<HelpCircle className="w-4 h-4" />}
-              >
-                Take Tour
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Floating decorative elements */}
+      <div className="fixed top-20 right-10 animate-bounce-gentle z-10 opacity-40">
+        <Star className="w-6 h-6 text-indigo-400" />
+      </div>
+      <div className="fixed top-40 right-32 animate-pulse-soft z-10 opacity-40">
+        <Sparkles className="w-5 h-5 text-purple-400" />
+      </div>
+      <div className="fixed bottom-20 left-10 animate-wiggle z-10 opacity-40">
+        <Heart className="w-7 h-7 text-pink-400" />
+      </div>
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Header Section */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 relative z-20">
+        {/* Welcome Section */}
         <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-            <div className="mb-4 lg:mb-0">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-1 sm:mb-2">
-                Monitor progress of your children
-              </h1>
-              <p className="text-slate-600 text-sm sm:text-lg">
-                Track and analyze their learning journey in the easiest way
-              </p>
-            </div>
-            
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 bg-white rounded-xl sm:rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm text-sm"
-                />
-              </div>
-              <button className="p-2 sm:p-3 bg-slate-900 text-white rounded-xl sm:rounded-2xl hover:bg-slate-800 transition-colors shadow-sm">
-                <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Time Period Selector */}
-        <div className="flex items-center space-x-1 mb-6 sm:mb-8">
-          <button className="px-4 sm:px-6 py-1.5 sm:py-2 bg-white text-slate-600 rounded-lg sm:rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-xs sm:text-sm">
-            Week
-          </button>
-          <button className="px-4 sm:px-6 py-1.5 sm:py-2 bg-slate-900 text-white rounded-lg sm:rounded-xl shadow-sm text-xs sm:text-sm">
-            Month
-          </button>
-          <button className="px-4 sm:px-6 py-1.5 sm:py-2 bg-white text-slate-600 rounded-lg sm:rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-xs sm:text-sm">
-            Year
-          </button>
-        </div>
-
-        {/* Main Stats Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
-          {/* Students Card */}
-          <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden">
-            <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
-              <Users className="w-4 h-4 sm:w-6 sm:h-6 text-purple-600" />
-            </div>
-            <div className="mb-3 sm:mb-4">
-              <p className="text-purple-700 font-medium mb-1 text-xs sm:text-sm">Students</p>
-              <div className="flex items-baseline">
-                <span className="text-xl sm:text-4xl font-bold text-purple-900">{students.length}</span>
-                <span className="text-purple-600 text-xs sm:text-sm ml-1 sm:ml-2">+{students.length} total</span>
-              </div>
-            </div>
-            <div className="w-full bg-purple-200 rounded-full h-1.5 sm:h-2">
-              <div 
-                className="bg-purple-600 h-1.5 sm:h-2 rounded-full transition-all duration-500"
-                style={{ width: `${(students.length / maxStudents) * 100}%` }}
-              ></div>
-            </div>
-            {showWelcomeTooltips && students.length === 0 && (
-              <WelcomeTooltip
-                isVisible={true}
-                onClose={() => setShowWelcomeTooltips(false)}
-                title="Add Your First Child"
-                description="Click the 'Add Student' card below to create your first child's profile and start their learning journey!"
-                position="bottom"
-              />
-            )}
-          </div>
-
-          {/* Exams Card */}
-          <div className="bg-gradient-to-br from-cyan-100 to-cyan-200 rounded-xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden">
-            <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
-              <BookOpen className="w-4 h-4 sm:w-6 sm:h-6 text-cyan-600" />
-            </div>
-            <div className="mb-3 sm:mb-4">
-              <p className="text-cyan-700 font-medium mb-1 text-xs sm:text-sm">Exams</p>
-              <div className="flex items-baseline">
-                <span className="text-xl sm:text-4xl font-bold text-cyan-900">{dashboardStats.totalExams}</span>
-                <span className="text-cyan-600 text-xs sm:text-sm ml-1 sm:ml-2">+1 last day</span>
-              </div>
-            </div>
-            <div className="w-full bg-cyan-200 rounded-full h-1.5 sm:h-2">
-              <div className="bg-cyan-600 h-1.5 sm:h-2 rounded-full w-3/4 transition-all duration-500"></div>
-            </div>
-          </div>
-
-          {/* Average Score Card */}
-          <div className="bg-white rounded-xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 relative">
-            <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
-              <div className="w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center">
-                <div className="w-1 h-1 sm:w-2 sm:h-2 bg-slate-400 rounded-full"></div>
-                <div className="w-1 h-1 sm:w-2 sm:h-2 bg-slate-400 rounded-full ml-0.5 sm:ml-1"></div>
-                <div className="w-1 h-1 sm:w-2 sm:h-2 bg-slate-400 rounded-full ml-0.5 sm:ml-1"></div>
-              </div>
-            </div>
-            <div className="mb-3 sm:mb-4">
-              <p className="text-slate-600 font-medium mb-1 text-xs sm:text-sm">Average Score</p>
-              <div className="flex items-baseline">
-                <span className="text-xl sm:text-4xl font-bold text-slate-900">{dashboardStats.averageScore}</span>
-                <span className="text-slate-500 text-xs sm:text-sm ml-1 sm:ml-2">+1 last day</span>
-              </div>
-            </div>
-            <div className="w-full bg-slate-200 rounded-full h-1.5 sm:h-2">
-              <div 
-                className="bg-slate-600 h-1.5 sm:h-2 rounded-full transition-all duration-500"
-                style={{ width: `${dashboardStats.averageScore}%` }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Add Student Card */}
-          <div className="bg-white rounded-xl sm:rounded-3xl p-4 sm:p-6 border-2 border-dashed border-slate-300 hover:border-indigo-400 transition-colors cursor-pointer group relative" onClick={() => setShowAddModal(true)}>
-            <div className="text-center">
-              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-slate-100 group-hover:bg-indigo-100 rounded-lg sm:rounded-2xl flex items-center justify-center mx-auto mb-2 sm:mb-4 transition-colors">
-                <Plus className="w-4 h-4 sm:w-6 sm:h-6 text-slate-400 group-hover:text-indigo-600" />
-              </div>
-              <p className="text-slate-600 group-hover:text-indigo-600 font-medium text-xs sm:text-sm">Add Student</p>
-              <p className="text-slate-400 text-xs mt-1">Click to add new child</p>
-            </div>
-            {showWelcomeTooltips && students.length > 0 && (
-              <WelcomeTooltip
-                isVisible={true}
-                onClose={() => setShowWelcomeTooltips(false)}
-                title="Start an Exam"
-                description="Click 'Start Exam' on any student card to begin their first learning adventure!"
-                position="left"
-              />
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-          {/* Main Chart Area */}
-          <div className="lg:col-span-2">
-            {/* Total Progress Chart */}
-            <div className="bg-white rounded-xl sm:rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200 mb-6 sm:mb-8">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
-                <div>
-                  <h3 className="text-lg sm:text-2xl font-bold text-slate-900 mb-1 sm:mb-2">Total progress</h3>
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-cyan-400 rounded-full mr-1 sm:mr-2"></div>
-                      <span className="text-slate-600 text-xs sm:text-sm">learning</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-slate-300 rounded-full mr-1 sm:mr-2"></div>
-                      <span className="text-slate-600 text-xs sm:text-sm">target</span>
-                    </div>
-                  </div>
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-white/30 shadow-lg">
+            <div className="flex flex-col sm:flex-row items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-center mb-4 sm:mb-0">
+                <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full p-3 sm:p-4 mb-3 sm:mb-0 sm:mr-4 shadow-lg">
+                  <Crown className="w-8 h-8 sm:w-10 lg:w-12 text-white" />
                 </div>
-                <div className="text-right mt-2 sm:mt-0">
-                  <div className="text-xl sm:text-3xl font-bold text-slate-900">
-                    ${dashboardStats.totalXP}.00
-                  </div>
+                <div className="text-center sm:text-left">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800 mb-1 sm:mb-2">
+                    Welcome back, {profile?.full_name || 'Parent'}!
+                  </h1>
+                  <p className="text-base sm:text-lg lg:text-xl text-slate-600">Ready to level up your kids' learning adventure?</p>
                 </div>
               </div>
-
-              {/* Mock Chart Area */}
-              <div className="h-40 sm:h-64 relative">
-                <svg className="w-full h-full" viewBox="0 0 800 200">
-                  {/* Grid lines */}
-                  <defs>
-                    <pattern id="grid" width="80" height="40" patternUnits="userSpaceOnUse">
-                      <path d="M 80 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" strokeWidth="1"/>
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#grid)" />
-                  
-                  {/* Chart lines */}
-                  <path
-                    d="M 50 150 Q 150 120 250 100 T 450 80 T 650 90 T 750 70"
-                    fill="none"
-                    stroke="#22d3ee"
-                    strokeWidth="3"
-                    className="drop-shadow-sm"
-                  />
-                  <path
-                    d="M 50 180 Q 150 160 250 140 T 450 120 T 650 130 T 750 110"
-                    fill="none"
-                    stroke="#e2e8f0"
-                    strokeWidth="3"
-                  />
-                  
-                  {/* Data point */}
-                  <circle cx="450" cy="80" r="6" fill="#0891b2" className="drop-shadow-sm" />
-                </svg>
-                
-                {/* Month labels */}
-                <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs sm:text-sm text-slate-500 px-4">
-                  <span>Jun</span>
-                  <span>Jul</span>
-                  <span>Aug</span>
-                  <span>Sep</span>
-                  <span className="bg-slate-900 text-white px-2 py-0.5 rounded-full text-xs">Oct</span>
-                  <span>Nov</span>
-                  <span>Dec</span>
-                  <span>Jan</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Students Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-              {students.map((student) => (
-                <StudentCard
-                  key={student.id}
-                  student={student}
-                  onExamComplete={handleExamComplete}
-                  onStudentUpdated={handleStudentUpdated}
-                />
-              ))}
-              
-              {students.length === 0 && (
-                <div className="md:col-span-2 text-center py-8 sm:py-12">
-                  <div className="bg-indigo-100 rounded-full w-16 h-16 sm:w-24 sm:h-24 flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                    <Users className="w-8 h-8 sm:w-12 sm:h-12 text-indigo-500" />
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-800 mb-3 sm:mb-4">No students added yet!</h3>
-                  <p className="text-slate-600 text-sm sm:text-lg mb-4 sm:mb-6">
-                    Start by adding your first child to begin their learning adventure!
-                  </p>
-                  <Button 
-                    onClick={() => setShowAddModal(true)}
-                    size="lg"
-                    icon={<Plus className="w-5 h-5 sm:w-6 sm:h-6" />}
-                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
-                  >
-                    Add Your First Child!
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Right Sidebar */}
-          <div className="space-y-4 sm:space-y-6">
-            {/* Performance Image Card */}
-            <div className="bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl sm:rounded-3xl p-4 sm:p-6 text-white relative overflow-hidden">
-              <div className="absolute top-2 sm:top-4 right-2 sm:right-4 w-20 sm:w-32 h-20 sm:h-32 opacity-20">
-                <div className="w-full h-full bg-white rounded-xl sm:rounded-2xl transform rotate-12"></div>
-                <div className="absolute top-1 sm:top-2 left-1 sm:left-2 w-full h-full bg-white rounded-xl sm:rounded-2xl transform rotate-6"></div>
-                <div className="absolute top-2 sm:top-4 left-2 sm:left-4 w-full h-full bg-white rounded-xl sm:rounded-2xl"></div>
-              </div>
-              <div className="relative z-10">
-                <h3 className="text-base sm:text-xl font-bold mb-1 sm:mb-2">Learning Progress</h3>
-                <p className="text-cyan-100 mb-3 sm:mb-4 text-xs sm:text-sm">Track your children's educational journey</p>
-                <Button 
-                  variant="outline" 
-                  className="border-white text-white hover:bg-white hover:text-cyan-600 text-xs sm:text-sm py-1.5 sm:py-2 px-3 sm:px-4"
-                  onClick={() => setShowFamilyReports(true)}
+              <div className="hidden lg:block">
+                <Button
+                  onClick={() => setShowLeaderboard(true)}
+                  variant="gradient-primary"
+                  size="lg"
+                  icon={<Trophy className="w-5 h-5" />}
                 >
-                  View Reports
+                  Leaderboard
                 </Button>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Performance List */}
-            <div className="bg-white rounded-xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
-              <div className="flex items-center justify-between mb-4 sm:mb-6">
-                <h3 className="text-base sm:text-lg font-bold text-slate-900">Performance</h3>
-                <div className="flex items-center space-x-1 sm:space-x-2">
-                  <button className="px-2 sm:px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs">Students</button>
-                  <button className="px-2 sm:px-3 py-1 text-slate-600 rounded-lg text-xs hover:bg-slate-100">Subjects</button>
-                  <button className="p-1 text-slate-400 hover:text-slate-600">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </button>
+        {/* Plan Details Section */}
+        <div className="mb-6 sm:mb-8">
+          <div className={`rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border-2 shadow-lg ${getPlanColor(subscriptionPlan)}`}>
+            <div className="flex flex-col lg:flex-row items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-center mb-4 lg:mb-0">
+                <div className="bg-white/80 backdrop-blur-sm rounded-full p-3 sm:p-4 mb-3 sm:mb-0 sm:mr-6 border border-white/30 shadow-md">
+                  <Crown className="w-8 h-8 sm:w-10 lg:w-12 text-amber-500" />
+                </div>
+                <div className="text-center sm:text-left">
+                  <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-slate-700 mb-1 sm:mb-2">Your Current Plan</h3>
+                  <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800">{getPlanDisplayName(subscriptionPlan)}</p>
                 </div>
               </div>
-
-              <div className="space-y-3 sm:space-y-4">
-                {students.slice(0, 3).map((student, index) => (
-                  <div key={student.id} className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 rounded-xl sm:rounded-2xl">
-                    <div className="flex items-center">
-                      <div className={`w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-2xl flex items-center justify-center mr-3 sm:mr-4 ${
-                        index === 0 ? 'bg-slate-900' : index === 1 ? 'bg-purple-100' : 'bg-cyan-100'
-                      }`}>
-                        <div className={`w-4 h-4 sm:w-6 sm:h-6 rounded-md sm:rounded-lg ${
-                          index === 0 ? 'bg-cyan-400' : index === 1 ? 'bg-purple-400' : 'bg-cyan-400'
-                        }`}></div>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-slate-900 text-xs sm:text-base">{student.name}</h4>
-                        <p className="text-slate-500 text-xs">{student.level}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <ArrowUp className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 mr-1" />
-                      <span className="text-green-600 font-medium text-xs sm:text-sm">{25 + index * 5}%</span>
-                    </div>
+              
+              <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 lg:space-x-8">
+                <div className="text-center bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-white/30 shadow-md">
+                  <div className="flex items-center justify-center text-blue-600 mb-1 sm:mb-2">
+                    <Users className="w-4 h-4 sm:w-5 lg:w-6 mr-1 sm:mr-2" />
+                    <span className="font-semibold text-sm sm:text-base">Kids Limit</span>
                   </div>
-                ))}
-
-                {students.length === 0 && (
-                  <div className="text-center py-6 sm:py-8">
-                    <Trophy className="w-8 h-8 sm:w-12 sm:h-12 text-slate-300 mx-auto mb-2 sm:mb-3" />
-                    <p className="text-slate-500 text-xs sm:text-sm">No performance data yet</p>
-                    <p className="text-slate-400 text-xs mt-1">Add students to see their progress</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">{maxStudents}</p>
+                </div>
+                
+                <div className="text-center bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-white/30 shadow-md">
+                  <div className="flex items-center justify-center text-indigo-600 mb-1 sm:mb-2">
+                    <BookOpen className="w-4 h-4 sm:w-5 lg:w-6 mr-1 sm:mr-2" />
+                    <span className="font-semibold text-sm sm:text-base">Daily Exams</span>
+                  </div>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">
+                    {dailyExamLimit === 999 ? '∞' : dailyExamLimit}
+                  </p>
+                </div>
+                
+                {subscriptionPlan === 'premium' && (
+                  <div className="text-center bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-white/30 shadow-md">
+                    <div className="flex items-center justify-center text-amber-600 mb-1 sm:mb-2">
+                      <Star className="w-4 h-4 sm:w-5 lg:w-6 mr-1 sm:mr-2" />
+                      <span className="font-semibold text-sm sm:text-base">Access</span>
+                    </div>
+                    <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">Full</p>
                   </div>
                 )}
               </div>
             </div>
+            
+            {subscriptionPlan === 'premium' && (
+              <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-green-100 border-2 border-green-300 rounded-xl sm:rounded-2xl">
+                <div className="flex items-center text-green-800 font-medium">
+                  <Crown className="w-4 h-4 sm:w-5 lg:w-6 mr-2 sm:mr-3" />
+                  <span className="text-sm sm:text-base lg:text-lg">
+                    You're enjoying premium access for FREE during our launch period!
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
-            {/* Quick Actions */}
-            <div className="bg-white rounded-xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Quick Actions</h3>
-              <div className="space-y-2 sm:space-y-3">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-md border border-slate-200">
+            <div className="flex flex-col sm:flex-row items-center">
+              <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full p-2 sm:p-3 mb-2 sm:mb-0 sm:mr-3 lg:mr-4 shadow-lg">
+                <Users className="w-5 h-5 sm:w-6 lg:w-8 text-white" />
+              </div>
+              <div className="text-center sm:text-left">
+                <p className="text-xs sm:text-sm font-medium text-slate-600">Kids</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">{students.length}</p>
+                <p className="text-xs text-slate-500">of {maxStudents} allowed</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-md border border-slate-200">
+            <div className="flex flex-col sm:flex-row items-center">
+              <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-full p-2 sm:p-3 mb-2 sm:mb-0 sm:mr-3 lg:mr-4 shadow-lg">
+                <BookOpen className="w-5 h-5 sm:w-6 lg:w-8 text-white" />
+              </div>
+              <div className="text-center sm:text-left">
+                <p className="text-xs sm:text-sm font-medium text-slate-600">Exams Done</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">{dashboardStats.totalExams}</p>
+                <p className="text-xs text-slate-500">
+                  {dailyExamLimit === 999 ? 'Unlimited daily' : `${dailyExamLimit}/day limit`}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-md border border-slate-200">
+            <div className="flex flex-col sm:flex-row items-center">
+              <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-full p-2 sm:p-3 mb-2 sm:mb-0 sm:mr-3 lg:mr-4 shadow-lg">
+                <Trophy className="w-5 h-5 sm:w-6 lg:w-8 text-white" />
+              </div>
+              <div className="text-center sm:text-left">
+                <p className="text-xs sm:text-sm font-medium text-slate-600">Badges</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">{dashboardStats.totalBadges}</p>
+                <p className="text-xs text-slate-500">
+                  {subscriptionPlan === 'premium' ? 'Full badge system' : 'Limited badges'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-md border border-slate-200">
+            <div className="flex flex-col sm:flex-row items-center">
+              <div className="bg-gradient-to-br from-red-500 to-pink-500 rounded-full p-2 sm:p-3 mb-2 sm:mb-0 sm:mr-3 lg:mr-4 shadow-lg">
+                <TrendingUp className="w-5 h-5 sm:w-6 lg:w-8 text-white" />
+              </div>
+              <div className="text-center sm:text-left">
+                <p className="text-xs sm:text-sm font-medium text-slate-600">Avg Score</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800">
+                  {dashboardStats.averageScore > 0 ? `${dashboardStats.averageScore}%` : '-'}
+                </p>
+                <p className="text-xs text-slate-500">
+                  {subscriptionPlan === 'premium' ? 'Detailed analytics' : 'Basic tracking'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          {/* Children Management */}
+          <div className="lg:col-span-2">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-white/30 shadow-lg">
+              <div className="p-4 sm:p-6 border-b border-slate-200">
+                <div className="flex flex-col sm:flex-row items-center justify-between">
+                  <div className="flex items-center mb-3 sm:mb-0">
+                    <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full p-2 sm:p-3 mr-3 sm:mr-4 shadow-lg">
+                      <Users className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                    </div>
+                    <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800">
+                      Your Amazing Kids ({students.length})
+                    </h2>
+                  </div>
+                  <Button 
+                    variant="gradient-primary"
+                    size="md" 
+                    onClick={() => canAddMoreStudents && setShowAddModal(true)}
+                    disabled={!canAddMoreStudents}
+                    icon={<Plus className="w-4 h-4 sm:w-5 sm:h-5" />}
+                    className={`w-full sm:w-auto text-sm sm:text-base ${!canAddMoreStudents ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    Add Kid
+                  </Button>
+                </div>
+                {!canAddMoreStudents && (
+                  <div className="mt-3 sm:mt-4 p-2.5 sm:p-3 bg-amber-100 border border-amber-300 rounded-xl">
+                    <p className="text-amber-700 font-medium text-center text-sm sm:text-base">
+                      You've reached your plan limit of {maxStudents} {maxStudents === 1 ? 'kid' : 'kids'}!
+                    </p>
+                  </div>
+                )}
+              </div>
+              
+              <div className="p-4 sm:p-6">
+                {error && (
+                  <div className="mb-4 bg-red-50 border-2 border-red-200 rounded-xl p-3 sm:p-4">
+                    <p className="text-red-700 font-medium text-center text-sm sm:text-base">{error}</p>
+                  </div>
+                )}
+
+                {loading ? (
+                  <div className="text-center py-8 sm:py-12">
+                    <div className="relative">
+                      <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-4 border-indigo-200 border-t-indigo-500 mx-auto mb-4 sm:mb-6"></div>
+                    </div>
+                    <p className="text-indigo-600 font-medium text-lg sm:text-xl">Loading your awesome kids...</p>
+                  </div>
+                ) : students.length === 0 ? (
+                  <div className="text-center py-8 sm:py-12">
+                    <div className="bg-indigo-100 rounded-full w-16 h-16 sm:w-20 lg:w-24 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                      <Users className="w-10 h-10 sm:w-12 lg:w-16 text-indigo-500" />
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-indigo-600 mb-3 sm:mb-4">No kids added yet!</h3>
+                    <p className="text-slate-600 text-base sm:text-lg mb-3 sm:mb-4">
+                      Start by adding your first kid to begin their epic learning adventure!
+                    </p>
+                    <p className="text-indigo-500 mb-4 sm:mb-6 text-sm sm:text-base">
+                      You can add up to {maxStudents} {maxStudents === 1 ? 'kid' : 'kids'} with your current plan!
+                    </p>
+                    <Button 
+                      onClick={() => setShowAddModal(true)}
+                      variant="gradient-primary"
+                      size="lg"
+                      icon={<Plus className="w-5 h-5 sm:w-6 sm:h-6" />}
+                      className="w-full sm:w-auto"
+                    >
+                      Add Your First Kid!
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                    {students.map((student) => (
+                      <StudentCard
+                        key={student.id}
+                        student={student}
+                        onExamComplete={handleExamComplete}
+                        onStudentUpdated={handleStudentUpdated}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions & Info */}
+          <div className="space-y-4 sm:space-y-6">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-white/30 p-4 sm:p-6 shadow-lg">
+              <div className="flex items-center mb-4 sm:mb-6">
+                <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full p-2 sm:p-3 mr-3 sm:mr-4 shadow-lg">
+                  <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-slate-800">Quick Actions</h3>
+              </div>
+              <div className="space-y-3 sm:space-y-4">
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start text-left border-2 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 text-xs sm:text-sm py-2 sm:py-3"
+                  className="w-full justify-start text-sm sm:text-base lg:text-lg border-2 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50"
+                  onClick={() => canAddMoreStudents && setShowAddModal(true)}
+                  disabled={!canAddMoreStudents}
+                  icon={<Plus className="w-4 h-4 sm:w-5 sm:h-5" />}
+                >
+                  Add New Kid
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start text-sm sm:text-base lg:text-lg border-2 border-slate-200 hover:border-amber-300 hover:bg-amber-50"
                   onClick={() => setShowLeaderboard(true)}
                   icon={<Trophy className="w-4 h-4 sm:w-5 sm:h-5" />}
                 >
@@ -546,30 +409,105 @@ export function ParentDashboard() {
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start text-left border-2 border-slate-200 hover:border-purple-300 hover:bg-purple-50 text-xs sm:text-sm py-2 sm:py-3"
+                  className="w-full justify-start text-sm sm:text-base lg:text-lg border-2 border-slate-200 hover:border-blue-300 hover:bg-blue-50"
                   onClick={() => setShowFamilyReports(true)}
-                  icon={<BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />}
+                  icon={<TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />}
                 >
-                  Family Reports
+                  View Reports
                 </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start text-left border-2 border-slate-200 hover:border-green-300 hover:bg-green-50 text-xs sm:text-sm py-2 sm:py-3"
-                  onClick={() => setShowAddModal(true)}
-                  disabled={!canAddMoreStudents}
-                  icon={<Plus className="w-4 h-4 sm:w-5 sm:h-5" />}
-                >
-                  Add New Child
-                </Button>
-                {isNewUser && (
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start text-left border-2 border-amber-300 hover:border-amber-400 hover:bg-amber-50 text-amber-700 text-xs sm:text-sm py-2 sm:py-3"
-                    onClick={() => setShowOnboarding(true)}
-                    icon={<HelpCircle className="w-4 h-4 sm:w-5 sm:h-5" />}
-                  >
-                    Take Platform Tour
-                  </Button>
+              </div>
+            </div>
+
+            {/* Family Stats */}
+            <div className="bg-gradient-to-br from-indigo-100 to-blue-100 rounded-2xl sm:rounded-3xl border-2 border-indigo-300 p-4 sm:p-6 shadow-lg">
+              <div className="flex items-center mb-3 sm:mb-4">
+                <div className="bg-gradient-to-br from-indigo-500 to-blue-500 rounded-full p-2 sm:p-3 mr-3 sm:mr-4 shadow-lg">
+                  <Target className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-indigo-800">Family Stats</h3>
+              </div>
+              <div className="space-y-2 sm:space-y-3 text-sm sm:text-base lg:text-lg">
+                <div className="flex items-center justify-between">
+                  <span className="text-indigo-700">Total XP Earned:</span>
+                  <span className="font-bold text-indigo-800">{dashboardStats.totalXP}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-blue-700">Exams Completed:</span>
+                  <span className="font-bold text-blue-800">{dashboardStats.totalExams}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-purple-700">Badges Earned:</span>
+                  <span className="font-bold text-purple-800">{dashboardStats.totalBadges}</span>
+                </div>
+                {dashboardStats.averageScore > 0 && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-amber-700">Family Average:</span>
+                    <span className="font-bold text-amber-800">{dashboardStats.averageScore}%</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl sm:rounded-3xl border-2 border-blue-300 p-4 sm:p-6 shadow-lg">
+              <div className="flex items-center mb-3 sm:mb-4">
+                <div className="bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full p-2 sm:p-3 mr-3 sm:mr-4 shadow-lg">
+                  <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-blue-800">Getting Started</h3>
+              </div>
+              <p className="text-indigo-700 text-sm sm:text-base lg:text-lg mb-3 sm:mb-4">
+                Welcome to Edventure+! Here's your learning quest:
+              </p>
+              <ol className="text-blue-700 space-y-2 sm:space-y-3">
+                <li className="flex items-start">
+                  <span className="bg-blue-500 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-xs sm:text-sm font-bold mr-2 sm:mr-3 mt-1">1</span>
+                  <span className="text-sm sm:text-base lg:text-lg">Add your kids' profiles</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="bg-indigo-500 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-xs sm:text-sm font-bold mr-2 sm:mr-3 mt-1">2</span>
+                  <span className="text-sm sm:text-base lg:text-lg">Choose levels & subjects</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="bg-purple-500 text-white rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-xs sm:text-sm font-bold mr-2 sm:mr-3 mt-1">3</span>
+                  <span className="text-sm sm:text-base lg:text-lg">Start the learning adventure!</span>
+                </li>
+              </ol>
+            </div>
+
+            {/* Plan Benefits */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-white/30 p-4 sm:p-6 shadow-lg">
+              <div className="flex items-center mb-3 sm:mb-4">
+                <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-full p-2 sm:p-3 mr-3 sm:mr-4 shadow-lg">
+                  <Crown className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-amber-700">Your Plan Benefits</h3>
+              </div>
+              <div className="space-y-2 sm:space-y-3 text-sm sm:text-base lg:text-lg">
+                <div className="flex items-center text-green-600">
+                  <Crown className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                  <span className="font-bold">{subscriptionPlan === 'premium' ? 'Premium' : 'Free'} Plan Active</span>
+                </div>
+                <div className="flex items-center text-blue-600">
+                  <Users className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                  <span>Up to {maxStudents} {maxStudents === 1 ? 'kid' : 'kids'}</span>
+                </div>
+                <div className="flex items-center text-indigo-600">
+                  <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                  <span>
+                    {dailyExamLimit === 999 ? 'Unlimited' : dailyExamLimit} exam{dailyExamLimit !== 1 ? 's' : ''} per day
+                  </span>
+                </div>
+                {subscriptionPlan === 'premium' && (
+                  <>
+                    <div className="flex items-center text-amber-600">
+                      <Trophy className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                      <span>All difficulty levels</span>
+                    </div>
+                    <div className="flex items-center text-red-600">
+                      <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                      <span>Advanced analytics</span>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -592,20 +530,6 @@ export function ParentDashboard() {
       <FamilyReportsModal
         isOpen={showFamilyReports}
         onClose={() => setShowFamilyReports(false)}
-      />
-
-      <OnboardingModal
-        isOpen={showOnboarding}
-        onClose={() => setShowOnboarding(false)}
-        onComplete={handleOnboardingComplete}
-        userName={user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'there'}
-      />
-
-      <QuickStartGuide
-        isOpen={showQuickStart}
-        onClose={() => setShowQuickStart(false)}
-        onAddStudent={() => setShowAddModal(true)}
-        hasStudents={students.length > 0}
       />
     </div>
   )
