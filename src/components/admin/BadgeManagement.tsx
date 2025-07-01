@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Trophy, Plus, Edit, Trash2, Award, Star } from 'lucide-react'
 import { Button } from '../ui/Button'
+import { AddBadgeModal } from './AddBadgeModal'
 
 interface Badge {
   id: string
@@ -17,6 +18,7 @@ export function BadgeManagement() {
   const [badges, setBadges] = useState<Badge[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [showAddModal, setShowAddModal] = useState(false)
 
   useEffect(() => {
     fetchBadges()
@@ -41,6 +43,10 @@ export function BadgeManagement() {
     }
   }
 
+  const handleBadgeAdded = () => {
+    fetchBadges() // Refresh the badges list
+  }
+
   const getConditionText = (type: string, value: number) => {
     switch (type) {
       case 'exams_completed':
@@ -51,6 +57,10 @@ export function BadgeManagement() {
         return `${value} day learning streak`
       case 'xp_earned':
         return `Earn ${value} XP points`
+      case 'subject_mastery':
+        return `Complete ${value} exams in the same subject`
+      case 'first_exam':
+        return `Complete your first exam`
       default:
         return `${type}: ${value}`
     }
@@ -76,7 +86,11 @@ export function BadgeManagement() {
             <h1 className="text-2xl font-bold text-neutral-800">Badge System Management</h1>
             <p className="text-neutral-600">Create and manage achievement badges for students</p>
           </div>
-          <Button icon={<Plus className="w-4 h-4" />}>
+          <Button 
+            onClick={() => setShowAddModal(true)}
+            icon={<Plus className="w-4 h-4" />}
+            className="bg-gradient-to-r from-accent-500 to-warning-500 hover:from-accent-600 hover:to-warning-600 text-white"
+          >
             Create Badge
           </Button>
         </div>
@@ -143,7 +157,11 @@ export function BadgeManagement() {
               <p className="text-neutral-600 mb-4">
                 Create your first achievement badge to motivate students.
               </p>
-              <Button icon={<Plus className="w-4 h-4" />}>
+              <Button 
+                onClick={() => setShowAddModal(true)}
+                icon={<Plus className="w-4 h-4" />}
+                className="bg-gradient-to-r from-accent-500 to-warning-500 hover:from-accent-600 hover:to-warning-600 text-white"
+              >
                 Create First Badge
               </Button>
             </div>
@@ -181,6 +199,13 @@ export function BadgeManagement() {
           )}
         </div>
       </div>
+
+      {/* Add Badge Modal */}
+      <AddBadgeModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onBadgeAdded={handleBadgeAdded}
+      />
     </div>
   )
 }

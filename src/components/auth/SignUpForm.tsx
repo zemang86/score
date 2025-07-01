@@ -50,20 +50,19 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
   if (success) {
     return (
       <div className="w-full max-w-md mx-auto text-center">
-        <div className="bg-gradient-to-r from-success-100 to-accent-100 border-2 border-success-300 rounded-3xl p-8 animate-scale-in">
+        <div className="bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 rounded-3xl p-8 animate-scale-in">
           <div className="flex justify-center mb-4">
-            <Star className="w-16 h-16 text-accent-500 animate-bounce-gentle" />
+            <Star className="w-16 h-16 text-amber-500 animate-bounce-gentle" />
           </div>
-          <h2 className="text-3xl font-bold text-success-700 mb-4">Account Created!</h2>
-          <p className="text-success-600 text-lg mb-6">
-            Welcome to KitaScore! You're now part of our learning family. 
+          <h2 className="text-3xl font-bold text-green-700 mb-4">Account Created!</h2>
+          <p className="text-green-600 text-lg mb-6">
+            Welcome to Edventure+! You're now part of our learning family. 
             Time to add your kids and start the adventure!
           </p>
           <Button 
             onClick={onToggleMode} 
-            variant="success"
             size="lg"
-            className="w-full"
+            className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
             icon={<Crown className="w-5 h-5" />}
           >
             Let's Start Learning!
@@ -77,17 +76,17 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
     <div className="w-full max-w-md mx-auto">
       <div className="text-center mb-8">
         <div className="flex items-center justify-center mb-4">
-          <Sparkles className="w-6 h-6 text-secondary-500 mr-2 animate-pulse-soft" />
-          <h1 className="text-3xl font-bold text-primary-600">Join KitaScore!</h1>
-          <Sparkles className="w-6 h-6 text-secondary-500 ml-2 animate-pulse-soft" />
+          <Sparkles className="w-6 h-6 text-purple-500 mr-2 animate-pulse-soft" />
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Join Edventure+!</h1>
+          <Sparkles className="w-6 h-6 text-purple-500 ml-2 animate-pulse-soft" />
         </div>
-        <p className="text-secondary-600 text-lg">Create your family's learning adventure account</p>
+        <p className="text-slate-600 text-lg">Create your family's learning adventure account</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="bg-error-50 border-2 border-error-200 rounded-xl p-4">
-            <p className="text-error-700 font-medium text-center">{error}</p>
+          <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+            <p className="text-red-700 font-medium text-center">{error}</p>
           </div>
         )}
 
@@ -121,7 +120,7 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
           >
             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
           </button>
@@ -138,22 +137,21 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
 
         <Button
           type="submit"
-          variant="fun"
           size="lg"
-          className="w-full"
+          className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
           loading={loading}
           icon={!loading ? <Zap className="w-5 h-5" /> : undefined}
         >
           {loading ? 'Creating Account...' : 'Create My Account!'}
         </Button>
 
-        <div className="text-center bg-primary-50 rounded-xl p-4 border border-primary-200">
-          <p className="text-neutral-700">
+        <div className="text-center bg-slate-50 rounded-xl p-4 border border-slate-200">
+          <p className="text-slate-700">
             Already have an account?{' '}
             <button
               type="button"
               onClick={onToggleMode}
-              className="text-primary-600 hover:text-primary-700 font-semibold transition-colors hover:underline"
+              className="text-indigo-600 hover:text-indigo-700 font-semibold transition-colors hover:underline"
             >
               Sign in here!
             </button>

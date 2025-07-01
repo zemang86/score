@@ -18,24 +18,24 @@ export function Button({
   disabled,
   ...props
 }: ButtonProps) {
-  const baseClasses = 'inline-flex items-center justify-center font-medium transition-smooth focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed hover-lift'
+  const baseClasses = 'inline-flex items-center justify-center font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95'
   
   const variantClasses = {
-    primary: 'bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500 shadow-fun',
-    secondary: 'bg-secondary-500 text-white hover:bg-secondary-600 focus:ring-secondary-500 shadow-success',
-    outline: 'border-2 border-primary-300 bg-white text-primary-700 hover:bg-primary-50 hover:border-primary-400 focus:ring-primary-500 shadow-soft',
-    ghost: 'text-primary-700 hover:bg-primary-100 focus:ring-primary-500',
-    success: 'bg-success-500 text-white hover:bg-success-600 focus:ring-success-500 shadow-success',
-    warning: 'bg-warning-500 text-white hover:bg-warning-600 focus:ring-warning-500 shadow-warning',
-    error: 'bg-error-500 text-white hover:bg-error-600 focus:ring-error-500 shadow-error',
-    fun: 'bg-gradient-to-r from-primary-400 to-secondary-400 text-white hover:from-primary-500 hover:to-secondary-500 focus:ring-primary-500 shadow-fun'
+    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-lg hover:shadow-xl',
+    secondary: 'bg-slate-600 text-white hover:bg-slate-700 focus:ring-slate-500 shadow-lg hover:shadow-xl',
+    outline: 'border-2 border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-400 focus:ring-slate-500 shadow-sm hover:shadow-md',
+    ghost: 'text-slate-700 hover:bg-slate-100 focus:ring-slate-500',
+    success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-lg hover:shadow-xl',
+    warning: 'bg-amber-600 text-white hover:bg-amber-700 focus:ring-amber-500 shadow-lg hover:shadow-xl',
+    error: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-lg hover:shadow-xl',
+    fun: 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 focus:ring-blue-500 shadow-lg hover:shadow-xl'
   }
   
   const sizeClasses = {
-    sm: 'px-3 py-2 text-sm rounded-xl',
-    md: 'px-4 py-2.5 text-base rounded-xl',
-    lg: 'px-6 py-3 text-lg rounded-2xl',
-    xl: 'px-8 py-4 text-xl rounded-2xl'
+    sm: 'px-4 py-2.5 text-sm rounded-xl',
+    md: 'px-6 py-3 text-base rounded-xl',
+    lg: 'px-8 py-4 text-lg rounded-2xl',
+    xl: 'px-10 py-5 text-xl rounded-2xl'
   }
 
   const isDisabled = disabled || loading
@@ -47,9 +47,9 @@ export function Button({
       {...props}
     >
       {loading && (
-        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+        <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-3"></div>
       )}
-      {icon && !loading && <span className="mr-2">{icon}</span>}
+      {icon && !loading && <span className="mr-3">{icon}</span>}
       {children}
     </button>
   )

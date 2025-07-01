@@ -4,6 +4,7 @@ import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { Shield, Mail, Lock, Eye, EyeOff, ArrowLeft, Crown, Zap } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { EdventureLogo } from '../ui/EdventureLogo'
 
 export function AdminLoginPage() {
   const { signIn } = useAuth()
@@ -35,74 +36,74 @@ export function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-error-900 to-neutral-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-red-900 to-slate-800">
       <div className="flex min-h-screen">
         {/* Left side - Admin Branding */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-error-600 via-neutral-800 to-neutral-900 p-12 text-white relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-red-600 via-slate-800 to-slate-900 p-12 text-white relative overflow-hidden">
           {/* Security-themed decorative elements */}
-          <div className="absolute top-10 right-10 animate-pulse-soft opacity-60">
-            <Shield className="w-12 h-12 text-error-300" />
+          <div className="absolute top-10 right-10 animate-pulse-soft opacity-40">
+            <Shield className="w-12 h-12 text-red-300" />
           </div>
-          <div className="absolute top-32 right-32 animate-bounce-gentle opacity-60">
-            <Crown className="w-8 h-8 text-accent-400" />
+          <div className="absolute top-32 right-32 animate-bounce-gentle opacity-40">
+            <Crown className="w-8 h-8 text-amber-400" />
           </div>
-          <div className="absolute bottom-20 right-20 animate-pulse-soft opacity-60">
-            <Zap className="w-10 h-10 text-error-400" />
+          <div className="absolute bottom-20 right-20 animate-pulse-soft opacity-40">
+            <Zap className="w-10 h-10 text-red-400" />
           </div>
 
           <div className="flex flex-col justify-center max-w-lg relative z-10">
             <div className="mb-8">
               <div className="flex items-center mb-6">
-                <div className="glass rounded-3xl p-4 mr-4 border border-white/30">
-                  <Shield className="w-16 h-16 text-error-300" />
+                <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-4 mr-4 border border-white/30">
+                  <Shield className="w-16 h-16 text-red-300" />
                 </div>
                 <div>
                   <h1 className="text-5xl font-bold text-white">Admin Portal</h1>
-                  <p className="text-error-200 text-xl">KitaScore System Control</p>
+                  <p className="text-red-200 text-xl">Edventure+ System Control</p>
                 </div>
               </div>
-              <div className="glass rounded-3xl p-6 border border-white/20">
-                <p className="text-3xl font-bold mb-3 text-error-300">Secure Access Only</p>
-                <p className="text-error-100 text-xl leading-relaxed">
-                  Administrative access to KitaScore system management and controls.
+              <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20">
+                <p className="text-3xl font-bold mb-3 text-red-300">Secure Access Only</p>
+                <p className="text-red-100 text-xl leading-relaxed">
+                  Administrative access to Edventure+ system management and controls.
                 </p>
               </div>
             </div>
 
             <div className="space-y-6">
-              <div className="flex items-start space-x-4 glass rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                <div className="bg-error-500 rounded-full p-3 shadow-error">
+              <div className="flex items-start space-x-4 bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <div className="bg-red-500 rounded-full p-3 shadow-lg">
                   <Shield className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xl text-error-300">System Management</h3>
-                  <p className="text-error-100">Full access to user management, question banks, and system analytics.</p>
+                  <h3 className="font-bold text-xl text-red-300">System Management</h3>
+                  <p className="text-red-100">Full access to user management, question banks, and system analytics.</p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4 glass rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                <div className="bg-accent-500 rounded-full p-3 shadow-warning">
+              <div className="flex items-start space-x-4 bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <div className="bg-amber-500 rounded-full p-3 shadow-lg">
                   <Crown className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xl text-error-300">Administrative Control</h3>
-                  <p className="text-error-100">Monitor platform performance and manage educational content.</p>
+                  <h3 className="font-bold text-xl text-red-300">Administrative Control</h3>
+                  <p className="text-red-100">Monitor platform performance and manage educational content.</p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4 glass rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                <div className="bg-neutral-500 rounded-full p-3 shadow-medium">
+              <div className="flex items-start space-x-4 bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <div className="bg-slate-500 rounded-full p-3 shadow-lg">
                   <Zap className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xl text-error-300">Advanced Analytics</h3>
-                  <p className="text-error-100">Deep insights into system usage and educational effectiveness.</p>
+                  <h3 className="font-bold text-xl text-red-300">Advanced Analytics</h3>
+                  <p className="text-red-100">Deep insights into system usage and educational effectiveness.</p>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 p-4 bg-warning-100/20 border-2 border-warning-400/50 rounded-2xl glass">
-              <p className="text-warning-200 text-center font-medium">
+            <div className="mt-8 p-4 bg-amber-100/20 border-2 border-amber-400/50 rounded-2xl backdrop-blur-lg">
+              <p className="text-amber-200 text-center font-medium">
                 <strong>Authorized Personnel Only</strong>
               </p>
             </div>
@@ -110,36 +111,36 @@ export function AdminLoginPage() {
         </div>
 
         {/* Right side - Admin Login Form */}
-        <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-neutral-100 to-neutral-200">
+        <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-slate-100 to-slate-200">
           <div className="w-full max-w-md">
             {/* Mobile branding */}
             <div className="lg:hidden text-center mb-8">
               <div className="flex items-center justify-center mb-6">
-                <div className="bg-error-600 rounded-3xl p-4 mr-3 shadow-error">
+                <div className="bg-red-600 rounded-3xl p-4 mr-3 shadow-lg">
                   <Shield className="w-12 h-12 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold text-neutral-800">Admin Portal</h1>
-                  <p className="text-error-600 text-lg">Secure Access</p>
+                  <h1 className="text-4xl font-bold text-slate-800">Admin Portal</h1>
+                  <p className="text-red-600 text-lg">Secure Access</p>
                 </div>
               </div>
             </div>
 
-            <div className="glass rounded-3xl p-8 border border-white/30">
+            <div className="bg-white/90 backdrop-blur-lg rounded-3xl p-8 border border-white/30 shadow-xl">
               <div className="text-center mb-8">
                 <div className="flex items-center justify-center mb-4">
-                  <div className="bg-error-600 rounded-full p-3 mr-3 shadow-error">
+                  <div className="bg-red-600 rounded-full p-3 mr-3 shadow-lg">
                     <Shield className="w-8 h-8 text-white" />
                   </div>
-                  <h1 className="text-3xl font-bold text-neutral-800">Administrator Login</h1>
+                  <h1 className="text-3xl font-bold text-slate-800">Administrator Login</h1>
                 </div>
-                <p className="text-neutral-600 text-lg">Enter your admin credentials to access the system</p>
+                <p className="text-slate-600 text-lg">Enter your admin credentials to access the system</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {error && (
-                  <div className="bg-error-50 border-2 border-error-200 rounded-xl p-4">
-                    <p className="text-error-700 font-medium text-center">{error}</p>
+                  <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+                    <p className="text-red-700 font-medium text-center">{error}</p>
                   </div>
                 )}
 
@@ -164,7 +165,7 @@ export function AdminLoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -172,9 +173,8 @@ export function AdminLoginPage() {
 
                 <Button
                   type="submit"
-                  variant="error"
                   size="lg"
-                  className="w-full"
+                  className="w-full bg-red-600 hover:bg-red-700 text-white"
                   loading={loading}
                   icon={!loading ? <Shield className="w-5 h-5" /> : undefined}
                 >
@@ -185,15 +185,15 @@ export function AdminLoginPage() {
                   <button
                     type="button"
                     onClick={handleBackToHome}
-                    className="text-neutral-600 hover:text-neutral-800 font-medium inline-flex items-center transition-colors hover:underline"
+                    className="text-slate-600 hover:text-slate-800 font-medium inline-flex items-center transition-colors hover:underline"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Back to Home
                   </button>
                 </div>
 
-                <div className="bg-warning-50 border border-warning-200 rounded-xl p-4">
-                  <p className="text-warning-800 text-center text-sm">
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                  <p className="text-amber-800 text-center text-sm">
                     <strong>Security Notice:</strong> This area is restricted to authorized administrators only. 
                     All access attempts are logged and monitored.
                   </p>
