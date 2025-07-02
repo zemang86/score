@@ -241,7 +241,7 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
           </div>
 
           {/* Question Content Based on Type */}
-          {formData.type === 'MCQ' && formData.options.length > 0 && (
+          {formData.type === 'MCQ' && Array.isArray(formData.options) && formData.options.length > 0 && (
             <div className="space-y-2 sm:space-y-3">
               <h4 className="font-semibold text-neutral-700 mb-2 sm:mb-3 text-sm sm:text-base">Options:</h4>
               {formData.options.map((option, index) => (
@@ -263,7 +263,7 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
             </div>
           )}
 
-          {formData.type === 'Matching' && formData.options.length > 0 && (
+          {formData.type === 'Matching' && Array.isArray(formData.options) && formData.options.length > 0 && (
             <div className="space-y-3 sm:space-y-4">
               <h4 className="font-semibold text-neutral-700 mb-2 sm:mb-3 text-sm sm:text-base flex items-center">
                 <ArrowUpDown className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
@@ -503,7 +503,7 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
                     required
                   >
                     <option value="">Select correct option</option>
-                    {formData.options.map((option, index) => (
+                    {Array.isArray(formData.options) && formData.options.map((option, index) => (
                       <option key={index} value={option}>
                         {String.fromCharCode(65 + index)}. {option}
                       </option>
