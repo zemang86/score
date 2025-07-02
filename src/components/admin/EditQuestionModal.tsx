@@ -58,6 +58,9 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
   // Populate form when question changes
   useEffect(() => {
     if (question && isOpen) {
+      // Ensure options is always an array
+      const questionOptions = Array.isArray(question.options) ? question.options : []
+      
       setFormData({
         level: question.level,
         subject: question.subject,
@@ -65,17 +68,17 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
         type: question.type,
         topic: question.topic || '',
         question_text: question.question_text,
-        options: question.options || [],
+        options: questionOptions,
         correct_answer: question.correct_answer,
         image_url: question.image_url || ''
       })
       
       // Convert options array to text for editing
-      if (question.options && question.options.length > 0) {
+      if (questionOptions.length > 0) {
         if (question.type === 'MCQ') {
-          setOptionsText(question.options.join('\n'))
+          setOptionsText(questionOptions.join('\n'))
         } else if (question.type === 'Matching') {
-          setOptionsText(question.options.join('\n'))
+          setOptionsText(questionOptions.join('\n'))
         } else {
           setOptionsText('')
         }
