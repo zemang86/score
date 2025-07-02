@@ -57,9 +57,20 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
 
   // Populate form when question changes
   useEffect(() => {
+    console.log('🔍 EditQuestionModal useEffect triggered')
+    console.log('📝 question prop:', question)
+    console.log('🚪 isOpen:', isOpen)
+    
     if (question && isOpen) {
+      console.log('✅ Processing question data...')
+      console.log('📊 question.options (raw):', question.options)
+      console.log('🔍 question.options type:', typeof question.options)
+      console.log('📋 question.type:', question.type)
+      
       // Ensure options is always an array
       const questionOptions = Array.isArray(question.options) ? question.options : []
+      console.log('🔄 questionOptions (processed):', questionOptions)
+      console.log('📏 questionOptions length:', questionOptions.length)
       
       setFormData({
         level: question.level,
@@ -74,20 +85,32 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
       })
       
       // Convert options array to text for editing
+      let newOptionsText = ''
       if (questionOptions.length > 0) {
         if (question.type === 'MCQ') {
-          setOptionsText(questionOptions.join('\n'))
+          newOptionsText = questionOptions.join('\n')
+          console.log('📝 MCQ options text:', newOptionsText)
         } else if (question.type === 'Matching') {
-          setOptionsText(questionOptions.join('\n'))
+          newOptionsText = questionOptions.join('\n')
+          console.log('🔗 Matching options text:', newOptionsText)
         } else {
-          setOptionsText('')
+          newOptionsText = ''
+          console.log('❌ Non-MCQ/Matching type, clearing options text')
         }
       } else {
-        setOptionsText('')
+        newOptionsText = ''
+        console.log('❌ No options found, clearing options text')
       }
+      
+      console.log('🎯 Final newOptionsText:', newOptionsText)
+      setOptionsText(newOptionsText)
       
       setError('')
       setPreviewMode(false)
+      
+      console.log('✅ Form data populated successfully')
+    } else {
+      console.log('❌ Skipping form population - question:', !!question, 'isOpen:', isOpen)
     }
   }, [question, isOpen])
 
@@ -97,14 +120,17 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
   }
 
   const handleOptionsChange = (value: string) => {
+    console.log('📝 Options text changed:', value)
     setOptionsText(value)
     
     // Convert text to options array based on question type
     if (formData.type === 'MCQ') {
       const options = value.split('\n').map(opt => opt.trim()).filter(opt => opt)
+      console.log('🔄 MCQ options array:', options)
       setFormData(prev => ({ ...prev, options }))
     } else if (formData.type === 'Matching') {
       const options = value.split('\n').map(opt => opt.trim()).filter(opt => opt)
+      console.log('🔗 Matching options array:', options)
       setFormData(prev => ({ ...prev, options }))
     }
   }
@@ -302,6 +328,10 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
     )
   }
 
+  // Add debug logging for current state
+  console.log('🎯 Current optionsText state:', optionsText)
+  console.log('📊 Current formData.options:', formData.options)
+
   if (!isOpen || !question) return null
 
   return (
@@ -489,6 +519,11 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
                       : 'Enter each matching pair as "Left:Right" on separate lines'
                     }
                   </p>
+                  {/* Debug info - remove this in production */}
+                  <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
+                    <strong>Debug:</strong> optionsText length: {optionsText.length}, 
+                    formData.options: {JSON.stringify(formData.options)}
+                  </div>
                 </div>
               )}
 
