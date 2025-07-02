@@ -1,21 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { BookOpen, Search, Filter, Plus, Edit, Trash2, Upload, FileText, CheckCircle, AlertCircle, ArrowUpDown, Edit3, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Question } from '../../lib/supabase'
+import { BookOpen, Search, Filter, Plus, Edit, Trash2, Upload, FileText, CheckCircle, AlertCircle, ArrowUpDown, Edit3, ChevronLeft, ChevronRight, Eye } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
-
-interface Question {
-  id: string
-  level: string
-  subject: string
-  year: string
-  type: 'MCQ' | 'ShortAnswer' | 'Subjective' | 'Matching'
-  topic?: string
-  question_text: string
-  options: string[]
-  correct_answer: string
-  created_at: string
-}
+import { EditQuestionModal } from './EditQuestionModal'
 
 interface UploadResult {
   success: boolean
@@ -47,6 +36,10 @@ export function QuestionManagement() {
   const [uploading, setUploading] = useState(false)
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null)
   const [showUploadModal, setShowUploadModal] = useState(false)
+
+  // Edit Question Modal states
+  const [selectedQuestionForEdit, setSelectedQuestionForEdit] = useState<Question | null>(null)
+  const [showEditModal, setShowEditModal] = useState(false)
 
   useEffect(() => {
     fetchQuestions()
@@ -253,7 +246,8 @@ export function QuestionManagement() {
             topic: row.topic?.trim() || null,
             question_text: row.question_text.trim(),
             options: options,
-            correct_answer: row.correct_answer.trim()
+            correct_answer: row.correct_answer.trim(),
+            image_url: row.image_url?.trim() || null
           })
         } else {
           allErrors.push(`Row ${index + 2}: ${errors.join(', ')}`)
@@ -324,6 +318,17 @@ export function QuestionManagement() {
       setSelectedLevel(value)
     }
     setCurrentPage(1) // Reset to first page when changing filters
+  }
+
+  const handleEditQuestion = (question: Question) => {
+    setSelectedQuestionForEdit(question)
+    setShowEditModal(true)
+  }
+
+  const handleQuestionUpdated = () => {
+    fetchQuestions() // Refresh the questions list
+    setShowEditModal(false)
+    setSelectedQuestionForEdit(null)
   }
 
   const filteredQuestions = questions
@@ -417,7 +422,7 @@ export function QuestionManagement() {
             </div>
             <div className="text-center sm:text-left">
               <p className="text-xs sm:text-sm font-medium text-primary-600">Total Questions</p>
-              <p className="text-xl sm:text-2xl font-bold text-neutral-800">{totalQuestions.toLocaleString()}</p>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-neutral-800">{totalQuestions.toLocaleString()}</p>
             </div>
           </div>
         </div>
@@ -429,7 +434,7 @@ export function QuestionManagement() {
             </div>
             <div className="text-center sm:text-left">
               <p className="text-xs sm:text-sm font-medium text-secondary-600">MCQ Questions</p>
-              <p className="text-xl sm:text-2xl font-bold text-neutral-800">
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-neutral-800">
                 {questions.filter(q => q.type === 'MCQ').length}
               </p>
             </div>
@@ -443,7 +448,7 @@ export function QuestionManagement() {
             </div>
             <div className="text-center sm:text-left">
               <p className="text-xs sm:text-sm font-medium text-accent-600">Subjects</p>
-              <p className="text-xl sm:text-2xl font-bold text-neutral-800">{allSubjects.length}</p>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-neutral-800">{allSubjects.length}</p>
             </div>
           </div>
         </div>
@@ -455,7 +460,7 @@ export function QuestionManagement() {
             </div>
             <div className="text-center sm:text-left">
               <p className="text-xs sm:text-sm font-medium text-warning-600">Levels</p>
-              <p className="text-xl sm:text-2xl font-bold text-neutral-800">{allLevels.length}</p>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-neutral-800">{allLevels.length}</p>
             </div>
           </div>
         </div>
@@ -527,6 +532,12 @@ export function QuestionManagement() {
                       {question.topic && (
                         <div className="text-xs text-neutral-500">Topic: {question.topic}</div>
                       )}
+                      {question.image_url && (
+                        <div className="text-xs text-blue-500 flex items-center mt-1">
+                          <Eye className="w-3 h-3 mr-1" />
+                          Has image
+                        </div>
+                      )}
                     </div>
                   </td>
                   <td className="px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
@@ -545,7 +556,13 @@ export function QuestionManagement() {
                   </td>
                   <td className="px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
                     <div className="flex items-center justify-end space-x-1 sm:space-x-2">
-                      <Button variant="ghost" size="sm" icon={<Edit className="w-3 h-3 sm:w-4 sm:h-4" />} />
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        icon={<Edit className="w-3 h-3 sm:w-4 sm:h-4" />}
+                        onClick={() => handleEditQuestion(question)}
+                        title="Edit question"
+                      />
                       <Button variant="ghost" size="sm" className="text-error-600 hover:text-error-700" icon={<Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />} />
                     </div>
                   </td>
@@ -680,6 +697,7 @@ export function QuestionManagement() {
                   <div><strong>question_text:</strong> The full question text</div>
                   <div><strong>options:</strong> For MCQ: comma-separated options (e.g., "A,B,C,D"). For others: leave empty</div>
                   <div><strong>correct_answer:</strong> The correct answer</div>
+                  <div><strong>image_url:</strong> URL to question image/diagram (optional)</div>
                 </div>
                 <p className="text-xs text-primary-600 mt-3">
                   <strong>Note:</strong> Use double quotes around fields that contain commas.
@@ -760,6 +778,17 @@ export function QuestionManagement() {
           </div>
         </div>
       )}
+
+      {/* Edit Question Modal */}
+      <EditQuestionModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false)
+          setSelectedQuestionForEdit(null)
+        }}
+        question={selectedQuestionForEdit}
+        onQuestionUpdated={handleQuestionUpdated}
+      />
     </div>
   )
 }
