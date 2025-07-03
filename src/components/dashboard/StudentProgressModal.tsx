@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Student } from '../../lib/supabase'
 import { Button } from '../ui/Button'
-import { X, TrendingUp, Trophy, Calendar, BookOpen, Target, Star, Award, BarChart3, ArrowLeft, Eye, CheckCircle, XCircle, Clock, Edit3, ArrowUpDown } from 'lucide-react'
+import { X, TrendingUp, Trophy, Calendar, BookOpen, Target, Star, Award, BarChart3, ArrowLeft, Eye, CheckCircle, XCircle, Clock, Edit3, ArrowUpDown, BookOpenCheck } from 'lucide-react'
 
 interface StudentProgressModalProps {
   isOpen: boolean
@@ -35,6 +35,7 @@ interface ExamAttempt {
     correct_answer: string
     level: string
     topic?: string
+    explanation?: string
   }
 }
 
@@ -148,7 +149,7 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
     setReviewLoading(true)
     
     try {
-      // Fetch attempts with question details
+      // Fetch attempts with question details including explanation field
       const { data: attempts, error: attemptsError } = await supabase
         .from('attempts')
         .select(`
@@ -163,7 +164,8 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
             options,
             correct_answer,
             level,
-            topic
+            topic,
+            explanation
           )
         `)
         .eq('exam_id', exam.id)
@@ -184,7 +186,8 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
           options: attempt.questions.options || [],
           correct_answer: attempt.questions.correct_answer,
           level: attempt.questions.level,
-          topic: attempt.questions.topic
+          topic: attempt.questions.topic,
+          explanation: attempt.questions.explanation
         } : undefined
       }))
 
@@ -280,6 +283,7 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
 
         {/* Answer Section */}
         <div className="space-y-1.5">
+          {/* Your Answer - Always shown */}
           <div>
             <h5 className="font-medium text-gray-700 mb-1 text-xs">Your Answer:</h5>
             <div className={`p-1.5 rounded-md border text-xs ${isCorrect ? 'bg-success-100 border-success-300 text-success-800' : 'bg-error-100 border-error-300 text-error-800'}`}>
@@ -287,15 +291,46 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
             </div>
           </div>
 
-          {!isCorrect && (
+          {/* Correct Answer - Always shown */}
+          <div>
+            <h5 className="font-medium text-success-700 mb-1 text-xs">Correct Answer:</h5>
+            <div className="p-1.5 rounded-md bg-success-100 border border-success-300 text-success-800 text-xs">
+              {question.correct_answer}
+            </div>
+          </div>
+
+          {/* Explanation - Show if available */}
+          {question.explanation && (
             <div>
-              <h5 className="font-medium text-success-700 mb-1 text-xs">Correct Answer:</h5>
-              <div className="p-1.5 rounded-md bg-success-100 border border-success-300 text-success-800 text-xs">
-                {question.correct_answer}
+              <h5 className="font-medium text-blue-700 mb-1 text-xs flex items-center">
+                <BookOpenCheck className="w-3.5 h-3.5 mr-1" />
+                Explanation:
+              </h5>
+              <div className="p-1.5 rounded-md bg-blue-50 border border-blue-200 text-blue-800 text-xs">
+                {question.explanation}
               </div>
             </div>
           )}
         </div>
+
+        {/* Special handling for different question types */}
+        {question.type === 'Matching' && (
+          <div className="mt-1.5 p-1.5 bg-primary-50 border border-primary-200 rounded-md">
+            <div className="flex items-center text-primary-700 text-xs">
+              <ArrowUpDown className="w-3.5 h-3.5 mr-1" />
+              <span>Matching question - answers shown as pairs</span>
+            </div>
+          </div>
+        )}
+
+        {question.type === 'Subjective' && (
+          <div className="mt-1.5 p-1.5 bg-accent-50 border border-accent-200 rounded-md">
+            <div className="flex items-center text-accent-700 text-xs">
+              <Edit3 className="w-3.5 h-3.5 mr-1" />
+              <span>Subjective question - graded based on key concepts</span>
+            </div>
+          </div>
+        )}
       </div>
     )
   }
