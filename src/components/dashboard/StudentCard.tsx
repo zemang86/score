@@ -16,9 +16,23 @@ interface StudentCardProps {
 }
 
 export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStudentUpdated }: StudentCardProps) {
-  const [showExamModal, setShowExamModal] = useState(false)
+  // Use session storage to persist modal state across tab switches and re-renders
+  const [showExamModal, setShowExamModal] = useState(() => {
+    return sessionStorage.getItem(`exam-modal-${student.id}`) === 'true'
+  })
   const [showProgressModal, setShowProgressModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+
+  // Helper functions to manage exam modal state with session storage
+  const openExamModal = () => {
+    setShowExamModal(true)
+    sessionStorage.setItem(`exam-modal-${student.id}`, 'true')
+  }
+
+  const closeExamModal = () => {
+    setShowExamModal(false)
+    sessionStorage.removeItem(`exam-modal-${student.id}`)
+  }
 
   const getAgeDisplay = (dateOfBirth: string) => {
     return calculateAgeInYearsAndMonths(dateOfBirth)
@@ -42,7 +56,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
   }
 
   const handleExamComplete = (score: number, totalQuestions: number) => {
-    setShowExamModal(false)
+    closeExamModal()
     // Delay calling onExamComplete to prevent immediate re-render that closes modal
     setTimeout(() => {
       if (onExamComplete) {
@@ -116,7 +130,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
               variant="gradient-primary"
               size="sm" 
               className="flex-1 text-sm py-2 shadow-md hover:shadow-lg"
-              onClick={() => setShowExamModal(true)}
+              onClick={openExamModal}
               icon={<Zap className="w-4 h-4" />}
             >
               Start Exam
@@ -137,7 +151,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
       {/* Modals */}
       <ExamModal
         isOpen={showExamModal}
-        onClose={() => setShowExamModal(false)}
+        onClose={closeExamModal}
         student={student}
         onExamComplete={handleExamComplete}
       />

@@ -24,9 +24,9 @@ console.log('Anon Key:', supabaseAnonKey ? `${supabaseAnonKey.substring(0, 20)}.
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    autoRefreshToken: true,
+    autoRefreshToken: false, // Temporarily disable to prevent tab switching issues
     persistSession: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: false // Temporarily disable to prevent tab switching issues
   },
   realtime: {
     params: {
