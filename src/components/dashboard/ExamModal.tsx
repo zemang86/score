@@ -27,21 +27,66 @@ type ExamMode = 'Easy' | 'Medium' | 'Full'
 type Subject = 'Bahasa Melayu' | 'English' | 'Mathematics' | 'Science' | 'History'
 
 export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModalProps) {
-  const [step, setStep] = useState<'setup' | 'exam' | 'results'>('setup')
-  const [selectedSubject, setSelectedSubject] = useState<Subject>('Mathematics')
-  const [selectedMode, setSelectedMode] = useState<ExamMode>('Easy')
-  const [questions, setQuestions] = useState<ExamQuestion[]>([])
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [timeLeft, setTimeLeft] = useState(0)
-  const [examStarted, setExamStarted] = useState(false)
+  // Initialize state from session storage if available
+  const getInitialState = () => {
+    try {
+      const saved = sessionStorage.getItem(`exam-state-${student.id}`)
+      if (saved) {
+        return JSON.parse(saved)
+      }
+    } catch {
+      // Fall back to defaults if parsing fails
+    }
+    return {
+      step: 'setup',
+      selectedSubject: 'Mathematics',
+      selectedMode: 'Easy',
+      questions: [],
+      currentQuestionIndex: 0,
+      timeLeft: 0,
+      examStarted: false,
+      examScore: 0,
+      totalQuestions: 0,
+      matchingPairs: [],
+      selectedLeftItem: null
+    }
+  }
+
+  const initialState = getInitialState()
+  
+  const [step, setStep] = useState<'setup' | 'exam' | 'results'>(initialState.step)
+  const [selectedSubject, setSelectedSubject] = useState<Subject>(initialState.selectedSubject)
+  const [selectedMode, setSelectedMode] = useState<ExamMode>(initialState.selectedMode)
+  const [questions, setQuestions] = useState<ExamQuestion[]>(initialState.questions)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(initialState.currentQuestionIndex)
+  const [timeLeft, setTimeLeft] = useState(initialState.timeLeft)
+  const [examStarted, setExamStarted] = useState(initialState.examStarted)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [examScore, setExamScore] = useState(0)
-  const [totalQuestions, setTotalQuestions] = useState(0)
+  const [examScore, setExamScore] = useState(initialState.examScore)
+  const [totalQuestions, setTotalQuestions] = useState(initialState.totalQuestions)
   
   // Matching question state
-  const [matchingPairs, setMatchingPairs] = useState<MatchingPair[]>([])
-  const [selectedLeftItem, setSelectedLeftItem] = useState<string | null>(null)
+  const [matchingPairs, setMatchingPairs] = useState<MatchingPair[]>(initialState.matchingPairs)
+  const [selectedLeftItem, setSelectedLeftItem] = useState<string | null>(initialState.selectedLeftItem)
+
+  // Save state to session storage whenever important state changes
+  const saveState = () => {
+    const stateToSave = {
+      step,
+      selectedSubject,
+      selectedMode,
+      questions,
+      currentQuestionIndex,
+      timeLeft,
+      examStarted,
+      examScore,
+      totalQuestions,
+      matchingPairs,
+      selectedLeftItem
+    }
+    sessionStorage.setItem(`exam-state-${student.id}`, JSON.stringify(stateToSave))
+  }
 
   const subjects: Subject[] = ['Bahasa Melayu', 'English', 'Mathematics', 'Science', 'History']
   
@@ -372,6 +417,13 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     }
   }
 
+  // Save state effect - persist state whenever important values change
+  useEffect(() => {
+    if (step === 'exam' && examStarted) {
+      saveState()
+    }
+  }, [step, selectedSubject, selectedMode, questions, currentQuestionIndex, timeLeft, examStarted, examScore, totalQuestions, matchingPairs, selectedLeftItem])
+
   // Timer effect
   useEffect(() => {
     if (examStarted && timeLeft > 0) {
@@ -384,6 +436,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
   // Handle modal close - reset all state
   const handleModalClose = () => {
+    // Clear saved state
+    sessionStorage.removeItem(`exam-state-${student.id}`)
+    
     // Reset all state when modal closes
     setStep('setup')
     setQuestions([])
@@ -400,6 +455,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
   // Handle results completion - notify parent and close
   const handleResultsComplete = () => {
+    // Clear saved state since exam is complete
+    sessionStorage.removeItem(`exam-state-${student.id}`)
+    
     // Notify parent component to refresh student data
     onExamComplete(examScore, totalQuestions)
     // Close the modal

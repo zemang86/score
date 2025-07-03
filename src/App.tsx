@@ -1,13 +1,13 @@
-import React, { Suspense } from 'react'
+import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 
-// Lazy load components for better performance
-const LandingPage = React.lazy(() => import('./components/landing/LandingPage').then(module => ({ default: module.LandingPage })))
-const AuthPage = React.lazy(() => import('./components/auth/AuthPage').then(module => ({ default: module.AuthPage })))
-const AdminLoginPage = React.lazy(() => import('./components/admin/AdminLoginPage').then(module => ({ default: module.AdminLoginPage })))
-const ParentDashboard = React.lazy(() => import('./components/dashboard/ParentDashboard').then(module => ({ default: module.ParentDashboard })))
-const AdminDashboard = React.lazy(() => import('./components/admin/AdminDashboard').then(module => ({ default: module.AdminDashboard })))
+// Regular imports instead of lazy loading to prevent tab switching issues
+import { LandingPage } from './components/landing/LandingPage'
+import { AuthPage } from './components/auth/AuthPage'
+import { AdminLoginPage } from './components/admin/AdminLoginPage'
+import { ParentDashboard } from './components/dashboard/ParentDashboard'
+import { AdminDashboard } from './components/admin/AdminDashboard'
 
 // Simplified loading component
 function LoadingSpinner() {
@@ -44,23 +44,22 @@ function LoadingSpinner() {
 function AppContent() {
   const { user, isAdmin, loading } = useAuth()
 
-  console.log('🔍 AppContent: Current state:', { 
-    hasUser: !!user, 
-    userEmail: user?.email,
-    isAdmin, 
-    loading 
-  })
+  // console.log('🔍 AppContent: Current state:', { 
+  //   hasUser: !!user, 
+  //   userEmail: user?.email,
+  //   isAdmin, 
+  //   loading 
+  // })
 
   if (loading) {
-    console.log('⏳ AppContent: Still loading, showing spinner')
+    // console.log('⏳ AppContent: Still loading, showing spinner')
     return <LoadingSpinner />
   }
 
-  console.log('✅ AppContent: Loading complete, rendering routes')
+  // console.log('✅ AppContent: Loading complete, rendering routes')
 
   return (
-    <Suspense fallback={<LoadingSpinner />}>
-      <Routes>
+    <Routes>
         <Route 
           path="/" 
           element={<LandingPage />}
@@ -111,7 +110,6 @@ function AppContent() {
           } 
         />
       </Routes>
-    </Suspense>
   )
 }
 

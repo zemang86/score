@@ -16,9 +16,33 @@ interface StudentCardProps {
 }
 
 export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStudentUpdated }: StudentCardProps) {
-  const [showExamModal, setShowExamModal] = useState(false)
+  // Use session storage to persist modal state, but only if there's an active exam
+  const [showExamModal, setShowExamModal] = useState(() => {
+    const savedState = sessionStorage.getItem(`exam-state-${student.id}`)
+    if (savedState) {
+      try {
+        const parsedState = JSON.parse(savedState)
+        // Only restore modal if there's an active exam (not in setup or completed)
+        return parsedState.step === 'exam' && parsedState.examStarted === true
+      } catch {
+        return false
+      }
+    }
+    return false
+  })
   const [showProgressModal, setShowProgressModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+
+  // Helper functions to manage exam modal state
+  const openExamModal = () => {
+    setShowExamModal(true)
+  }
+
+  const closeExamModal = () => {
+    setShowExamModal(false)
+    // Clear any saved exam state when modal is closed
+    sessionStorage.removeItem(`exam-state-${student.id}`)
+  }
 
   const getAgeDisplay = (dateOfBirth: string) => {
     return calculateAgeInYearsAndMonths(dateOfBirth)
@@ -42,10 +66,13 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
   }
 
   const handleExamComplete = (score: number, totalQuestions: number) => {
-    setShowExamModal(false)
-    if (onExamComplete) {
-      onExamComplete()
-    }
+    closeExamModal()
+    // Delay calling onExamComplete to prevent immediate re-render that closes modal
+    setTimeout(() => {
+      if (onExamComplete) {
+        onExamComplete()
+      }
+    }, 100) // Small delay to let modal close naturally
   }
 
   const handleStudentUpdated = () => {
@@ -113,7 +140,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
               variant="gradient-primary"
               size="sm" 
               className="flex-1 text-sm py-2 shadow-md hover:shadow-lg"
-              onClick={() => setShowExamModal(true)}
+              onClick={openExamModal}
               icon={<Zap className="w-4 h-4" />}
             >
               Start Exam
@@ -134,7 +161,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
       {/* Modals */}
       <ExamModal
         isOpen={showExamModal}
-        onClose={() => setShowExamModal(false)}
+        onClose={closeExamModal}
         student={student}
         onExamComplete={handleExamComplete}
       />
