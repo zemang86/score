@@ -22,8 +22,8 @@ export default defineConfig({
     },
     // Target modern browsers for smaller bundles
     target: 'es2020',
-    // Enable minification
-    minify: 'terser',
+    // Use esbuild minification (default, no additional deps needed)
+    minify: 'esbuild',
     // Enable source maps for production debugging
     sourcemap: true,
     // Chunk size warning limit
@@ -38,7 +38,7 @@ export default defineConfig({
 
   // Performance optimizations
   esbuild: {
-    // Remove console.log in production
+    // Remove console.log in production builds
     drop: ['console', 'debugger']
   },
 
