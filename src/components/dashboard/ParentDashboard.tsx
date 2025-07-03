@@ -93,9 +93,17 @@ export function ParentDashboard() {
       console.log('✅ Students fetched successfully:', data?.length || 0, 'students')
       setStudents(data || [])
       
-      // Fetch dashboard statistics
+      // Fetch dashboard statistics using the fetched student data
       if (data && data.length > 0) {
-        await fetchDashboardStats(data.map(s => s.id))
+        await fetchDashboardStats(data) // Pass the fetched data directly
+      } else {
+        // Reset stats if no students
+        setDashboardStats({
+          totalExams: 0,
+          totalBadges: 0,
+          averageScore: 0,
+          totalXP: 0
+        })
       }
     } catch (err: any) {
       console.error('❌ Error in fetchStudents:', err)
@@ -116,9 +124,11 @@ export function ParentDashboard() {
     }
   }
 
-  const fetchDashboardStats = async (studentIds: string[]) => {
+  const fetchDashboardStats = async (studentsData: Student[]) => {
     try {
-      console.log('📊 Fetching dashboard stats for students:', studentIds)
+      console.log('📊 Fetching dashboard stats for students:', studentsData.map(s => s.id))
+
+      const studentIds = studentsData.map(s => s.id)
 
       // Fetch exam statistics
       const { data: exams, error: examsError } = await supabase
@@ -143,22 +153,24 @@ export function ParentDashboard() {
         throw badgesError
       }
 
-      // Calculate statistics
-      const completedExams = exams || []
-      const scores = completedExams.map(e => e.score).filter(s => s !== null)
+      // Calculate statistics using the passed studentsData parameter
+      const totalXP = studentsData.reduce((sum, student) => sum + (student.xp || 0), 0)
+      const totalExams = exams?.length || 0
+      const completedExams = exams?.filter(e => e.completed) || []
+      const scores = completedExams.map(e => e.score).filter(s => s !== null && s !== undefined)
       const averageScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0
-      const totalXP = students.reduce((sum, student) => sum + (student.xp || 0), 0)
+      const totalBadges = badges?.length || 0
 
       console.log('✅ Dashboard stats calculated:', {
         totalExams: completedExams.length,
-        totalBadges: badges?.length || 0,
+        totalBadges,
         averageScore,
         totalXP
       })
 
       setDashboardStats({
         totalExams: completedExams.length,
-        totalBadges: badges?.length || 0,
+        totalBadges,
         averageScore,
         totalXP
       })
