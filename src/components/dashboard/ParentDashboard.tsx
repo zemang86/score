@@ -354,11 +354,11 @@ export function ParentDashboard() {
 
 
 
-        {/* Quick Stats - Compact Grid */}
+        {/* Enhanced Stats Grid - 6 Cards */}
         {loading ? (
           <DashboardStatsSkeleton />
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200 hover-lift">
               <div className="flex items-center">
                 <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
@@ -400,9 +400,7 @@ export function ParentDashboard() {
                   <p className="text-xs font-medium text-slate-600">Badges</p>
                   <div className="flex items-baseline">
                     <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{dashboardStats.totalBadges}</p>
-                    <p className="text-xs text-slate-500">
-                      {isPremium ? 'Full' : 'Limited'}
-                    </p>
+                    <p className="text-xs text-slate-500">earned</p>
                   </div>
                 </div>
               </div>
@@ -419,9 +417,37 @@ export function ParentDashboard() {
                     <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">
                       {dashboardStats.averageScore > 0 ? `${dashboardStats.averageScore}%` : '-'}
                     </p>
-                    <p className="text-xs text-slate-500">
-                      {isPremium ? 'Detailed' : 'Basic'}
-                    </p>
+                    <p className="text-xs text-slate-500">family</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200 hover-lift">
+              <div className="flex items-center">
+                <div className="bg-gradient-to-br from-purple-500 to-violet-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
+                  <Zap className="w-4 h-4 sm:w-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-slate-600">Total XP</p>
+                  <div className="flex items-baseline">
+                    <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{dashboardStats.totalXP}</p>
+                    <p className="text-xs text-slate-500">points</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200 hover-lift">
+              <div className="flex items-center">
+                <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
+                  <BookOpen className="w-4 h-4 sm:w-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-slate-600">Questions</p>
+                  <div className="flex items-baseline">
+                    <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">1000+</p>
+                    <p className="text-xs text-slate-500">available</p>
                   </div>
                 </div>
               </div>
@@ -429,10 +455,9 @@ export function ParentDashboard() {
           </div>
         )}
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          {/* Children Management */}
-          <div className="lg:col-span-2">
+        {/* Children Management - Full Width */}
+        <div className="mb-4 sm:mb-6">
+          <div>
             <div className="bg-white/90 backdrop-blur-sm rounded-xl border border-white/30 shadow-md">
               <div className="p-3 sm:p-4 border-b border-slate-200">
                 <div className="flex flex-col sm:flex-row items-center justify-between">
@@ -542,140 +567,10 @@ export function ParentDashboard() {
               </div>
             </div>
           </div>
-
-          {/* Quick Actions & Info */}
-          <div className="space-y-3 sm:space-y-4">
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl border border-white/30 p-3 sm:p-4 shadow-md">
-              <div className="flex items-center mb-3">
-                <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
-                  <Zap className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-800">Quick Actions</h3>
-              </div>
-              <div className="space-y-2">
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start text-xs sm:text-sm border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 py-2"
-                  onClick={() => canAddMoreStudents && setShowAddModal(true)}
-                  disabled={!canAddMoreStudents}
-                  icon={<Plus className="w-3.5 h-3.5" />}
-                >
-                  Add New Kid
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start text-xs sm:text-sm border border-slate-200 hover:border-amber-300 hover:bg-amber-50 py-2"
-                  onClick={() => setShowLeaderboard(true)}
-                  icon={<Trophy className="w-3.5 h-3.5" />}
-                >
-                  View Leaderboard
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start text-xs sm:text-sm border border-slate-200 hover:border-blue-300 hover:bg-blue-50 py-2"
-                  onClick={() => setShowFamilyReports(true)}
-                  icon={<TrendingUp className="w-3.5 h-3.5" />}
-                >
-                  View Reports
-                </Button>
-              </div>
-            </div>
-
-            {/* Family Stats - Compact */}
-            <div className="bg-gradient-to-br from-indigo-100 to-blue-100 rounded-xl border-2 border-indigo-300 p-3 sm:p-4 shadow-md">
-              <div className="flex items-center mb-2">
-                <div className="bg-gradient-to-br from-indigo-500 to-blue-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
-                  <Target className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-indigo-800">Family Stats</h3>
-              </div>
-              <div className="space-y-1.5 text-xs sm:text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-indigo-700">Total XP Earned:</span>
-                  <span className="font-bold text-indigo-800">{dashboardStats.totalXP}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-blue-700">Exams Completed:</span>
-                  <span className="font-bold text-blue-800">{dashboardStats.totalExams}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-purple-700">Badges Earned:</span>
-                  <span className="font-bold text-purple-800">{dashboardStats.totalBadges}</span>
-                </div>
-                {dashboardStats.averageScore > 0 && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-amber-700">Family Average:</span>
-                    <span className="font-bold text-amber-800">{dashboardStats.averageScore}%</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl border-2 border-blue-300 p-3 sm:p-4 shadow-md">
-              <div className="flex items-center mb-2">
-                <div className="bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
-                  <Sparkles className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-blue-800">Getting Started</h3>
-              </div>
-              <p className="text-indigo-700 text-xs sm:text-sm mb-2">
-                Welcome to Edventure+! Here's your learning quest:
-              </p>
-              <ol className="text-blue-700 space-y-1.5">
-                <li className="flex items-start">
-                  <span className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mr-2 mt-0.5">1</span>
-                  <span className="text-xs sm:text-sm">Add your kids' profiles</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="bg-indigo-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mr-2 mt-0.5">2</span>
-                  <span className="text-xs sm:text-sm">Choose levels & subjects</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="bg-purple-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mr-2 mt-0.5">3</span>
-                  <span className="text-xs sm:text-sm">Start the learning adventure!</span>
-                </li>
-              </ol>
-            </div>
-
-            {/* Plan Benefits - Compact */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl border border-white/30 p-3 sm:p-4 shadow-md">
-              <div className="flex items-center mb-2">
-                <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
-                  <Crown className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-base sm:text-lg font-bold text-amber-700">Your Plan Benefits</h3>
-              </div>
-              <div className="space-y-1.5 text-xs sm:text-sm">
-                <div className="flex items-center text-green-600">
-                  <Crown className="w-3.5 h-3.5 mr-1.5" />
-                  <span className="font-bold">{subscriptionPlan === 'premium' ? 'Premium' : 'Free'} Plan Active</span>
-                </div>
-                <div className="flex items-center text-blue-600">
-                  <Users className="w-3.5 h-3.5 mr-1.5" />
-                  <span>Up to {maxStudents} {maxStudents === 1 ? 'kid' : 'kids'}</span>
-                </div>
-                <div className="flex items-center text-indigo-600">
-                  <BookOpen className="w-3.5 h-3.5 mr-1.5" />
-                  <span>
-                    {dailyExamLimit === 999 ? 'Unlimited' : dailyExamLimit} exam{dailyExamLimit !== 1 ? 's' : ''} per day
-                  </span>
-                </div>
-                {subscriptionPlan === 'premium' && (
-                  <>
-                    <div className="flex items-center text-amber-600">
-                      <Trophy className="w-3.5 h-3.5 mr-1.5" />
-                      <span>All difficulty levels</span>
-                    </div>
-                    <div className="flex items-center text-red-600">
-                      <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
-                      <span>Advanced analytics</span>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
         </div>
+
+        {/* Question Bank Statistics */}
+        <QuestionBankStats />
       </main>
 
       {/* Modals */}
