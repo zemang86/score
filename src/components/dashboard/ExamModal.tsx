@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase'
 import { Student, Question } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3 } from 'lucide-react'
+import { checkShortAnswer } from '../../utils/answerChecker'
 
 interface ExamModalProps {
   isOpen: boolean
@@ -241,22 +242,6 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
         return false
       }
 
-      case 'ShortAnswer':
-        return question.userAnswer === question.correct_answer
-
-      case 'Subjective':
-        // For subjective questions, we'll do a simple keyword-based check
-        // In a real system, this would need manual grading or AI assistance
-        const userText = (question.userAnswer as string).toLowerCase().trim()
-        const correctText = question.correct_answer.toLowerCase().trim()
-        
-        // Check if user answer contains key words from correct answer
-        const keyWords = correctText.split(/\s+/).filter(word => word.length > 3)
-        const matchedWords = keyWords.filter(word => userText.includes(word))
-        
-        // Consider correct if at least 60% of key words are present
-        return matchedWords.length >= Math.ceil(keyWords.length * 0.6)
-
       case 'Matching':
         if (!Array.isArray(question.userAnswer)) return false
         
@@ -277,22 +262,57 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     
     // Calculate score
     let correctAnswers = 0
-    const gradedQuestions = questions.map(question => {
-      const isCorrect = gradeQuestion(question)
-      if (isCorrect) correctAnswers++
-      return { ...question, isCorrect }
-    })
-
-    setQuestions(gradedQuestions)
     
-    const score = Math.round((correctAnswers / questions.length) * 100)
+    // Process each question and grade it
+    const gradingPromises = questions.map(async (question) => {
+      let isCorrect = false;
+      
+      // For MCQ and Matching, use the synchronous grading function
+      if (question.type === 'MCQ' || question.type === 'Matching') {
+        isCorrect = gradeQuestion(question);
+      } 
+      // For ShortAnswer and Subjective, use the AI-powered checker
+      else if ((question.type === 'ShortAnswer' || question.type === 'Subjective') && question.userAnswer) {
+        try {
+          const checkResult = await checkShortAnswer(
+            question.userAnswer as string, 
+            question.correct_answer,
+            {
+              openaiApiKey: import.meta.env.VITE_OPENAI_API_KEY
+            }
+          );
+          
+          isCorrect = checkResult.result === 'correct';
+          console.log(`Answer check for "${question.userAnswer}": ${checkResult.result} (${checkResult.method}) - ${checkResult.reason}`);
+        } catch (error) {
+          console.error('Error checking answer:', error);
+          // Fallback to simple matching if AI check fails
+          const userText = (question.userAnswer as string).toLowerCase().trim();
+          const correctText = question.correct_answer.toLowerCase().trim();
+          
+          // Simple keyword matching as fallback
+          const keyWords = correctText.split(/\s+/).filter(word => word.length > 3);
+          const matchedWords = keyWords.filter(word => userText.includes(word));
+          isCorrect = matchedWords.length >= Math.ceil(keyWords.length * 0.6);
+        }
+      }
+      
+      if (isCorrect) correctAnswers++;
+      return { ...question, isCorrect };
+    });
+    
+    // Wait for all grading to complete
+    const gradedQuestions = await Promise.all(gradingPromises);
+    setQuestions(gradedQuestions);
+    
+    const score = Math.round((correctAnswers / questions.length) * 100);
     
     // Store score and total questions for later use
-    setExamScore(score)
-    setTotalQuestions(questions.length)
+    setExamScore(score);
+    setTotalQuestions(questions.length);
     
     // IMPORTANT: Set step to results FIRST before any async operations
-    setStep('results')
+    setStep('results');
     
     try {
       // Save exam to database
@@ -315,7 +335,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       if (examError) throw examError
 
       // Save individual attempts
-      const attempts = questions.map(question => ({
+      const attempts = gradedQuestions.map(question => ({
         exam_id: examData.id,
         question_id: question.id,
         answer_given: Array.isArray(question.userAnswer) 
