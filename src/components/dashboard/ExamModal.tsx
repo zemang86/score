@@ -590,10 +590,10 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl max-w-4xl w-full h-full max-h-screen overflow-hidden flex flex-col">
+      <div className="bg-white w-full h-full flex flex-col overflow-hidden">
         
         {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-white border-b border-neutral-200 rounded-t-2xl sm:rounded-t-3xl">
+        <div className="sticky top-0 z-10 bg-white border-b border-neutral-200">
           {/* Setup Step Header */}
           {step === 'setup' && (
             <div className="p-3 sm:p-4 bg-gradient-to-r from-primary-100 to-secondary-100">
@@ -676,7 +676,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-4 sm:p-6">
+          <div className="p-4 sm:p-6 max-w-4xl mx-auto">
             {/* Setup Step Content */}
             {step === 'setup' && (
               <>
