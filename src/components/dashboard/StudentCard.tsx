@@ -43,9 +43,12 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
 
   const handleExamComplete = (score: number, totalQuestions: number) => {
     setShowExamModal(false)
-    if (onExamComplete) {
-      onExamComplete()
-    }
+    // Delay calling onExamComplete to prevent immediate re-render that closes modal
+    setTimeout(() => {
+      if (onExamComplete) {
+        onExamComplete()
+      }
+    }, 100) // Small delay to let modal close naturally
   }
 
   const handleStudentUpdated = () => {
