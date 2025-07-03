@@ -7,6 +7,8 @@ import { StudentCard } from './StudentCard'
 import { LeaderboardModal } from './LeaderboardModal'
 import { FamilyReportsModal } from './FamilyReportsModal'
 import { ExamModal } from './ExamModal'
+import { EditStudentModal } from './EditStudentModal'
+import { StudentProgressModal } from './StudentProgressModal'
 import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } from '../ui/SkeletonLoader'
@@ -19,6 +21,8 @@ export function ParentDashboard() {
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [showFamilyReports, setShowFamilyReports] = useState(false)
   const [showExamModal, setShowExamModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [showProgressModal, setShowProgressModal] = useState(false)
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
   const [error, setError] = useState('')
   const [connectionError, setConnectionError] = useState(false)
@@ -235,6 +239,32 @@ export function ParentDashboard() {
     if (selectedStudent) {
       sessionStorage.removeItem(`exam-state-${selectedStudent.id}`)
     }
+  }
+
+  const handleOpenEditModal = (student: Student) => {
+    setSelectedStudent(student)
+    setShowEditModal(true)
+  }
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false)
+    setSelectedStudent(null)
+  }
+
+  const handleOpenProgressModal = (student: Student) => {
+    setSelectedStudent(student)
+    setShowProgressModal(true)
+  }
+
+  const handleCloseProgressModal = () => {
+    setShowProgressModal(false)
+    setSelectedStudent(null)
+  }
+
+  const handleStudentUpdatedFromModal = () => {
+    setShowEditModal(false)
+    setSelectedStudent(null)
+    fetchStudents() // Refresh the students list after edit
   }
 
   const handleRetry = () => {
@@ -539,6 +569,8 @@ export function ParentDashboard() {
                         onExamComplete={handleExamComplete}
                         onStudentUpdated={handleStudentUpdated}
                         onOpenExamModal={handleOpenExamModal}
+                        onOpenEditModal={handleOpenEditModal}
+                        onOpenProgressModal={handleOpenProgressModal}
                       />
                     ))}
                   </div>
@@ -705,6 +737,23 @@ export function ParentDashboard() {
           onClose={handleCloseExamModal}
           student={selectedStudent}
           onExamComplete={handleExamComplete}
+        />
+      )}
+
+      {selectedStudent && (
+        <EditStudentModal
+          isOpen={showEditModal}
+          onClose={handleCloseEditModal}
+          student={selectedStudent}
+          onStudentUpdated={handleStudentUpdatedFromModal}
+        />
+      )}
+
+      {selectedStudent && (
+        <StudentProgressModal
+          isOpen={showProgressModal}
+          onClose={handleCloseProgressModal}
+          student={selectedStudent}
         />
       )}
     </div>
