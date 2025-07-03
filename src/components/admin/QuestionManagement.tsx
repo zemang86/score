@@ -30,6 +30,7 @@ export function QuestionManagement() {
   
   // Subject list state
   const [allSubjects, setAllSubjects] = useState<string[]>([])
+
   
   // CSV Upload states
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -109,21 +110,14 @@ export function QuestionManagement() {
     }
   }
 
-  const fetchAllSubjects = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('questions')
-        .select('subject')
-        .not('subject', 'is', null)
+  // Use predefined subjects instead of fetching from database
+  // This ensures all expected subjects are always available in the filter
+  const predefinedSubjects = ['Bahasa Melayu', 'English', 'Mathematics', 'Science', 'History']
 
-      if (error) throw error
-
-      const subjects = [...new Set(data?.map(item => item.subject) || [])]
-      setAllSubjects(subjects.sort())
-    } catch (err) {
-      console.error('Error fetching subjects:', err)
-    }
+  const initializeSubjects = () => {
+    setAllSubjects(predefinedSubjects)
   }
+
 
   const handleDeleteQuestion = async (questionId: string) => {
     if (!confirm('Are you sure you want to delete this question?')) {
@@ -266,7 +260,7 @@ export function QuestionManagement() {
   }, [currentPage, questionsPerPage, selectedSubject, selectedLevel, selectedType, searchTerm])
 
   useEffect(() => {
-    fetchAllSubjects()
+    initializeSubjects()
   }, [])
 
   const handleSearch = (value: string) => {

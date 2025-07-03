@@ -59,30 +59,15 @@ export function LandingPage() {
 
       if (questionError) throw questionError
 
-      // Fetch unique subjects
-      const { data: subjectData, error: subjectError } = await supabase
-        .from('questions')
-        .select('subject')
-        .not('subject', 'is', null)
-
-      if (subjectError) throw subjectError
-      
-      const uniqueSubjects = [...new Set(subjectData.map(item => item.subject))]
-
-      // Fetch unique levels
-      const { data: levelData, error: levelError } = await supabase
-        .from('questions')
-        .select('level')
-        .not('level', 'is', null)
-
-      if (levelError) throw levelError
-      
-      const uniqueLevels = [...new Set(levelData.map(item => item.level))]
+      // Use total available subjects and levels in Malaysian education system
+      // This showcases the complete system capabilities rather than just populated database content
+      const totalCoreSubjects = 5 // Bahasa Melayu, English, Mathematics, Science, History
+      const totalAvailableLevels = 11 // Darjah 1-6 (6) + Tingkatan 1-5 (5) = 11 total levels
 
       // Update state with fetched data
       setQuestionCount(questionCount || 0)
-      setSubjectCount(uniqueSubjects.length)
-      setLevelCount(uniqueLevels.length)
+      setSubjectCount(totalCoreSubjects)
+      setLevelCount(totalAvailableLevels)
     } catch (error) {
       console.error('Error fetching question stats:', error)
       // Fallback to default values if fetch fails
