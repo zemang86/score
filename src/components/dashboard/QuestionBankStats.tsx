@@ -7,10 +7,7 @@ interface QuestionStats {
   count: number
 }
 
-interface Question {
-  level: string
-  created_at: string
-}
+
 
 export function QuestionBankStats() {
   const [questionStats, setQuestionStats] = useState<QuestionStats[]>([])
@@ -31,38 +28,51 @@ export function QuestionBankStats() {
     try {
       setLoading(true)
 
-      // Fetch question counts per level
-      const { data: questions, error: questionsError } = await supabase
-        .from('questions')
-        .select('level, created_at')
+      // Use efficient count queries per level (11 parallel queries)
+      console.log('🔄 QuestionBankStats: Fetching counts per level efficiently...')
+      
+      const levelCountPromises = allLevels.map(async (level) => {
+        const { count, error } = await supabase
+          .from('questions')
+          .select('*', { count: 'exact', head: true })
+          .ilike('level', level)
 
-      if (questionsError) throw questionsError
-
-      // Group questions by level and count them
-      const levelCounts = allLevels.map(level => {
-        const count = questions?.filter((q: Question) => 
-          q.level.toLowerCase().trim() === level.toLowerCase().trim()
-        ).length || 0
-        return { level, count }
+        if (error) {
+          console.error(`❌ Error fetching count for ${level}:`, error)
+          return { level, count: 0 }
+        }
+        
+        return { level, count: count || 0 }
       })
 
+      // Execute all count queries in parallel for better performance
+      const levelCounts = await Promise.all(levelCountPromises)
       setQuestionStats(levelCounts)
 
-      // Get the most recent question update time
-      if (questions && questions.length > 0) {
-        const mostRecentDate = questions
-          .map((q: Question) => new Date(q.created_at))
-          .sort((a: Date, b: Date) => b.getTime() - a.getTime())[0]
-        
-        setLastUpdated(mostRecentDate.toLocaleDateString('en-MY', {
+      // Get most recent question update time efficiently
+      const { data: latestQuestion, error: latestError } = await supabase
+        .from('questions')
+        .select('created_at')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+
+      if (latestError) {
+        console.error('❌ Error fetching latest question date:', latestError)
+      } else if (latestQuestion) {
+        const latestDate = new Date(latestQuestion.created_at)
+        setLastUpdated(latestDate.toLocaleDateString('en-MY', {
           year: 'numeric',
           month: 'short',
           day: 'numeric'
         }))
       }
 
+      const totalCount = levelCounts.reduce((sum, stat) => sum + stat.count, 0)
+      console.log('✅ QuestionBankStats: Total questions found:', totalCount)
+
     } catch (error) {
-      console.error('Error fetching question stats:', error)
+      console.error('❌ Error fetching question stats:', error)
     } finally {
       setLoading(false)
     }

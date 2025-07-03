@@ -162,15 +162,16 @@ export function ParentDashboard() {
 
   const fetchTotalQuestionsCount = async () => {
     try {
-      // Fetch total question count
+      // Use the most efficient method from landing page - no data transfer, just count
       const { count: questionsCount, error: questionsError } = await supabase
         .from('questions')
-        .select('id', { count: 'exact' })
+        .select('*', { count: 'exact', head: true })
 
       if (questionsError) {
         console.error('❌ Error fetching questions count:', questionsError)
       } else {
         setTotalQuestions(questionsCount || 0)
+        console.log('✅ Dashboard: Fetched actual question count:', questionsCount)
       }
     } catch (error) {
       console.error('❌ Error in fetchTotalQuestionsCount:', error)
