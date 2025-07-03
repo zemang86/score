@@ -5,8 +5,8 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('❌ Missing Supabase environment variables')
-  console.error('VITE_SUPABASE_URL:', supabaseUrl ? 'Present' : 'Missing')
-  console.error('VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Present' : 'Missing')
+  console.error('VITE_SUPABASE_URL:', supabaseUrl ? `${supabaseUrl.substring(0, 20)}...` : 'Missing')
+  console.error('VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? `${supabaseAnonKey.substring(0, 20)}...` : 'Missing')
   throw new Error('Missing Supabase environment variables. Please check your .env file.')
 }
 
@@ -147,6 +147,8 @@ export interface Question {
   options: string[]
   correct_answer: string
   created_at: string
+  image_url?: string
+  explanation?: string
 }
 
 export interface Exam {

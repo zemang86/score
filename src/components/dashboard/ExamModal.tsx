@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Student, Question } from '../../lib/supabase'
 import { Button } from '../ui/Button'
-import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3, Lock } from 'lucide-react'
+import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3, Lock, BookOpenCheck } from 'lucide-react'
 import { checkShortAnswer } from '../../utils/answerChecker'
 
 interface ExamModalProps {
@@ -821,10 +821,10 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
               </div>
             )}
 
-            {/* Results Step - Compact */}
+            {/* Results Step */}
             {step === 'results' && (
               <div className="space-y-4">
-                {/* Compact Score Display */}
+                {/* Score Display */}
                 <div className="text-center bg-gradient-to-r from-yellow-100 to-orange-100 border-2 border-yellow-400 rounded-lg p-4 shadow-lg">
                   <div className={`text-3xl sm:text-4xl font-bold mb-2 ${getScoreColor(examScore)}`}>
                     {examScore}%
@@ -836,7 +836,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                     {questions.filter(q => q.isCorrect).length} out of {questions.length} correct
                   </div>
                   
-                  {/* Compact XP Display */}
+                  {/* XP Display */}
                   <div className="mt-3 p-2 bg-blue-100 border border-blue-300 rounded-lg">
                     <div className="flex items-center justify-center text-blue-700 mb-1">
                       <Star className="w-4 h-4 mr-1" />
@@ -848,31 +848,86 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                   </div>
                 </div>
 
-                {/* Compact Question Review */}
+                {/* Question Review with Correct Answers and Explanations */}
                 <div className="bg-white border border-gray-200 rounded-lg p-4">
                   <h3 className="text-base font-bold text-gray-700 mb-3">Question Review</h3>
-                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                  <div className="space-y-3 max-h-80 overflow-y-auto">
                     {questions.map((question, index) => (
                       <div
                         key={index}
-                        className={`p-2 rounded-lg border ${
+                        className={`p-3 rounded-lg border-2 ${
                           question.isCorrect
                             ? 'bg-green-50 border-green-300'
                             : 'bg-red-50 border-red-300'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">
-                            Q{index + 1}: {question.question_text.substring(0, 40)}...
-                          </span>
+                        {/* Question Header */}
+                        <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center">
-                            {question.isCorrect ? (
-                              <CheckCircle className="w-4 h-4 text-green-600" />
-                            ) : (
-                              <AlertCircle className="w-4 h-4 text-red-600" />
-                            )}
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-white mr-2 ${
+                              question.isCorrect ? 'bg-green-500' : 'bg-red-500'
+                            }`}>
+                              {index + 1}
+                            </div>
+                            <div>
+                              <div className="flex items-center">
+                                {question.isCorrect ? (
+                                  <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
+                                ) : (
+                                  <XCircle className="w-4 h-4 text-red-600 mr-1" />
+                                )}
+                                <span className={`font-semibold text-xs ${
+                                  question.isCorrect ? 'text-green-700' : 'text-red-700'
+                                }`}>
+                                  {question.isCorrect ? 'Correct' : 'Incorrect'}
+                                </span>
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {question.type} • {question.level}
+                                {question.topic && ` • ${question.topic}`}
+                              </div>
+                            </div>
                           </div>
                         </div>
+                        
+                        {/* Question Text */}
+                        <div className="mb-2">
+                          <p className="text-sm text-gray-700">{question.question_text}</p>
+                        </div>
+                        
+                        {/* Your Answer */}
+                        <div className="mb-2">
+                          <div className="text-xs font-medium text-gray-700 mb-1">Your answer:</div>
+                          <div className={`p-2 rounded-md border text-xs ${
+                            question.isCorrect ? 'bg-green-100 border-green-300 text-green-800' : 'bg-red-100 border-red-300 text-red-800'
+                          }`}>
+                            {Array.isArray(question.userAnswer) 
+                              ? question.userAnswer.join(', ') 
+                              : (question.userAnswer || 'No answer provided')
+                            }
+                          </div>
+                        </div>
+                        
+                        {/* Correct Answer - Show for all questions */}
+                        <div className="mb-2">
+                          <div className="text-xs font-medium text-green-700 mb-1">Correct answer:</div>
+                          <div className="p-2 rounded-md bg-green-100 border border-green-300 text-green-800 text-xs">
+                            {question.correct_answer}
+                          </div>
+                        </div>
+                        
+                        {/* Explanation - Show if available */}
+                        {question.explanation && (
+                          <div>
+                            <div className="text-xs font-medium text-blue-700 mb-1 flex items-center">
+                              <BookOpenCheck className="w-3.5 h-3.5 mr-1" />
+                              Explanation:
+                            </div>
+                            <div className="p-2 rounded-md bg-blue-50 border border-blue-200 text-blue-800 text-xs">
+                              {question.explanation}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
