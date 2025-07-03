@@ -1,13 +1,18 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Star, Trophy, Users, BookOpen, Target, Award, TrendingUp, ArrowRight, Play, CheckCircle, XCircle, DollarSign, Crown, Shield, Sparkles, Heart, Zap, Monitor, Smartphone, Rocket, Brain, Globe, ChevronDown, Lightbulb, Gamepad2, BarChart3, Clock, Gift } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { RevealOnScroll } from '../animations/RevealOnScroll'
 import { EdventureLogo } from '../ui/EdventureLogo'
+import { supabase } from '../../lib/supabase'
 
 export function LandingPage() {
   const navigate = useNavigate()
   const observerRef = useRef<IntersectionObserver | null>(null)
+  const [questionCount, setQuestionCount] = useState<number | null>(null)
+  const [subjectCount, setSubjectCount] = useState<number | null>(null)
+  const [levelCount, setLevelCount] = useState<number | null>(null)
+  const [statsLoading, setStatsLoading] = useState(true)
 
   useEffect(() => {
     // Initialize optimized scroll observer for performance
@@ -36,10 +41,58 @@ export function LandingPage() {
       observerRef.current?.observe(el)
     })
 
+    // Fetch question statistics
+    fetchQuestionStats()
+
     return () => {
       observerRef.current?.disconnect()
     }
   }, [])
+
+  const fetchQuestionStats = async () => {
+    setStatsLoading(true)
+    try {
+      // Fetch total question count
+      const { count: questionCount, error: questionError } = await supabase
+        .from('questions')
+        .select('*', { count: 'exact', head: true })
+
+      if (questionError) throw questionError
+
+      // Fetch unique subjects
+      const { data: subjectData, error: subjectError } = await supabase
+        .from('questions')
+        .select('subject')
+        .not('subject', 'is', null)
+
+      if (subjectError) throw subjectError
+      
+      const uniqueSubjects = [...new Set(subjectData.map(item => item.subject))]
+
+      // Fetch unique levels
+      const { data: levelData, error: levelError } = await supabase
+        .from('questions')
+        .select('level')
+        .not('level', 'is', null)
+
+      if (levelError) throw levelError
+      
+      const uniqueLevels = [...new Set(levelData.map(item => item.level))]
+
+      // Update state with fetched data
+      setQuestionCount(questionCount || 0)
+      setSubjectCount(uniqueSubjects.length)
+      setLevelCount(uniqueLevels.length)
+    } catch (error) {
+      console.error('Error fetching question stats:', error)
+      // Fallback to default values if fetch fails
+      setQuestionCount(null)
+      setSubjectCount(null)
+      setLevelCount(null)
+    } finally {
+      setStatsLoading(false)
+    }
+  }
 
   const handleGetStarted = () => {
     console.log('🚀 Navigating to auth page...')
@@ -52,6 +105,12 @@ export function LandingPage() {
     if (featuresSection) {
       featuresSection.scrollIntoView({ behavior: 'smooth' })
     }
+  }
+
+  // Format number with commas
+  const formatNumber = (num: number | null): string => {
+    if (num === null) return '10,000+' // Fallback value
+    return num.toLocaleString()
   }
 
   return (
@@ -168,19 +227,37 @@ export function LandingPage() {
               <div className="grid grid-cols-3 gap-3 sm:gap-6 text-center lg:text-left">
                 <RevealOnScroll animationType="slide-up" delay={600}>
                   <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-lg border border-white/50 hover:shadow-xl transition-all duration-300 hover:scale-105">
-                    <div className="text-xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-1 sm:mb-2">10,000+</div>
+                    <div className="text-xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-1 sm:mb-2">
+                      {statsLoading ? (
+                        <div className="animate-pulse h-8 w-24 bg-indigo-100 rounded-md mx-auto lg:mx-0"></div>
+                      ) : (
+                        formatNumber(questionCount)
+                      )}
+                    </div>
                     <div className="text-slate-600 font-semibold text-xs sm:text-sm">Questions</div>
                   </div>
                 </RevealOnScroll>
                 <RevealOnScroll animationType="slide-up" delay={700}>
                   <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-lg border border-white/50 hover:shadow-xl transition-all duration-300 hover:scale-105">
-                    <div className="text-xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1 sm:mb-2">5</div>
+                    <div className="text-xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1 sm:mb-2">
+                      {statsLoading ? (
+                        <div className="animate-pulse h-8 w-8 bg-purple-100 rounded-md mx-auto lg:mx-0"></div>
+                      ) : (
+                        subjectCount || 5
+                      )}
+                    </div>
                     <div className="text-slate-600 font-semibold text-xs sm:text-sm">Subjects</div>
                   </div>
                 </RevealOnScroll>
                 <RevealOnScroll animationType="slide-up" delay={800}>
                   <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-lg border border-white/50 hover:shadow-xl transition-all duration-300 hover:scale-105">
-                    <div className="text-xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent mb-1 sm:mb-2">11</div>
+                    <div className="text-xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent mb-1 sm:mb-2">
+                      {statsLoading ? (
+                        <div className="animate-pulse h-8 w-8 bg-pink-100 rounded-md mx-auto lg:mx-0"></div>
+                      ) : (
+                        levelCount || 11
+                      )}
+                    </div>
                     <div className="text-slate-600 font-semibold text-xs sm:text-sm">Levels</div>
                   </div>
                 </RevealOnScroll>
