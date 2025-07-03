@@ -50,18 +50,6 @@ export function AuthPage() {
         <Zap className="w-6 h-6 text-amber-400" />
       </div>
 
-      {/* Back to Home Button */}
-      <div className="absolute top-6 left-6 z-50">
-        <Button
-          variant="ghost"
-          onClick={handleBackToHome}
-          icon={<ArrowLeft className="w-4 h-4" />}
-          className="text-slate-600 hover:text-indigo-600 bg-white/80 backdrop-blur-sm border border-white/30 shadow-sm"
-        >
-          Back to Home
-        </Button>
-      </div>
-
       <div className="flex min-h-screen relative z-20">
         {/* Left side - Branding */}
         <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-800 to-indigo-900 p-12 text-white relative overflow-hidden">
@@ -140,6 +128,16 @@ export function AuthPage() {
             </div>
 
             <div className="bg-white/80 backdrop-blur-lg rounded-3xl p-8 border border-white/30 shadow-xl">
+              {/* Back to Home Button - Now inside the form container */}
+              <Button
+                variant="outline"
+                onClick={handleBackToHome}
+                icon={<ArrowLeft className="w-4 h-4" />}
+                className="w-full mb-6 border-indigo-300 text-indigo-600 hover:bg-indigo-50"
+              >
+                Back to Home
+              </Button>
+
               {renderForm()}
             </div>
           </div>
