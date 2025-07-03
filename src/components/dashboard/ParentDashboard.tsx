@@ -6,6 +6,7 @@ import { AddStudentModal } from './AddStudentModal'
 import { StudentCard } from './StudentCard'
 import { LeaderboardModal } from './LeaderboardModal'
 import { FamilyReportsModal } from './FamilyReportsModal'
+import { ExamModal } from './ExamModal'
 import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } from '../ui/SkeletonLoader'
@@ -17,6 +18,8 @@ export function ParentDashboard() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [showFamilyReports, setShowFamilyReports] = useState(false)
+  const [showExamModal, setShowExamModal] = useState(false)
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
   const [error, setError] = useState('')
   const [connectionError, setConnectionError] = useState(false)
   const [dashboardStats, setDashboardStats] = useState({
@@ -34,6 +37,30 @@ export function ParentDashboard() {
       fetchStudents()
     }
   }, [user])
+
+  // Check for any active exam sessions on mount
+  useEffect(() => {
+    if (students.length > 0) {
+      // Check if any student has an active exam session
+      for (const student of students) {
+        const savedState = sessionStorage.getItem(`exam-state-${student.id}`)
+        if (savedState) {
+          try {
+            const parsedState = JSON.parse(savedState)
+            // Only restore modal if there's an active exam (not in setup or completed)
+            if (parsedState.step === 'exam' && parsedState.examStarted === true) {
+              setSelectedStudent(student)
+              setShowExamModal(true)
+              break // Only show one exam modal at a time
+            }
+          } catch {
+            // Invalid session data, remove it
+            sessionStorage.removeItem(`exam-state-${student.id}`)
+          }
+        }
+      }
+    }
+  }, [students])
 
   const testConnection = async () => {
     try {
@@ -194,6 +221,20 @@ export function ParentDashboard() {
 
   const handleStudentUpdated = () => {
     fetchStudents() // Refresh the students list after edit
+  }
+
+  const handleOpenExamModal = (student: Student) => {
+    setSelectedStudent(student)
+    setShowExamModal(true)
+  }
+
+  const handleCloseExamModal = () => {
+    setShowExamModal(false)
+    setSelectedStudent(null)
+    // Clear any saved exam state when modal is closed
+    if (selectedStudent) {
+      sessionStorage.removeItem(`exam-state-${selectedStudent.id}`)
+    }
   }
 
   const handleRetry = () => {
@@ -497,6 +538,7 @@ export function ParentDashboard() {
                         student={student}
                         onExamComplete={handleExamComplete}
                         onStudentUpdated={handleStudentUpdated}
+                        onOpenExamModal={handleOpenExamModal}
                       />
                     ))}
                   </div>
@@ -656,6 +698,15 @@ export function ParentDashboard() {
         isOpen={showFamilyReports}
         onClose={() => setShowFamilyReports(false)}
       />
+
+      {selectedStudent && (
+        <ExamModal
+          isOpen={showExamModal}
+          onClose={handleCloseExamModal}
+          student={selectedStudent}
+          onExamComplete={handleExamComplete}
+        />
+      )}
     </div>
   )
 }

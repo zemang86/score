@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Student } from '../../lib/supabase'
 import { User, School, GraduationCap, Calendar, Star, Edit, Zap, Trophy, ArrowUp } from 'lucide-react'
 import { Button } from '../ui/Button'
-import { ExamModal } from './ExamModal'
 import { StudentProgressModal } from './StudentProgressModal'
 import { EditStudentModal } from './EditStudentModal'
 import { calculateAgeInYearsAndMonths } from '../../utils/dateUtils'
@@ -13,36 +12,12 @@ interface StudentCardProps {
   onDelete?: (student: Student) => void
   onExamComplete?: () => void
   onStudentUpdated?: () => void
+  onOpenExamModal?: (student: Student) => void
 }
 
-export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStudentUpdated }: StudentCardProps) {
-  // Use session storage to persist modal state, but only if there's an active exam
-  const [showExamModal, setShowExamModal] = useState(() => {
-    const savedState = sessionStorage.getItem(`exam-state-${student.id}`)
-    if (savedState) {
-      try {
-        const parsedState = JSON.parse(savedState)
-        // Only restore modal if there's an active exam (not in setup or completed)
-        return parsedState.step === 'exam' && parsedState.examStarted === true
-      } catch {
-        return false
-      }
-    }
-    return false
-  })
+export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStudentUpdated, onOpenExamModal }: StudentCardProps) {
   const [showProgressModal, setShowProgressModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
-
-  // Helper functions to manage exam modal state
-  const openExamModal = () => {
-    setShowExamModal(true)
-  }
-
-  const closeExamModal = () => {
-    setShowExamModal(false)
-    // Clear any saved exam state when modal is closed
-    sessionStorage.removeItem(`exam-state-${student.id}`)
-  }
 
   const getAgeDisplay = (dateOfBirth: string) => {
     return calculateAgeInYearsAndMonths(dateOfBirth)
@@ -65,15 +40,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
     return { text: `${xp} XP - Expert`, color: 'text-amber-600', emoji: '👑' }
   }
 
-  const handleExamComplete = (score: number, totalQuestions: number) => {
-    closeExamModal()
-    // Delay calling onExamComplete to prevent immediate re-render that closes modal
-    setTimeout(() => {
-      if (onExamComplete) {
-        onExamComplete()
-      }
-    }, 100) // Small delay to let modal close naturally
-  }
+
 
   const handleStudentUpdated = () => {
     setShowEditModal(false)
@@ -140,7 +107,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
               variant="gradient-primary"
               size="sm" 
               className="flex-1 text-sm py-2 shadow-md hover:shadow-lg"
-              onClick={openExamModal}
+              onClick={() => onOpenExamModal?.(student)}
               icon={<Zap className="w-4 h-4" />}
             >
               Start Exam
@@ -159,13 +126,6 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
       </div>
 
       {/* Modals */}
-      <ExamModal
-        isOpen={showExamModal}
-        onClose={closeExamModal}
-        student={student}
-        onExamComplete={handleExamComplete}
-      />
-
       <StudentProgressModal
         isOpen={showProgressModal}
         onClose={() => setShowProgressModal(false)}
