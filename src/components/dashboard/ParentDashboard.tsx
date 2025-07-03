@@ -8,6 +8,7 @@ import { LeaderboardModal } from './LeaderboardModal'
 import { FamilyReportsModal } from './FamilyReportsModal'
 import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
 import { Button } from '../ui/Button'
+import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } from '../ui/SkeletonLoader'
 
 export function ParentDashboard() {
   const { user, profile, subscriptionPlan, maxStudents, dailyExamLimit } = useAuth()
@@ -185,7 +186,10 @@ export function ParentDashboard() {
   }
 
   const handleExamComplete = () => {
-    fetchStudents() // Refresh to update XP and stats
+    // ✅ Delay refresh to allow modal to close naturally and prevent tab switching issues
+    setTimeout(() => {
+      fetchStudents() // Refresh to update XP and stats
+    }, 1000) // 1 second delay
   }
 
   const handleStudentUpdated = () => {
@@ -316,75 +320,79 @@ export function ParentDashboard() {
         </div>
 
         {/* Quick Stats - Compact Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200">
-            <div className="flex items-center">
-              <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
-                <Users className="w-4 h-4 sm:w-5 text-white" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-slate-600">Kids</p>
-                <div className="flex items-baseline">
-                  <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{students.length}</p>
-                  <p className="text-xs text-slate-500">of {maxStudents}</p>
+        {loading ? (
+          <DashboardStatsSkeleton />
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200 hover-lift">
+              <div className="flex items-center">
+                <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
+                  <Users className="w-4 h-4 sm:w-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-slate-600">Kids</p>
+                  <div className="flex items-baseline">
+                    <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{students.length}</p>
+                    <p className="text-xs text-slate-500">of {maxStudents}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200">
-            <div className="flex items-center">
-              <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
-                <BookOpen className="w-4 h-4 sm:w-5 text-white" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-slate-600">Exams Done</p>
-                <div className="flex items-baseline">
-                  <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{dashboardStats.totalExams}</p>
-                  <p className="text-xs text-slate-500">
-                    {dailyExamLimit === 999 ? '∞/day' : `${dailyExamLimit}/day`}
-                  </p>
+            <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200 hover-lift">
+              <div className="flex items-center">
+                <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
+                  <BookOpen className="w-4 h-4 sm:w-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-slate-600">Exams Done</p>
+                  <div className="flex items-baseline">
+                    <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{dashboardStats.totalExams}</p>
+                    <p className="text-xs text-slate-500">
+                      {dailyExamLimit === 999 ? '∞/day' : `${dailyExamLimit}/day`}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200">
-            <div className="flex items-center">
-              <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
-                <Trophy className="w-4 h-4 sm:w-5 text-white" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-slate-600">Badges</p>
-                <div className="flex items-baseline">
-                  <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{dashboardStats.totalBadges}</p>
-                  <p className="text-xs text-slate-500">
-                    {isPremium ? 'Full' : 'Limited'}
-                  </p>
+            <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200 hover-lift">
+              <div className="flex items-center">
+                <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
+                  <Trophy className="w-4 h-4 sm:w-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-slate-600">Badges</p>
+                  <div className="flex items-baseline">
+                    <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{dashboardStats.totalBadges}</p>
+                    <p className="text-xs text-slate-500">
+                      {isPremium ? 'Full' : 'Limited'}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200">
-            <div className="flex items-center">
-              <div className="bg-gradient-to-br from-red-500 to-pink-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
-                <TrendingUp className="w-4 h-4 sm:w-5 text-white" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-slate-600">Avg Score</p>
-                <div className="flex items-baseline">
-                  <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">
-                    {dashboardStats.averageScore > 0 ? `${dashboardStats.averageScore}%` : '-'}
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    {isPremium ? 'Detailed' : 'Basic'}
-                  </p>
+            <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200 hover-lift">
+              <div className="flex items-center">
+                <div className="bg-gradient-to-br from-red-500 to-pink-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
+                  <TrendingUp className="w-4 h-4 sm:w-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-slate-600">Avg Score</p>
+                  <div className="flex items-baseline">
+                    <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">
+                      {dashboardStats.averageScore > 0 ? `${dashboardStats.averageScore}%` : '-'}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {isPremium ? 'Detailed' : 'Basic'}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -455,11 +463,9 @@ export function ParentDashboard() {
                 )}
 
                 {loading ? (
-                  <div className="text-center py-6">
-                    <div className="relative">
-                      <div className="animate-spin rounded-full h-10 w-10 border-4 border-indigo-200 border-t-indigo-500 mx-auto mb-3"></div>
-                    </div>
-                    <p className="text-indigo-600 font-medium text-sm sm:text-base">Loading your awesome kids...</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                    <StudentCardSkeleton />
+                    <StudentCardSkeleton />
                   </div>
                 ) : students.length === 0 && !error ? (
                   <div className="text-center py-6">
