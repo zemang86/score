@@ -30,7 +30,6 @@ export function QuestionManagement() {
   
   // Subject list state
   const [allSubjects, setAllSubjects] = useState<string[]>([])
-  const [allLevels, setAllLevels] = useState<string[]>([])
   
   // CSV Upload states
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -51,6 +50,12 @@ export function QuestionManagement() {
     { value: 'ShortAnswer', label: 'Short Answer' },
     { value: 'Subjective', label: 'Subjective/Essay' },
     { value: 'Matching', label: 'Matching' }
+  ]
+
+  // Predefined list of all education levels
+  const allEducationLevels = [
+    'Darjah 1', 'Darjah 2', 'Darjah 3', 'Darjah 4', 'Darjah 5', 'Darjah 6',
+    'Tingkatan 1', 'Tingkatan 2', 'Tingkatan 3', 'Tingkatan 4', 'Tingkatan 5'
   ]
 
   const fetchQuestions = async () => {
@@ -117,22 +122,6 @@ export function QuestionManagement() {
       setAllSubjects(subjects.sort())
     } catch (err) {
       console.error('Error fetching subjects:', err)
-    }
-  }
-
-  const fetchAllLevels = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('questions')
-        .select('level')
-        .not('level', 'is', null)
-
-      if (error) throw error
-
-      const levels = [...new Set(data?.map(item => item.level) || [])]
-      setAllLevels(levels.sort())
-    } catch (err) {
-      console.error('Error fetching levels:', err)
     }
   }
 
@@ -278,7 +267,6 @@ export function QuestionManagement() {
 
   useEffect(() => {
     fetchAllSubjects()
-    fetchAllLevels()
   }, [])
 
   const handleSearch = (value: string) => {
@@ -391,7 +379,7 @@ export function QuestionManagement() {
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
             >
               <option value="">All Levels</option>
-              {allLevels.map(level => (
+              {allEducationLevels.map(level => (
                 <option key={level} value={level}>{level}</option>
               ))}
             </select>
