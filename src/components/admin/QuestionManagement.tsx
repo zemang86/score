@@ -41,6 +41,9 @@ export function QuestionManagement() {
   const [selectedQuestionForEdit, setSelectedQuestionForEdit] = useState<Question | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
 
+  // Delete states
+  const [deletingQuestionId, setDeletingQuestionId] = useState<string | null>(null)
+
   useEffect(() => {
     fetchQuestions()
     fetchAllSubjects()
@@ -127,6 +130,49 @@ export function QuestionManagement() {
       console.error('Error fetching questions:', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDeleteQuestion = async (questionId: string, questionText: string) => {
+    // Show confirmation dialog
+    const confirmMessage = `Are you sure you want to delete this question?\n\n"${questionText.substring(0, 100)}${questionText.length > 100 ? '...' : '"}"\n\nThis action cannot be undone.`
+    
+    if (!window.confirm(confirmMessage)) {
+      return
+    }
+
+    setDeletingQuestionId(questionId)
+    setError('')
+
+    try {
+      console.log('🗑️ Deleting question:', questionId)
+      
+      const { error: deleteError } = await supabase
+        .from('questions')
+        .delete()
+        .eq('id', questionId)
+
+      if (deleteError) {
+        throw deleteError
+      }
+
+      console.log('✅ Question deleted successfully')
+      
+      // Refresh the questions list
+      await fetchQuestions()
+      
+      // Show success message briefly
+      const successMessage = 'Question deleted successfully!'
+      setError('')
+      
+      // You could add a success state here if you want to show a success message
+      console.log(successMessage)
+      
+    } catch (err: any) {
+      console.error('❌ Error deleting question:', err)
+      setError(err.message || 'Failed to delete question')
+    } finally {
+      setDeletingQuestionId(null)
     }
   }
 
@@ -563,7 +609,16 @@ export function QuestionManagement() {
                         onClick={() => handleEditQuestion(question)}
                         title="Edit question"
                       />
-                      <Button variant="ghost" size="sm" className="text-error-600 hover:text-error-700" icon={<Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />} />
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-error-600 hover:text-error-700" 
+                        icon={<Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />}
+                        onClick={() => handleDeleteQuestion(question.id, question.question_text)}
+                        disabled={deletingQuestionId === question.id}
+                        loading={deletingQuestionId === question.id}
+                        title="Delete question"
+                      />
                     </div>
                   </td>
                 </tr>
