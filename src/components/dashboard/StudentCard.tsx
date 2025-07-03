@@ -16,22 +16,32 @@ interface StudentCardProps {
 }
 
 export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStudentUpdated }: StudentCardProps) {
-  // Use session storage to persist modal state across tab switches and re-renders
+  // Use session storage to persist modal state, but only if there's an active exam
   const [showExamModal, setShowExamModal] = useState(() => {
-    return sessionStorage.getItem(`exam-modal-${student.id}`) === 'true'
+    const savedState = sessionStorage.getItem(`exam-state-${student.id}`)
+    if (savedState) {
+      try {
+        const parsedState = JSON.parse(savedState)
+        // Only restore modal if there's an active exam (not in setup or completed)
+        return parsedState.step === 'exam' && parsedState.examStarted === true
+      } catch {
+        return false
+      }
+    }
+    return false
   })
   const [showProgressModal, setShowProgressModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
 
-  // Helper functions to manage exam modal state with session storage
+  // Helper functions to manage exam modal state
   const openExamModal = () => {
     setShowExamModal(true)
-    sessionStorage.setItem(`exam-modal-${student.id}`, 'true')
   }
 
   const closeExamModal = () => {
     setShowExamModal(false)
-    sessionStorage.removeItem(`exam-modal-${student.id}`)
+    // Clear any saved exam state when modal is closed
+    sessionStorage.removeItem(`exam-state-${student.id}`)
   }
 
   const getAgeDisplay = (dateOfBirth: string) => {
