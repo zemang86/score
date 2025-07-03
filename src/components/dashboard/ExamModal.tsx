@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Student, Question } from '../../lib/supabase'
 import { Button } from '../ui/Button'
-import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3 } from 'lucide-react'
+import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3, Lock } from 'lucide-react'
 import { checkShortAnswer } from '../../utils/answerChecker'
 
 interface ExamModalProps {
@@ -693,33 +693,74 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Choose Difficulty</label>
                   <div className="space-y-2">
-                    {(['Easy', 'Medium', 'Full'] as ExamMode[]).map((mode) => {
-                      const config = getModeConfig(mode)
-                      return (
-                        <button
-                          key={mode}
-                          onClick={() => setSelectedMode(mode)}
-                          className={`w-full p-3 rounded-lg border-2 transition-all duration-300 text-left ${
-                            selectedMode === mode
-                              ? 'bg-green-500 text-white border-green-700 shadow-md'
-                              : 'bg-white text-green-600 border-green-300 hover:bg-green-50'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <div className="font-bold text-sm">{mode} Mode</div>
-                              <div className="text-xs opacity-90">
-                                {config.questionCount} questions • {config.timeMinutes} minutes
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Clock className="w-4 h-4" />
-                              <Target className="w-4 h-4" />
+                    {/* Easy Mode - Enabled */}
+                    <button
+                      onClick={() => setSelectedMode('Easy')}
+                      className={`w-full p-3 rounded-lg border-2 transition-all duration-300 text-left ${
+                        selectedMode === 'Easy'
+                          ? 'bg-green-500 text-white border-green-700 shadow-md'
+                          : 'bg-white text-green-600 border-green-300 hover:bg-green-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-bold text-sm">Easy Mode</div>
+                          <div className="text-xs opacity-90">
+                            10 questions • 15 minutes
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Clock className="w-4 h-4" />
+                          <Target className="w-4 h-4" />
+                        </div>
+                      </div>
+                    </button>
+
+                    {/* Medium Mode - Disabled with Coming Soon */}
+                    <div className="relative">
+                      <button
+                        disabled={true}
+                        className="w-full p-3 rounded-lg border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-80 cursor-not-allowed"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-bold text-sm">Medium Mode</div>
+                            <div className="text-xs opacity-90">
+                              20 questions • 30 minutes
                             </div>
                           </div>
-                        </button>
-                      )
-                    })}
+                          <div className="flex items-center space-x-1">
+                            <Lock className="w-4 h-4" />
+                          </div>
+                        </div>
+                      </button>
+                      <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg rounded-tr-lg">
+                        Coming Soon
+                      </div>
+                    </div>
+
+                    {/* Full Mode - Disabled with Coming Soon */}
+                    <div className="relative">
+                      <button
+                        disabled={true}
+                        className="w-full p-3 rounded-lg border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-80 cursor-not-allowed"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-bold text-sm">Full Mode</div>
+                            <div className="text-xs opacity-90">
+                              40+ questions • 60 minutes
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Lock className="w-4 h-4" />
+                          </div>
+                        </div>
+                      </button>
+                      <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg rounded-tr-lg">
+                        Coming Soon
+                      </div>
+                    </div>
                   </div>
                 </div>
 
