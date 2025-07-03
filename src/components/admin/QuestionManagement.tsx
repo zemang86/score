@@ -103,36 +103,23 @@ export function QuestionManagement() {
     }
   }
 
-  const fetchAllSubjects = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('questions')
-        .select('subject')
-        .not('subject', 'is', null)
+  // Use predefined subjects instead of fetching from database
+  // This ensures all expected subjects are always available in the filter
+  const predefinedSubjects = ['Bahasa Melayu', 'English', 'Mathematics', 'Science', 'History']
 
-      if (error) throw error
-
-      const subjects = [...new Set(data?.map(item => item.subject) || [])]
-      setAllSubjects(subjects.sort())
-    } catch (err) {
-      console.error('Error fetching subjects:', err)
-    }
+  const initializeSubjects = () => {
+    setAllSubjects(predefinedSubjects)
   }
 
-  const fetchAllLevels = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('questions')
-        .select('level')
-        .not('level', 'is', null)
+  // Use predefined levels instead of fetching from database
+  // This ensures all expected levels are always available in the filter
+  const predefinedLevels = [
+    'Darjah 1', 'Darjah 2', 'Darjah 3', 'Darjah 4', 'Darjah 5', 'Darjah 6',
+    'Tingkatan 1', 'Tingkatan 2', 'Tingkatan 3', 'Tingkatan 4', 'Tingkatan 5'
+  ]
 
-      if (error) throw error
-
-      const levels = [...new Set(data?.map(item => item.level) || [])]
-      setAllLevels(levels.sort())
-    } catch (err) {
-      console.error('Error fetching levels:', err)
-    }
+  const initializeLevels = () => {
+    setAllLevels(predefinedLevels)
   }
 
   const handleDeleteQuestion = async (questionId: string) => {
@@ -276,8 +263,8 @@ export function QuestionManagement() {
   }, [currentPage, questionsPerPage, selectedSubject, selectedLevel, selectedType, searchTerm])
 
   useEffect(() => {
-    fetchAllSubjects()
-    fetchAllLevels()
+    initializeSubjects()
+    initializeLevels()
   }, [])
 
   const handleSearch = (value: string) => {
