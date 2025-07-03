@@ -6,7 +6,7 @@ import { AddStudentModal } from './AddStudentModal'
 import { StudentCard } from './StudentCard'
 import { LeaderboardModal } from './LeaderboardModal'
 import { FamilyReportsModal } from './FamilyReportsModal'
-import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target } from 'lucide-react'
+import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
 import { Button } from '../ui/Button'
 
 export function ParentDashboard() {
@@ -17,6 +17,7 @@ export function ParentDashboard() {
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [showFamilyReports, setShowFamilyReports] = useState(false)
   const [error, setError] = useState('')
+  const [connectionError, setConnectionError] = useState(false)
   const [dashboardStats, setDashboardStats] = useState({
     totalExams: 0,
     totalBadges: 0,
@@ -33,12 +34,48 @@ export function ParentDashboard() {
     }
   }, [user])
 
+  const testConnection = async () => {
+    try {
+      console.log('🧪 Testing Supabase connection...')
+      
+      // Test basic connection
+      const { data, error } = await supabase
+        .from('users')
+        .select('count')
+        .limit(1)
+      
+      if (error) {
+        console.error('❌ Connection test failed:', error)
+        return false
+      }
+      
+      console.log('✅ Connection test successful')
+      return true
+    } catch (err) {
+      console.error('❌ Connection test error:', err)
+      return false
+    }
+  }
+
   const fetchStudents = async () => {
     if (!user) return
 
     try {
       setLoading(true)
       setError('')
+      setConnectionError(false)
+
+      console.log('🔍 Starting to fetch students for user:', user.id)
+
+      // First test the connection
+      const connectionOk = await testConnection()
+      if (!connectionOk) {
+        setConnectionError(true)
+        setError('Unable to connect to the database. Please check your internet connection and try again.')
+        return
+      }
+
+      console.log('📡 Making request to fetch students...')
 
       const { data, error: fetchError } = await supabase
         .from('students')
@@ -46,10 +83,14 @@ export function ParentDashboard() {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
+      console.log('📡 Students fetch response:', { data, error: fetchError })
+
       if (fetchError) {
+        console.error('❌ Fetch error details:', fetchError)
         throw fetchError
       }
 
+      console.log('✅ Students fetched successfully:', data?.length || 0, 'students')
       setStudents(data || [])
       
       // Fetch dashboard statistics
@@ -57,8 +98,19 @@ export function ParentDashboard() {
         await fetchDashboardStats(data.map(s => s.id))
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to load students')
-      console.error('Error fetching students:', err)
+      console.error('❌ Error in fetchStudents:', err)
+      
+      // Check if it's a network error
+      if (err.message === 'Failed to fetch' || err.name === 'TypeError') {
+        setConnectionError(true)
+        setError('Network connection failed. Please check your internet connection and ensure Supabase is accessible.')
+      } else if (err.code === 'PGRST301') {
+        setError('Database connection issue. Please try refreshing the page.')
+      } else if (err.code === 'PGRST116') {
+        setError('No data found. This might be a permissions issue.')
+      } else {
+        setError(err.message || 'Failed to load students. Please try again.')
+      }
     } finally {
       setLoading(false)
     }
@@ -66,6 +118,8 @@ export function ParentDashboard() {
 
   const fetchDashboardStats = async (studentIds: string[]) => {
     try {
+      console.log('📊 Fetching dashboard stats for students:', studentIds)
+
       // Fetch exam statistics
       const { data: exams, error: examsError } = await supabase
         .from('exams')
@@ -73,7 +127,10 @@ export function ParentDashboard() {
         .in('student_id', studentIds)
         .eq('completed', true)
 
-      if (examsError) throw examsError
+      if (examsError) {
+        console.error('❌ Error fetching exams:', examsError)
+        throw examsError
+      }
 
       // Fetch badge statistics
       const { data: badges, error: badgesError } = await supabase
@@ -81,13 +138,23 @@ export function ParentDashboard() {
         .select('id')
         .in('student_id', studentIds)
 
-      if (badgesError) throw badgesError
+      if (badgesError) {
+        console.error('❌ Error fetching badges:', badgesError)
+        throw badgesError
+      }
 
       // Calculate statistics
       const completedExams = exams || []
       const scores = completedExams.map(e => e.score).filter(s => s !== null)
       const averageScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0
       const totalXP = students.reduce((sum, student) => sum + (student.xp || 0), 0)
+
+      console.log('✅ Dashboard stats calculated:', {
+        totalExams: completedExams.length,
+        totalBadges: badges?.length || 0,
+        averageScore,
+        totalXP
+      })
 
       setDashboardStats({
         totalExams: completedExams.length,
@@ -96,7 +163,8 @@ export function ParentDashboard() {
         totalXP
       })
     } catch (error) {
-      console.error('Error fetching dashboard stats:', error)
+      console.error('❌ Error fetching dashboard stats:', error)
+      // Don't show error for stats, just log it
     }
   }
 
@@ -110,6 +178,10 @@ export function ParentDashboard() {
 
   const handleStudentUpdated = () => {
     fetchStudents() // Refresh the students list after edit
+  }
+
+  const handleRetry = () => {
+    fetchStudents()
   }
 
   const getPlanDisplayName = (plan: string | null) => {
@@ -339,8 +411,34 @@ export function ParentDashboard() {
               
               <div className="p-3 sm:p-4">
                 {error && (
-                  <div className="mb-3 bg-red-50 border-2 border-red-200 rounded-lg p-2.5">
-                    <p className="text-red-700 font-medium text-center text-xs sm:text-sm">{error}</p>
+                  <div className="mb-3 bg-red-50 border-2 border-red-200 rounded-lg p-3">
+                    <div className="flex items-start">
+                      <AlertCircle className="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1">
+                        <p className="text-red-700 font-medium text-sm mb-2">{error}</p>
+                        {connectionError && (
+                          <div className="space-y-2">
+                            <p className="text-red-600 text-xs">
+                              Troubleshooting steps:
+                            </p>
+                            <ul className="text-red-600 text-xs space-y-1 ml-4">
+                              <li>• Check your internet connection</li>
+                              <li>• Verify Supabase configuration in .env file</li>
+                              <li>• Ensure your Supabase project is active</li>
+                              <li>• Try refreshing the page</li>
+                            </ul>
+                            <Button
+                              onClick={handleRetry}
+                              variant="outline"
+                              size="sm"
+                              className="mt-2 text-xs border-red-300 text-red-700 hover:bg-red-50"
+                            >
+                              Retry Connection
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
 
@@ -351,7 +449,7 @@ export function ParentDashboard() {
                     </div>
                     <p className="text-indigo-600 font-medium text-sm sm:text-base">Loading your awesome kids...</p>
                   </div>
-                ) : students.length === 0 ? (
+                ) : students.length === 0 && !error ? (
                   <div className="text-center py-6">
                     <div className="bg-indigo-100 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-3">
                       <Users className="w-8 h-8 text-indigo-500" />

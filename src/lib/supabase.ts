@@ -4,11 +4,22 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+  console.error('❌ Missing Supabase environment variables')
+  console.error('VITE_SUPABASE_URL:', supabaseUrl ? 'Present' : 'Missing')
+  console.error('VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Present' : 'Missing')
+  throw new Error('Missing Supabase environment variables. Please check your .env file.')
+}
+
+// Validate URL format
+try {
+  new URL(supabaseUrl)
+} catch (error) {
+  console.error('❌ Invalid Supabase URL format:', supabaseUrl)
+  throw new Error('Invalid Supabase URL format. Please check your VITE_SUPABASE_URL in .env file.')
 }
 
 console.log('🔧 Supabase Configuration:')
-console.log('URL:', supabaseUrl ? `${supabaseUrl.substring(0, 20)}...` : 'Missing')
+console.log('URL:', supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : 'Missing')
 console.log('Anon Key:', supabaseAnonKey ? `${supabaseAnonKey.substring(0, 20)}...` : 'Missing')
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -21,16 +32,77 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     params: {
       eventsPerSecond: 10
     }
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'edventure-plus-app'
+    }
   }
 })
 
+// Enhanced connection test with detailed error reporting
+const testSupabaseConnection = async () => {
+  console.log('🧪 Testing Supabase connection...')
+  
+  try {
+    // Test 1: Basic connection
+    console.log('📡 Test 1: Basic connection test')
+    const { data, error } = await Promise.race([
+      supabase.from('users').select('count').limit(1),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Connection timeout')), 10000)
+      )
+    ]) as any
+
+    if (error) {
+      console.error('❌ Basic connection test failed:', error)
+      console.error('Error details:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint
+      })
+      return { success: false, error: error.message }
+    }
+
+    console.log('✅ Basic connection test successful')
+
+    // Test 2: Auth session
+    console.log('📡 Test 2: Auth session test')
+    const { data: session, error: sessionError } = await supabase.auth.getSession()
+    
+    if (sessionError) {
+      console.warn('⚠️ Auth session test warning:', sessionError)
+    } else {
+      console.log('✅ Auth session test completed')
+      console.log('Session status:', session.session ? 'Active session found' : 'No active session')
+    }
+
+    return { success: true }
+  } catch (error: any) {
+    console.error('❌ Connection test failed with error:', error)
+    
+    if (error.message === 'Connection timeout') {
+      console.error('💥 Connection timed out - possible network or configuration issue')
+    } else if (error.message?.includes('fetch')) {
+      console.error('💥 Network fetch error - check internet connection and Supabase URL')
+    }
+    
+    return { success: false, error: error.message }
+  }
+}
+
 // Test connection on initialization
-supabase.auth.getSession().then(({ data, error }) => {
-  if (error) {
-    console.error('❌ Supabase connection error:', error)
+testSupabaseConnection().then(result => {
+  if (result.success) {
+    console.log('🎉 Supabase database is ready!')
   } else {
-    console.log('✅ Supabase connected successfully')
-    console.log('Session:', data.session ? 'Active session found' : 'No active session')
+    console.error('💥 Supabase database connection failed:', result.error)
+    console.error('🔧 Please check:')
+    console.error('  1. Your internet connection')
+    console.error('  2. VITE_SUPABASE_URL in .env file')
+    console.error('  3. VITE_SUPABASE_ANON_KEY in .env file')
+    console.error('  4. Your Supabase project is active')
   }
 }).catch(err => {
   console.error('❌ Failed to test Supabase connection:', err)
@@ -300,11 +372,13 @@ export const testDatabaseConnection = async (): Promise<{ success: boolean; erro
   console.log('🧪 Testing database connection...')
   
   try {
-    // Test basic query
-    const { data, error } = await supabase
-      .from('users')
-      .select('count')
-      .limit(1)
+    // Test basic query with timeout
+    const { data, error } = await Promise.race([
+      supabase.from('users').select('count').limit(1),
+      new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Connection timeout')), 10000)
+      )
+    ]) as any
     
     if (error) {
       console.error('❌ Database connection test failed:', error)
@@ -313,14 +387,42 @@ export const testDatabaseConnection = async (): Promise<{ success: boolean; erro
     
     console.log('✅ Database connection test successful')
     return { success: true }
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Database connection test error:', error)
-    return { success: false, error: 'Connection test failed' }
+    
+    if (error.message === 'Connection timeout') {
+      return { success: false, error: 'Connection timeout - please check your network and Supabase configuration' }
+    }
+    
+    return { success: false, error: error.message || 'Connection test failed' }
   }
 }
 
+// Enhanced error handler for Supabase operations
+export const handleSupabaseError = (error: any, operation: string) => {
+  console.error(`❌ Supabase ${operation} error:`, error)
+  
+  if (error.message === 'Failed to fetch') {
+    return 'Network connection failed. Please check your internet connection and try again.'
+  }
+  
+  if (error.code === 'PGRST301') {
+    return 'Database connection issue. Please try refreshing the page.'
+  }
+  
+  if (error.code === 'PGRST116') {
+    return 'No data found. This might be a permissions issue.'
+  }
+  
+  if (error.code === 'PGRST204') {
+    return 'Access denied. Please check your permissions.'
+  }
+  
+  return error.message || `${operation} failed. Please try again.`
+}
+
 // Initialize connection test
-testDatabaseConnection().then(result => {
+testSupabaseConnection().then(result => {
   if (result.success) {
     console.log('🎉 Supabase database is ready!')
   } else {
