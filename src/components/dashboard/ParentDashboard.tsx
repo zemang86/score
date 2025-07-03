@@ -24,6 +24,9 @@ export function ParentDashboard() {
     totalXP: 0
   })
 
+  // Define isPremium based on subscriptionPlan
+  const isPremium = subscriptionPlan === 'premium'
+
   useEffect(() => {
     if (user) {
       fetchStudents()
