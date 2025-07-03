@@ -291,7 +291,8 @@ export function QuestionManagement() {
   }
 
   const handleLevelFilter = (level: string) => {
-    setSelectedLevel(level)
+    // Trim the level value to ensure consistent matching
+    setSelectedLevel(level.trim())
     setCurrentPage(1) // Reset to first page when filtering
   }
 
