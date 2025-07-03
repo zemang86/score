@@ -260,7 +260,7 @@ export function QuestionManagement() {
   }, [currentPage, questionsPerPage, selectedSubject, selectedLevel, selectedType, searchTerm])
 
   useEffect(() => {
-<
+    initializeSubjects()
   }, [])
 
   const handleSearch = (value: string) => {

@@ -1,9 +1,9 @@
+/* Import scroll animations - must come first */
+@import './animations.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import scroll animations */
-@import './animations.css';
 
 /* Modern, clean global styles */
 @layer base {

@@ -12,6 +12,7 @@ import { StudentProgressModal } from './StudentProgressModal'
 import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } from '../ui/SkeletonLoader'
+import { QuestionBankStats } from './QuestionBankStats'
 
 export function ParentDashboard() {
   const { user, profile, subscriptionPlan, maxStudents, dailyExamLimit } = useAuth()
@@ -305,11 +306,11 @@ export function ParentDashboard() {
       </div>
       
       <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 relative z-20">
-        {/* Welcome Section - Compact */}
+        {/* Welcome Section with Plan Info */}
         <div className="mb-4 sm:mb-6">
           <div className="bg-white/90 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30 shadow-md">
-            <div className="flex flex-col sm:flex-row items-center justify-between">
-              <div className="flex flex-col sm:flex-row items-center mb-3 sm:mb-0">
+            <div className="flex flex-col lg:flex-row items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-center mb-3 lg:mb-0">
                 <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-2 sm:p-3 mb-2 sm:mb-0 sm:mr-3 shadow-md">
                   <Crown className="w-6 h-6 sm:w-7 text-white" />
                 </div>
@@ -317,10 +318,18 @@ export function ParentDashboard() {
                   <h1 className="text-xl sm:text-2xl font-bold text-slate-800 mb-0.5">
                     Welcome, {profile?.full_name || 'Parent'}!
                   </h1>
-                  <p className="text-sm sm:text-base text-slate-600">Ready to level up your kids' learning adventure?</p>
+                  <p className="text-sm sm:text-base text-slate-600 mb-1">
+                    Ready to level up your kids' learning adventure?
+                  </p>
+                  <div className="flex items-center justify-center sm:justify-start">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                      <Crown className="w-3 h-3 mr-1" />
+                      {getPlanDisplayName(subscriptionPlan)}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className="hidden lg:block">
+              <div className="flex gap-2">
                 <Button
                   onClick={() => setShowLeaderboard(true)}
                   variant="gradient-primary"
@@ -329,66 +338,21 @@ export function ParentDashboard() {
                 >
                   Leaderboard
                 </Button>
+                <Button
+                  onClick={() => setShowFamilyReports(true)}
+                  variant="outline"
+                  size="sm"
+                  icon={<TrendingUp className="w-4 h-4" />}
+                  className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                >
+                  Reports
+                </Button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Plan Details Section - Compact */}
-        <div className="mb-4 sm:mb-6">
-          <div className={`rounded-xl p-3 sm:p-4 border-2 shadow-md ${getPlanColor(subscriptionPlan)}`}>
-            <div className="flex flex-col lg:flex-row items-center justify-between">
-              <div className="flex items-center mb-3 lg:mb-0">
-                <div className="bg-white/80 backdrop-blur-sm rounded-lg p-2 mr-3 border border-white/30 shadow-sm">
-                  <Crown className="w-5 h-5 sm:w-6 text-amber-500" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-700">Your Current Plan</p>
-                  <p className="text-lg sm:text-xl font-bold text-slate-800">{getPlanDisplayName(subscriptionPlan)}</p>
-                </div>
-              </div>
-              
-              <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-                <div className="text-center bg-white/80 backdrop-blur-sm rounded-lg p-2 border border-white/30 shadow-sm">
-                  <div className="flex items-center justify-center text-blue-600 mb-0.5">
-                    <Users className="w-3.5 h-3.5 mr-1" />
-                    <span className="font-medium text-xs">Kids Limit</span>
-                  </div>
-                  <p className="text-lg font-bold text-slate-800">{maxStudents}</p>
-                </div>
-                
-                <div className="text-center bg-white/80 backdrop-blur-sm rounded-lg p-2 border border-white/30 shadow-sm">
-                  <div className="flex items-center justify-center text-indigo-600 mb-0.5">
-                    <BookOpen className="w-3.5 h-3.5 mr-1" />
-                    <span className="font-medium text-xs">Daily Exams</span>
-                  </div>
-                  <p className="text-lg font-bold text-slate-800">
-                    {dailyExamLimit === 999 ? '∞' : dailyExamLimit}
-                  </p>
-                </div>
-                
-                {subscriptionPlan === 'premium' && (
-                  <div className="text-center bg-white/80 backdrop-blur-sm rounded-lg p-2 border border-white/30 shadow-sm">
-                    <div className="flex items-center justify-center text-amber-600 mb-0.5">
-                      <Star className="w-3.5 h-3.5 mr-1" />
-                      <span className="font-medium text-xs">Access</span>
-                    </div>
-                    <p className="text-lg font-bold text-slate-800">Full</p>
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            {subscriptionPlan === 'premium' && (
-              <div className="mt-3 p-2 bg-green-100 border border-green-300 rounded-lg text-xs sm:text-sm">
-                <div className="flex items-center text-green-800 font-medium">
-                  <Crown className="w-3.5 h-3.5 mr-1.5" />
-                  <span>You're enjoying premium access for FREE during our launch period!</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+
 
         {/* Quick Stats - Compact Grid */}
         {loading ? (
