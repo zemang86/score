@@ -55,6 +55,21 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     }
   }
 
+  // Prevent body scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      // Store original overflow style
+      const originalStyle = window.getComputedStyle(document.body).overflow
+      // Prevent scrolling
+      document.body.style.overflow = 'hidden'
+      
+      // Cleanup function to restore scrolling
+      return () => {
+        document.body.style.overflow = originalStyle
+      }
+    }
+  }, [isOpen])
+
   // Function to determine allowed levels based on student's current level
   const getAllowedLevels = (currentLevel: string): string[] => {
     const levelMap: { [key: string]: string[] } = {
@@ -575,21 +590,22 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         
-        {/* Setup Step */}
-        {step === 'setup' && (
-          <>
-            <div className="p-4 sm:p-6 border-b border-neutral-200 bg-gradient-to-r from-primary-100 to-secondary-100">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 bg-white border-b border-neutral-200 rounded-t-2xl sm:rounded-t-3xl">
+          {/* Setup Step Header */}
+          {step === 'setup' && (
+            <div className="p-3 sm:p-4 bg-gradient-to-r from-primary-100 to-secondary-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <div className="bg-primary-500 rounded-full p-2 sm:p-3 mr-3 sm:mr-4 shadow-fun">
-                    <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                    <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-primary-600">Start New Exam</h2>
-                    <p className="text-sm sm:text-base text-secondary-600">For {student.name} - {student.level}</p>
-                    <p className="text-xs sm:text-sm text-primary-500 mt-1">
+                    <h2 className="text-lg sm:text-xl font-bold text-primary-600">Start New Exam</h2>
+                    <p className="text-sm text-secondary-600">For {student.name} - {student.level}</p>
+                    <p className="text-xs text-primary-500 mt-1">
                       Questions from: {getAllowedLevels(student.level).join(', ')}
                     </p>
                   </div>
@@ -602,130 +618,21 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                 </button>
               </div>
             </div>
+          )}
 
-            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-              {error && (
-                <div className="bg-error-50 border-2 border-error-200 rounded-xl p-3 sm:p-4">
-                  <p className="text-error-700 font-medium text-center text-sm sm:text-base">{error}</p>
-                </div>
-              )}
-
-              {/* Level Information */}
-              <div className="bg-primary-50 border-2 border-primary-200 rounded-xl p-3 sm:p-4">
-                <h3 className="text-sm sm:text-base font-semibold text-primary-800 mb-2">Smart Question Selection</h3>
-                <p className="text-xs sm:text-sm text-primary-700 mb-2">
-                  Based on your level ({student.level}), you'll receive questions from:
-                </p>
-                <div className="flex flex-wrap gap-1 sm:gap-2">
-                  {getAllowedLevels(student.level).map((level, index) => (
-                    <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-200 text-primary-800">
-                      {level}
-                    </span>
-                  ))}
-                </div>
-                <p className="text-xs text-primary-600 mt-2">
-                  This helps build a strong foundation by including questions from previous levels!
-                </p>
-              </div>
-
-              {/* Subject Selection */}
-              <div>
-                <label className="block text-base sm:text-lg font-bold text-primary-700 mb-2 sm:mb-3">
-                  Choose Subject
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
-                  {subjects.map((subject) => (
-                    <button
-                      key={subject}
-                      onClick={() => setSelectedSubject(subject)}
-                      className={`p-3 sm:p-4 rounded-xl border-2 font-medium transition-all duration-300 text-sm sm:text-base ${
-                        selectedSubject === subject
-                          ? 'bg-primary-500 text-white border-primary-700 shadow-fun'
-                          : 'bg-white text-primary-600 border-primary-300 hover:bg-primary-50'
-                      }`}
-                    >
-                      {subject}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Mode Selection */}
-              <div>
-                <label className="block text-base sm:text-lg font-bold text-primary-700 mb-2 sm:mb-3">
-                  Choose Difficulty
-                </label>
-                <div className="space-y-2 sm:space-y-3">
-                  {(['Easy', 'Medium', 'Full'] as ExamMode[]).map((mode) => {
-                    const config = getModeConfig(mode)
-                    return (
-                      <button
-                        key={mode}
-                        onClick={() => setSelectedMode(mode)}
-                        className={`w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-300 text-left ${
-                          selectedMode === mode
-                            ? 'bg-secondary-500 text-white border-secondary-700 shadow-success'
-                            : 'bg-white text-secondary-600 border-secondary-300 hover:bg-secondary-50'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-bold text-base sm:text-lg">{mode} Mode</div>
-                            <div className="text-xs sm:text-sm opacity-90">
-                              {config.questionCount} questions • {config.timeMinutes} minutes
-                            </div>
-                            <div className="text-xs opacity-75 mt-1">
-                              Types: {config.types.join(', ')}
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-1 sm:space-x-2">
-                            <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
-                            <Target className="w-4 h-4 sm:w-5 sm:h-5" />
-                          </div>
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                <Button
-                  variant="outline"
-                  onClick={handleModalClose}
-                  className="flex-1 text-sm sm:text-base"
-                  disabled={loading}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={startExam}
-                  className="flex-1 bg-gradient-to-r from-secondary-400 to-secondary-600 text-sm sm:text-base"
-                  disabled={loading}
-                  loading={loading}
-                  icon={!loading ? <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> : undefined}
-                >
-                  {loading ? 'Loading...' : 'Start Exam!'}
-                </Button>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Exam Step */}
-        {step === 'exam' && questions.length > 0 && (
-          <>
-            <div className="p-4 sm:p-6 border-b border-neutral-200 bg-gradient-to-r from-primary-100 to-secondary-100">
+          {/* Exam Step Header */}
+          {step === 'exam' && questions.length > 0 && (
+            <div className="p-3 sm:p-4 bg-gradient-to-r from-primary-100 to-secondary-100">
               <div className="flex flex-col sm:flex-row items-center justify-between">
-                <div className="flex items-center mb-3 sm:mb-0">
+                <div className="flex items-center mb-2 sm:mb-0">
                   <div className="bg-secondary-500 rounded-full p-2 sm:p-3 mr-3 sm:mr-4 shadow-success">
-                    <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                    <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div>
                     <h2 className="text-lg sm:text-xl font-bold text-primary-600">
                       Question {currentQuestionIndex + 1} of {questions.length}
                     </h2>
-                    <p className="text-sm sm:text-base text-secondary-600">
+                    <p className="text-sm text-secondary-600">
                       {selectedSubject} - {selectedMode} Mode - {questions[currentQuestionIndex]?.type}
                     </p>
                     <p className="text-xs text-primary-500">
@@ -736,58 +643,24 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                 <div className="text-center">
                   <div className="bg-error-500 text-white rounded-xl px-3 sm:px-4 py-1.5 sm:py-2 shadow-error">
                     <Clock className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1 sm:mr-2" />
-                    <span className="font-bold text-sm sm:text-base lg:text-lg">{formatTime(timeLeft)}</span>
+                    <span className="font-bold text-sm sm:text-base">{formatTime(timeLeft)}</span>
                   </div>
                 </div>
               </div>
             </div>
+          )}
 
-            <div className="p-4 sm:p-6">
-              {questions[currentQuestionIndex] && (
-                <div className="space-y-4 sm:space-y-6">
-                  <div className="bg-primary-50 border-2 border-primary-200 rounded-xl p-4 sm:p-6">
-                    <h3 className="text-lg sm:text-xl font-bold text-primary-700 mb-3 sm:mb-4">
-                      {questions[currentQuestionIndex].question_text}
-                    </h3>
-                    
-                    {renderQuestionContent()}
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0">
-                    <Button
-                      variant="outline"
-                      onClick={previousQuestion}
-                      disabled={currentQuestionIndex === 0}
-                      className="text-sm sm:text-base"
-                    >
-                      ← Previous
-                    </Button>
-                    <Button
-                      onClick={nextQuestion}
-                      disabled={!hasUserAnswer()}
-                      className="bg-gradient-to-r from-secondary-400 to-secondary-600 text-sm sm:text-base"
-                    >
-                      {currentQuestionIndex === questions.length - 1 ? 'Finish Exam' : 'Next →'}
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-
-        {/* Results Step */}
-        {step === 'results' && (
-          <>
-            <div className="p-4 sm:p-6 border-b border-neutral-200 bg-gradient-to-r from-success-100 to-accent-100">
+          {/* Results Step Header */}
+          {step === 'results' && (
+            <div className="p-3 sm:p-4 bg-gradient-to-r from-success-100 to-accent-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <div className="bg-success-500 rounded-full p-2 sm:p-3 mr-3 sm:mr-4 shadow-success">
-                    <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                    <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-success-600">Exam Complete!</h2>
-                    <p className="text-sm sm:text-base text-primary-600">{student.name}'s Results</p>
+                    <h2 className="text-lg sm:text-xl font-bold text-success-600">Exam Complete!</h2>
+                    <p className="text-sm text-primary-600">{student.name}'s Results</p>
                   </div>
                 </div>
                 <button
@@ -798,98 +671,254 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                 </button>
               </div>
             </div>
+          )}
+        </div>
 
-            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-              {/* Score Display */}
-              <div className="text-center bg-gradient-to-r from-accent-100 to-warning-100 border-2 border-accent-400 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-large">
-                <div className={`text-4xl sm:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 ${getScoreColor(examScore)}`}>
-                  {examScore}%
-                </div>
-                <div className="text-lg sm:text-xl lg:text-2xl font-bold text-primary-700 mb-1 sm:mb-2">
-                  {getScoreMessage(examScore)}
-                </div>
-                <div className="text-base sm:text-lg text-secondary-600">
-                  {questions.filter(q => q.isCorrect).length} out of {questions.length} correct
-                </div>
-                <div className="text-sm text-primary-600 mt-2">
-                  Questions from levels: {[...new Set(questions.map(q => q.level))].join(', ')}
-                </div>
-                
-                {/* XP Gained Display */}
-                <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-primary-100 border-2 border-primary-300 rounded-xl">
-                  <div className="flex items-center justify-center text-primary-700 mb-2">
-                    <Star className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-                    <span className="font-bold text-base sm:text-lg">XP Earned!</span>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-4 sm:p-6">
+            {/* Setup Step Content */}
+            {step === 'setup' && (
+              <>
+                {error && (
+                  <div className="mb-4 sm:mb-6 bg-error-50 border-2 border-error-200 rounded-xl p-3 sm:p-4">
+                    <div className="flex items-center">
+                      <AlertCircle className="w-5 h-5 text-error-600 mr-2 sm:mr-3" />
+                      <p className="text-error-700 font-medium text-sm sm:text-base">{error}</p>
+                    </div>
                   </div>
-                  <div className="text-2xl sm:text-3xl font-bold text-primary-800">
-                    +{questions.filter(q => q.isCorrect).length * 10 + (examScore === 100 ? 50 : 0)} XP
+                )}
+
+                {/* Level Information */}
+                <div className="bg-primary-50 border-2 border-primary-200 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
+                  <h3 className="text-sm sm:text-base font-semibold text-primary-800 mb-2">Smart Question Selection</h3>
+                  <p className="text-xs sm:text-sm text-primary-700 mb-2">
+                    Based on your level ({student.level}), you'll receive questions from:
+                  </p>
+                  <div className="flex flex-wrap gap-1 sm:gap-2">
+                    {getAllowedLevels(student.level).map((level, index) => (
+                      <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-200 text-primary-800">
+                        {level}
+                      </span>
+                    ))}
                   </div>
-                  <div className="text-xs sm:text-sm text-primary-600 mt-1">
-                    {questions.filter(q => q.isCorrect).length * 10} for correct answers
-                    {examScore === 100 && ' + 50 perfect score bonus!'}
+                  <p className="text-xs text-primary-600 mt-2">
+                    This helps build a strong foundation by including questions from previous levels!
+                  </p>
+                </div>
+
+                {/* Subject Selection */}
+                <div className="mb-4 sm:mb-6">
+                  <label className="block text-base sm:text-lg font-bold text-primary-700 mb-2 sm:mb-3">
+                    Choose Subject
+                  </label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
+                    {subjects.map((subject) => (
+                      <button
+                        key={subject}
+                        onClick={() => setSelectedSubject(subject)}
+                        className={`p-3 sm:p-4 rounded-xl border-2 font-medium transition-all duration-300 text-sm sm:text-base ${
+                          selectedSubject === subject
+                            ? 'bg-primary-500 text-white border-primary-700 shadow-fun'
+                            : 'bg-white text-primary-600 border-primary-300 hover:bg-primary-50'
+                        }`}
+                      >
+                        {subject}
+                      </button>
+                    ))}
                   </div>
                 </div>
+
+                {/* Mode Selection */}
+                <div className="mb-4 sm:mb-6">
+                  <label className="block text-base sm:text-lg font-bold text-primary-700 mb-2 sm:mb-3">
+                    Choose Difficulty
+                  </label>
+                  <div className="space-y-2 sm:space-y-3">
+                    {(['Easy', 'Medium', 'Full'] as ExamMode[]).map((mode) => {
+                      const config = getModeConfig(mode)
+                      return (
+                        <button
+                          key={mode}
+                          onClick={() => setSelectedMode(mode)}
+                          className={`w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-300 text-left ${
+                            selectedMode === mode
+                              ? 'bg-secondary-500 text-white border-secondary-700 shadow-success'
+                              : 'bg-white text-secondary-600 border-secondary-300 hover:bg-secondary-50'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="font-bold text-base sm:text-lg">{mode} Mode</div>
+                              <div className="text-xs sm:text-sm opacity-90">
+                                {config.questionCount} questions • {config.timeMinutes} minutes
+                              </div>
+                              <div className="text-xs opacity-75 mt-1">
+                                Types: {config.types.join(', ')}
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-1 sm:space-x-2">
+                              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
+                              <Target className="w-4 h-4 sm:w-5 sm:h-5" />
+                            </div>
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                  <Button
+                    variant="outline"
+                    onClick={handleModalClose}
+                    className="flex-1 text-sm sm:text-base"
+                    disabled={loading}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={startExam}
+                    className="flex-1 bg-gradient-to-r from-secondary-400 to-secondary-600 text-sm sm:text-base"
+                    disabled={loading}
+                    loading={loading}
+                    icon={!loading ? <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> : undefined}
+                  >
+                    {loading ? 'Loading...' : 'Start Exam!'}
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {/* Exam Step Content */}
+            {step === 'exam' && questions.length > 0 && (
+              <div className="space-y-4 sm:space-y-6">
+                {questions[currentQuestionIndex] && (
+                  <>
+                    <div className="bg-primary-50 border-2 border-primary-200 rounded-xl p-4 sm:p-6">
+                      <h3 className="text-lg sm:text-xl font-bold text-primary-700 mb-3 sm:mb-4">
+                        {questions[currentQuestionIndex].question_text}
+                      </h3>
+                      
+                      {renderQuestionContent()}
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0">
+                      <Button
+                        variant="outline"
+                        onClick={previousQuestion}
+                        disabled={currentQuestionIndex === 0}
+                        className="text-sm sm:text-base"
+                      >
+                        ← Previous
+                      </Button>
+                      <Button
+                        onClick={nextQuestion}
+                        disabled={!hasUserAnswer()}
+                        className="bg-gradient-to-r from-secondary-400 to-secondary-600 text-sm sm:text-base"
+                      >
+                        {currentQuestionIndex === questions.length - 1 ? 'Finish Exam' : 'Next →'}
+                      </Button>
+                    </div>
+                  </>
+                )}
               </div>
+            )}
 
-              {/* Question Review with Correct Answers */}
-              <div className="bg-white border-2 border-primary-200 rounded-xl p-4 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-primary-700 mb-3 sm:mb-4">Question Review</h3>
-                <div className="space-y-3 max-h-80 overflow-y-auto">
-                  {questions.map((question, index) => (
-                    <div
-                      key={index}
-                      className={`p-3 sm:p-4 rounded-xl border-2 ${
-                        question.isCorrect
-                          ? 'bg-success-50 border-success-300'
-                          : 'bg-error-50 border-error-300'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <span className="text-sm font-medium">
-                            Q{index + 1} ({question.level}): {question.question_text.substring(0, 60)}...
-                          </span>
+            {/* Results Step Content */}
+            {step === 'results' && (
+              <div className="space-y-4 sm:space-y-6">
+                {/* Score Display */}
+                <div className="text-center bg-gradient-to-r from-accent-100 to-warning-100 border-2 border-accent-400 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-large">
+                  <div className={`text-4xl sm:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 ${getScoreColor(examScore)}`}>
+                    {examScore}%
+                  </div>
+                  <div className="text-lg sm:text-xl lg:text-2xl font-bold text-primary-700 mb-1 sm:mb-2">
+                    {getScoreMessage(examScore)}
+                  </div>
+                  <div className="text-base sm:text-lg text-secondary-600">
+                    {questions.filter(q => q.isCorrect).length} out of {questions.length} correct
+                  </div>
+                  <div className="text-sm text-primary-600 mt-2">
+                    Questions from levels: {[...new Set(questions.map(q => q.level))].join(', ')}
+                  </div>
+                  
+                  {/* XP Gained Display */}
+                  <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-primary-100 border-2 border-primary-300 rounded-xl">
+                    <div className="flex items-center justify-center text-primary-700 mb-2">
+                      <Star className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+                      <span className="font-bold text-base sm:text-lg">XP Earned!</span>
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-bold text-primary-800">
+                      +{questions.filter(q => q.isCorrect).length * 10 + (examScore === 100 ? 50 : 0)} XP
+                    </div>
+                    <div className="text-xs sm:text-sm text-primary-600 mt-1">
+                      {questions.filter(q => q.isCorrect).length * 10} for correct answers
+                      {examScore === 100 && ' + 50 perfect score bonus!'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Question Review with Correct Answers */}
+                <div className="bg-white border-2 border-primary-200 rounded-xl p-4 sm:p-6">
+                  <h3 className="text-lg sm:text-xl font-bold text-primary-700 mb-3 sm:mb-4">Question Review</h3>
+                  <div className="space-y-3 max-h-72 sm:max-h-96 overflow-y-auto">
+                    {questions.map((question, index) => (
+                      <div
+                        key={index}
+                        className={`p-3 sm:p-4 rounded-xl border-2 ${
+                          question.isCorrect
+                            ? 'bg-success-50 border-success-300'
+                            : 'bg-error-50 border-error-300'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <span className="text-sm font-medium">
+                              Q{index + 1} ({question.level}): {question.question_text.substring(0, 60)}...
+                            </span>
+                          </div>
+                          <div className="flex items-center ml-2">
+                            {question.isCorrect ? (
+                              <CheckCircle className="w-5 h-5 text-success-600" />
+                            ) : (
+                              <AlertCircle className="w-5 h-5 text-error-600" />
+                            )}
+                          </div>
                         </div>
-                        <div className="flex items-center ml-2">
-                          {question.isCorrect ? (
-                            <CheckCircle className="w-5 h-5 text-success-600" />
-                          ) : (
-                            <AlertCircle className="w-5 h-5 text-error-600" />
+                        
+                        {/* Show answers for review */}
+                        <div className="text-xs space-y-1">
+                          <div className={`${question.isCorrect ? 'text-success-700' : 'text-error-700'}`}>
+                            <strong>Your answer:</strong> {
+                              Array.isArray(question.userAnswer) 
+                                ? question.userAnswer.join(', ') 
+                                : (question.userAnswer || 'No answer')
+                            }
+                          </div>
+                          {!question.isCorrect && (
+                            <div className="text-success-700">
+                              <strong>Correct answer:</strong> {question.correct_answer}
+                            </div>
                           )}
                         </div>
                       </div>
-                      
-                      {/* Show answers for review */}
-                      <div className="text-xs space-y-1">
-                        <div className={`${question.isCorrect ? 'text-success-700' : 'text-error-700'}`}>
-                          <strong>Your answer:</strong> {
-                            Array.isArray(question.userAnswer) 
-                              ? question.userAnswer.join(', ') 
-                              : (question.userAnswer || 'No answer')
-                          }
-                        </div>
-                        {!question.isCorrect && (
-                          <div className="text-success-700">
-                            <strong>Correct answer:</strong> {question.correct_answer}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              <Button
-                onClick={handleResultsComplete}
-                className="w-full bg-gradient-to-r from-primary-400 to-secondary-500 text-sm sm:text-base lg:text-lg"
-                size="lg"
-                icon={<Star className="w-5 h-5 sm:w-6 sm:h-6" />}
-              >
-                Continue Learning!
-              </Button>
-            </div>
-          </>
-        )}
+                <Button
+                  onClick={handleResultsComplete}
+                  className="w-full bg-gradient-to-r from-primary-400 to-secondary-500 text-sm sm:text-base lg:text-lg"
+                  size="lg"
+                  icon={<Star className="w-5 h-5 sm:w-6 sm:h-6" />}
+                >
+                  Continue Learning!
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
