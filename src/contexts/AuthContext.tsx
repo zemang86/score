@@ -206,6 +206,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         } else {
           console.log('👤 AuthContext: Auth change - No user found, clearing state')
+          
+          // Check if this is an implicit session invalidation (e.g., failed token refresh)
+          if (event !== 'SIGNED_OUT' && event !== 'INITIAL_SESSION') {
+            console.log('🔄 AuthContext: Implicit session invalidation detected, forcing clean logout')
+            // Force a clean logout to clear all local session data
+            await signOut()
+            return
+          }
+          
           setUser(null)
           setProfile(null)
           setSubscriptionPlan('premium') // Keep premium as default
