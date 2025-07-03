@@ -54,111 +54,116 @@ export function QuickStartGuide({ isOpen, onClose, onAddStudent, hasStudents }: 
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-lg sm:rounded-xl shadow-xl max-w-md w-full max-h-[95vh] overflow-hidden flex flex-col">
         
-        {/* Header */}
-        <div className="p-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-t-3xl">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="bg-white/20 rounded-full p-3 mr-4">
-                <Play className="w-8 h-8 text-amber-300" />
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+          <div className="p-3 sm:p-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="bg-white/20 rounded-lg p-2 mr-3">
+                  <Play className="w-5 h-5 text-amber-300" />
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold">Quick Start Guide</h1>
+                  <p className="text-indigo-100 text-xs">Get up and running in 3 easy steps</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold">Quick Start Guide</h1>
-                <p className="text-indigo-100">Get up and running in 3 easy steps</p>
-              </div>
+              <button
+                onClick={onClose}
+                className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <button
-              onClick={onClose}
-              className="text-white/80 hover:text-white transition-colors bg-white/20 rounded-full p-2"
-            >
-              <X className="w-6 h-6" />
-            </button>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-6 space-y-4">
-          {steps.map((step, index) => {
-            const isCompleted = step.completed || completedSteps.includes(step.id)
-            const isActive = !isCompleted && (index === 0 || steps[index - 1].completed || completedSteps.includes(steps[index - 1].id))
-            
-            return (
-              <div
-                key={step.id}
-                className={`relative p-4 rounded-2xl border-2 transition-all duration-300 ${
-                  isCompleted
-                    ? 'bg-green-50 border-green-300'
-                    : isActive
-                    ? 'bg-white border-indigo-300 shadow-lg'
-                    : 'bg-slate-50 border-slate-200'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mr-4 ${
-                      isCompleted
-                        ? 'bg-green-500'
-                        : isActive
-                        ? `bg-gradient-to-r ${step.color}`
-                        : 'bg-slate-300'
-                    }`}>
-                      {isCompleted ? (
-                        <CheckCircle className="w-6 h-6 text-white" />
-                      ) : (
-                        <step.icon className="w-6 h-6 text-white" />
-                      )}
-                    </div>
-                    <div>
-                      <h3 className={`font-bold text-lg ${
-                        isCompleted ? 'text-green-700' : isActive ? 'text-slate-800' : 'text-slate-500'
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-3 sm:p-4 space-y-2">
+            {steps.map((step, index) => {
+              const isCompleted = step.completed || completedSteps.includes(step.id)
+              const isActive = !isCompleted && (index === 0 || steps[index - 1].completed || completedSteps.includes(steps[index - 1].id))
+              
+              return (
+                <div
+                  key={step.id}
+                  className={`relative p-3 rounded-lg border transition-all duration-300 ${
+                    isCompleted
+                      ? 'bg-green-50 border-green-300'
+                      : isActive
+                      ? 'bg-white border-indigo-300 shadow-sm'
+                      : 'bg-gray-50 border-gray-200'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center mr-3 ${
+                        isCompleted
+                          ? 'bg-green-500'
+                          : isActive
+                          ? `bg-gradient-to-r ${step.color}`
+                          : 'bg-gray-300'
                       }`}>
-                        {step.title}
-                      </h3>
-                      <p className={`text-sm ${
-                        isCompleted ? 'text-green-600' : isActive ? 'text-slate-600' : 'text-slate-400'
-                      }`}>
-                        {step.description}
-                      </p>
+                        {isCompleted ? (
+                          <CheckCircle className="w-4 h-4 text-white" />
+                        ) : (
+                          <step.icon className="w-4 h-4 text-white" />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className={`font-bold text-sm ${
+                          isCompleted ? 'text-green-700' : isActive ? 'text-gray-800' : 'text-gray-500'
+                        }`}>
+                          {step.title}
+                        </h3>
+                        <p className={`text-xs ${
+                          isCompleted ? 'text-green-600' : isActive ? 'text-gray-600' : 'text-gray-400'
+                        }`}>
+                          {step.description}
+                        </p>
+                      </div>
                     </div>
+                    
+                    {isActive && !isCompleted && (
+                      <Button
+                        onClick={() => {
+                          step.onAction()
+                          handleStepComplete(step.id)
+                        }}
+                        className={`bg-gradient-to-r ${step.color} text-white text-xs py-1 px-2`}
+                        icon={<ArrowRight className="w-3.5 h-3.5" />}
+                      >
+                        {step.action}
+                      </Button>
+                    )}
+                    
+                    {isCompleted && (
+                      <div className="text-green-600 font-medium text-xs">
+                        ✅ Completed
+                      </div>
+                    )}
                   </div>
-                  
-                  {isActive && !isCompleted && (
-                    <Button
-                      onClick={() => {
-                        step.onAction()
-                        handleStepComplete(step.id)
-                      }}
-                      className={`bg-gradient-to-r ${step.color} text-white`}
-                      icon={<ArrowRight className="w-4 h-4" />}
-                    >
-                      {step.action}
-                    </Button>
-                  )}
-                  
-                  {isCompleted && (
-                    <div className="text-green-600 font-medium text-sm">
-                      ✅ Completed
-                    </div>
-                  )}
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-slate-200 bg-slate-50 rounded-b-3xl">
+        <div className="border-t border-gray-200 bg-gray-50 p-3 sm:p-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center text-slate-600">
-              <Sparkles className="w-5 h-5 mr-2" />
-              <span className="text-sm">Complete all steps to unlock the full experience!</span>
+            <div className="flex items-center text-gray-600">
+              <Sparkles className="w-4 h-4 mr-1.5" />
+              <span className="text-xs">Complete all steps to unlock the full experience!</span>
             </div>
             <Button
               onClick={onClose}
               variant="outline"
-              className="border-2 border-slate-300 hover:border-slate-400"
+              className="text-sm py-1.5 px-3 border border-gray-300"
             >
               Close Guide
             </Button>

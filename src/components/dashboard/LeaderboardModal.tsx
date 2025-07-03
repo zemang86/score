@@ -126,13 +126,13 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />
+        return <Crown className="w-4 h-4 text-amber-500" />
       case 2:
-        return <Medal className="w-5 h-5 sm:w-6 sm:h-6 text-neutral-400" />
+        return <Medal className="w-4 h-4 text-gray-400" />
       case 3:
-        return <Medal className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />
+        return <Medal className="w-4 h-4 text-amber-500" />
       default:
-        return <span className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-indigo-600 font-bold text-xs sm:text-sm">#{rank}</span>
+        return <span className="w-4 h-4 flex items-center justify-center text-indigo-600 font-bold text-xs">#{rank}</span>
     }
   }
 
@@ -141,11 +141,11 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
       case 1:
         return 'bg-gradient-to-r from-amber-100 to-amber-200 border-amber-400'
       case 2:
-        return 'bg-gradient-to-r from-neutral-100 to-neutral-200 border-neutral-400'
+        return 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-400'
       case 3:
         return 'bg-gradient-to-r from-amber-100 to-orange-100 border-amber-400'
       default:
-        return 'bg-white border-slate-200'
+        return 'bg-white border-gray-200'
     }
   }
 
@@ -174,32 +174,34 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        
-        {/* Header */}
-        <div className="p-4 sm:p-6 border-b border-neutral-200 bg-gradient-to-r from-amber-100 to-amber-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="bg-amber-500 rounded-full p-2 sm:p-3 mr-3 sm:mr-4 shadow-lg">
-                <Trophy className="w-5 h-5 sm:w-8 sm:h-8 text-white" />
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-lg sm:rounded-xl shadow-xl max-w-2xl w-full max-h-[95vh] overflow-hidden flex flex-col">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+          <div className="p-3 sm:p-4 bg-gradient-to-r from-amber-100 to-amber-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="bg-amber-500 rounded-lg p-2 mr-3 shadow-md">
+                  <Trophy className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-amber-800">Global Leaderboard</h2>
+                  <p className="text-xs text-amber-700">See how students are performing worldwide!</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-lg sm:text-2xl font-bold text-amber-800">Global Leaderboard</h2>
-                <p className="text-amber-700 text-xs sm:text-base">See how students are performing worldwide!</p>
-              </div>
+              <button
+                onClick={onClose}
+                className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <button
-              onClick={onClose}
-              className="text-neutral-400 hover:text-neutral-600 transition-colors bg-white rounded-full p-1.5 sm:p-2 shadow-sm"
-            >
-              <X className="w-5 h-5 sm:w-6 sm:h-6" />
-            </button>
           </div>
         </div>
 
         {/* Type Selection */}
-        <div className="border-b border-neutral-200 bg-neutral-50">
+        <div className="border-b border-gray-200 bg-gray-50">
           <div className="flex">
             {[
               { id: 'xp', label: 'XP Points', icon: Star },
@@ -211,13 +213,13 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                 <button
                   key={type.id}
                   onClick={() => setActiveType(type.id as LeaderboardType)}
-                  className={`flex-1 px-3 py-2 sm:px-4 sm:py-3 font-medium transition-all duration-300 text-xs sm:text-base ${
+                  className={`flex-1 px-3 py-2 font-medium transition-all duration-300 text-xs ${
                     activeType === type.id
                       ? 'bg-amber-500 text-white border-b-2 border-amber-700'
                       : 'text-amber-600 hover:bg-amber-100'
                   }`}
                 >
-                  <Icon className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1 sm:mr-2" />
+                  <Icon className="w-4 h-4 inline mr-1" />
                   {type.label}
                 </button>
               )
@@ -225,108 +227,110 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-4 sm:p-6">
-          {loading ? (
-            <div className="text-center py-8 sm:py-12">
-              <div className="animate-spin rounded-full h-10 w-10 sm:h-16 sm:w-16 border-4 border-amber-200 border-t-amber-500 mx-auto mb-4 sm:mb-6"></div>
-              <p className="text-amber-600 font-medium text-base sm:text-xl">Loading global leaderboard...</p>
-            </div>
-          ) : error ? (
-            <div className="text-center py-8 sm:py-12">
-              <div className="bg-red-100 rounded-full w-10 h-10 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <X className="w-5 h-5 sm:w-8 sm:h-8 text-red-600" />
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-3 sm:p-4">
+            {loading ? (
+              <div className="text-center py-6">
+                <div className="animate-spin rounded-full h-10 w-10 border-4 border-amber-200 border-t-amber-500 mx-auto mb-3"></div>
+                <p className="text-amber-600 font-medium text-sm">Loading global leaderboard...</p>
               </div>
-              <h3 className="text-base sm:text-lg font-medium text-red-800 mb-1 sm:mb-2">Error Loading Leaderboard</h3>
-              <p className="text-red-600 text-sm sm:text-base mb-3 sm:mb-4">{error}</p>
-              <Button onClick={fetchLeaderboard} variant="error" size="sm">
-                Try Again
-              </Button>
-            </div>
-          ) : (
-            <>
-              <div className="mb-3 sm:mb-4">
-                <h3 className="text-base sm:text-lg font-bold text-amber-700 text-center">
-                  Top Students by {getTypeLabel(activeType)}
-                </h3>
-                <p className="text-xs sm:text-sm text-amber-600 text-center mt-1">
-                  Showing {leaderboard.length} students from around the world
-                </p>
+            ) : error ? (
+              <div className="text-center py-6">
+                <div className="bg-red-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-3">
+                  <X className="w-5 h-5 text-red-600" />
+                </div>
+                <h3 className="text-base font-medium text-red-800 mb-1">Error Loading Leaderboard</h3>
+                <p className="text-red-600 text-sm mb-3">{error}</p>
+                <Button onClick={fetchLeaderboard} variant="error" size="sm">
+                  Try Again
+                </Button>
               </div>
+            ) : (
+              <>
+                <div className="mb-3">
+                  <h3 className="text-base font-bold text-amber-700 text-center">
+                    Top Students by {getTypeLabel(activeType)}
+                  </h3>
+                  <p className="text-xs text-amber-600 text-center mt-1">
+                    Showing {leaderboard.length} students from around the world
+                  </p>
+                </div>
 
-              {leaderboard.length > 0 ? (
-                <div className="space-y-2 sm:space-y-3 max-h-72 sm:max-h-96 overflow-y-auto">
-                  {leaderboard.slice(0, 50).map((entry) => {
-                    const isUserStudent = userStudents.includes(entry.student_id)
-                    
-                    return (
-                      <div
-                        key={entry.student_id}
-                        className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-300 ${
-                          isUserStudent 
-                            ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-2 ring-indigo-200' 
-                            : getRankBgColor(entry.rank)
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <div className="mr-3 sm:mr-4 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10">
-                              {getRankIcon(entry.rank)}
+                {leaderboard.length > 0 ? (
+                  <div className="space-y-2 max-h-72 overflow-y-auto">
+                    {leaderboard.slice(0, 50).map((entry) => {
+                      const isUserStudent = userStudents.includes(entry.student_id)
+                      
+                      return (
+                        <div
+                          key={entry.student_id}
+                          className={`p-2.5 rounded-lg border transition-all duration-300 ${
+                            isUserStudent 
+                              ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-1 ring-indigo-200' 
+                              : getRankBgColor(entry.rank)
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="mr-2 flex items-center justify-center w-6 h-6">
+                                {getRankIcon(entry.rank)}
+                              </div>
+                              <div>
+                                <div className={`font-bold text-sm ${isUserStudent ? 'text-indigo-700' : 'text-gray-800'}`}>
+                                  {entry.student_name}
+                                  {isUserStudent && <span className="ml-1 text-indigo-500">👨‍👩‍👧‍👦</span>}
+                                </div>
+                                <div className={`text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-600'}`}>
+                                  {entry.student_level} • {entry.student_school}
+                                </div>
+                              </div>
                             </div>
-                            <div>
-                              <div className={`font-bold text-sm sm:text-lg ${isUserStudent ? 'text-indigo-700' : 'text-slate-800'}`}>
-                                {entry.student_name}
-                                {isUserStudent && <span className="ml-2 text-indigo-500">👨‍👩‍👧‍👦</span>}
+                            <div className="text-right">
+                              <div className={`text-sm font-bold ${isUserStudent ? 'text-indigo-700' : 'text-gray-800'}`}>
+                                {getTypeValue(entry, activeType)}
                               </div>
-                              <div className={`text-xs ${isUserStudent ? 'text-indigo-600' : 'text-slate-600'}`}>
-                                {entry.student_level} • {entry.student_school}
-                              </div>
+                              {activeType === 'xp' && entry.total_exams > 0 && (
+                                <div className={`text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'}`}>
+                                  {entry.total_exams} exams • {entry.average_score}% avg
+                                </div>
+                              )}
+                              {activeType === 'exams' && entry.total_xp > 0 && (
+                                <div className={`text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'}`}>
+                                  {entry.total_xp} XP • {entry.average_score}% avg
+                                </div>
+                              )}
+                              {activeType === 'scores' && entry.total_exams > 0 && (
+                                <div className={`text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'}`}>
+                                  {entry.total_exams} exams • {entry.total_xp} XP
+                                </div>
+                              )}
                             </div>
-                          </div>
-                          <div className="text-right">
-                            <div className={`text-base sm:text-xl font-bold ${isUserStudent ? 'text-indigo-700' : 'text-slate-800'}`}>
-                              {getTypeValue(entry, activeType)}
-                            </div>
-                            {activeType === 'xp' && entry.total_exams > 0 && (
-                              <div className={`text-xs ${isUserStudent ? 'text-indigo-600' : 'text-slate-500'}`}>
-                                {entry.total_exams} exams • {entry.average_score}% avg
-                              </div>
-                            )}
-                            {activeType === 'exams' && entry.total_xp > 0 && (
-                              <div className={`text-xs ${isUserStudent ? 'text-indigo-600' : 'text-slate-500'}`}>
-                                {entry.total_xp} XP • {entry.average_score}% avg
-                              </div>
-                            )}
-                            {activeType === 'scores' && entry.total_exams > 0 && (
-                              <div className={`text-xs ${isUserStudent ? 'text-indigo-600' : 'text-slate-500'}`}>
-                                {entry.total_exams} exams • {entry.total_xp} XP
-                              </div>
-                            )}
                           </div>
                         </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              ) : (
-                <div className="text-center py-8 sm:py-12">
-                  <div className="bg-amber-100 rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                    <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-amber-600" />
+                      )
+                    })}
                   </div>
-                  <p className="text-amber-600 text-base sm:text-lg">No data available yet!</p>
-                  <p className="text-amber-500 text-xs sm:text-sm">Students need to complete exams to appear on the leaderboard!</p>
-                </div>
-              )}
-            </>
-          )}
+                ) : (
+                  <div className="text-center py-6">
+                    <div className="bg-amber-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                      <Trophy className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <p className="text-amber-600 text-base">No data available yet!</p>
+                    <p className="text-amber-500 text-xs">Students need to complete exams to appear on the leaderboard!</p>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 sm:p-6 border-t border-neutral-200 bg-neutral-50">
+        <div className="border-t border-gray-200 bg-gray-50 p-3 sm:p-4">
           <Button
             onClick={onClose}
-            className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white text-sm sm:text-base py-2.5 sm:py-3"
-            icon={<Trophy className="w-5 h-5 sm:w-6 sm:h-6" />}
+            className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white text-sm py-2"
+            icon={<Trophy className="w-4 h-4" />}
           >
             Keep Learning!
           </Button>

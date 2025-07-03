@@ -96,132 +96,129 @@ export function EditStudentModal({ isOpen, onClose, student, onStudentUpdated }:
   if (!isOpen || !student) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-4 sm:p-6 border-b border-neutral-200 bg-gradient-to-r from-secondary-100 to-accent-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="bg-secondary-500 rounded-full p-2 sm:p-3 mr-3 sm:mr-4 shadow-success">
-                <Edit className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-lg sm:rounded-xl shadow-xl max-w-md w-full max-h-[95vh] overflow-hidden flex flex-col">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+          <div className="p-3 sm:p-4 bg-gradient-to-r from-green-100 to-teal-100">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="bg-green-500 rounded-lg p-2 mr-3 shadow-md">
+                  <Edit className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-green-700">Edit Student</h2>
+                  <p className="text-xs text-green-600">Update {student.name}'s information</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-secondary-600">Edit Student</h2>
-                <p className="text-sm sm:text-base text-accent-600">Update {student.name}'s information</p>
-              </div>
+              <button
+                onClick={handleClose}
+                className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <button
-              onClick={handleClose}
-              className="text-neutral-400 hover:text-neutral-600 transition-colors bg-white rounded-full p-1.5 sm:p-2 shadow-soft"
-            >
-              <X className="w-5 h-5 sm:w-6 sm:h-6" />
-            </button>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-          {error && (
-            <div className="bg-error-50 border-2 border-error-200 rounded-xl p-3 sm:p-4">
-              <p className="text-error-700 font-medium text-center text-sm sm:text-base">{error}</p>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <form onSubmit={handleSubmit} className="p-3 sm:p-4 space-y-4">
+            {error && (
+              <div className="bg-red-50 border-2 border-red-200 rounded-lg p-3">
+                <p className="text-red-700 font-medium text-center text-sm">{error}</p>
+              </div>
+            )}
+
+            <div className="bg-green-50 border border-green-200 rounded-lg p-2.5">
+              <div className="flex items-center mb-1">
+                <Sparkles className="w-4 h-4 text-green-600 mr-1.5" />
+                <p className="text-green-800 font-medium text-xs">Editable Information</p>
+              </div>
+              <p className="text-green-700 text-xs">
+                You can update the name, school, education level, and date of birth. 
+                This is useful as your child progresses to new levels each year.
+              </p>
             </div>
-          )}
 
-          <div className="bg-secondary-50 border-2 border-secondary-200 rounded-xl p-3 sm:p-4">
-            <div className="flex items-center mb-2">
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-secondary-600 mr-2" />
-              <p className="text-secondary-800 font-medium text-sm sm:text-base">Editable Information</p>
+            <Input
+              type="text"
+              placeholder="Student's full name"
+              value={formData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              icon={<User className="w-4 h-4" />}
+              label="Full Name"
+              helper="Update if there was a spelling mistake or name change"
+              required
+            />
+
+            <Input
+              type="text"
+              placeholder="School name"
+              value={formData.school}
+              onChange={(e) => handleInputChange('school', e.target.value)}
+              icon={<School className="w-4 h-4" />}
+              label="School"
+              helper="Update if your child changed schools"
+              required
+            />
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Education Level
+              </label>
+              <div className="relative">
+                <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <select
+                  value={formData.level}
+                  onChange={(e) => handleInputChange('level', e.target.value)}
+                  className="w-full pl-9 pr-3 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-sm"
+                  required
+                >
+                  <option value="">Select education level</option>
+                  {levels.map(level => (
+                    <option key={level} value={level}>{level}</option>
+                  ))}
+                </select>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Update when your child advances to the next level</p>
             </div>
-            <p className="text-secondary-700 text-xs sm:text-sm">
-              You can update the name, school, education level, and date of birth. 
-              This is useful as your child progresses to new levels each year or if there were any initial mistakes.
-            </p>
-          </div>
 
-          <Input
-            type="text"
-            placeholder="Student's full name"
-            value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
-            icon={<User className="w-4 h-4 sm:w-5 sm:h-5" />}
-            label="Full Name"
-            helper="Update if there was a spelling mistake or name change"
-            required
-          />
+            <Input
+              type="date"
+              placeholder="Date of birth"
+              value={formData.dateOfBirth}
+              onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+              icon={<Calendar className="w-4 h-4" />}
+              label="Date of Birth"
+              helper="Correct if there was an error in the original entry"
+              required
+            />
 
-          <Input
-            type="text"
-            placeholder="School name"
-            value={formData.school}
-            onChange={(e) => handleInputChange('school', e.target.value)}
-            icon={<School className="w-4 h-4 sm:w-5 sm:h-5" />}
-            label="School"
-            helper="Update if your child changed schools"
-            required
-          />
-
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              Education Level
-            </label>
-            <div className="relative">
-              <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4 sm:w-5 sm:h-5" />
-              <select
-                value={formData.level}
-                onChange={(e) => handleInputChange('level', e.target.value)}
-                className="w-full pl-8 sm:pl-10 pr-4 py-2.5 sm:py-3 border-2 border-neutral-200 rounded-xl focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 bg-white text-sm sm:text-base"
-                required
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                className="flex-1 text-sm border border-gray-200"
+                disabled={loading}
               >
-                <option value="">Select education level</option>
-                {levels.map(level => (
-                  <option key={level} value={level}>{level}</option>
-                ))}
-              </select>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="success"
+                className="flex-1 text-sm"
+                disabled={loading || !formData.name || !formData.school || !formData.level || !formData.dateOfBirth}
+                loading={loading}
+                icon={!loading ? <Save className="w-4 h-4" /> : undefined}
+              >
+                {loading ? 'Saving...' : 'Save Changes'}
+              </Button>
             </div>
-            <p className="text-sm text-neutral-500 mt-2">Update when your child advances to the next level</p>
-          </div>
-
-          <Input
-            type="date"
-            placeholder="Date of birth"
-            value={formData.dateOfBirth}
-            onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-            icon={<Calendar className="w-4 h-4 sm:w-5 sm:h-5" />}
-            label="Date of Birth"
-            helper="Correct if there was an error in the original entry"
-            required
-          />
-
-          <div className="bg-accent-50 border-2 border-accent-200 rounded-xl p-3 sm:p-4">
-            <div className="flex items-center mb-2">
-              <Edit className="w-4 h-4 sm:w-5 sm:h-5 text-accent-600 mr-2" />
-              <p className="text-accent-800 font-medium text-sm sm:text-base">Future Features</p>
-            </div>
-            <p className="text-accent-700 text-xs sm:text-sm">
-              Keep information up-to-date for future features like digital certificates and personalized learning paths!
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              className="flex-1 text-sm sm:text-base"
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="success"
-              className="flex-1 text-sm sm:text-base"
-              disabled={loading || !formData.name || !formData.school || !formData.level || !formData.dateOfBirth}
-              loading={loading}
-              icon={!loading ? <Save className="w-4 h-4 sm:w-5 sm:h-5" /> : undefined}
-            >
-              {loading ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   )

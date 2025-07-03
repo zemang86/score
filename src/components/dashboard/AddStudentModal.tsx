@@ -64,15 +64,6 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
         return
       }
 
-      // Calculate age from date of birth
-      const birthDate = new Date(formData.dateOfBirth)
-      const today = new Date()
-      let age = today.getFullYear() - birthDate.getFullYear()
-      const monthDiff = today.getMonth() - birthDate.getMonth()
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        age--
-      }
-
       // Insert new student
       const { error: insertError } = await supabase
         .from('students')
@@ -83,7 +74,6 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
             school: formData.school.trim(),
             level: formData.level,
             date_of_birth: formData.dateOfBirth,
-            age: age,
             xp: 0
           }
         ])
@@ -111,106 +101,113 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-white/30">
-        <div className="p-6 border-b border-white/20 bg-gradient-to-r from-indigo-100 to-purple-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full p-3 mr-4 shadow-lg">
-                <Star className="w-8 text-white" />
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white/95 backdrop-blur-lg rounded-lg sm:rounded-xl shadow-xl max-w-md w-full max-h-[95vh] overflow-hidden flex flex-col">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+          <div className="p-3 sm:p-4 bg-gradient-to-r from-indigo-100 to-purple-100">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-2 mr-3 shadow-md">
+                  <Star className="w-5 h-5 text-white" />
+                </div>
+                <h2 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Add New Kid</h2>
               </div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Add New Kid</h2>
+              <button
+                onClick={onClose}
+                className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <button
-              onClick={onClose}
-              className="text-slate-400 hover:text-slate-600 transition-colors bg-white rounded-full p-2 shadow-lg"
-            >
-              <X className="w-6 h-6" />
-            </button>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {error && (
-            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
-              <p className="text-red-700 font-medium text-center">{error}</p>
-            </div>
-          )}
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <form onSubmit={handleSubmit} className="p-3 sm:p-4 space-y-4">
+            {error && (
+              <div className="bg-red-50 border-2 border-red-200 rounded-lg p-3">
+                <p className="text-red-700 font-medium text-center text-sm">{error}</p>
+              </div>
+            )}
 
-          <Input
-            type="text"
-            placeholder="Kid's full name"
-            value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
-            icon={<User className="w-5 h-5" />}
-            required
-          />
-
-          <Input
-            type="text"
-            placeholder="School name"
-            value={formData.school}
-            onChange={(e) => handleInputChange('school', e.target.value)}
-            icon={<School className="w-5 h-5" />}
-            required
-          />
-
-          <div className="relative">
-            <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-            <select
-              value={formData.level}
-              onChange={(e) => handleInputChange('level', e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-base"
+            <Input
+              type="text"
+              placeholder="Kid's full name"
+              value={formData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              icon={<User className="w-4 h-4" />}
               required
-            >
-              <option value="">Select education level</option>
-              {levels.map(level => (
-                <option key={level} value={level}>{level}</option>
-              ))}
-            </select>
-          </div>
+            />
 
-          <Input
-            type="date"
-            placeholder="Date of birth"
-            value={formData.dateOfBirth}
-            onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-            icon={<Calendar className="w-5 h-5" />}
-            helper="We'll calculate their age automatically"
-            required
-          />
+            <Input
+              type="text"
+              placeholder="School name"
+              value={formData.school}
+              onChange={(e) => handleInputChange('school', e.target.value)}
+              icon={<School className="w-4 h-4" />}
+              required
+            />
 
-          <div className="bg-gradient-to-r from-indigo-100 to-purple-100 border-2 border-indigo-300 rounded-xl p-4">
-            <div className="flex items-center mb-2">
-              <Sparkles className="w-5 h-5 text-indigo-600 mr-2" />
-              <p className="text-indigo-800 font-medium">Plan Limit Info</p>
+            <div className="relative">
+              <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <select
+                value={formData.level}
+                onChange={(e) => handleInputChange('level', e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 border-2 border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-sm"
+                required
+              >
+                <option value="">Select education level</option>
+                {levels.map(level => (
+                  <option key={level} value={level}>{level}</option>
+                ))}
+              </select>
             </div>
-            <p className="text-indigo-700">
-              You can add up to <strong>{maxStudents}</strong> {maxStudents === 1 ? 'kid' : 'kids'} with your current plan!
-            </p>
-          </div>
 
-          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              className="flex-1 border-2 border-slate-200 hover:border-slate-300"
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
-              disabled={loading || !formData.name || !formData.school || !formData.level || !formData.dateOfBirth}
-              loading={loading}
-              icon={!loading ? <Zap className="w-5 h-5" /> : undefined}
-            >
-              {loading ? 'Adding...' : 'Add Kid!'}
-            </Button>
-          </div>
-        </form>
+            <Input
+              type="date"
+              placeholder="Date of birth"
+              value={formData.dateOfBirth}
+              onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+              icon={<Calendar className="w-4 h-4" />}
+              helper="We'll calculate their age automatically"
+              required
+            />
+
+            <div className="bg-gradient-to-r from-indigo-100 to-purple-100 border border-indigo-300 rounded-lg p-2.5">
+              <div className="flex items-center mb-1">
+                <Sparkles className="w-4 h-4 text-indigo-600 mr-1.5" />
+                <p className="text-indigo-800 font-medium text-xs">Plan Limit Info</p>
+              </div>
+              <p className="text-indigo-700 text-xs">
+                You can add up to <strong>{maxStudents}</strong> {maxStudents === 1 ? 'kid' : 'kids'} with your current plan!
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="flex-1 border border-slate-200 hover:border-slate-300 text-sm"
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-sm"
+                disabled={loading || !formData.name || !formData.school || !formData.level || !formData.dateOfBirth}
+                loading={loading}
+                icon={!loading ? <Zap className="w-4 h-4" /> : undefined}
+              >
+                {loading ? 'Adding...' : 'Add Kid!'}
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   )

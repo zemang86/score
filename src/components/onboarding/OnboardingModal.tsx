@@ -31,30 +31,30 @@ export function OnboardingModal({ isOpen, onClose, onComplete, userName }: Onboa
       bgGradient: "from-indigo-500 to-purple-500",
       iconColor: "text-amber-400",
       content: (
-        <div className="text-center space-y-6">
+        <div className="text-center space-y-4">
           <div className="relative">
-            <div className="w-32 h-32 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full mx-auto flex items-center justify-center shadow-2xl">
-              <Crown className="w-16 h-16 text-amber-400" />
+            <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full mx-auto flex items-center justify-center shadow-lg">
+              <Crown className="w-10 h-10 text-amber-400" />
             </div>
-            <div className="absolute -top-2 -right-2 w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center animate-bounce">
-              <Star className="w-5 h-5 text-white" />
+            <div className="absolute -top-1 -right-1 w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center animate-bounce">
+              <Star className="w-4 h-4 text-white" />
             </div>
           </div>
           <div>
-            <h2 className="text-3xl font-bold text-slate-800 mb-3">
+            <h2 className="text-xl font-bold text-gray-800 mb-2">
               Welcome, {userName}! 🎉
             </h2>
-            <p className="text-lg text-slate-600 leading-relaxed">
+            <p className="text-sm text-gray-600 leading-relaxed">
               You've just joined Malaysia's most engaging learning platform! 
               Let's take a quick tour to help you get started with your children's educational journey.
             </p>
           </div>
-          <div className="bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 rounded-xl p-4">
-            <div className="flex items-center justify-center text-green-700 mb-2">
-              <Gift className="w-6 h-6 mr-2" />
-              <span className="font-bold">Special Launch Offer!</span>
+          <div className="bg-gradient-to-r from-green-100 to-emerald-100 border border-green-300 rounded-lg p-3">
+            <div className="flex items-center justify-center text-green-700 mb-1">
+              <Gift className="w-4 h-4 mr-1.5" />
+              <span className="font-bold text-sm">Special Launch Offer!</span>
             </div>
-            <p className="text-green-600 text-sm">
+            <p className="text-green-600 text-xs">
               You currently have <strong>Premium Access</strong> with unlimited exams and up to 3 children!
             </p>
           </div>
@@ -69,43 +69,43 @@ export function OnboardingModal({ isOpen, onClose, onComplete, userName }: Onboa
       bgGradient: "from-green-500 to-emerald-500",
       iconColor: "text-white",
       content: (
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div className="text-center">
-            <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full mx-auto flex items-center justify-center shadow-xl mb-4">
-              <Users className="w-12 h-12 text-white" />
+            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full mx-auto flex items-center justify-center shadow-md mb-3">
+              <Users className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-slate-800 mb-3">Step 1: Add Your Children</h3>
-            <p className="text-slate-600 text-lg">
+            <h3 className="text-lg font-bold text-gray-800 mb-2">Step 1: Add Your Children</h3>
+            <p className="text-gray-600 text-sm">
               Start by adding profiles for each of your children. We'll need some basic information to personalize their learning experience.
             </p>
           </div>
           
-          <div className="bg-white rounded-2xl p-6 border-2 border-green-200 shadow-lg">
-            <h4 className="font-bold text-green-700 mb-4 flex items-center">
-              <CheckCircle className="w-5 h-5 mr-2" />
+          <div className="bg-white rounded-lg p-3 border border-green-200 shadow-sm">
+            <h4 className="font-bold text-green-700 mb-2 flex items-center text-sm">
+              <CheckCircle className="w-4 h-4 mr-1.5" />
               What You'll Need:
             </h4>
-            <div className="space-y-3 text-sm">
+            <div className="space-y-2 text-xs">
               <div className="flex items-start">
-                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5 mr-2 flex-shrink-0"></div>
                 <div>
                   <strong>Child's Full Name:</strong> For personalized greetings and certificates
                 </div>
               </div>
               <div className="flex items-start">
-                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5 mr-2 flex-shrink-0"></div>
                 <div>
                   <strong>School Name:</strong> To connect with their current education
                 </div>
               </div>
               <div className="flex items-start">
-                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5 mr-2 flex-shrink-0"></div>
                 <div>
                   <strong>Education Level:</strong> From Darjah 1 to Tingkatan 5
                 </div>
               </div>
               <div className="flex items-start">
-                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5 mr-2 flex-shrink-0"></div>
                 <div>
                   <strong>Date of Birth:</strong> For age-appropriate content
                 </div>
@@ -113,8 +113,8 @@ export function OnboardingModal({ isOpen, onClose, onComplete, userName }: Onboa
             </div>
           </div>
 
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-            <p className="text-green-700 text-center font-medium">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-2.5">
+            <p className="text-green-700 text-center font-medium text-xs">
               💡 <strong>Pro Tip:</strong> You can add up to 3 children with your Premium account!
             </p>
           </div>
@@ -129,51 +129,51 @@ export function OnboardingModal({ isOpen, onClose, onComplete, userName }: Onboa
       bgGradient: "from-blue-500 to-indigo-500",
       iconColor: "text-white",
       content: (
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div className="text-center">
-            <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full mx-auto flex items-center justify-center shadow-xl mb-4">
-              <Target className="w-12 h-12 text-white" />
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full mx-auto flex items-center justify-center shadow-md mb-3">
+              <Target className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-slate-800 mb-3">Step 2: Choose Exam Modes</h3>
-            <p className="text-slate-600 text-lg">
+            <h3 className="text-lg font-bold text-gray-800 mb-2">Step 2: Choose Exam Modes</h3>
+            <p className="text-gray-600 text-sm">
               We offer three difficulty levels to match your child's learning pace and confidence level.
             </p>
           </div>
           
-          <div className="space-y-4">
-            <div className="bg-green-50 border-2 border-green-300 rounded-xl p-4">
-              <div className="flex items-center mb-2">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mr-3">E</div>
-                <h4 className="font-bold text-green-700">Easy Mode</h4>
+          <div className="space-y-2">
+            <div className="bg-green-50 border border-green-300 rounded-lg p-2.5">
+              <div className="flex items-center mb-1">
+                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mr-2">E</div>
+                <h4 className="font-bold text-green-700 text-sm">Easy Mode</h4>
               </div>
-              <p className="text-green-600 text-sm mb-2">Perfect for beginners or building confidence</p>
-              <ul className="text-xs text-green-600 space-y-1">
+              <p className="text-green-600 text-xs mb-1">Perfect for beginners or building confidence</p>
+              <ul className="text-xs text-green-600 space-y-0.5">
                 <li>• 10 Multiple Choice Questions (MCQ)</li>
                 <li>• 15 minutes to complete</li>
                 <li>• Great for daily practice</li>
               </ul>
             </div>
 
-            <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4">
-              <div className="flex items-center mb-2">
-                <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold mr-3">M</div>
-                <h4 className="font-bold text-amber-700">Medium Mode</h4>
+            <div className="bg-amber-50 border border-amber-300 rounded-lg p-2.5">
+              <div className="flex items-center mb-1">
+                <div className="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold mr-2">M</div>
+                <h4 className="font-bold text-amber-700 text-sm">Medium Mode</h4>
               </div>
-              <p className="text-amber-600 text-sm mb-2">Balanced challenge with mixed question types</p>
-              <ul className="text-xs text-amber-600 space-y-1">
+              <p className="text-amber-600 text-xs mb-1">Balanced challenge with mixed question types</p>
+              <ul className="text-xs text-amber-600 space-y-0.5">
                 <li>• 20-30 Mixed Questions (MCQ + Short Answer)</li>
                 <li>• 30 minutes to complete</li>
                 <li>• Builds problem-solving skills</li>
               </ul>
             </div>
 
-            <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4">
-              <div className="flex items-center mb-2">
-                <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white font-bold mr-3">F</div>
-                <h4 className="font-bold text-red-700">Full Mode</h4>
+            <div className="bg-red-50 border border-red-300 rounded-lg p-2.5">
+              <div className="flex items-center mb-1">
+                <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white font-bold mr-2">F</div>
+                <h4 className="font-bold text-red-700 text-sm">Full Mode</h4>
               </div>
-              <p className="text-red-600 text-sm mb-2">Complete exam experience for serious preparation</p>
-              <ul className="text-xs text-red-600 space-y-1">
+              <p className="text-red-600 text-xs mb-1">Complete exam experience for serious preparation</p>
+              <ul className="text-xs text-red-600 space-y-0.5">
                 <li>• 40+ All Question Types (MCQ, Short, Essay, Matching)</li>
                 <li>• 60 minutes to complete</li>
                 <li>• Real exam simulation</li>
@@ -191,38 +191,38 @@ export function OnboardingModal({ isOpen, onClose, onComplete, userName }: Onboa
       bgGradient: "from-amber-500 to-orange-500",
       iconColor: "text-white",
       content: (
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div className="text-center">
-            <div className="w-24 h-24 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full mx-auto flex items-center justify-center shadow-xl mb-4">
-              <Trophy className="w-12 h-12 text-white" />
+            <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full mx-auto flex items-center justify-center shadow-md mb-3">
+              <Trophy className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-slate-800 mb-3">Step 3: Track Progress & Rewards</h3>
-            <p className="text-slate-600 text-lg">
+            <h3 className="text-lg font-bold text-gray-800 mb-2">Step 3: Track Progress & Rewards</h3>
+            <p className="text-gray-600 text-sm">
               Learning becomes an adventure with our gamified progress tracking and achievement system.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-purple-50 border-2 border-purple-300 rounded-xl p-4">
-              <div className="flex items-center mb-3">
-                <Zap className="w-6 h-6 text-purple-600 mr-2" />
-                <h4 className="font-bold text-purple-700">XP Points System</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div className="bg-purple-50 border border-purple-300 rounded-lg p-2.5">
+              <div className="flex items-center mb-1.5">
+                <Zap className="w-4 h-4 text-purple-600 mr-1.5" />
+                <h4 className="font-bold text-purple-700 text-sm">XP Points System</h4>
               </div>
-              <p className="text-purple-600 text-sm mb-2">Earn experience points for every correct answer!</p>
-              <ul className="text-xs text-purple-600 space-y-1">
+              <p className="text-purple-600 text-xs mb-1">Earn experience points for every correct answer!</p>
+              <ul className="text-xs text-purple-600 space-y-0.5">
                 <li>• 10 XP per correct answer</li>
                 <li>• 50 XP bonus for perfect scores</li>
                 <li>• Level up as you learn more</li>
               </ul>
             </div>
 
-            <div className="bg-pink-50 border-2 border-pink-300 rounded-xl p-4">
-              <div className="flex items-center mb-3">
-                <Star className="w-6 h-6 text-pink-600 mr-2" />
-                <h4 className="font-bold text-pink-700">Achievement Badges</h4>
+            <div className="bg-pink-50 border border-pink-300 rounded-lg p-2.5">
+              <div className="flex items-center mb-1.5">
+                <Star className="w-4 h-4 text-pink-600 mr-1.5" />
+                <h4 className="font-bold text-pink-700 text-sm">Achievement Badges</h4>
               </div>
-              <p className="text-pink-600 text-sm mb-2">Unlock special badges for milestones!</p>
-              <ul className="text-xs text-pink-600 space-y-1">
+              <p className="text-pink-600 text-xs mb-1">Unlock special badges for milestones!</p>
+              <ul className="text-xs text-pink-600 space-y-0.5">
                 <li>• 🎯 First Steps (Complete first exam)</li>
                 <li>• ⭐ Perfect Score (Get 100%)</li>
                 <li>• 🔥 Streak Master (5 exams in a row)</li>
@@ -230,12 +230,12 @@ export function OnboardingModal({ isOpen, onClose, onComplete, userName }: Onboa
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-indigo-100 to-purple-100 border-2 border-indigo-300 rounded-xl p-4">
-            <div className="flex items-center mb-2">
-              <BookOpen className="w-6 h-6 text-indigo-600 mr-2" />
-              <h4 className="font-bold text-indigo-700">Detailed Analytics</h4>
+          <div className="bg-gradient-to-r from-indigo-100 to-purple-100 border border-indigo-300 rounded-lg p-2.5">
+            <div className="flex items-center mb-1">
+              <BookOpen className="w-4 h-4 text-indigo-600 mr-1.5" />
+              <h4 className="font-bold text-indigo-700 text-sm">Detailed Analytics</h4>
             </div>
-            <p className="text-indigo-600 text-sm">
+            <p className="text-indigo-600 text-xs">
               Get comprehensive reports on your children's performance, including subject-wise breakdowns, 
               improvement trends, and areas that need more focus.
             </p>
@@ -251,51 +251,51 @@ export function OnboardingModal({ isOpen, onClose, onComplete, userName }: Onboa
       bgGradient: "from-green-500 to-emerald-500",
       iconColor: "text-amber-400",
       content: (
-        <div className="text-center space-y-6">
+        <div className="text-center space-y-4">
           <div className="relative">
-            <div className="w-32 h-32 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full mx-auto flex items-center justify-center shadow-2xl">
-              <Star className="w-16 h-16 text-amber-400" />
+            <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full mx-auto flex items-center justify-center shadow-lg">
+              <Star className="w-10 h-10 text-amber-400" />
             </div>
-            <div className="absolute -top-2 -right-2 w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center animate-bounce">
-              <Zap className="w-5 h-5 text-white" />
+            <div className="absolute -top-1 -right-1 w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center animate-bounce">
+              <Zap className="w-4 h-4 text-white" />
             </div>
           </div>
           
           <div>
-            <h2 className="text-3xl font-bold text-slate-800 mb-3">
+            <h2 className="text-xl font-bold text-gray-800 mb-2">
               You're Ready to Go! 🚀
             </h2>
-            <p className="text-lg text-slate-600 leading-relaxed mb-6">
+            <p className="text-sm text-gray-600 leading-relaxed mb-3">
               Your Edventure+ account is all set up! Now it's time to add your children and start their learning journey.
             </p>
           </div>
 
-          <div className="bg-gradient-to-r from-blue-100 to-indigo-100 border-2 border-blue-300 rounded-xl p-6">
-            <h3 className="font-bold text-blue-700 mb-4">Quick Start Checklist:</h3>
-            <div className="space-y-3 text-left">
+          <div className="bg-gradient-to-r from-blue-100 to-indigo-100 border border-blue-300 rounded-lg p-3">
+            <h3 className="font-bold text-blue-700 mb-2 text-sm">Quick Start Checklist:</h3>
+            <div className="space-y-2 text-left">
               <div className="flex items-center">
-                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-white text-sm font-bold">1</span>
+                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mr-2">
+                  <span className="text-white text-xs font-bold">1</span>
                 </div>
-                <span className="text-blue-700">Click "Add New Child" to create your first student profile</span>
+                <span className="text-blue-700 text-xs">Click "Add New Child" to create your first student profile</span>
               </div>
               <div className="flex items-center">
-                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-white text-sm font-bold">2</span>
+                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mr-2">
+                  <span className="text-white text-xs font-bold">2</span>
                 </div>
-                <span className="text-blue-700">Choose a subject and start with Easy Mode</span>
+                <span className="text-blue-700 text-xs">Choose a subject and start with Easy Mode</span>
               </div>
               <div className="flex items-center">
-                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-white text-sm font-bold">3</span>
+                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mr-2">
+                  <span className="text-white text-xs font-bold">3</span>
                 </div>
-                <span className="text-blue-700">Watch your child earn XP and unlock achievements!</span>
+                <span className="text-blue-700 text-xs">Watch your child earn XP and unlock achievements!</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-            <p className="text-amber-700 text-center">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5">
+            <p className="text-amber-700 text-center text-xs">
               <strong>Need Help?</strong> Look for the helpful tooltips throughout the dashboard, 
               or contact our support team anytime!
             </p>
@@ -328,62 +328,65 @@ export function OnboardingModal({ isOpen, onClose, onComplete, userName }: Onboa
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-lg sm:rounded-xl shadow-xl max-w-2xl w-full max-h-[95vh] overflow-hidden flex flex-col">
         
-        {/* Header */}
-        <div className={`p-6 bg-gradient-to-r ${currentStepData.bgGradient} text-white relative overflow-hidden`}>
-          <div className="absolute top-4 right-4">
-            <button
-              onClick={onClose}
-              className="text-white/80 hover:text-white transition-colors bg-white/20 rounded-full p-2"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-          
-          <div className="flex items-center justify-between">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+          <div className={`p-3 sm:p-4 bg-gradient-to-r ${currentStepData.bgGradient} text-white relative overflow-hidden`}>
+            <div className="absolute top-3 right-3">
+              <button
+                onClick={onClose}
+                className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            
             <div className="flex items-center">
-              <div className="bg-white/20 rounded-full p-3 mr-4">
-                <currentStepData.icon className={`w-8 h-8 ${currentStepData.iconColor}`} />
+              <div className="bg-white/20 rounded-lg p-2 mr-3">
+                <currentStepData.icon className={`w-5 h-5 ${currentStepData.iconColor}`} />
               </div>
               <div>
-                <h1 className="text-2xl lg:text-3xl font-bold">{currentStepData.title}</h1>
-                <p className="text-white/90 text-lg">{currentStepData.description}</p>
+                <h1 className="text-lg font-bold">{currentStepData.title}</h1>
+                <p className="text-white/90 text-xs">{currentStepData.description}</p>
               </div>
             </div>
-          </div>
-          
-          {/* Progress Bar */}
-          <div className="mt-6">
-            <div className="flex justify-between text-sm text-white/80 mb-2">
-              <span>Step {currentStep + 1} of {steps.length}</span>
-              <span>{Math.round(((currentStep + 1) / steps.length) * 100)}% Complete</span>
-            </div>
-            <div className="w-full bg-white/20 rounded-full h-2">
-              <div 
-                className="bg-white h-2 rounded-full transition-all duration-500"
-                style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
-              ></div>
+            
+            {/* Progress Bar */}
+            <div className="mt-3">
+              <div className="flex justify-between text-xs text-white/80 mb-1">
+                <span>Step {currentStep + 1} of {steps.length}</span>
+                <span>{Math.round(((currentStep + 1) / steps.length) * 100)}% Complete</span>
+              </div>
+              <div className="w-full bg-white/20 rounded-full h-1.5">
+                <div 
+                  className="bg-white h-1.5 rounded-full transition-all duration-500"
+                  style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+                ></div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-8">
-          {currentStepData.content}
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-3 sm:p-4">
+            {currentStepData.content}
+          </div>
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-slate-200 bg-slate-50">
-          <div className="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
-            <div className="flex space-x-3">
+        <div className="border-t border-gray-200 bg-gray-50 p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+            <div className="flex space-x-2">
               {currentStep > 0 && (
                 <Button
                   variant="outline"
                   onClick={handlePrevious}
-                  icon={<ArrowLeft className="w-5 h-5" />}
-                  className="border-2 border-slate-300 hover:border-slate-400"
+                  icon={<ArrowLeft className="w-4 h-4" />}
+                  className="text-sm py-1.5 px-3 border border-gray-300"
                 >
                   Previous
                 </Button>
@@ -391,7 +394,7 @@ export function OnboardingModal({ isOpen, onClose, onComplete, userName }: Onboa
               <Button
                 variant="ghost"
                 onClick={handleSkip}
-                className="text-slate-600 hover:text-slate-800"
+                className="text-gray-600 hover:text-gray-800 text-sm py-1.5 px-3"
               >
                 Skip Tour
               </Button>
@@ -399,8 +402,8 @@ export function OnboardingModal({ isOpen, onClose, onComplete, userName }: Onboa
             
             <Button
               onClick={handleNext}
-              className={`bg-gradient-to-r ${currentStepData.bgGradient} hover:opacity-90 text-white px-8 py-3`}
-              icon={currentStep === steps.length - 1 ? <Play className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+              className={`bg-gradient-to-r ${currentStepData.bgGradient} hover:opacity-90 text-white text-sm py-1.5 px-4`}
+              icon={currentStep === steps.length - 1 ? <Play className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
             >
               {currentStep === steps.length - 1 ? "Start Learning!" : "Next Step"}
             </Button>
