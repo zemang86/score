@@ -30,7 +30,12 @@ export function QuestionManagement() {
   
   // Subject list state
   const [allSubjects, setAllSubjects] = useState<string[]>([])
-  const [allLevels, setAllLevels] = useState<string[]>([])
+
+  // Predefined list of all education levels
+  const allEducationLevels = [
+    'Darjah 1', 'Darjah 2', 'Darjah 3', 'Darjah 4', 'Darjah 5', 'Darjah 6',
+    'Tingkatan 1', 'Tingkatan 2', 'Tingkatan 3', 'Tingkatan 4', 'Tingkatan 5'
+  ]
   
   // CSV Upload states
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -73,7 +78,8 @@ export function QuestionManagement() {
       }
       
       if (selectedLevel) {
-        query = query.eq('level', selectedLevel)
+        // Use ilike instead of eq for case-insensitive matching
+        query = query.ilike('level', selectedLevel)
       }
 
       if (selectedType) {
@@ -111,16 +117,7 @@ export function QuestionManagement() {
     setAllSubjects(predefinedSubjects)
   }
 
-  // Use predefined levels instead of fetching from database
-  // This ensures all expected levels are always available in the filter
-  const predefinedLevels = [
-    'Darjah 1', 'Darjah 2', 'Darjah 3', 'Darjah 4', 'Darjah 5', 'Darjah 6',
-    'Tingkatan 1', 'Tingkatan 2', 'Tingkatan 3', 'Tingkatan 4', 'Tingkatan 5'
-  ]
 
-  const initializeLevels = () => {
-    setAllLevels(predefinedLevels)
-  }
 
   const handleDeleteQuestion = async (questionId: string) => {
     if (!confirm('Are you sure you want to delete this question?')) {
@@ -264,7 +261,6 @@ export function QuestionManagement() {
 
   useEffect(() => {
     initializeSubjects()
-    initializeLevels()
   }, [])
 
   const handleSearch = (value: string) => {
@@ -278,7 +274,8 @@ export function QuestionManagement() {
   }
 
   const handleLevelFilter = (level: string) => {
-    setSelectedLevel(level)
+    // Trim the level value to ensure consistent matching
+    setSelectedLevel(level.trim())
     setCurrentPage(1) // Reset to first page when filtering
   }
 
@@ -376,7 +373,7 @@ export function QuestionManagement() {
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
             >
               <option value="">All Levels</option>
-              {allLevels.map(level => (
+              {allEducationLevels.map(level => (
                 <option key={level} value={level}>{level}</option>
               ))}
             </select>
