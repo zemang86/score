@@ -455,11 +455,40 @@ export function ParentDashboard() {
                 )}
 
                 {loading ? (
-                  <div className="text-center py-6">
-                    <div className="relative">
-                      <div className="animate-spin rounded-full h-10 w-10 border-4 border-indigo-200 border-t-indigo-500 mx-auto mb-3"></div>
-                    </div>
-                    <p className="text-indigo-600 font-medium text-sm sm:text-base">Loading your awesome kids...</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="bg-white rounded-xl p-4 border-2 border-slate-200 shadow-lg animate-pulse">
+                        {/* Header skeleton */}
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center">
+                            <div className="w-10 h-10 bg-slate-300 rounded-xl mr-3"></div>
+                            <div>
+                              <div className="h-4 bg-slate-300 rounded w-24 mb-2"></div>
+                              <div className="h-3 bg-slate-200 rounded w-16"></div>
+                            </div>
+                          </div>
+                          <div className="w-8 h-8 bg-slate-200 rounded-lg"></div>
+                        </div>
+                        
+                        {/* Content skeleton */}
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-center">
+                            <div className="h-4 bg-slate-200 rounded w-20"></div>
+                            <div className="h-6 bg-slate-300 rounded-lg w-16"></div>
+                          </div>
+                          <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                            <div className="flex items-center">
+                              <div className="w-6 h-6 bg-slate-300 rounded-lg mr-2"></div>
+                              <div className="h-4 bg-slate-200 rounded w-32"></div>
+                            </div>
+                          </div>
+                          <div className="flex space-x-2 pt-1">
+                            <div className="flex-1 h-10 bg-slate-200 rounded-lg"></div>
+                            <div className="flex-1 h-10 bg-slate-200 rounded-lg"></div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ) : students.length === 0 && !error ? (
                   <div className="text-center py-6">
