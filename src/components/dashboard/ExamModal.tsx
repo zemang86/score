@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Student, Question } from '../../lib/supabase'
 import { Button } from '../ui/Button'
-import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3, Lock, BookOpenCheck } from 'lucide-react'
+import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3, Lock, BookOpenCheck, XCircle } from 'lucide-react'
 import { checkShortAnswer } from '../../utils/answerChecker'
 
 interface ExamModalProps {
