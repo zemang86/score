@@ -589,8 +589,8 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl max-w-4xl w-full h-full max-h-screen overflow-hidden flex flex-col">
         
         {/* Sticky Header */}
         <div className="sticky top-0 z-10 bg-white border-b border-neutral-200 rounded-t-2xl sm:rounded-t-3xl">
