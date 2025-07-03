@@ -33,6 +33,7 @@ export function ParentDashboard() {
     averageScore: 0,
     totalXP: 0
   })
+  const [totalQuestions, setTotalQuestions] = useState<number>(0)
 
   // Define isPremium based on subscriptionPlan
   const isPremium = subscriptionPlan === 'premium'
@@ -137,6 +138,8 @@ export function ParentDashboard() {
           averageScore: 0,
           totalXP: 0
         })
+        // Still fetch questions count even with no students
+        await fetchTotalQuestionsCount()
       }
     } catch (err: any) {
       console.error('❌ Error in fetchStudents:', err)
@@ -154,6 +157,23 @@ export function ParentDashboard() {
       }
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchTotalQuestionsCount = async () => {
+    try {
+      // Fetch total question count
+      const { count: questionsCount, error: questionsError } = await supabase
+        .from('questions')
+        .select('id', { count: 'exact' })
+
+      if (questionsError) {
+        console.error('❌ Error fetching questions count:', questionsError)
+      } else {
+        setTotalQuestions(questionsCount || 0)
+      }
+    } catch (error) {
+      console.error('❌ Error in fetchTotalQuestionsCount:', error)
     }
   }
 
@@ -185,6 +205,9 @@ export function ParentDashboard() {
         console.error('❌ Error fetching badges:', badgesError)
         throw badgesError
       }
+
+      // Fetch total question count
+      await fetchTotalQuestionsCount()
 
       // Calculate statistics using the passed studentsData parameter
       const totalXP = studentsData.reduce((sum, student) => sum + (student.xp || 0), 0)
@@ -446,7 +469,9 @@ export function ParentDashboard() {
                 <div>
                   <p className="text-xs font-medium text-slate-600">Questions</p>
                   <div className="flex items-baseline">
-                    <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">1000+</p>
+                    <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">
+                      {totalQuestions >= 1000 ? `${Math.floor(totalQuestions / 1000)}k+` : totalQuestions}
+                    </p>
                     <p className="text-xs text-slate-500">available</p>
                   </div>
                 </div>
