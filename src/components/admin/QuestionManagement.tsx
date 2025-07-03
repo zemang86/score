@@ -73,7 +73,8 @@ export function QuestionManagement() {
       }
       
       if (selectedLevel) {
-        query = query.eq('level', selectedLevel)
+        // Use ilike instead of eq for case-insensitive matching
+        query = query.ilike('level', selectedLevel)
       }
 
       if (selectedType) {
