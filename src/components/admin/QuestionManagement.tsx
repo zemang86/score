@@ -31,11 +31,6 @@ export function QuestionManagement() {
   // Subject list state
   const [allSubjects, setAllSubjects] = useState<string[]>([])
 
-  // Predefined list of all education levels
-  const allEducationLevels = [
-    'Darjah 1', 'Darjah 2', 'Darjah 3', 'Darjah 4', 'Darjah 5', 'Darjah 6',
-    'Tingkatan 1', 'Tingkatan 2', 'Tingkatan 3', 'Tingkatan 4', 'Tingkatan 5'
-  ]
   
   // CSV Upload states
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -56,6 +51,12 @@ export function QuestionManagement() {
     { value: 'ShortAnswer', label: 'Short Answer' },
     { value: 'Subjective', label: 'Subjective/Essay' },
     { value: 'Matching', label: 'Matching' }
+  ]
+
+  // Predefined list of all education levels
+  const allEducationLevels = [
+    'Darjah 1', 'Darjah 2', 'Darjah 3', 'Darjah 4', 'Darjah 5', 'Darjah 6',
+    'Tingkatan 1', 'Tingkatan 2', 'Tingkatan 3', 'Tingkatan 4', 'Tingkatan 5'
   ]
 
   const fetchQuestions = async () => {
@@ -116,7 +117,6 @@ export function QuestionManagement() {
   const initializeSubjects = () => {
     setAllSubjects(predefinedSubjects)
   }
-
 
 
   const handleDeleteQuestion = async (questionId: string) => {
@@ -260,7 +260,7 @@ export function QuestionManagement() {
   }, [currentPage, questionsPerPage, selectedSubject, selectedLevel, selectedType, searchTerm])
 
   useEffect(() => {
-    initializeSubjects()
+<
   }, [])
 
   const handleSearch = (value: string) => {
