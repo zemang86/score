@@ -289,7 +289,7 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
     }
   }
 
-  const gradeQuestion = (question: ExamQuestion): boolean => {
+  const gradeQuestion = async (question: ExamQuestion): Promise<boolean> => {
     if (!question.userAnswer) return false
     
     const correctAnswer = question.correct_answer?.toString().toLowerCase().trim()
@@ -301,7 +301,7 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
       return userAnswer === correctAnswer
     } else if (question.type === 'ShortAnswer') {
       try {
-        const checkResult = checkShortAnswer(userAnswer, correctAnswer || '')
+        const checkResult = await checkShortAnswer(userAnswer, correctAnswer || '')
         return checkResult.result === 'correct'
       } catch (error) {
         return userAnswer === correctAnswer
@@ -317,10 +317,12 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
     setLoading(true)
     
     try {
-      const gradedQuestions = questions.map(question => ({
-        ...question,
-        isCorrect: gradeQuestion(question)
-      }))
+      const gradedQuestions = await Promise.all(
+        questions.map(async (question) => ({
+          ...question,
+          isCorrect: await gradeQuestion(question)
+        }))
+      )
       
       const correctAnswers = gradedQuestions.filter(q => q.isCorrect).length
       const score = Math.round((correctAnswers / questions.length) * 100)
