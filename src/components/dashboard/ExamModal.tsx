@@ -424,12 +424,17 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     if (questions.length === 0) return null
 
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-3 mb-4">
-        <div className="flex items-center mb-2">
-          <Target className="w-4 h-4 text-blue-600 mr-2" />
-          <h4 className="text-sm font-semibold text-gray-700">Question Progress</h4>
+      <div className="bg-gradient-to-r from-slate-50 to-blue-50 border border-gray-200 rounded-xl p-4 mb-4 shadow-sm">
+        <div className="flex items-center mb-3">
+          <Target className="w-5 h-5 text-blue-600 mr-2" />
+          <h4 className="text-sm font-bold text-gray-800">Question Progress</h4>
+          <div className="ml-auto text-xs text-gray-600 bg-white px-2 py-1 rounded-full">
+            {questions.filter((_, index) => isQuestionAnswered(index)).length}/{questions.length} completed
+          </div>
         </div>
-        <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+        
+        {/* Progress Grid with Gaming Animations */}
+        <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2 mb-4">
           {questions.map((_, index) => {
             const isAnswered = isQuestionAnswered(index)
             const isCurrent = index === currentQuestionIndex
@@ -439,36 +444,49 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                 key={index}
                 onClick={() => jumpToQuestion(index)}
                 className={`
-                  w-8 h-8 rounded-lg border-2 text-xs font-bold transition-all duration-300 
-                  flex items-center justify-center
+                  relative w-10 h-10 rounded-xl text-xs font-bold transition-all duration-500 
+                  flex items-center justify-center transform hover:scale-110 active:scale-95
                   ${isCurrent 
-                    ? 'border-blue-500 bg-blue-500 text-white shadow-md ring-2 ring-blue-200' 
+                    ? 'border-2 border-blue-400 bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg animate-pulse-glow ring-4 ring-blue-200' 
                     : isAnswered 
-                      ? 'border-green-400 bg-green-100 text-green-700 hover:bg-green-200' 
-                      : 'border-yellow-400 bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                      ? 'border-2 border-green-400 bg-gradient-to-br from-green-400 to-green-500 text-white shadow-md hover:shadow-lg animate-success-bounce' 
+                      : 'border-2 border-yellow-400 bg-gradient-to-br from-yellow-300 to-yellow-400 text-yellow-800 shadow-sm hover:shadow-md animate-gentle-pulse'
                   }
                 `}
                 title={`Question ${index + 1} - ${isAnswered ? 'Answered' : 'Unanswered'}`}
               >
-                {index + 1}
+                {/* Gaming-style inner glow */}
+                <div className={`absolute inset-0 rounded-xl ${
+                  isCurrent ? 'bg-gradient-to-br from-blue-300/20 to-blue-600/20 animate-rotate-border' : ''
+                }`}></div>
+                
+                {/* Question number */}
+                <span className="relative z-10">{index + 1}</span>
+                
+                {/* Success sparkle for answered questions */}
+                {isAnswered && !isCurrent && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-2 h-2 text-green-500" />
+                  </div>
+                )}
               </button>
             )
           })}
         </div>
         
-        {/* Legend */}
-        <div className="flex items-center justify-center mt-3 space-x-4 text-xs">
+        {/* Enhanced Legend with Gaming Style */}
+        <div className="flex items-center justify-center space-x-6 text-xs">
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-blue-500 rounded mr-1"></div>
-            <span className="text-gray-600">Current</span>
+            <div className="w-4 h-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg mr-2 animate-pulse-glow"></div>
+            <span className="text-gray-700 font-medium">Current</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-green-100 border border-green-400 rounded mr-1"></div>
-            <span className="text-gray-600">Answered</span>
+            <div className="w-4 h-4 bg-gradient-to-br from-green-400 to-green-500 rounded-lg mr-2"></div>
+            <span className="text-gray-700 font-medium">Completed</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-yellow-100 border border-yellow-400 rounded mr-1"></div>
-            <span className="text-gray-600">Unanswered</span>
+            <div className="w-4 h-4 bg-gradient-to-br from-yellow-300 to-yellow-400 rounded-lg mr-2"></div>
+            <span className="text-gray-700 font-medium">Pending</span>
           </div>
         </div>
       </div>
@@ -1130,27 +1148,67 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
                 {questions[currentQuestionIndex] && (
                   <>
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <h3 className="text-base sm:text-lg font-bold text-blue-700 mb-3">
-                        {questions[currentQuestionIndex].question_text}
-                      </h3>
+                    {/* Question Content with Animation */}
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-4 sm:p-6 shadow-lg animate-slide-in">
+                      <div className="flex items-start justify-between mb-4">
+                        <h3 className="text-lg sm:text-xl font-bold text-blue-800 leading-tight flex-1">
+                          {questions[currentQuestionIndex].question_text}
+                        </h3>
+                        <div className="ml-4 flex-shrink-0">
+                          <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                            {questions[currentQuestionIndex].type}
+                          </div>
+                        </div>
+                      </div>
                       
-                      {renderQuestionContent()}
+                      <div className="animate-fade-in-delayed">
+                        {renderQuestionContent()}
+                      </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0">
-                      <Button
-                        variant="outline"
-                        onClick={previousQuestion}
-                        disabled={currentQuestionIndex === 0}
-                        className="text-sm"
-                      >
-                        ← Previous
-                      </Button>
-                      <div className="flex space-x-2">
+                    {/* Enhanced Navigation with Gaming Style */}
+                    <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                      <div className="flex items-center justify-between space-x-4">
+                        {/* Previous Button */}
+                        <Button
+                          variant="outline"
+                          onClick={previousQuestion}
+                          disabled={currentQuestionIndex === 0}
+                          className={`
+                            flex-shrink-0 min-w-[100px] transition-all duration-300 border-2
+                            ${currentQuestionIndex === 0 
+                              ? 'opacity-50 cursor-not-allowed' 
+                              : 'hover:border-blue-400 hover:bg-blue-50 hover:scale-105 active:scale-95'
+                            }
+                          `}
+                        >
+                          ← Previous
+                        </Button>
+                        
+                        {/* Center Progress Info */}
+                        <div className="flex-1 text-center">
+                          <div className="text-sm text-gray-600">
+                            Question <span className="font-bold text-blue-600">{currentQuestionIndex + 1}</span> of <span className="font-bold">{questions.length}</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                            <div 
+                              className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full transition-all duration-500 ease-out"
+                              style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
+                            ></div>
+                          </div>
+                        </div>
+
+                        {/* Next/Submit Button */}
                         <Button
                           onClick={nextQuestion}
-                          className="bg-gradient-to-r from-green-500 to-green-600 text-sm"
+                          className={`
+                            flex-shrink-0 min-w-[100px] bg-gradient-to-r transition-all duration-300
+                            ${currentQuestionIndex === questions.length - 1
+                              ? 'from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg hover:shadow-xl'
+                              : 'from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl'
+                            } 
+                            hover:scale-105 active:scale-95 transform
+                          `}
                         >
                           {currentQuestionIndex === questions.length - 1 ? 'Submit Exam' : 'Next →'}
                         </Button>
