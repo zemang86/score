@@ -275,103 +275,103 @@ export function LandingPage() {
             </div>
 
             {/* Right Visual - Premium Dashboard Preview */}
-            <div className="relative hidden lg:block">
+            <div className="relative mt-12 lg:mt-0">
               <RevealOnScroll animationType="scale-in" delay={400}>
                 <div className="relative">
                   {/* Main Dashboard Mockup */}
-                  <div className="bg-gradient-to-br from-white via-slate-50 to-indigo-50 rounded-3xl p-8 shadow-3xl border border-white/50 backdrop-blur-xl">
+                  <div className="bg-gradient-to-br from-white via-slate-50 to-indigo-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl sm:shadow-3xl border border-white/50 backdrop-blur-xl">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center justify-between mb-4 sm:mb-6 lg:mb-8">
                       <div className="flex items-center">
-                        <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mr-4">
-                          <Crown className="w-6 h-6 text-white" />
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl sm:rounded-2xl flex items-center justify-center mr-2 sm:mr-3 lg:mr-4">
+                          <Crown className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-slate-800">Welcome back, Sarah!</h3>
-                          <p className="text-slate-500 text-sm">Ready for today's adventure?</p>
+                          <h3 className="font-bold text-slate-800 text-sm sm:text-base lg:text-lg">Welcome back, Sarah!</h3>
+                          <p className="text-slate-500 text-xs sm:text-sm">Ready for today's adventure?</p>
                         </div>
                       </div>
-                      <div className="flex space-x-2">
-                        <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                        <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                        <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                      <div className="flex space-x-1 sm:space-x-2">
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-400 rounded-full"></div>
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-400 rounded-full"></div>
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-400 rounded-full"></div>
                       </div>
                     </div>
 
                     {/* Dashboard Content */}
-                    <div className="grid grid-cols-2 gap-6 mb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6">
                       {/* Student Card */}
-                      <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-                        <div className="flex items-center mb-4">
-                          <div className="w-10 h-10 bg-gradient-to-r from-pink-400 to-rose-400 rounded-xl flex items-center justify-center mr-3">
-                            <Users className="w-5 h-5 text-white" />
+                      <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg border border-slate-100">
+                        <div className="flex items-center mb-3 sm:mb-4">
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-gradient-to-r from-pink-400 to-rose-400 rounded-lg sm:rounded-xl flex items-center justify-center mr-2 sm:mr-3">
+                            <Users className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-white" />
                           </div>
                           <div>
-                            <h4 className="font-semibold text-slate-800">Ahmad</h4>
+                            <h4 className="font-semibold text-slate-800 text-xs sm:text-sm lg:text-base">Ahmad</h4>
                             <p className="text-slate-500 text-xs">Tingkatan 3</p>
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
+                          <div className="flex justify-between text-xs sm:text-sm">
                             <span className="text-slate-600">XP Progress</span>
                             <span className="font-semibold text-indigo-600">850 XP</span>
                           </div>
-                          <div className="w-full bg-slate-200 rounded-full h-2">
-                            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full w-4/5"></div>
+                          <div className="w-full bg-slate-200 rounded-full h-1.5 sm:h-2">
+                            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-1.5 sm:h-2 rounded-full w-4/5"></div>
                           </div>
                         </div>
                       </div>
 
                       {/* Achievement Card */}
-                      <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+                      <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg border border-slate-100">
                         <div className="text-center">
-                          <div className="w-12 h-12 bg-gradient-to-r from-amber-400 to-orange-400 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                            <Trophy className="w-6 h-6 text-white" />
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-r from-amber-400 to-orange-400 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                            <Trophy className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" />
                           </div>
-                          <h4 className="font-semibold text-slate-800 mb-1">Perfect Score!</h4>
+                          <h4 className="font-semibold text-slate-800 text-xs sm:text-sm lg:text-base mb-1">Perfect Score!</h4>
                           <p className="text-slate-500 text-xs">Mathematics Exam</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Progress Chart */}
-                    <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-semibold text-slate-800">Weekly Progress</h4>
-                        <div className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">95%</div>
+                    <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg border border-slate-100">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <h4 className="font-semibold text-slate-800 text-xs sm:text-sm lg:text-base">Weekly Progress</h4>
+                        <div className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">95%</div>
                       </div>
-                      <div className="space-y-3">
+                      <div className="space-y-2 sm:space-y-3">
                         <div className="flex items-center">
-                          <div className="w-3 h-3 bg-green-400 rounded-full mr-3"></div>
-                          <div className="flex-1 bg-slate-200 rounded-full h-2">
-                            <div className="bg-gradient-to-r from-green-400 to-emerald-400 h-2 rounded-full w-11/12"></div>
+                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-400 rounded-full mr-2 sm:mr-3"></div>
+                          <div className="flex-1 bg-slate-200 rounded-full h-1.5 sm:h-2">
+                            <div className="bg-gradient-to-r from-green-400 to-emerald-400 h-1.5 sm:h-2 rounded-full w-11/12"></div>
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <div className="w-3 h-3 bg-blue-400 rounded-full mr-3"></div>
-                          <div className="flex-1 bg-slate-200 rounded-full h-2">
-                            <div className="bg-gradient-to-r from-blue-400 to-indigo-400 h-2 rounded-full w-4/5"></div>
+                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-blue-400 rounded-full mr-2 sm:mr-3"></div>
+                          <div className="flex-1 bg-slate-200 rounded-full h-1.5 sm:h-2">
+                            <div className="bg-gradient-to-r from-blue-400 to-indigo-400 h-1.5 sm:h-2 rounded-full w-4/5"></div>
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <div className="w-3 h-3 bg-purple-400 rounded-full mr-3"></div>
-                          <div className="flex-1 bg-slate-200 rounded-full h-2">
-                            <div className="bg-gradient-to-r from-purple-400 to-pink-400 h-2 rounded-full w-3/4"></div>
+                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-purple-400 rounded-full mr-2 sm:mr-3"></div>
+                          <div className="flex-1 bg-slate-200 rounded-full h-1.5 sm:h-2">
+                            <div className="bg-gradient-to-r from-purple-400 to-pink-400 h-1.5 sm:h-2 rounded-full w-3/4"></div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Floating Achievement Badges */}
-                  <div className="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl shadow-2xl flex items-center justify-center animate-bounce-gentle">
-                    <Star className="w-10 h-10 text-white" />
+                  {/* Floating Achievement Badges - Responsive */}
+                  <div className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 lg:-top-6 lg:-right-6 w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl flex items-center justify-center animate-bounce-gentle">
+                    <Star className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white" />
                   </div>
-                  <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl shadow-2xl flex items-center justify-center animate-float">
-                    <Brain className="w-8 h-8 text-white" />
+                  <div className="absolute -bottom-3 -left-3 sm:-bottom-4 sm:-left-4 lg:-bottom-6 lg:-left-6 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl flex items-center justify-center animate-float">
+                    <Brain className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-white" />
                   </div>
-                  <div className="absolute top-1/2 -right-4 w-14 h-14 bg-gradient-to-br from-pink-400 to-rose-500 rounded-2xl shadow-xl flex items-center justify-center animate-pulse-soft">
-                    <Lightbulb className="w-7 h-7 text-white" />
+                  <div className="absolute top-1/2 -right-2 sm:-right-3 lg:-right-4 w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 bg-gradient-to-br from-pink-400 to-rose-500 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl flex items-center justify-center animate-pulse-soft">
+                    <Lightbulb className="w-4 h-4 sm:w-5 sm:h-5 lg:w-7 lg:h-7 text-white" />
                   </div>
                 </div>
               </RevealOnScroll>
