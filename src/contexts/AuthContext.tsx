@@ -56,21 +56,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Set 3-second timeout for auth check only
     loadingTimeoutRef.current = setTimeout(() => {
-      console.log('⏰ AuthContext: Auth loading timeout reached (3 seconds), setting loading to false')
       setLoading(false)
     }, 3000) // 3 seconds for auth only
     
-    console.log('⏰ AuthContext: Started 3-second auth loading timeout')
   }
 
   const getUserProfile = async (userId: string): Promise<void> => {
-    console.log('🔄 AuthContext: getUserProfile called for:', userId)
     
     // Don't block the UI - set profile loading state
     setProfileLoading(true)
     
     try {
-      console.log('📡 AuthContext: About to call fetchUserProfile...')
       
       // Use a shorter timeout for profile fetch
       const timeoutPromise = new Promise<never>((_, reject) => {
@@ -80,36 +76,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const profilePromise = fetchUserProfile(userId)
       
       const userProfile = await Promise.race([profilePromise, timeoutPromise])
-      console.log('✅ AuthContext: Profile fetched:', userProfile ? 'Profile found' : 'No profile')
       
       if (userProfile) {
-        console.log('📝 AuthContext: Setting profile state')
         setProfile(userProfile)
         setSubscriptionPlan(userProfile.subscription_plan)
         setMaxStudents(userProfile.max_students)
         setDailyExamLimit(userProfile.daily_exam_limit)
         setIsAdmin(userProfile.isAdmin)
       } else {
-        console.log('⚠️ AuthContext: No profile found, keeping defaults')
         setProfile(null)
         // Keep existing premium defaults
       }
     } catch (error) {
       console.error('❌ AuthContext: Error in getUserProfile:', error)
       // Keep defaults on error - don't change existing state
-      console.log('✅ AuthContext: Keeping default premium values due to profile fetch error')
     } finally {
       setProfileLoading(false)
     }
   }
 
   const refreshUserProfile = async () => {
-    console.log('🔄 AuthContext: refreshUserProfile called')
     if (user) {
-      console.log('🔄 AuthContext: Refreshing profile for user:', user.id)
       await getUserProfile(user.id)
     } else {
-      console.log('🔄 AuthContext: No user, clearing profile')
       setProfile(null)
       setSubscriptionPlan('premium') // Keep premium as default
       setMaxStudents(3)
@@ -119,7 +108,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    console.log('🚀 AuthContext: useEffect started - setting up auth listener')
     
     // Test database connection first
     testDatabaseConnection().then(result => {
@@ -133,7 +121,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Get initial session
     const getInitialSession = async () => {
-      console.log('🔍 AuthContext: Getting initial session...')
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
         
@@ -143,10 +130,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return
         }
         
-        console.log('📡 AuthContext: Initial session retrieved:', session ? 'Session exists' : 'No session')
         
         if (session?.user) {
-          console.log('👤 AuthContext: Initial session - User found, setting state')
           setSession(session)
           setUser(session.user)
           
@@ -155,7 +140,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.error('❌ AuthContext: Background profile fetch failed:', error)
           })
         } else {
-          console.log('👤 AuthContext: Initial session - No user found, clearing state')
           setSession(null)
           setUser(null)
           setProfile(null)
@@ -168,21 +152,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('❌ AuthContext: Error in getInitialSession:', error)
       } finally {
         clearLoadingTimeout()
-        console.log('✅ AuthContext: Initial session processing complete, setting loading to false')
         setLoading(false)
       }
     }
 
     // Set up auth state change listener
-    console.log('👂 AuthContext: Setting up auth state change listener')
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('🔔 AuthContext: Auth state changed:', event, session ? 'Session exists' : 'No session')
       
       // Skip processing if this is the initial session event
       if (event === 'INITIAL_SESSION') {
-        console.log('🔄 AuthContext: Skipping INITIAL_SESSION event - handled by getInitialSession')
         return
       }
       
@@ -190,11 +170,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session)
         
         if (session?.user) {
-          console.log('👤 AuthContext: Auth change - User found')
           
           // Only update user state if the user ID actually changed
           if (!user || user.id !== session.user.id) {
-            console.log('👤 AuthContext: User ID changed or new user, updating state')
             setUser(session.user)
             
             // Load profile in background - don't block UI
@@ -202,14 +180,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               console.error('❌ AuthContext: Background profile fetch failed during auth change:', error)
             })
           } else {
-            console.log('👤 AuthContext: Same user ID, skipping user state update')
           }
         } else {
-          console.log('👤 AuthContext: Auth change - No user found, clearing state')
           
           // Check if this is an implicit session invalidation (e.g., failed token refresh)
           if (event !== 'SIGNED_OUT' && event !== 'INITIAL_SESSION') {
-            console.log('🔄 AuthContext: Implicit session invalidation detected, forcing clean logout')
             // Force a clean logout to clear all local session data
             await signOut()
             return
@@ -226,7 +201,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('❌ AuthContext: Error processing auth state change:', error)
       } finally {
         clearLoadingTimeout()
-        console.log('✅ AuthContext: Auth state change processed, setting loading to false')
         setLoading(false)
       }
     })
@@ -235,14 +209,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     getInitialSession()
 
     return () => {
-      console.log('🧹 AuthContext: Cleaning up auth listener and timeout')
       subscription.unsubscribe()
       clearLoadingTimeout()
     }
   }, []) // Empty dependency array
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    console.log('📝 AuthContext: signUp called for:', email)
     
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -255,7 +227,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     if (!error && data.user) {
-      console.log('✅ AuthContext: User created, creating profile for:', data.user.id)
       
       // Create user profile in our users table with premium defaults
       const { error: profileError } = await supabase
@@ -274,7 +245,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (profileError) {
         console.error('❌ AuthContext: Error creating user profile:', profileError)
       } else {
-        console.log('✅ AuthContext: User profile created successfully')
         setSubscriptionPlan('premium')
         setMaxStudents(3)
         setDailyExamLimit(999)
@@ -288,7 +258,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signIn = async (email: string, password: string) => {
-    console.log('🔐 AuthContext: signIn called for:', email)
     
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -298,14 +267,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) {
       console.error('❌ AuthContext: Error during signIn:', error)
     } else {
-      console.log('✅ AuthContext: signIn successful')
     }
     
     return { error }
   }
 
   const signOut = async () => {
-    console.log('🚪 AuthContext: signOut called')
     
     clearLoadingTimeout()
     
@@ -322,7 +289,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.error('❌ AuthContext: Error during signOut:', error)
         }
       } else {
-        console.log('✅ AuthContext: signOut successful')
       }
     } catch (error) {
       console.error('❌ AuthContext: Unexpected error during signOut:', error)
@@ -336,17 +302,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAdmin(false)
     setLoading(false)
     setProfileLoading(false)
-    console.log('✅ AuthContext: Local signOut state cleared')
   }
 
   const resetPassword = async (email: string) => {
-    console.log('🔑 AuthContext: resetPassword called for:', email)
     const { error } = await supabase.auth.resetPasswordForEmail(email)
     
     if (error) {
       console.error('❌ AuthContext: Error during resetPassword:', error)
     } else {
-      console.log('✅ AuthContext: resetPassword email sent')
     }
     
     return { error }
@@ -369,7 +332,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refreshUserProfile,
   }
 
-  console.log('🔍 AuthContext: Current state:', {
     hasUser: !!user,
     userEmail: user?.email,
     userId: user?.id,

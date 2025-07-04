@@ -61,7 +61,6 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
     setError('')
 
     try {
-      console.log('Fetching leaderboard data from view...')
       
       // Fetch data from the leaderboard_data view with optional level filter
       let query = supabase
@@ -80,10 +79,8 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         throw error
       }
 
-      console.log('Raw leaderboard data:', leaderboardData)
 
       if (!leaderboardData || leaderboardData.length === 0) {
-        console.log('No leaderboard data found')
         setLeaderboard([])
         return
       }
@@ -123,7 +120,6 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         rank: index + 1
       }))
 
-      console.log('Processed leaderboard data:', processedData)
       setLeaderboard(processedData)
     } catch (error: any) {
       console.error('Error fetching leaderboard:', error)

@@ -44,7 +44,6 @@ function LoadingSpinner() {
 function AppContent() {
   const { user, isAdmin, loading } = useAuth()
 
-  // console.log('🔍 AppContent: Current state:', { 
   //   hasUser: !!user, 
   //   userEmail: user?.email,
   //   isAdmin, 
@@ -52,11 +51,9 @@ function AppContent() {
   // })
 
   if (loading) {
-    // console.log('⏳ AppContent: Still loading, showing spinner')
     return <LoadingSpinner />
   }
 
-  // console.log('✅ AppContent: Loading complete, rendering routes')
 
   return (
     <Routes>

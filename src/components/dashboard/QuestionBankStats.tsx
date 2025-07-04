@@ -29,7 +29,6 @@ export function QuestionBankStats() {
       setLoading(true)
 
       // Use efficient count queries per level (11 parallel queries)
-      console.log('🔄 QuestionBankStats: Fetching counts per level efficiently...')
       
       const levelCountPromises = allLevels.map(async (level) => {
         const { count, error } = await supabase
@@ -69,7 +68,6 @@ export function QuestionBankStats() {
       }
 
       const totalCount = levelCounts.reduce((sum, stat) => sum + stat.count, 0)
-      console.log('✅ QuestionBankStats: Total questions found:', totalCount)
 
     } catch (error) {
       console.error('❌ Error fetching question stats:', error)

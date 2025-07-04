@@ -154,7 +154,6 @@ export function OptimizedParentDashboard() {
       setError('')
       setConnectionError(false)
 
-      console.log('🔍 Fetching dashboard data for user:', user.id)
 
       // Test connection first (with timeout)
       const connectionTest = Promise.race([
@@ -224,7 +223,6 @@ export function OptimizedParentDashboard() {
         totalXP
       })
 
-      console.log('✅ Dashboard data fetched successfully')
 
     } catch (err: any) {
       console.error('❌ Error fetching dashboard data:', err)

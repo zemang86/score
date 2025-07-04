@@ -196,13 +196,11 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       })
     }
 
-    console.log(`Student ${student.name} has previously answered ${answeredQuestionIds.size} questions in ${subject}`)
 
     // Step 3: Separate fresh questions from previously answered ones
     const freshQuestions = allQuestions.filter((q: Question) => !answeredQuestionIds.has(q.id))
     const answeredQuestions = allQuestions.filter((q: Question) => answeredQuestionIds.has(q.id))
 
-    console.log(`Found ${freshQuestions.length} fresh questions and ${answeredQuestions.length} previously answered questions`)
 
     // Step 4: Smart selection strategy
     let selectedQuestions: typeof allQuestions = []
@@ -213,7 +211,6 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       const shuffledNewest = newestQuestions.sort(() => 0.5 - Math.random())
       selectedQuestions = shuffledNewest.slice(0, requiredCount)
       
-      console.log(`Selected ${selectedQuestions.length} fresh questions (newest first with randomization)`)
     } else if (freshQuestions.length > 0) {
       // Use all fresh questions + fill remainder with least recently answered
       selectedQuestions = [...freshQuestions]
@@ -243,13 +240,11 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
       selectedQuestions = selectedQuestions.concat(oldQuestions)
       
-      console.log(`Selected ${freshQuestions.length} fresh + ${oldQuestions.length} previously answered questions`)
     } else {
       // No fresh questions available - use the most varied set of answered questions
       const shuffledAnswered = answeredQuestions.sort(() => 0.5 - Math.random())
       selectedQuestions = shuffledAnswered.slice(0, requiredCount)
       
-      console.log(`No fresh questions available - selected ${selectedQuestions.length} from previously answered questions`)
     }
 
     return selectedQuestions
@@ -265,7 +260,6 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       // Get allowed levels for this student
       const allowedLevels = getAllowedLevels(student.level)
       
-      console.log(`Student ${student.name} (${student.level}) can access questions from levels:`, allowedLevels)
       
       // Use smart question selection instead of random selection
       const selectedQuestions = await getSmartQuestionSelection(
@@ -282,7 +276,6 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
         )
       }
 
-      console.log(`Selected ${selectedQuestions.length} questions from levels:`, 
         [...new Set(selectedQuestions.map(q => q.level))].join(', '))
 
       // Final shuffle to ensure the order isn't predictable
@@ -647,7 +640,6 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
           );
           
           isCorrect = checkResult.result === 'correct';
-          console.log(`Answer check for "${question.userAnswer}": ${checkResult.result} (${checkResult.method}) - ${checkResult.reason}`);
         } catch (error) {
           console.error('Error checking answer:', error);
           // Fallback to simple matching if AI check fails
@@ -723,7 +715,6 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
       if (xpError) throw xpError
 
-      console.log('Exam completed successfully:', {
         score,
         totalQuestions: questions.length,
         xpGained,

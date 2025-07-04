@@ -31,7 +31,6 @@ export function Header() {
   }
 
   const handleSignOut = async () => {
-    console.log('🚪 Signing out user...')
     await signOut()
     navigate('/')
   }

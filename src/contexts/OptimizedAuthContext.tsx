@@ -55,19 +55,16 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
   const startLoadingTimeout = useCallback(() => {
     clearLoadingTimeout()
     loadingTimeoutRef.current = setTimeout(() => {
-      console.log('⏰ AuthContext: Auth loading timeout reached (3 seconds)')
       setLoading(false)
     }, 3000)
   }, [clearLoadingTimeout])
 
   // Optimized profile fetching with caching
   const getUserProfile = useCallback(async (userId: string): Promise<void> => {
-    console.log('🔄 OptimizedAuthContext: getUserProfile called for:', userId)
     
     // Check cache first (cache for 5 minutes)
     const cached = profileCache.current.get(userId)
     if (cached && Date.now() - cached.timestamp < 5 * 60 * 1000) {
-      console.log('✅ Using cached profile for user:', userId)
       setProfile(cached.profile)
       setSubscriptionPlan(cached.profile.subscription_plan)
       setMaxStudents(cached.profile.max_students)
@@ -124,7 +121,6 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
 
   // Memoized auth functions
   const signUp = useCallback(async (email: string, password: string, fullName: string) => {
-    console.log('📝 OptimizedAuthContext: signUp called for:', email)
     
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -160,7 +156,6 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
   }, [])
 
   const signIn = useCallback(async (email: string, password: string) => {
-    console.log('🔐 OptimizedAuthContext: signIn called for:', email)
     
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -171,7 +166,6 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
   }, [])
 
   const signOut = useCallback(async () => {
-    console.log('🚪 OptimizedAuthContext: signOut called')
     
     clearLoadingTimeout()
     
@@ -206,14 +200,12 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
   }, [clearLoadingTimeout])
 
   const resetPassword = useCallback(async (email: string) => {
-    console.log('🔑 OptimizedAuthContext: resetPassword called for:', email)
     const { error } = await supabase.auth.resetPasswordForEmail(email)
     return { error }
   }, [])
 
   // Main auth effect
   useEffect(() => {
-    console.log('🚀 OptimizedAuthContext: Setting up auth listener')
     
     // Test database connection
     testDatabaseConnection().then(result => {
@@ -256,7 +248,6 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('🔔 OptimizedAuthContext: Auth state changed:', event)
       
       if (event === 'INITIAL_SESSION') {
         return

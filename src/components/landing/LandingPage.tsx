@@ -82,7 +82,6 @@ export function LandingPage() {
   }
 
   const handleGetStarted = () => {
-    console.log('🚀 Navigating to auth page...')
     navigate('/auth')
   }
 

@@ -14,7 +14,6 @@ export function AuthPage() {
   const navigate = useNavigate()
 
   const handleBackToHome = () => {
-    console.log('🏠 Navigating back to home...')
     navigate('/')
   }
 

@@ -6,7 +6,7 @@ import { AddStudentModal } from './AddStudentModal'
 import { StudentCard } from './StudentCard'
 import { LeaderboardModal } from './LeaderboardModal'
 import { FamilyReportsModal } from './FamilyReportsModal'
-import { ExamModal } from './ExamModal'
+import { ExamModalRefactored as ExamModal } from '../exam/ExamModalRefactored'
 import { EditStudentModal } from './EditStudentModal'
 import { StudentProgressModal } from './StudentProgressModal'
 import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
@@ -70,7 +70,6 @@ export function ParentDashboard() {
 
   const testConnection = async () => {
     try {
-      console.log('🧪 Testing Supabase connection...')
       
       // Test basic connection
       const { data, error } = await supabase
@@ -83,7 +82,6 @@ export function ParentDashboard() {
         return false
       }
       
-      console.log('✅ Connection test successful')
       return true
     } catch (err) {
       console.error('❌ Connection test error:', err)
@@ -99,7 +97,6 @@ export function ParentDashboard() {
       setError('')
       setConnectionError(false)
 
-      console.log('🔍 Starting to fetch students for user:', user.id)
 
       // First test the connection
       const connectionOk = await testConnection()
@@ -109,7 +106,6 @@ export function ParentDashboard() {
         return
       }
 
-      console.log('📡 Making request to fetch students...')
 
       const { data, error: fetchError } = await supabase
         .from('students')
@@ -117,14 +113,12 @@ export function ParentDashboard() {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
-      console.log('📡 Students fetch response:', { data, error: fetchError })
 
       if (fetchError) {
         console.error('❌ Fetch error details:', fetchError)
         throw fetchError
       }
 
-      console.log('✅ Students fetched successfully:', data?.length || 0, 'students')
       setStudents(data || [])
       
       // Fetch dashboard statistics using the fetched student data
@@ -171,7 +165,6 @@ export function ParentDashboard() {
         console.error('❌ Error fetching questions count:', questionsError)
       } else {
         setTotalQuestions(questionsCount || 0)
-        console.log('✅ Dashboard: Fetched actual question count:', questionsCount)
       }
     } catch (error) {
       console.error('❌ Error in fetchTotalQuestionsCount:', error)
@@ -180,7 +173,6 @@ export function ParentDashboard() {
 
   const fetchDashboardStats = async (studentsData: Student[]) => {
     try {
-      console.log('📊 Fetching dashboard stats for students:', studentsData.map(s => s.id))
 
       const studentIds = studentsData.map(s => s.id)
 
@@ -218,7 +210,6 @@ export function ParentDashboard() {
       const averageScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0
       const totalBadges = badges?.length || 0
 
-      console.log('✅ Dashboard stats calculated:', {
         totalExams: completedExams.length,
         totalBadges,
         averageScore,
