@@ -79,6 +79,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   const [showCelebration, setShowCelebration] = useState(false)
   const [earnedBadges, setEarnedBadges] = useState<Array<{name: string, icon: string, color: string}>>([])
   const [showLevelUp, setShowLevelUp] = useState(false)
+  const [isQuestionReviewExpanded, setIsQuestionReviewExpanded] = useState(false)
 
   // Save state to session storage whenever important state changes
   const saveState = () => {
@@ -1418,11 +1419,11 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                        {earnedBadges.map((badge, index) => (
                          <div
                            key={index}
-                           className={`${badge.color} text-white rounded-lg p-2 text-center shadow-lg animate-badge-bounce flex-shrink-0`}
+                           className={`${badge.color} text-white rounded-lg p-2 text-center shadow-lg animate-badge-bounce flex-shrink-0 w-20 min-w-[80px]`}
                            style={{ animationDelay: `${index * 0.2}s` }}
                          >
                            <div className="text-lg mb-1">{badge.icon}</div>
-                           <div className="font-bold text-xs">{badge.name}</div>
+                           <div className="font-bold text-xs leading-tight">{badge.name}</div>
                          </div>
                        ))}
                      </div>
@@ -1450,105 +1451,119 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                    </div>
                  </div>
 
-                                 {/* Compact Question Review */}
+                                                  {/* Collapsible Question Review */}
                  <div className="bg-white rounded-xl shadow-xl border-2 border-gray-200 overflow-hidden">
-                   <div className="bg-gradient-to-r from-gray-100 to-gray-200 px-4 py-2">
+                   <button
+                     onClick={() => setIsQuestionReviewExpanded(!isQuestionReviewExpanded)}
+                     className="w-full bg-gradient-to-r from-gray-100 to-gray-200 px-4 py-3 hover:from-gray-200 hover:to-gray-300 transition-all duration-200"
+                   >
                      <div className="flex items-center justify-between">
-                       <h3 className="text-base font-bold text-gray-800 flex items-center">
-                         <BookOpenCheck className="w-4 h-4 mr-2" />
-                         Question Review
-                       </h3>
-                       <div className="text-xs text-gray-600 bg-white px-2 py-1 rounded-full">
-                         {questions.filter(q => q.isCorrect).length} ✓ | {questions.filter(q => !q.isCorrect).length} ✗
+                       <div className="flex items-center">
+                         <BookOpenCheck className="w-4 h-4 mr-2 text-gray-700" />
+                         <h3 className="text-base font-bold text-gray-800">Question Review</h3>
+                       </div>
+                       <div className="flex items-center space-x-2">
+                         <div className="text-xs text-gray-600 bg-white px-2 py-1 rounded-full">
+                           {questions.filter(q => q.isCorrect).length} ✓ | {questions.filter(q => !q.isCorrect).length} ✗
+                         </div>
+                         <div className={`transform transition-transform duration-200 ${
+                           isQuestionReviewExpanded ? 'rotate-180' : 'rotate-0'
+                         }`}>
+                           <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                           </svg>
+                         </div>
                        </div>
                      </div>
-                   </div>
+                   </button>
                    
-                   <div className="max-h-64 overflow-y-auto p-3">
-                     <div className="space-y-2">
-                       {questions.map((question, index) => (
-                         <div
-                           key={index}
-                           className={`p-3 rounded-lg border transition-all duration-300 ${
-                             question.isCorrect
-                               ? 'bg-green-50 border-green-300 hover:bg-green-100'
-                               : 'bg-red-50 border-red-300 hover:bg-red-100'
-                           }`}
-                         >
-                           {/* Compact Question Header */}
-                           <div className="flex items-center justify-between mb-2">
-                             <div className="flex items-center">
-                               <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-white mr-2 text-xs ${
-                                 question.isCorrect ? 'bg-green-500' : 'bg-red-500'
-                               }`}>
-                                 {index + 1}
-                               </div>
+                   {isQuestionReviewExpanded && (
+                     <div className="max-h-64 overflow-y-auto p-3 animate-slide-in">
+                       <div className="space-y-2">
+                         {questions.map((question, index) => (
+                           <div
+                             key={index}
+                             className={`p-3 rounded-lg border transition-all duration-300 ${
+                               question.isCorrect
+                                 ? 'bg-green-50 border-green-300 hover:bg-green-100'
+                                 : 'bg-red-50 border-red-300 hover:bg-red-100'
+                             }`}
+                           >
+                             {/* Compact Question Header */}
+                             <div className="flex items-center justify-between mb-2">
                                <div className="flex items-center">
-                                 {question.isCorrect ? (
-                                   <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
-                                 ) : (
-                                   <XCircle className="w-4 h-4 text-red-600 mr-1" />
-                                 )}
-                                 <span className={`font-bold text-xs ${
-                                   question.isCorrect ? 'text-green-700' : 'text-red-700'
+                                 <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-white mr-2 text-xs ${
+                                   question.isCorrect ? 'bg-green-500' : 'bg-red-500'
                                  }`}>
-                                   {question.isCorrect ? 'Correct!' : 'Review'}
-                                 </span>
-                               </div>
-                             </div>
-                             <div className="text-xs text-gray-500">
-                               {question.type}
-                             </div>
-                           </div>
-                           
-                                                       {/* Compact Question Text */}
-                            <div className="mb-2">
-                              <p className="text-xs text-gray-800 overflow-hidden" style={{
-                                display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical'
-                              }}>
-                                {question.question_text}
-                              </p>
-                            </div>
-                           
-                           {/* Compact Answer Section */}
-                           <div className="space-y-1">
-                             {/* Your Answer */}
-                             <div className="flex items-start space-x-2">
-                               <span className="text-xs font-bold text-gray-600 min-w-[60px]">Your:</span>
-                               <div className={`flex-1 p-1.5 rounded text-xs ${
-                                 question.isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                               }`}>
-                                 {Array.isArray(question.userAnswer) 
-                                   ? question.userAnswer.join(', ') 
-                                   : (question.userAnswer || 'No answer')
-                                 }
-                               </div>
-                             </div>
-                             
-                             {/* Correct Answer */}
-                             <div className="flex items-start space-x-2">
-                               <span className="text-xs font-bold text-green-600 min-w-[60px]">Answer:</span>
-                               <div className="flex-1 p-1.5 rounded bg-green-100 text-green-800 text-xs">
-                                 {question.correct_answer}
-                               </div>
-                             </div>
-                             
-                             {/* Compact Explanation */}
-                             {question.explanation && (
-                               <div className="flex items-start space-x-2">
-                                 <span className="text-xs font-bold text-blue-600 min-w-[60px]">Info:</span>
-                                 <div className="flex-1 p-1.5 rounded bg-blue-50 text-blue-800 text-xs">
-                                   {question.explanation}
+                                   {index + 1}
+                                 </div>
+                                 <div className="flex items-center">
+                                   {question.isCorrect ? (
+                                     <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
+                                   ) : (
+                                     <XCircle className="w-4 h-4 text-red-600 mr-1" />
+                                   )}
+                                   <span className={`font-bold text-xs ${
+                                     question.isCorrect ? 'text-green-700' : 'text-red-700'
+                                   }`}>
+                                     {question.isCorrect ? 'Correct!' : 'Review'}
+                                   </span>
                                  </div>
                                </div>
-                             )}
+                               <div className="text-xs text-gray-500">
+                                 {question.type}
+                               </div>
+                             </div>
+                             
+                             {/* Compact Question Text */}
+                             <div className="mb-2">
+                               <p className="text-xs text-gray-800 overflow-hidden" style={{
+                                 display: '-webkit-box',
+                                 WebkitLineClamp: 2,
+                                 WebkitBoxOrient: 'vertical'
+                               }}>
+                                 {question.question_text}
+                               </p>
+                             </div>
+                             
+                             {/* Compact Answer Section */}
+                             <div className="space-y-1">
+                               {/* Your Answer */}
+                               <div className="flex items-start space-x-2">
+                                 <span className="text-xs font-bold text-gray-600 min-w-[60px]">Your:</span>
+                                 <div className={`flex-1 p-1.5 rounded text-xs ${
+                                   question.isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                 }`}>
+                                   {Array.isArray(question.userAnswer) 
+                                     ? question.userAnswer.join(', ') 
+                                     : (question.userAnswer || 'No answer')
+                                   }
+                                 </div>
+                               </div>
+                               
+                               {/* Correct Answer */}
+                               <div className="flex items-start space-x-2">
+                                 <span className="text-xs font-bold text-green-600 min-w-[60px]">Answer:</span>
+                                 <div className="flex-1 p-1.5 rounded bg-green-100 text-green-800 text-xs">
+                                   {question.correct_answer}
+                                 </div>
+                               </div>
+                               
+                               {/* Compact Explanation */}
+                               {question.explanation && (
+                                 <div className="flex items-start space-x-2">
+                                   <span className="text-xs font-bold text-blue-600 min-w-[60px]">Info:</span>
+                                   <div className="flex-1 p-1.5 rounded bg-blue-50 text-blue-800 text-xs">
+                                     {question.explanation}
+                                   </div>
+                                 </div>
+                               )}
+                             </div>
                            </div>
-                         </div>
-                       ))}
+                         ))}
+                       </div>
                      </div>
-                   </div>
+                   )}
                  </div>
               </div>
             )}
