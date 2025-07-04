@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Star, Trophy, Users, BookOpen, Target, Award, TrendingUp, ArrowRight, Play, CheckCircle, XCircle, DollarSign, Crown, Shield, Sparkles, Heart, Zap, Monitor, Smartphone, Rocket, Brain, Globe, ChevronDown, Lightbulb, Gamepad2, BarChart3, Clock, Gift } from 'lucide-react'
 import { Button } from '../ui/Button'
@@ -16,119 +16,111 @@ export function LandingPage() {
   const [statsLoading, setStatsLoading] = useState(true)
   const { t, i18n } = useTranslation()
 
+  // Optimized data fetching with immediate fallbacks
+  const fetchQuestionStats = useCallback(async () => {
+    // Set fallback values immediately for faster perceived loading
+    setQuestionCount(10000) // Show default immediately
+    setSubjectCount(5)
+    setLevelCount(11)
+    setStatsLoading(false) // Stop loading animation immediately
+    
+    // Fetch real data in background
+    try {
+      const { count: questionCount, error: questionError } = await supabase
+        .from('questions')
+        .select('*', { count: 'exact', head: true })
+
+      if (!questionError && questionCount !== null) {
+        setQuestionCount(questionCount)
+      }
+    } catch (error) {
+      console.error('Error fetching question stats:', error)
+      // Keep fallback values on error
+    }
+  }, [])
+
+  // Optimized scroll observer with better performance
   useEffect(() => {
-    // Initialize optimized scroll observer for performance
+    // Simplified intersection observer
     observerRef.current = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible')
-            // Remove will-change after animation completes
-            setTimeout(() => {
-              entry.target.classList.add('animation-complete')
-            }, 800)
+            // Unobserve after animation to improve performance
+            observerRef.current?.unobserve(entry.target)
           }
         })
       },
       {
-        threshold: 0.1,
-        rootMargin: '50px 0px -50px 0px'
+        threshold: 0.05, // Reduced threshold for faster triggering
+        rootMargin: '100px 0px -50px 0px' // Larger root margin for earlier triggering
       }
     )
 
-    // Observe all scroll-animated elements
-    const animatedElements = document.querySelectorAll('.scroll-fade-in, .scroll-slide-left, .scroll-slide-right, .scroll-scale-in, .scroll-bounce-in')
-    animatedElements.forEach((el) => {
-      el.classList.add('will-animate')
-      observerRef.current?.observe(el)
-    })
+    // Delayed observer setup to not block initial render
+    const setupObserver = () => {
+      const animatedElements = document.querySelectorAll('.scroll-fade-in, .scroll-slide-left, .scroll-slide-right, .scroll-scale-in, .scroll-bounce-in')
+      animatedElements.forEach((el) => {
+        observerRef.current?.observe(el)
+      })
+    }
 
-    // Fetch question statistics
+    // Setup observer after a short delay to prioritize critical rendering
+    const timeoutId = setTimeout(setupObserver, 100)
+
+    // Fetch stats immediately
     fetchQuestionStats()
 
     return () => {
+      clearTimeout(timeoutId)
       observerRef.current?.disconnect()
     }
-  }, [])
+  }, [fetchQuestionStats])
 
-  const fetchQuestionStats = async () => {
-    setStatsLoading(true)
-    try {
-      // Fetch total question count
-      const { count: questionCount, error: questionError } = await supabase
-        .from('questions')
-        .select('*', { count: 'exact', head: true })
-
-      if (questionError) throw questionError
-
-      // Use total available subjects and levels in Malaysian education system
-      // This showcases the complete system capabilities rather than just populated database content
-      const totalCoreSubjects = 5 // Bahasa Melayu, English, Mathematics, Science, History
-      const totalAvailableLevels = 11 // Darjah 1-6 (6) + Tingkatan 1-5 (5) = 11 total levels
-
-      // Update state with fetched data
-      setQuestionCount(questionCount || 0)
-      setSubjectCount(totalCoreSubjects)
-      setLevelCount(totalAvailableLevels)
-    } catch (error) {
-      console.error('Error fetching question stats:', error)
-      // Fallback to default values if fetch fails
-      setQuestionCount(null)
-      setSubjectCount(null)
-      setLevelCount(null)
-    } finally {
-      setStatsLoading(false)
-    }
-  }
-
-  const handleGetStarted = () => {
+  const handleGetStarted = useCallback(() => {
     console.log('🚀 Navigating to auth page...')
     navigate('/auth')
-  }
+  }, [navigate])
 
-  const handleWatchDemo = () => {
-    // Smooth scroll to features section
+  const handleWatchDemo = useCallback(() => {
     const featuresSection = document.getElementById('features-section')
     if (featuresSection) {
       featuresSection.scrollIntoView({ behavior: 'smooth' })
     }
-  }
+  }, [])
 
-  const changeLanguage = (lng: string) => {
+  const changeLanguage = useCallback((lng: string) => {
     i18n.changeLanguage(lng)
-  }
+  }, [i18n])
 
-  // Format number with commas
-  const formatNumber = (num: number | null): string => {
-    if (num === null) return '10,000+' // Fallback value
-    return num.toLocaleString()
-  }
+  // Memoized number formatting
+  const formatNumber = useMemo(() => {
+    return (num: number | null): string => {
+      if (num === null) return '10,000+' // Fallback value
+      return num.toLocaleString()
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
-      {/* Floating decorative elements */}
+      {/* Floating decorative elements - Simplified for performance */}
       <div className="fixed top-20 right-10 animate-float z-10 opacity-20">
         <Star className="w-8 h-8 text-indigo-400" />
       </div>
       <div className="fixed top-40 right-32 animate-bounce-gentle z-10 opacity-20">
         <Sparkles className="w-6 h-6 text-purple-400" />
       </div>
-      <div className="fixed bottom-20 left-10 animate-wiggle z-10 opacity-20">
-        <Heart className="w-8 h-8 text-pink-400" />
-      </div>
-      <div className="fixed top-1/2 right-5 animate-pulse-soft z-10 opacity-20">
-        <Zap className="w-7 h-7 text-amber-400" />
-      </div>
 
-      {/* Navigation */}
+      {/* Navigation - Load immediately without animation delay */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-white/20 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-20">
-            <RevealOnScroll animationType="slide-right" delay={100}>
+            <RevealOnScroll animationType="slide-right" delay={0}>
               <EdventureLogo size="md" className="sm:scale-110" />
             </RevealOnScroll>
             
-            <RevealOnScroll animationType="slide-left" delay={200}>
+            <RevealOnScroll animationType="slide-left" delay={0}>
               <div className="flex items-center gap-2 sm:gap-4">
                 {/* Language Switcher - Compact for Mobile */}
                 <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-lg border border-slate-200/50 p-1">
@@ -168,21 +160,19 @@ export function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero Section - Million Dollar Design */}
+      {/* Hero Section - Faster loading */}
       <section className="relative min-h-screen flex items-center justify-center pt-20 px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20">
-        {/* Background Elements */}
+        {/* Background Elements - Simplified */}
         <div className="absolute inset-0 overflow-hidden">
-          {/* Gradient Orbs */}
           <div className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-gradient-to-r from-indigo-400/30 to-purple-400/30 rounded-full blur-3xl animate-pulse-soft"></div>
           <div className="absolute bottom-1/4 right-1/4 w-56 sm:w-80 h-56 sm:h-80 bg-gradient-to-r from-pink-400/30 to-rose-400/30 rounded-full blur-3xl animate-float"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 sm:w-64 h-48 sm:h-64 bg-gradient-to-r from-amber-400/20 to-orange-400/20 rounded-full blur-3xl animate-bounce-gentle"></div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            {/* Left Content */}
+            {/* Left Content - Load immediately */}
             <div className="text-center lg:text-left">
-              <RevealOnScroll animationType="scale-in" delay={300}>
+              <RevealOnScroll animationType="scale-in" delay={0}>
                 <div className="mb-8">
                   {/* Premium Badge */}
                   <div className="inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 rounded-full text-indigo-700 text-xs sm:text-sm font-semibold mb-6 sm:mb-8 shadow-lg border border-white/50 backdrop-blur-sm">
@@ -208,8 +198,8 @@ export function LandingPage() {
                 </div>
               </RevealOnScroll>
               
-              {/* Action Buttons */}
-              <RevealOnScroll animationType="slide-up" delay={500}>
+              {/* Action Buttons - Reduced delay */}
+              <RevealOnScroll animationType="slide-up" delay={100}>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start items-center mb-10 sm:mb-12">
                   <Button 
                     size="lg" 
@@ -233,40 +223,28 @@ export function LandingPage() {
                 </div>
               </RevealOnScroll>
               
-              {/* Stats Cards */}
+              {/* Stats Cards - Show immediately with fast animations */}
               <div className="grid grid-cols-3 gap-3 sm:gap-6 text-center lg:text-left">
-                <RevealOnScroll animationType="slide-up" delay={600}>
+                <RevealOnScroll animationType="slide-up" delay={150}>
                   <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-lg border border-white/50 hover:shadow-xl transition-all duration-300 hover:scale-105">
                     <div className="text-xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-1 sm:mb-2">
-                      {statsLoading ? (
-                        <div className="animate-pulse h-8 w-24 bg-indigo-100 rounded-md mx-auto lg:mx-0"></div>
-                      ) : (
-                        formatNumber(questionCount)
-                      )}
+                      {formatNumber(questionCount)}
                     </div>
                     <div className="text-slate-600 font-semibold text-xs sm:text-sm">{t('stats.questions')}</div>
                   </div>
                 </RevealOnScroll>
-                <RevealOnScroll animationType="slide-up" delay={700}>
+                <RevealOnScroll animationType="slide-up" delay={200}>
                   <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-lg border border-white/50 hover:shadow-xl transition-all duration-300 hover:scale-105">
                     <div className="text-xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1 sm:mb-2">
-                      {statsLoading ? (
-                        <div className="animate-pulse h-8 w-8 bg-purple-100 rounded-md mx-auto lg:mx-0"></div>
-                      ) : (
-                        subjectCount || 5
-                      )}
+                      {subjectCount || 5}
                     </div>
                     <div className="text-slate-600 font-semibold text-xs sm:text-sm">{t('stats.subjects')}</div>
                   </div>
                 </RevealOnScroll>
-                <RevealOnScroll animationType="slide-up" delay={800}>
+                <RevealOnScroll animationType="slide-up" delay={250}>
                   <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-lg border border-white/50 hover:shadow-xl transition-all duration-300 hover:scale-105">
                     <div className="text-xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent mb-1 sm:mb-2">
-                      {statsLoading ? (
-                        <div className="animate-pulse h-8 w-8 bg-pink-100 rounded-md mx-auto lg:mx-0"></div>
-                      ) : (
-                        levelCount || 11
-                      )}
+                      {levelCount || 11}
                     </div>
                     <div className="text-slate-600 font-semibold text-xs sm:text-sm">{t('stats.levels')}</div>
                   </div>
@@ -274,9 +252,9 @@ export function LandingPage() {
               </div>
             </div>
 
-            {/* Right Visual - Premium Dashboard Preview */}
+            {/* Right Visual - Dashboard Preview - Faster loading */}
             <div className="relative mt-12 lg:mt-0">
-              <RevealOnScroll animationType="scale-in" delay={400}>
+              <RevealOnScroll animationType="scale-in" delay={200}>
                 <div className="relative">
                   {/* Main Dashboard Mockup */}
                   <div className="bg-gradient-to-br from-white via-slate-50 to-indigo-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl sm:shadow-3xl border border-white/50 backdrop-blur-xl">
