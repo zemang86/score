@@ -1,14 +1,16 @@
 import React from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
-import { LogOut, User, Crown, BarChart3, Home } from 'lucide-react'
+import { LogOut, User, Crown, BarChart3, Home, Globe } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { EdventureLogo } from '../ui/EdventureLogo'
+import { useTranslation } from 'react-i18next'
 
 export function Header() {
   const { user, isAdmin, signOut, subscriptionPlan } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
+  const { t, i18n } = useTranslation()
 
   const isAdminPage = location.pathname.startsWith('/admin')
 
@@ -34,6 +36,10 @@ export function Header() {
     navigate('/')
   }
 
+  const changeLanguage = (language: string) => {
+    i18n.changeLanguage(language)
+  }
+
   // Get user initials for mobile display
   const getUserInitials = () => {
     const name = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
@@ -41,6 +47,7 @@ export function Header() {
   }
 
   const isPremium = subscriptionPlan === 'premium'
+  const currentLanguage = i18n.language || 'en'
 
   return (
     <header className="bg-white/90 backdrop-blur-lg border-b border-slate-200/50 sticky top-0 z-40 shadow-sm">
@@ -51,6 +58,31 @@ export function Header() {
           </button>
 
           <div className="flex items-center space-x-2">
+            {/* Language Switcher */}
+            <div className="flex items-center space-x-1 mr-2">
+              <Globe className="w-4 h-4 text-slate-500" />
+              <button 
+                onClick={() => changeLanguage('en')} 
+                className={`px-2 py-1 text-xs font-medium rounded-md ${
+                  currentLanguage === 'en' 
+                    ? 'bg-indigo-100 text-indigo-700' 
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                EN
+              </button>
+              <button 
+                onClick={() => changeLanguage('ms')} 
+                className={`px-2 py-1 text-xs font-medium rounded-md ${
+                  currentLanguage === 'ms' 
+                    ? 'bg-indigo-100 text-indigo-700' 
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                MS
+              </button>
+            </div>
+
             {/* User Info */}
             <div className="hidden sm:flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-slate-200/50 shadow-sm">
               <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-1.5">

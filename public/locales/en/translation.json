@@ -1,0 +1,49 @@
+{
+  "nav": {
+    "signIn": "Sign In",
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "badge": "Transforming Education in Malaysia",
+    "title": "Where Learning",
+    "titleHighlight": "Becomes Adventure",
+    "subtitle": "Transform exam preparation into an engaging journey. From Darjah 1 to Tingkatan 5, track progress and celebrate achievements together.",
+    "startButton": "Start Your Adventure",
+    "watchDemo": "Watch Demo"
+  },
+  "stats": {
+    "questions": "Questions",
+    "subjects": "Subjects",
+    "levels": "Levels"
+  },
+  "features": {
+    "title": "Why Choose Edventure+?",
+    "subtitle": "The Future of",
+    "subtitleHighlight": "Learning is Here",
+    "description": "We've reimagined exam preparation to make it engaging, effective, and enjoyable for both parents and children."
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "Simple Steps to",
+    "subtitleHighlight": "Learning Success",
+    "description": "Transform your child's exam preparation in just three easy steps"
+  },
+  "subjects": {
+    "title": "Complete Coverage",
+    "subtitle": "All Core Subjects",
+    "subtitleHighlight": "Covered",
+    "description": "From Darjah 1 to Tingkatan 5, we've got all core subjects covered with thousands of questions"
+  },
+  "cta": {
+    "badge": "Ready to Transform Learning?",
+    "title": "Start Your Family's",
+    "titleHighlight": "Learning Adventure",
+    "description": "Join thousands of Malaysian families who are making exam preparation fun and effective with Edventure+.",
+    "button": "Start Free Today",
+    "note": "No credit card required • Set up in 2 minutes • Premium access included"
+  },
+  "footer": {
+    "copyright": "© 2025 Edventure+. All rights reserved.",
+    "tagline": "Where Learning Becomes Adventure"
+  }
+}

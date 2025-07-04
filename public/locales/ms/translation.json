@@ -1,0 +1,49 @@
+{
+  "nav": {
+    "signIn": "Log Masuk",
+    "getStarted": "Mulakan"
+  },
+  "hero": {
+    "badge": "Mengubah Pendidikan di Malaysia",
+    "title": "Di Mana Pembelajaran",
+    "titleHighlight": "Menjadi Petualangan",
+    "subtitle": "Ubah persediaan peperiksaan menjadi perjalanan yang menarik. Dari Darjah 1 hingga Tingkatan 5, jejaki kemajuan dan raikan pencapaian bersama.",
+    "startButton": "Mulakan Petualangan Anda",
+    "watchDemo": "Tonton Demo"
+  },
+  "stats": {
+    "questions": "Soalan",
+    "subjects": "Subjek",
+    "levels": "Tahap"
+  },
+  "features": {
+    "title": "Mengapa Pilih Edventure+?",
+    "subtitle": "Masa Depan",
+    "subtitleHighlight": "Pembelajaran Ada Di Sini",
+    "description": "Kami telah mengubah persediaan peperiksaan untuk menjadikannya menarik, berkesan, dan menyeronokkan untuk ibu bapa dan anak-anak."
+  },
+  "howItWorks": {
+    "title": "Bagaimana Ia Berfungsi",
+    "subtitle": "Langkah Mudah Untuk",
+    "subtitleHighlight": "Kejayaan Pembelajaran",
+    "description": "Ubah persediaan peperiksaan anak anda dalam tiga langkah mudah"
+  },
+  "subjects": {
+    "title": "Liputan Lengkap",
+    "subtitle": "Semua Subjek Teras",
+    "subtitleHighlight": "Diliputi",
+    "description": "Dari Darjah 1 hingga Tingkatan 5, kami mempunyai semua subjek teras yang dilengkapi dengan ribuan soalan"
+  },
+  "cta": {
+    "badge": "Bersedia Untuk Mengubah Pembelajaran?",
+    "title": "Mulakan Petualangan",
+    "titleHighlight": "Pembelajaran Keluarga Anda",
+    "description": "Sertai ribuan keluarga Malaysia yang menjadikan persediaan peperiksaan menyeronokkan dan berkesan dengan Edventure+.",
+    "button": "Mulakan Percuma Hari Ini",
+    "note": "Tiada kad kredit diperlukan • Persediaan dalam 2 minit • Akses premium disertakan"
+  },
+  "footer": {
+    "copyright": "© 2025 Edventure+. Hak cipta terpelihara.",
+    "tagline": "Di Mana Pembelajaran Menjadi Petualangan"
+  }
+}
