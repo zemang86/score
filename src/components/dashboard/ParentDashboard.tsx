@@ -210,12 +210,6 @@ export function ParentDashboard() {
       const averageScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0
       const totalBadges = badges?.length || 0
 
-        totalExams: completedExams.length,
-        totalBadges,
-        averageScore,
-        totalXP
-      })
-
       setDashboardStats({
         totalExams: completedExams.length,
         totalBadges,
