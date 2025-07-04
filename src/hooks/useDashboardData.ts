@@ -6,7 +6,7 @@ const fetchStudents = async (userId: string) => {
   const { data, error } = await supabase
     .from('students')
     .select('*')
-    .eq('parent_id', userId)
+    .eq('user_id', userId)
     .order('created_at', { ascending: false })
 
   if (error) throw error
