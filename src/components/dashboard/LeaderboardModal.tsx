@@ -31,13 +31,14 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   const [activeType, setActiveType] = useState<LeaderboardType>('xp')
   const [userStudents, setUserStudents] = useState<string[]>([])
   const [error, setError] = useState('')
+  const [levelFilter, setLevelFilter] = useState<string>('Global')
 
   useEffect(() => {
     if (isOpen && user) {
       fetchLeaderboard()
       fetchUserStudents()
     }
-  }, [isOpen, user, activeType])
+  }, [isOpen, user, activeType, levelFilter])
 
   const fetchUserStudents = async () => {
     if (!user) return
@@ -62,10 +63,17 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
     try {
       console.log('Fetching leaderboard data from view...')
       
-      // Fetch data from the leaderboard_data view
-      const { data: leaderboardData, error } = await supabase
+      // Fetch data from the leaderboard_data view with optional level filter
+      let query = supabase
         .from('leaderboard_data')
         .select('*')
+      
+      // Apply level filter if not Global
+      if (levelFilter !== 'Global') {
+        query = query.eq('student_level', levelFilter)
+      }
+
+      const { data: leaderboardData, error } = await query
 
       if (error) {
         console.error('Error fetching leaderboard:', error)
@@ -94,7 +102,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         rank: 0 // Will be set after sorting
       }))
 
-      // Sort based on active type
+      // Sort based on active type - handle null/zero values properly
       switch (activeType) {
         case 'xp':
           processedData.sort((a, b) => b.total_xp - a.total_xp)
@@ -103,6 +111,8 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           processedData.sort((a, b) => b.total_exams - a.total_exams)
           break
         case 'scores':
+          // For scores, only consider students with exams completed
+          processedData = processedData.filter(entry => entry.total_exams > 0 && entry.average_score > 0)
           processedData.sort((a, b) => b.average_score - a.average_score)
           break
       }
@@ -126,24 +136,24 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Crown className="w-4 h-4 text-amber-500" />
+        return <Crown className="w-4 h-4 text-yellow-500" />
       case 2:
         return <Medal className="w-4 h-4 text-gray-400" />
       case 3:
-        return <Medal className="w-4 h-4 text-amber-500" />
+        return <Medal className="w-4 h-4 text-orange-500" />
       default:
-        return <span className="w-4 h-4 flex items-center justify-center text-indigo-600 font-bold text-xs">#{rank}</span>
+        return <span className="w-4 h-4 flex items-center justify-center text-blue-600 font-bold text-xs">#{rank}</span>
     }
   }
 
   const getRankBgColor = (rank: number) => {
     switch (rank) {
       case 1:
-        return 'bg-gradient-to-r from-amber-100 to-amber-200 border-amber-400'
+        return 'bg-gradient-to-r from-yellow-100 to-orange-100 border-yellow-400'
       case 2:
         return 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-400'
       case 3:
-        return 'bg-gradient-to-r from-amber-100 to-orange-100 border-amber-400'
+        return 'bg-gradient-to-r from-orange-100 to-red-100 border-orange-400'
       default:
         return 'bg-white border-gray-200'
     }
@@ -176,51 +186,80 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white rounded-lg sm:rounded-xl shadow-xl max-w-2xl w-full max-h-[95vh] overflow-hidden flex flex-col">
-        {/* Sticky Header */}
+        {/* Enhanced Header with App-Consistent Styling */}
         <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-          <div className="p-3 sm:p-4 bg-gradient-to-r from-amber-100 to-amber-200">
+          <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-500 to-indigo-600 relative overflow-hidden">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <div className="bg-amber-500 rounded-lg p-2 mr-3 shadow-md">
-                  <Trophy className="w-5 h-5 text-white" />
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-2.5 mr-3 shadow-lg">
+                  <Trophy className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-amber-800">Global Leaderboard</h2>
-                  <p className="text-xs text-amber-700">See how students are performing worldwide!</p>
+                  <h2 className="text-xl font-bold text-white drop-shadow-lg">🏆 Global Leaderboard 🏆</h2>
+                  <p className="text-sm text-blue-100 drop-shadow">See how you rank among students worldwide!</p>
                 </div>
               </div>
-              <button
-                onClick={onClose}
-                className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
-                title="Close"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              
+              {/* Level Filter Dropdown */}
+              <div className="flex items-center space-x-3">
+                <div className="relative">
+                  <select
+                    value={levelFilter}
+                    onChange={(e) => setLevelFilter(e.target.value)}
+                    className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-3 py-2 text-sm font-medium hover:bg-white/30 transition-all duration-200 appearance-none pr-8"
+                  >
+                    <option value="Global" className="bg-blue-600 text-white">Global</option>
+                    <option value="Darjah 1" className="bg-blue-600 text-white">Darjah 1</option>
+                    <option value="Darjah 2" className="bg-blue-600 text-white">Darjah 2</option>
+                    <option value="Darjah 3" className="bg-blue-600 text-white">Darjah 3</option>
+                    <option value="Darjah 4" className="bg-blue-600 text-white">Darjah 4</option>
+                    <option value="Darjah 5" className="bg-blue-600 text-white">Darjah 5</option>
+                    <option value="Darjah 6" className="bg-blue-600 text-white">Darjah 6</option>
+                  </select>
+                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={onClose}
+                  className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-200 rounded-lg p-2 shadow-lg border border-white/30"
+                  title="Close"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Type Selection */}
-        <div className="border-b border-gray-200 bg-gray-50">
+        {/* Enhanced Tab Selection with App-Consistent Styling */}
+        <div className="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50">
           <div className="flex">
             {[
-              { id: 'xp', label: 'XP Points', icon: Star },
-              { id: 'exams', label: 'Exams', icon: Target },
-              { id: 'scores', label: 'Scores', icon: TrendingUp }
+              { id: 'xp', label: 'XP Points', icon: Star, emoji: '⚡' },
+              { id: 'exams', label: 'Exams', icon: Target, emoji: '🎯' },
+              { id: 'scores', label: 'Scores', icon: TrendingUp, emoji: '📈' }
             ].map((type) => {
               const Icon = type.icon
               return (
                 <button
                   key={type.id}
                   onClick={() => setActiveType(type.id as LeaderboardType)}
-                  className={`flex-1 px-3 py-2 font-medium transition-all duration-300 text-xs ${
+                  className={`flex-1 px-3 py-3 font-bold transition-all duration-300 text-sm relative overflow-hidden ${
                     activeType === type.id
-                      ? 'bg-amber-500 text-white border-b-2 border-amber-700'
-                      : 'text-amber-600 hover:bg-amber-100'
+                      ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg transform scale-105'
+                      : 'text-blue-600 hover:bg-blue-100 hover:text-blue-700'
                   }`}
                 >
-                  <Icon className="w-4 h-4 inline mr-1" />
-                  {type.label}
+
+                  <div className="relative z-10 flex items-center justify-center">
+                    <span className="mr-1 text-lg">{type.emoji}</span>
+                    <Icon className="w-4 h-4 inline mr-1" />
+                    {type.label}
+                  </div>
                 </button>
               )
             })}
@@ -229,7 +268,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-3 sm:p-4">
+          <div className="p-3 sm:p-4 overflow-visible">
             {loading ? (
               <div className="text-center py-6">
                 <div className="animate-spin rounded-full h-10 w-10 border-4 border-amber-200 border-t-amber-500 mx-auto mb-3"></div>
@@ -248,60 +287,126 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
               </div>
             ) : (
               <>
+                {/* Compact Sticky Section: Your Students - Mobile Optimized */}
+                {userStudents.length > 0 && (
+                  <div className="mb-3 bg-gradient-to-r from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-lg p-2 sm:p-3 shadow-md sticky top-0 z-10">
+                    <h3 className="text-xs sm:text-sm font-bold text-indigo-800 mb-2 text-center">📍 Your Students</h3>
+                    <div className="grid grid-cols-3 gap-1 sm:gap-2">
+                      {leaderboard
+                        .filter(entry => userStudents.includes(entry.student_id))
+                        .slice(0, 3)
+                        .map((entry, index) => (
+                          <div
+                            key={entry.student_id}
+                            className="bg-white rounded-md p-1.5 sm:p-2 shadow-sm border border-indigo-200 min-h-[60px] sm:min-h-[70px]"
+                          >
+                            <div className="text-center h-full flex flex-col justify-center">
+                              <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full mx-auto mb-1 flex items-center justify-center text-[10px] sm:text-xs font-bold ${
+                                entry.rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' :
+                                entry.rank === 2 ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white' :
+                                entry.rank === 3 ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white' :
+                                'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
+                              }`}>
+                                {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
+                              </div>
+                              <div className="font-bold text-[10px] sm:text-xs text-indigo-800 truncate leading-tight" title={entry.student_name}>
+                                {entry.student_name.length > 8 ? `${entry.student_name.substring(0, 8)}...` : entry.student_name}
+                              </div>
+                              <div className="text-[9px] sm:text-xs text-indigo-600 leading-tight">
+                                {getTypeValue(entry, activeType)}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="mb-3">
-                  <h3 className="text-base font-bold text-amber-700 text-center">
+                  <h3 className="text-base font-bold text-center bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
                     Top Students by {getTypeLabel(activeType)}
                   </h3>
-                  <p className="text-xs text-amber-600 text-center mt-1">
-                    Showing {leaderboard.length} students from around the world
+                  <p className="text-xs text-blue-600 text-center mt-1">
+                    {leaderboard.length} students competing {levelFilter === 'Global' ? 'worldwide' : `in ${levelFilter}`}
                   </p>
                 </div>
 
                 {leaderboard.length > 0 ? (
-                  <div className="space-y-2 max-h-72 overflow-y-auto">
+                  <div className="space-y-1.5 sm:space-y-2 max-h-72 overflow-y-auto">
                     {leaderboard.slice(0, 50).map((entry) => {
                       const isUserStudent = userStudents.includes(entry.student_id)
                       
                       return (
                         <div
                           key={entry.student_id}
-                          className={`p-2.5 rounded-lg border transition-all duration-300 ${
+                          className={`p-2 sm:p-3 rounded-lg sm:rounded-xl border-2 transition-all duration-300 transform hover:scale-[1.01] sm:hover:scale-102 hover:shadow-md sm:hover:shadow-lg ${
                             isUserStudent 
-                              ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-1 ring-indigo-200' 
-                              : getRankBgColor(entry.rank)
+                              ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-1 sm:ring-2 ring-indigo-200' 
+                              : entry.rank === 1
+                              ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 border-yellow-400'
+                              : entry.rank === 2
+                              ? 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-400'
+                              : entry.rank === 3
+                              ? 'bg-gradient-to-r from-orange-100 to-orange-200 border-orange-400'
+                              : 'bg-white border-gray-200 hover:border-gray-300'
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center">
-                              <div className="mr-2 flex items-center justify-center w-6 h-6">
-                                {getRankIcon(entry.rank)}
+                              <div className={`mr-2 sm:mr-3 flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full font-bold relative overflow-hidden ${
+                                entry.rank === 1 
+                                  ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' 
+                                  : entry.rank === 2
+                                  ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white'
+                                  : entry.rank === 3
+                                  ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white'
+                                  : 'bg-gray-100 text-gray-600'
+                              }`}>
+                                {/* Inner pulsing effect for top 3 */}
+                                {entry.rank <= 3 && (
+                                  <div className={`absolute inset-0 rounded-full animate-inner-pulse ${
+                                    entry.rank === 1 ? 'bg-yellow-300/50' :
+                                    entry.rank === 2 ? 'bg-gray-300/50' :
+                                    'bg-orange-300/50'
+                                  }`}></div>
+                                )}
+                                <span className="relative z-10 text-xs sm:text-sm">
+                                  {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
+                                </span>
                               </div>
-                              <div>
-                                <div className={`font-bold text-sm ${isUserStudent ? 'text-indigo-700' : 'text-gray-800'}`}>
-                                  {entry.student_name}
-                                  {isUserStudent && <span className="ml-1 text-indigo-500">👨‍👩‍👧‍👦</span>}
+                              <div className="flex-1 min-w-0">
+                                <div className={`font-bold text-xs sm:text-sm flex items-center ${isUserStudent ? 'text-indigo-700' : 'text-gray-800'}`}>
+                                  <span className="truncate">{entry.student_name}</span>
+                                  {isUserStudent && <span className="ml-1 sm:ml-2 text-indigo-500 flex-shrink-0">👨‍👩‍👧‍👦</span>}
+                                  {entry.rank <= 5 && !isUserStudent && <span className="ml-1 sm:ml-2 flex-shrink-0">🔥</span>}
                                 </div>
-                                <div className={`text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-600'}`}>
+                                <div className={`text-[10px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-600'} truncate`}>
                                   {entry.student_level} • {entry.student_school}
                                 </div>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <div className={`text-sm font-bold ${isUserStudent ? 'text-indigo-700' : 'text-gray-800'}`}>
+                            <div className="text-right flex-shrink-0">
+                              <div className={`text-xs sm:text-sm font-bold ${
+                                isUserStudent ? 'text-indigo-700' : 
+                                entry.rank === 1 ? 'text-yellow-700' : 
+                                entry.rank === 2 ? 'text-gray-700' : 
+                                entry.rank === 3 ? 'text-orange-700' : 
+                                'text-gray-800'
+                              }`}>
                                 {getTypeValue(entry, activeType)}
                               </div>
                               {activeType === 'xp' && entry.total_exams > 0 && (
-                                <div className={`text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'}`}>
+                                <div className={`text-[9px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'} hidden sm:block`}>
                                   {entry.total_exams} exams • {entry.average_score}% avg
                                 </div>
                               )}
                               {activeType === 'exams' && entry.total_xp > 0 && (
-                                <div className={`text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'}`}>
+                                <div className={`text-[9px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'} hidden sm:block`}>
                                   {entry.total_xp} XP • {entry.average_score}% avg
                                 </div>
                               )}
                               {activeType === 'scores' && entry.total_exams > 0 && (
-                                <div className={`text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'}`}>
+                                <div className={`text-[9px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'} hidden sm:block`}>
                                   {entry.total_exams} exams • {entry.total_xp} XP
                                 </div>
                               )}
@@ -325,14 +430,14 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="border-t border-gray-200 bg-gray-50 p-3 sm:p-4">
+        {/* Enhanced Footer */}
+        <div className="border-t border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50 p-3 sm:p-4">
           <Button
             onClick={onClose}
-            className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white text-sm py-2"
-            icon={<Trophy className="w-4 h-4" />}
+            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-sm py-3 font-bold shadow-lg transform hover:scale-105 transition-all duration-200"
+            icon={<Trophy className="w-5 h-5" />}
           >
-            Keep Learning!
+            🚀 Continue Learning! 🚀
           </Button>
         </div>
       </div>

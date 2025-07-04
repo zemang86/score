@@ -72,6 +72,15 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   const [matchingPairs, setMatchingPairs] = useState<MatchingPair[]>(initialState.matchingPairs)
   const [selectedLeftItem, setSelectedLeftItem] = useState<string | null>(initialState.selectedLeftItem)
 
+  // Enhanced Results Page State
+  const [animatedScore, setAnimatedScore] = useState(0)
+  const [showStars, setShowStars] = useState(false)
+  const [showBadges, setShowBadges] = useState(false)
+  const [showCelebration, setShowCelebration] = useState(false)
+  const [earnedBadges, setEarnedBadges] = useState<Array<{name: string, icon: string, color: string}>>([])
+  const [showLevelUp, setShowLevelUp] = useState(false)
+  const [isQuestionReviewExpanded, setIsQuestionReviewExpanded] = useState(false)
+
   // Save state to session storage whenever important state changes
   const saveState = () => {
     const stateToSave = {
@@ -90,6 +99,21 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     }
     sessionStorage.setItem(`exam-state-${student.id}`, JSON.stringify(stateToSave))
   }
+
+  // Enhanced Results Animation Effect
+  useEffect(() => {
+    if (step === 'results' && examScore > 0) {
+      // Reset animation states
+      setAnimatedScore(0)
+      setShowStars(false)
+      setShowBadges(false)
+      setShowCelebration(false)
+      setShowLevelUp(false)
+      
+      // Start the results animation sequence
+      startResultsAnimation()
+    }
+  }, [step, examScore])
 
   const subjects: Subject[] = ['Bahasa Melayu', 'English', 'Mathematics', 'Science', 'History']
   
@@ -781,6 +805,100 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     return 'Don\'t give up! Try again!'
   }
 
+  // Enhanced Results Page Helper Functions
+  const getStarRating = (score: number): number => {
+    if (score === 100) return 5
+    if (score >= 90) return 4
+    if (score >= 80) return 3
+    if (score >= 70) return 2
+    if (score >= 60) return 1
+    return 0
+  }
+
+  const getGamingMessage = (score: number): string => {
+    if (score === 100) return '🎊 LEGENDARY PERFORMANCE! 🎊'
+    if (score >= 90) return '🏆 EPIC ACHIEVEMENT! 🏆'
+    if (score >= 80) return '⚡ AWESOME WORK! ⚡'
+    if (score >= 70) return '🎯 GREAT JOB! 🎯'
+    if (score >= 60) return '💫 NICE EFFORT! 💫'
+    return '🚀 KEEP GOING! 🚀'
+  }
+
+  const calculateAchievements = (score: number, correctAnswers: number, totalQuestions: number): Array<{name: string, icon: string, color: string}> => {
+    const badges = []
+    
+    if (score === 100) {
+      badges.push({ name: 'Perfect Score', icon: '🎯', color: 'bg-gradient-to-r from-yellow-400 to-orange-400' })
+    }
+    
+    if (score >= 90) {
+      badges.push({ name: 'Top Performer', icon: '🏆', color: 'bg-gradient-to-r from-purple-400 to-pink-400' })
+    }
+    
+    if (correctAnswers >= 8) {
+      badges.push({ name: 'Answer Master', icon: '🧠', color: 'bg-gradient-to-r from-blue-400 to-cyan-400' })
+    }
+    
+    if (score >= 80) {
+      badges.push({ name: 'Smart Cookie', icon: '🍪', color: 'bg-gradient-to-r from-green-400 to-emerald-400' })
+    }
+    
+    // Check for improvement (this could be compared with previous attempts)
+    if (score >= 70) {
+      badges.push({ name: 'Rising Star', icon: '⭐', color: 'bg-gradient-to-r from-indigo-400 to-purple-400' })
+    }
+    
+    return badges
+  }
+
+  const getXPGained = (correctAnswers: number, score: number): number => {
+    let xp = correctAnswers * 10 // Base XP per correct answer
+    
+    // Bonus XP for performance
+    if (score === 100) xp += 100 // Perfect score bonus
+    else if (score >= 90) xp += 50 // Excellent bonus
+    else if (score >= 80) xp += 25 // Good bonus
+    
+    return xp
+  }
+
+  // Animation Functions
+  const animateScore = (targetScore: number) => {
+    const duration = 2000 // 2 seconds
+    const steps = 60
+    const increment = targetScore / steps
+    let currentScore = 0
+    
+    const timer = setInterval(() => {
+      currentScore += increment
+      if (currentScore >= targetScore) {
+        currentScore = targetScore
+        clearInterval(timer)
+        
+        // Trigger star animation after score animation
+        setTimeout(() => setShowStars(true), 200)
+        
+        // Trigger badges after stars
+        setTimeout(() => setShowBadges(true), 1000)
+        
+        // Trigger celebration for high scores
+        if (targetScore >= 80) {
+          setTimeout(() => setShowCelebration(true), 1500)
+        }
+      }
+      setAnimatedScore(Math.floor(currentScore))
+    }, duration / steps)
+  }
+
+  const startResultsAnimation = () => {
+    const correctAnswers = questions.filter(q => q.isCorrect).length
+    const badges = calculateAchievements(examScore, correctAnswers, questions.length)
+    setEarnedBadges(badges)
+    
+    // Start score animation
+    setTimeout(() => animateScore(examScore), 500)
+  }
+
   const hasUserAnswer = () => {
     const question = questions[currentQuestionIndex]
     if (!question) return false
@@ -996,11 +1114,11 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-3 sm:p-4">
-            {/* Setup Step */}
+            {/* Gaming-Enhanced Setup Step */}
             {step === 'setup' && (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {error && (
-                  <div className="bg-red-50 border-2 border-red-200 rounded-lg p-3">
+                  <div className="bg-red-50 border-2 border-red-200 rounded-lg p-3 animate-slide-in">
                     <div className="flex items-center">
                       <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
                       <p className="text-red-700 font-medium text-sm">{error}</p>
@@ -1008,133 +1126,215 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                   </div>
                 )}
 
-                {/* Level Information - Compact */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <h3 className="text-sm font-semibold text-blue-800 mb-2">Smart Question Selection</h3>
-                  <p className="text-xs text-blue-700 mb-2">
-                    Based on your level ({student.level}), you'll receive questions from:
-                  </p>
-                  <div className="flex flex-wrap gap-1">
-                    {getAllowedLevels(student.level).map((level, index) => (
-                      <span key={index} className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-200 text-blue-800">
-                        {level}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Subject Selection - Compact Grid */}
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Choose Subject</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {subjects.map((subject) => (
-                      <button
-                        key={subject}
-                        onClick={() => setSelectedSubject(subject)}
-                        className={`p-2 rounded-lg border-2 font-medium transition-all duration-300 text-xs sm:text-sm ${
-                          selectedSubject === subject
-                            ? 'bg-blue-500 text-white border-blue-700 shadow-md'
-                            : 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50'
-                        }`}
-                      >
-                        {subject}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Mode Selection - Compact */}
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Choose Difficulty</label>
-                  <div className="space-y-2">
-                    {/* Easy Mode - Enabled */}
-                    <button
-                      onClick={() => setSelectedMode('Easy')}
-                      className={`w-full p-3 rounded-lg border-2 transition-all duration-300 text-left ${
-                        selectedMode === 'Easy'
-                          ? 'bg-green-500 text-white border-green-700 shadow-md'
-                          : 'bg-white text-green-600 border-green-300 hover:bg-green-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-bold text-sm">Easy Mode</div>
-                          <div className="text-xs opacity-90">
-                            10 questions • 15 minutes
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Clock className="w-4 h-4" />
-                          <Target className="w-4 h-4" />
-                        </div>
+                {/* Compact Student Gaming Profile Card */}
+                <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl p-3 text-white shadow-lg animate-slide-in">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-full p-1.5 mr-3">
+                        <Star className="w-5 h-5 text-yellow-300" />
                       </div>
-                    </button>
-
-                    {/* Medium Mode - Disabled with Coming Soon */}
-                    <div className="relative">
-                      <button
-                        disabled={true}
-                        className="w-full p-3 rounded-lg border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-80 cursor-not-allowed"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-bold text-sm">Medium Mode</div>
-                            <div className="text-xs opacity-90">
-                              20 questions • 30 minutes
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Lock className="w-4 h-4" />
-                          </div>
-                        </div>
-                      </button>
-                      <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg rounded-tr-lg">
-                        Coming Soon
+                      <div>
+                        <h3 className="font-bold text-base">{student.name}</h3>
+                        <p className="text-xs opacity-90">{student.level} • {student.school}</p>
                       </div>
                     </div>
+                    <div className="text-right">
+                      <div className="text-xs opacity-90">Total XP</div>
+                      <div className="text-lg font-bold">{student.xp}</div>
+                    </div>
+                  </div>
+                  
+                  {/* XP Progress Bar */}
+                  <div>
+                    <div className="flex justify-between text-xs opacity-90 mb-1">
+                      <span>Level Progress</span>
+                      <span>{Math.min(student.xp % 100, 99)}/100 XP</span>
+                    </div>
+                    <div className="w-full bg-white/20 rounded-full h-1.5">
+                      <div 
+                        className="bg-yellow-300 h-1.5 rounded-full transition-all duration-1000 animate-pulse-glow"
+                        style={{ width: `${Math.min((student.xp % 100), 99)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
 
-                    {/* Full Mode - Disabled with Coming Soon */}
-                    <div className="relative">
-                      <button
-                        disabled={true}
-                        className="w-full p-3 rounded-lg border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-80 cursor-not-allowed"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-bold text-sm">Full Mode</div>
-                            <div className="text-xs opacity-90">
-                              40+ questions • 60 minutes
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Lock className="w-4 h-4" />
-                          </div>
-                        </div>
-                      </button>
-                      <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg rounded-tr-lg">
-                        Coming Soon
+                {/* Compact Success Criteria */}
+                <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg p-3 shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Target className="w-4 h-4 text-white mr-2" />
+                      <h3 className="text-sm font-bold">Success Targets</h3>
+                    </div>
+                    <div className="flex items-center space-x-4 text-xs">
+                      <div className="text-center">
+                        <div className="font-bold">70%+</div>
+                        <div className="opacity-75">Good</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold">90%+</div>
+                        <div className="opacity-75">Excellent</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold">100%</div>
+                        <div className="opacity-75">Perfect</div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
+                                 {/* Gaming-Style Subject Selection */}
+                 <div>
+                   <label className="block text-sm font-bold text-gray-700 mb-2.5 flex items-center">
+                     <BookOpen className="w-4 h-4 mr-2" />
+                     Choose Subject Domain
+                   </label>
+                                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
+                     {subjects.map((subject) => (
+                       <button
+                         key={subject}
+                         onClick={() => setSelectedSubject(subject)}
+                         className={`group p-2 sm:p-3 rounded-xl border-2 font-medium transition-all duration-300 text-xs sm:text-sm transform hover:scale-105 hover:shadow-lg min-h-[70px] sm:min-h-[80px] touch-target ${
+                           selectedSubject === subject
+                             ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white border-blue-700 shadow-lg animate-pulse-glow'
+                             : 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50 hover:border-blue-400'
+                         }`}
+                       >
+                         <div className="flex flex-col items-center justify-center h-full">
+                           <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full mb-1 flex items-center justify-center ${
+                             selectedSubject === subject ? 'bg-white/20' : 'bg-blue-100'
+                           }`}>
+                             {subject === 'Mathematics' && <span className="text-sm sm:text-base">🧮</span>}
+                             {subject === 'English' && <span className="text-sm sm:text-base">📚</span>}
+                             {subject === 'Science' && <span className="text-sm sm:text-base">🧪</span>}
+                             {subject === 'Bahasa Melayu' && <span className="text-sm sm:text-base">🗣️</span>}
+                             {subject === 'History' && <span className="text-sm sm:text-base">🏛️</span>}
+                           </div>
+                           <span className="text-center leading-tight text-xs sm:text-sm">{subject}</span>
+                         </div>
+                       </button>
+                     ))}
+                   </div>
+                </div>
+
+                                 {/* Gaming-Style Difficulty Selection */}
+                 <div>
+                   <label className="block text-sm font-bold text-gray-700 mb-2.5 flex items-center">
+                     <Target className="w-4 h-4 mr-2" />
+                     Choose Difficulty Level
+                   </label>
+                   <div className="space-y-2.5">
+                                         {/* Easy Mode - Enhanced Gaming Style */}
+                     <button
+                       onClick={() => setSelectedMode('Easy')}
+                       className={`group w-full p-3 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-102 hover:shadow-lg min-h-[60px] sm:min-h-[70px] touch-target ${
+                         selectedMode === 'Easy'
+                           ? 'bg-gradient-to-r from-green-500 to-green-600 text-white border-green-700 shadow-lg animate-pulse-glow'
+                           : 'bg-white text-green-600 border-green-300 hover:bg-green-50 hover:border-green-400'
+                       }`}
+                     >
+                       <div className="flex items-center justify-between h-full">
+                         <div className="flex items-center flex-1">
+                           <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 flex items-center justify-center flex-shrink-0 ${
+                             selectedMode === 'Easy' ? 'bg-white/20' : 'bg-green-100'
+                           }`}>
+                             <span className="text-lg sm:text-xl">🛡️</span>
+                           </div>
+                           <div className="min-w-0 flex-1">
+                             <div className="font-bold text-sm sm:text-base">Easy Mode</div>
+                             <div className="text-xs sm:text-sm opacity-90 leading-tight">
+                               10 questions • 15 minutes
+                             </div>
+                           </div>
+                         </div>
+                         <div className="flex flex-col items-center space-y-1 flex-shrink-0 ml-2">
+                           <div className="flex items-center space-x-1">
+                             <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                             <Target className="w-3 h-3 sm:w-4 sm:h-4" />
+                           </div>
+                           <div className="text-xs font-bold">+10-50 XP</div>
+                         </div>
+                       </div>
+                     </button>
+
+                                         {/* Medium Mode - Disabled with Gaming Style */}
+                     <div className="relative">
+                       <button
+                         disabled={true}
+                         className="group w-full p-3 rounded-xl border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-60 min-h-[60px] sm:min-h-[70px]"
+                       >
+                         <div className="flex items-center justify-between h-full">
+                           <div className="flex items-center flex-1">
+                             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 flex items-center justify-center bg-gray-200 flex-shrink-0">
+                               <span className="text-lg sm:text-xl opacity-50">⚔️</span>
+                             </div>
+                             <div className="min-w-0 flex-1">
+                               <div className="font-bold text-sm sm:text-base">Medium Mode</div>
+                               <div className="text-xs sm:text-sm opacity-90 leading-tight">
+                                 20 questions • 30 minutes
+                               </div>
+                             </div>
+                           </div>
+                           <div className="flex flex-col items-center space-y-1 flex-shrink-0 ml-2">
+                             <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
+                             <div className="text-xs font-bold">+20-75 XP</div>
+                           </div>
+                         </div>
+                       </button>
+                       <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-2 sm:px-3 py-1 rounded-bl-lg rounded-tr-lg animate-pulse">
+                         Coming Soon
+                       </div>
+                     </div>
+
+                     {/* Full Mode - Disabled with Gaming Style */}
+                     <div className="relative">
+                       <button
+                         disabled={true}
+                         className="group w-full p-3 rounded-xl border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-60 min-h-[60px] sm:min-h-[70px]"
+                       >
+                         <div className="flex items-center justify-between h-full">
+                           <div className="flex items-center flex-1">
+                             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 flex items-center justify-center bg-gray-200 flex-shrink-0">
+                               <span className="text-lg sm:text-xl opacity-50">👑</span>
+                             </div>
+                             <div className="min-w-0 flex-1">
+                               <div className="font-bold text-sm sm:text-base">Full Mode</div>
+                               <div className="text-xs sm:text-sm opacity-90 leading-tight">
+                                 40+ questions • 60 minutes
+                               </div>
+                             </div>
+                           </div>
+                           <div className="flex flex-col items-center space-y-1 flex-shrink-0 ml-2">
+                             <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
+                             <div className="text-xs font-bold">+50-150 XP</div>
+                           </div>
+                         </div>
+                       </button>
+                       <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-2 sm:px-3 py-1 rounded-bl-lg rounded-tr-lg animate-pulse">
+                         Coming Soon
+                       </div>
+                     </div>
+                  </div>
+                </div>
+
+                {/* Gaming-Enhanced Action Buttons - Mobile Optimized */}
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-3">
                   <Button
                     variant="outline"
                     onClick={handleModalClose}
-                    className="flex-1 text-sm"
+                    className="w-full sm:flex-1 py-2.5 sm:py-2 text-sm sm:text-base border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 min-h-[44px] touch-target"
                     disabled={loading}
                   >
-                    Cancel
+                    Cancel Mission
                   </Button>
                   <Button
                     onClick={startExam}
-                    className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-sm"
+                    className="w-full sm:flex-1 py-2.5 sm:py-2 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 hover:from-orange-600 hover:via-red-600 hover:to-pink-600 text-white font-bold text-sm sm:text-base transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl animate-pulse-glow min-h-[44px] touch-target"
                     disabled={loading}
                     loading={loading}
-                    icon={!loading ? <Zap className="w-4 h-4" /> : undefined}
+                    icon={!loading ? <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> : undefined}
                   >
-                    {loading ? 'Loading...' : 'Start Exam!'}
+                    {loading ? '🚀 Loading...' : '🚀 Start Exam!'}
                   </Button>
                 </div>
               </div>
@@ -1219,126 +1419,246 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
               </div>
             )}
 
-            {/* Results Step */}
+            {/* Enhanced Results Step - Compact */}
             {step === 'results' && (
-              <div className="space-y-4">
-                {/* Score Display */}
-                <div className="text-center bg-gradient-to-r from-yellow-100 to-orange-100 border-2 border-yellow-400 rounded-lg p-4 shadow-lg">
-                  <div className={`text-3xl sm:text-4xl font-bold mb-2 ${getScoreColor(examScore)}`}>
-                    {examScore}%
-                  </div>
-                  <div className="text-base sm:text-lg font-bold text-gray-700 mb-1">
-                    {getScoreMessage(examScore)}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {questions.filter(q => q.isCorrect).length} out of {questions.length} correct
-                  </div>
-                  
-                  {/* XP Display */}
-                  <div className="mt-3 p-2 bg-blue-100 border border-blue-300 rounded-lg">
-                    <div className="flex items-center justify-center text-blue-700 mb-1">
-                      <Star className="w-4 h-4 mr-1" />
-                      <span className="font-bold text-sm">XP Earned!</span>
-                    </div>
-                    <div className="text-xl font-bold text-blue-800">
-                      +{questions.filter(q => q.isCorrect).length * 10 + (examScore === 100 ? 50 : 0)} XP
-                    </div>
-                  </div>
-                </div>
-
-                {/* Question Review with Correct Answers and Explanations */}
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <h3 className="text-base font-bold text-gray-700 mb-3">Question Review</h3>
-                  <div className="space-y-3 max-h-80 overflow-y-auto">
-                    {questions.map((question, index) => (
+              <div className="space-y-3 relative">
+                {/* Confetti Effect */}
+                {showCelebration && (
+                  <div className="absolute inset-0 pointer-events-none z-10">
+                    {[...Array(20)].map((_, i) => (
                       <div
-                        key={index}
-                        className={`p-3 rounded-lg border-2 ${
-                          question.isCorrect
-                            ? 'bg-green-50 border-green-300'
-                            : 'bg-red-50 border-red-300'
-                        }`}
-                      >
-                        {/* Question Header */}
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center">
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-white mr-2 ${
-                              question.isCorrect ? 'bg-green-500' : 'bg-red-500'
-                            }`}>
-                              {index + 1}
-                            </div>
-                            <div>
-                              <div className="flex items-center">
-                                {question.isCorrect ? (
-                                  <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
-                                ) : (
-                                  <XCircle className="w-4 h-4 text-red-600 mr-1" />
-                                )}
-                                <span className={`font-semibold text-xs ${
-                                  question.isCorrect ? 'text-green-700' : 'text-red-700'
-                                }`}>
-                                  {question.isCorrect ? 'Correct' : 'Incorrect'}
-                                </span>
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                {question.type} • {question.level}
-                                {question.topic && ` • ${question.topic}`}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Question Text */}
-                        <div className="mb-2">
-                          <p className="text-sm text-gray-700">{question.question_text}</p>
-                        </div>
-                        
-                        {/* Your Answer */}
-                        <div className="mb-2">
-                          <div className="text-xs font-medium text-gray-700 mb-1">Your answer:</div>
-                          <div className={`p-2 rounded-md border text-xs ${
-                            question.isCorrect ? 'bg-green-100 border-green-300 text-green-800' : 'bg-red-100 border-red-300 text-red-800'
-                          }`}>
-                            {Array.isArray(question.userAnswer) 
-                              ? question.userAnswer.join(', ') 
-                              : (question.userAnswer || 'No answer provided')
-                            }
-                          </div>
-                        </div>
-                        
-                        {/* Correct Answer - Show for all questions */}
-                        <div className="mb-2">
-                          <div className="text-xs font-medium text-green-700 mb-1">Correct answer:</div>
-                          <div className="p-2 rounded-md bg-green-100 border border-green-300 text-green-800 text-xs">
-                            {question.correct_answer}
-                          </div>
-                        </div>
-                        
-                        {/* Explanation - Show if available */}
-                        {question.explanation && (
-                          <div>
-                            <div className="text-xs font-medium text-blue-700 mb-1 flex items-center">
-                              <BookOpenCheck className="w-3.5 h-3.5 mr-1" />
-                              Explanation:
-                            </div>
-                            <div className="p-2 rounded-md bg-blue-50 border border-blue-200 text-blue-800 text-xs">
-                              {question.explanation}
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                        key={i}
+                        className="absolute w-2 h-2 bg-yellow-400 animate-confetti-fall"
+                        style={{
+                          left: `${Math.random() * 100}%`,
+                          animationDelay: `${Math.random() * 3}s`,
+                          backgroundColor: ['#f59e0b', '#ef4444', '#10b981', '#3b82f6', '#8b5cf6'][Math.floor(Math.random() * 5)]
+                        }}
+                      />
                     ))}
                   </div>
-                </div>
+                )}
 
-                <Button
-                  onClick={handleResultsComplete}
-                  className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-sm"
-                  size="lg"
-                  icon={<Star className="w-5 h-5" />}
-                >
-                  Continue Learning!
-                </Button>
+                                                  {/* Two-Column Layout: Score + Achievements */}
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                   {/* Left Column: Score Display */}
+                   <div className={`text-center p-4 rounded-2xl shadow-xl relative overflow-hidden ${
+                     examScore >= 90 ? 'bg-gradient-to-br from-yellow-100 via-orange-100 to-red-100 border-4 border-yellow-400' :
+                     examScore >= 80 ? 'bg-gradient-to-br from-green-100 via-emerald-100 to-teal-100 border-4 border-green-400' :
+                     examScore >= 70 ? 'bg-gradient-to-br from-blue-100 via-cyan-100 to-sky-100 border-4 border-blue-400' :
+                     examScore >= 60 ? 'bg-gradient-to-br from-purple-100 via-violet-100 to-indigo-100 border-4 border-purple-400' :
+                     'bg-gradient-to-br from-gray-100 via-slate-100 to-zinc-100 border-4 border-gray-400'
+                   } ${showCelebration ? 'animate-celebration-pulse' : ''}`}>
+                     
+                     {/* Gaming Message */}
+                     <div className="text-lg font-bold mb-2 animate-slide-in">
+                       {getGamingMessage(examScore)}
+                     </div>
+                     
+                     {/* Animated Score Counter */}
+                     <div className={`text-4xl sm:text-5xl font-black mb-3 animate-score-count-up ${getScoreColor(examScore)}`}>
+                       {animatedScore}%
+                     </div>
+                     
+                     {/* Star Rating */}
+                     <div className="flex justify-center mb-3 space-x-1">
+                       {[...Array(5)].map((_, i) => (
+                         <Star
+                           key={i}
+                           className={`w-6 h-6 transition-all duration-300 ${
+                             i < getStarRating(examScore) 
+                               ? 'text-yellow-400 fill-current' 
+                               : 'text-gray-300'
+                           } ${showStars ? 'animate-star-pop' : ''}`}
+                           style={{ animationDelay: `${i * 0.1}s` }}
+                         />
+                       ))}
+                     </div>
+                     
+                     {/* Performance Stats */}
+                     <div className="grid grid-cols-2 gap-3">
+                       <div className="bg-white/80 backdrop-blur-sm rounded-lg p-2 shadow-lg">
+                         <div className="text-xs font-medium text-gray-600">Questions Correct</div>
+                         <div className="text-lg font-bold text-green-600">
+                           {questions.filter(q => q.isCorrect).length}/{questions.length}
+                         </div>
+                       </div>
+                       <div className="bg-white/80 backdrop-blur-sm rounded-lg p-2 shadow-lg">
+                         <div className="text-xs font-medium text-gray-600">XP Earned</div>
+                         <div className="text-lg font-bold text-blue-600">
+                           +{getXPGained(questions.filter(q => q.isCorrect).length, examScore)}
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+
+                                        {/* Right Column: Achievement Badges */}
+                     <div className="h-full">
+                       {showBadges && earnedBadges.length > 0 ? (
+                                                    <div className="bg-white rounded-xl p-3 sm:p-4 shadow-xl border-2 border-yellow-200 h-full">
+                           <div className="text-center mb-2 sm:mb-3">
+                             <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 mx-auto mb-1" />
+                             <h3 className="text-base sm:text-lg font-bold text-gray-800">🎉 Achievements! 🎉</h3>
+                           </div>
+                           <div className="grid grid-cols-3 sm:grid-cols-2 gap-1.5 sm:gap-2 max-h-32 sm:max-h-none overflow-y-auto">
+                             {earnedBadges.map((badge, index) => (
+                               <div
+                                 key={index}
+                                 className={`${badge.color} text-white rounded-lg p-2 sm:p-3 text-center shadow-lg animate-badge-bounce`}
+                                 style={{ animationDelay: `${index * 0.2}s` }}
+                               >
+                                 <div className="text-lg sm:text-2xl mb-0.5 sm:mb-1">{badge.icon}</div>
+                                 <div className="font-bold text-[10px] sm:text-xs leading-tight">{badge.name}</div>
+                               </div>
+                             ))}
+                           </div>
+                         </div>
+                       ) : (
+                         <div className="bg-white rounded-xl p-3 sm:p-4 shadow-xl border-2 border-gray-200 h-full flex items-center justify-center">
+                           <div className="text-center text-gray-500">
+                             <Trophy className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 opacity-50" />
+                             <p className="text-xs sm:text-sm">Complete more challenges<br />to earn achievements!</p>
+                           </div>
+                         </div>
+                       )}
+                     </div>
+                 </div>
+
+                                 {/* Compact Next Challenge Prompt */}
+                 <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl p-4 shadow-xl">
+                   <div className="text-center">
+                     <div className="text-lg mb-1">🚀</div>
+                     <h3 className="text-lg font-bold mb-2">Ready for Your Next Challenge?</h3>
+                     <p className="text-blue-100 mb-3 text-sm">
+                       {examScore >= 90 ? 'You\'re on fire! Try a different subject!' :
+                        examScore >= 80 ? 'Great progress! Keep going!' :
+                        examScore >= 70 ? 'You\'re improving! Practice more!' :
+                        'Don\'t give up! Keep learning!'}
+                     </p>
+                     <Button
+                       onClick={handleResultsComplete}
+                       className="bg-white text-blue-700 hover:bg-blue-50 hover:text-blue-800 font-bold py-2 px-4 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 border-2 border-white"
+                       size="sm"
+                     >
+                       Continue Adventure! 🎮
+                     </Button>
+                   </div>
+                 </div>
+
+                                                  {/* Collapsible Question Review */}
+                 <div className="bg-white rounded-xl shadow-xl border-2 border-gray-200 overflow-hidden">
+                   <button
+                     onClick={() => setIsQuestionReviewExpanded(!isQuestionReviewExpanded)}
+                     className="w-full bg-gradient-to-r from-gray-100 to-gray-200 px-4 py-3 hover:from-gray-200 hover:to-gray-300 transition-all duration-200"
+                   >
+                     <div className="flex items-center justify-between">
+                       <div className="flex items-center">
+                         <BookOpenCheck className="w-4 h-4 mr-2 text-gray-700" />
+                         <h3 className="text-base font-bold text-gray-800">Question Review</h3>
+                       </div>
+                       <div className="flex items-center space-x-2">
+                         <div className="text-xs text-gray-600 bg-white px-2 py-1 rounded-full">
+                           {questions.filter(q => q.isCorrect).length} ✓ | {questions.filter(q => !q.isCorrect).length} ✗
+                         </div>
+                         <div className={`transform transition-transform duration-200 ${
+                           isQuestionReviewExpanded ? 'rotate-180' : 'rotate-0'
+                         }`}>
+                           <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                           </svg>
+                         </div>
+                       </div>
+                     </div>
+                   </button>
+                   
+                   {isQuestionReviewExpanded && (
+                     <div className="max-h-64 overflow-y-auto p-3 animate-slide-in">
+                       <div className="space-y-2">
+                         {questions.map((question, index) => (
+                           <div
+                             key={index}
+                             className={`p-3 rounded-lg border transition-all duration-300 ${
+                               question.isCorrect
+                                 ? 'bg-green-50 border-green-300 hover:bg-green-100'
+                                 : 'bg-red-50 border-red-300 hover:bg-red-100'
+                             }`}
+                           >
+                             {/* Compact Question Header */}
+                             <div className="flex items-center justify-between mb-2">
+                               <div className="flex items-center">
+                                 <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-white mr-2 text-xs ${
+                                   question.isCorrect ? 'bg-green-500' : 'bg-red-500'
+                                 }`}>
+                                   {index + 1}
+                                 </div>
+                                 <div className="flex items-center">
+                                   {question.isCorrect ? (
+                                     <CheckCircle className="w-4 h-4 text-green-600 mr-1" />
+                                   ) : (
+                                     <XCircle className="w-4 h-4 text-red-600 mr-1" />
+                                   )}
+                                   <span className={`font-bold text-xs ${
+                                     question.isCorrect ? 'text-green-700' : 'text-red-700'
+                                   }`}>
+                                     {question.isCorrect ? 'Correct!' : 'Review'}
+                                   </span>
+                                 </div>
+                               </div>
+                               <div className="text-xs text-gray-500">
+                                 {question.type}
+                               </div>
+                             </div>
+                             
+                             {/* Compact Question Text */}
+                             <div className="mb-2">
+                               <p className="text-xs text-gray-800 overflow-hidden" style={{
+                                 display: '-webkit-box',
+                                 WebkitLineClamp: 2,
+                                 WebkitBoxOrient: 'vertical'
+                               }}>
+                                 {question.question_text}
+                               </p>
+                             </div>
+                             
+                             {/* Compact Answer Section */}
+                             <div className="space-y-1">
+                               {/* Your Answer */}
+                               <div className="flex items-start space-x-2">
+                                 <span className="text-xs font-bold text-gray-600 min-w-[60px]">Your:</span>
+                                 <div className={`flex-1 p-1.5 rounded text-xs ${
+                                   question.isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                 }`}>
+                                   {Array.isArray(question.userAnswer) 
+                                     ? question.userAnswer.join(', ') 
+                                     : (question.userAnswer || 'No answer')
+                                   }
+                                 </div>
+                               </div>
+                               
+                               {/* Correct Answer */}
+                               <div className="flex items-start space-x-2">
+                                 <span className="text-xs font-bold text-green-600 min-w-[60px]">Answer:</span>
+                                 <div className="flex-1 p-1.5 rounded bg-green-100 text-green-800 text-xs">
+                                   {question.correct_answer}
+                                 </div>
+                               </div>
+                               
+                               {/* Compact Explanation */}
+                               {question.explanation && (
+                                 <div className="flex items-start space-x-2">
+                                   <span className="text-xs font-bold text-blue-600 min-w-[60px]">Info:</span>
+                                   <div className="flex-1 p-1.5 rounded bg-blue-50 text-blue-800 text-xs">
+                                     {question.explanation}
+                                   </div>
+                                 </div>
+                               )}
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                     </div>
+                   )}
+                 </div>
               </div>
             )}
           </div>
