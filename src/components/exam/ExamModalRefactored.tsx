@@ -3,6 +3,7 @@ import { X, BookOpen } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { ExamSetup, ExamTimer, ExamProgressTracker, ExamQuestionRenderer } from './index'
+import { ExamResults } from './ExamResults'
 import { ExamModalProps, ExamQuestion, MatchingPair, ExamMode, Subject, ExamStep } from './types'
 import { checkShortAnswer } from '../../utils/answerChecker'
 
@@ -347,6 +348,18 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
       
       if (saveError) throw saveError
       
+      // Update student XP
+      const xpGained = correctAnswers * 10 + (score === 100 ? 100 : score >= 90 ? 50 : score >= 80 ? 25 : 0)
+      const { error: xpError } = await supabase
+        .from('students')
+        .update({ xp: student.xp + xpGained })
+        .eq('id', student.id)
+
+      if (xpError) {
+        console.error('Failed to update student XP:', xpError)
+        // Don't throw error - exam submission was successful
+      }
+      
       setStep('results')
       onExamComplete(score, questions.length)
       
@@ -514,19 +527,27 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
             )}
 
             {step === 'results' && (
-              <div className="text-center space-y-4">
-                <div className="bg-gradient-to-br from-green-100 to-blue-100 rounded-xl p-6 shadow-lg">
-                  <h3 className="text-2xl font-bold text-green-600 mb-2">Exam Complete!</h3>
-                  <div className="text-4xl font-bold text-blue-600 mb-4">{examScore}%</div>
-                  <div className="text-gray-600">
-                    {questions.filter(q => q.isCorrect).length} out of {questions.length} questions correct
-                  </div>
-                </div>
-                
-                <Button onClick={handleModalClose} className="bg-green-500 hover:bg-green-600">
-                  Continue Learning
-                </Button>
-              </div>
+              <ExamResults 
+                student={student}
+                questions={questions}
+                examScore={examScore}
+                selectedSubject={selectedSubject}
+                selectedMode={selectedMode}
+                onClose={handleModalClose}
+                onTryAgain={() => {
+                  setStep('setup')
+                  setExamScore(0)
+                  setQuestions([])
+                  setCurrentQuestionIndex(0)
+                  setTimeLeft(0)
+                  setExamStarted(false)
+                  setError('')
+                  setTotalQuestions(0)
+                  setMatchingPairs([])
+                  setSelectedLeftItem(null)
+                  setShowSubmitWarning(false)
+                }}
+              />
             )}
           </div>
         </div>
