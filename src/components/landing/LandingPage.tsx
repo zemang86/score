@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Star, Trophy, Users, BookOpen, Target, Award, TrendingUp, ArrowRight, Play, CheckCircle, XCircle, DollarSign, Crown, Shield, Sparkles, Heart, Zap, Monitor, Smartphone, Rocket, Brain, Globe, ChevronDown, Lightbulb, Gamepad2, BarChart3, Clock, Gift } from 'lucide-react'
 import { Button } from '../ui/Button'
@@ -16,127 +16,119 @@ export function LandingPage() {
   const [statsLoading, setStatsLoading] = useState(true)
   const { t, i18n } = useTranslation()
 
+  // Optimized data fetching with immediate fallbacks
+  const fetchQuestionStats = useCallback(async () => {
+    // Set fallback values immediately for faster perceived loading
+    setQuestionCount(10000) // Show default immediately
+    setSubjectCount(5)
+    setLevelCount(11)
+    setStatsLoading(false) // Stop loading animation immediately
+    
+    // Fetch real data in background
+    try {
+      const { count: questionCount, error: questionError } = await supabase
+        .from('questions')
+        .select('*', { count: 'exact', head: true })
+
+      if (!questionError && questionCount !== null) {
+        setQuestionCount(questionCount)
+      }
+    } catch (error) {
+      console.error('Error fetching question stats:', error)
+      // Keep fallback values on error
+    }
+  }, [])
+
+  // Optimized scroll observer with better performance
   useEffect(() => {
-    // Initialize optimized scroll observer for performance
+    // Simplified intersection observer
     observerRef.current = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible')
-            // Remove will-change after animation completes
-            setTimeout(() => {
-              entry.target.classList.add('animation-complete')
-            }, 800)
+            // Unobserve after animation to improve performance
+            observerRef.current?.unobserve(entry.target)
           }
         })
       },
       {
-        threshold: 0.1,
-        rootMargin: '50px 0px -50px 0px'
+        threshold: 0.05, // Reduced threshold for faster triggering
+        rootMargin: '100px 0px -50px 0px' // Larger root margin for earlier triggering
       }
     )
 
-    // Observe all scroll-animated elements
-    const animatedElements = document.querySelectorAll('.scroll-fade-in, .scroll-slide-left, .scroll-slide-right, .scroll-scale-in, .scroll-bounce-in')
-    animatedElements.forEach((el) => {
-      el.classList.add('will-animate')
-      observerRef.current?.observe(el)
-    })
+    // Delayed observer setup to not block initial render
+    const setupObserver = () => {
+      const animatedElements = document.querySelectorAll('.scroll-fade-in, .scroll-slide-left, .scroll-slide-right, .scroll-scale-in, .scroll-bounce-in')
+      animatedElements.forEach((el) => {
+        observerRef.current?.observe(el)
+      })
+    }
 
-    // Fetch question statistics
+    // Setup observer after a short delay to prioritize critical rendering
+    const timeoutId = setTimeout(setupObserver, 100)
+
+    // Fetch stats immediately
     fetchQuestionStats()
 
     return () => {
+      clearTimeout(timeoutId)
       observerRef.current?.disconnect()
     }
-  }, [])
+  }, [fetchQuestionStats])
 
-  const fetchQuestionStats = async () => {
-    setStatsLoading(true)
-    try {
-      // Fetch total question count
-      const { count: questionCount, error: questionError } = await supabase
-        .from('questions')
-        .select('*', { count: 'exact', head: true })
-
-      if (questionError) throw questionError
-
-      // Use total available subjects and levels in Malaysian education system
-      // This showcases the complete system capabilities rather than just populated database content
-      const totalCoreSubjects = 5 // Bahasa Melayu, English, Mathematics, Science, History
-      const totalAvailableLevels = 11 // Darjah 1-6 (6) + Tingkatan 1-5 (5) = 11 total levels
-
-      // Update state with fetched data
-      setQuestionCount(questionCount || 0)
-      setSubjectCount(totalCoreSubjects)
-      setLevelCount(totalAvailableLevels)
-    } catch (error) {
-      console.error('Error fetching question stats:', error)
-      // Fallback to default values if fetch fails
-      setQuestionCount(null)
-      setSubjectCount(null)
-      setLevelCount(null)
-    } finally {
-      setStatsLoading(false)
-    }
-  }
-
-  const handleGetStarted = () => {
+  const handleGetStarted = useCallback(() => {
     console.log('🚀 Navigating to auth page...')
     navigate('/auth')
-  }
+  }, [navigate])
 
-  const handleWatchDemo = () => {
-    // Smooth scroll to features section
+  const handleWatchDemo = useCallback(() => {
     const featuresSection = document.getElementById('features-section')
     if (featuresSection) {
       featuresSection.scrollIntoView({ behavior: 'smooth' })
     }
-  }
+  }, [])
 
-  const changeLanguage = (lng: string) => {
+  const changeLanguage = useCallback((lng: string) => {
     i18n.changeLanguage(lng)
-  }
+  }, [i18n])
 
-  // Format number with commas
-  const formatNumber = (num: number | null): string => {
-    if (num === null) return '10,000+' // Fallback value
-    return num.toLocaleString()
-  }
+  // Memoized number formatting
+  const formatNumber = useMemo(() => {
+    return (num: number | null): string => {
+      if (num === null) return '10,000+' // Fallback value
+      return num.toLocaleString()
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
-      {/* Floating decorative elements */}
+      {/* Floating decorative elements - Simplified for performance */}
       <div className="fixed top-20 right-10 animate-float z-10 opacity-20">
         <Star className="w-8 h-8 text-indigo-400" />
       </div>
       <div className="fixed top-40 right-32 animate-bounce-gentle z-10 opacity-20">
         <Sparkles className="w-6 h-6 text-purple-400" />
       </div>
-      <div className="fixed bottom-20 left-10 animate-wiggle z-10 opacity-20">
-        <Heart className="w-8 h-8 text-pink-400" />
-      </div>
-      <div className="fixed top-1/2 right-5 animate-pulse-soft z-10 opacity-20">
-        <Zap className="w-7 h-7 text-amber-400" />
-      </div>
 
-      {/* Navigation */}
-      <nav className="absolute top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-white/20 sticky shadow-lg">
+      {/* Navigation - Load immediately without animation delay */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-white/20 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-20">
-            <RevealOnScroll animationType="slide-right" delay={100}>
+            <RevealOnScroll animationType="slide-right" delay={0}>
               <EdventureLogo size="md" className="sm:scale-110" />
             </RevealOnScroll>
-            <RevealOnScroll animationType="slide-left" delay={200}>
-              <div className="flex items-center space-x-2 sm:space-x-4">
-                {/* Language Switcher */}
-                <div className="flex items-center space-x-1 mr-2">
-                  <Globe className="w-4 h-4 text-slate-500" />
+            
+            <RevealOnScroll animationType="slide-left" delay={0}>
+              <div className="flex items-center gap-2 sm:gap-4">
+                {/* Language Switcher - Compact for Mobile */}
+                <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-lg border border-slate-200/50 p-1">
                   <button 
                     onClick={() => changeLanguage('en')} 
-                    className={`px-2 py-1 text-xs font-medium rounded-md ${
+                    className={`px-2 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
                       i18n.language === 'en' 
-                        ? 'bg-indigo-100 text-indigo-700' 
+                        ? 'bg-indigo-500 text-white shadow-sm' 
                         : 'text-slate-600 hover:bg-slate-100'
                     }`}
                   >
@@ -144,9 +136,9 @@ export function LandingPage() {
                   </button>
                   <button 
                     onClick={() => changeLanguage('ms')} 
-                    className={`px-2 py-1 text-xs font-medium rounded-md ${
+                    className={`px-2 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
                       i18n.language === 'ms' 
-                        ? 'bg-indigo-100 text-indigo-700' 
+                        ? 'bg-indigo-500 text-white shadow-sm' 
                         : 'text-slate-600 hover:bg-slate-100'
                     }`}
                   >
@@ -154,40 +146,33 @@ export function LandingPage() {
                   </button>
                 </div>
                 
-                <Button 
-                  variant="ghost" 
+                {/* Get Started Button - Always Visible */}
+                <button 
                   onClick={handleGetStarted} 
-                  className="text-slate-700 hover:text-indigo-600 font-medium px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-base"
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
                 >
-                  {t('nav.signIn')}
-                </Button>
-                <Button 
-                  onClick={handleGetStarted} 
-                  variant="gradient-primary"
-                >
-                  {t('nav.getStarted')}
-                </Button>
+                  <span className="hidden sm:inline">{t('nav.getStarted')}</span>
+                  <span className="sm:hidden">Start</span>
+                </button>
               </div>
             </RevealOnScroll>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section - Million Dollar Design */}
+      {/* Hero Section - Faster loading */}
       <section className="relative min-h-screen flex items-center justify-center pt-20 px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20">
-        {/* Background Elements */}
+        {/* Background Elements - Simplified */}
         <div className="absolute inset-0 overflow-hidden">
-          {/* Gradient Orbs */}
           <div className="absolute top-1/4 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-gradient-to-r from-indigo-400/30 to-purple-400/30 rounded-full blur-3xl animate-pulse-soft"></div>
           <div className="absolute bottom-1/4 right-1/4 w-56 sm:w-80 h-56 sm:h-80 bg-gradient-to-r from-pink-400/30 to-rose-400/30 rounded-full blur-3xl animate-float"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 sm:w-64 h-48 sm:h-64 bg-gradient-to-r from-amber-400/20 to-orange-400/20 rounded-full blur-3xl animate-bounce-gentle"></div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            {/* Left Content */}
+            {/* Left Content - Load immediately */}
             <div className="text-center lg:text-left">
-              <RevealOnScroll animationType="scale-in" delay={300}>
+              <RevealOnScroll animationType="scale-in" delay={0}>
                 <div className="mb-8">
                   {/* Premium Badge */}
                   <div className="inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 rounded-full text-indigo-700 text-xs sm:text-sm font-semibold mb-6 sm:mb-8 shadow-lg border border-white/50 backdrop-blur-sm">
@@ -213,8 +198,8 @@ export function LandingPage() {
                 </div>
               </RevealOnScroll>
               
-              {/* Action Buttons */}
-              <RevealOnScroll animationType="slide-up" delay={500}>
+              {/* Action Buttons - Reduced delay */}
+              <RevealOnScroll animationType="slide-up" delay={100}>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start items-center mb-10 sm:mb-12">
                   <Button 
                     size="lg" 
@@ -238,40 +223,28 @@ export function LandingPage() {
                 </div>
               </RevealOnScroll>
               
-              {/* Stats Cards */}
+              {/* Stats Cards - Show immediately with fast animations */}
               <div className="grid grid-cols-3 gap-3 sm:gap-6 text-center lg:text-left">
-                <RevealOnScroll animationType="slide-up" delay={600}>
+                <RevealOnScroll animationType="slide-up" delay={150}>
                   <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-lg border border-white/50 hover:shadow-xl transition-all duration-300 hover:scale-105">
                     <div className="text-xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-1 sm:mb-2">
-                      {statsLoading ? (
-                        <div className="animate-pulse h-8 w-24 bg-indigo-100 rounded-md mx-auto lg:mx-0"></div>
-                      ) : (
-                        formatNumber(questionCount)
-                      )}
+                      {formatNumber(questionCount)}
                     </div>
                     <div className="text-slate-600 font-semibold text-xs sm:text-sm">{t('stats.questions')}</div>
                   </div>
                 </RevealOnScroll>
-                <RevealOnScroll animationType="slide-up" delay={700}>
+                <RevealOnScroll animationType="slide-up" delay={200}>
                   <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-lg border border-white/50 hover:shadow-xl transition-all duration-300 hover:scale-105">
                     <div className="text-xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1 sm:mb-2">
-                      {statsLoading ? (
-                        <div className="animate-pulse h-8 w-8 bg-purple-100 rounded-md mx-auto lg:mx-0"></div>
-                      ) : (
-                        subjectCount || 5
-                      )}
+                      {subjectCount || 5}
                     </div>
                     <div className="text-slate-600 font-semibold text-xs sm:text-sm">{t('stats.subjects')}</div>
                   </div>
                 </RevealOnScroll>
-                <RevealOnScroll animationType="slide-up" delay={800}>
+                <RevealOnScroll animationType="slide-up" delay={250}>
                   <div className="bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-lg border border-white/50 hover:shadow-xl transition-all duration-300 hover:scale-105">
                     <div className="text-xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent mb-1 sm:mb-2">
-                      {statsLoading ? (
-                        <div className="animate-pulse h-8 w-8 bg-pink-100 rounded-md mx-auto lg:mx-0"></div>
-                      ) : (
-                        levelCount || 11
-                      )}
+                      {levelCount || 11}
                     </div>
                     <div className="text-slate-600 font-semibold text-xs sm:text-sm">{t('stats.levels')}</div>
                   </div>
@@ -279,104 +252,104 @@ export function LandingPage() {
               </div>
             </div>
 
-            {/* Right Visual - Premium Dashboard Preview */}
-            <div className="relative hidden lg:block">
-              <RevealOnScroll animationType="scale-in" delay={400}>
+            {/* Right Visual - Dashboard Preview - Faster loading */}
+            <div className="relative mt-12 lg:mt-0">
+              <RevealOnScroll animationType="scale-in" delay={200}>
                 <div className="relative">
                   {/* Main Dashboard Mockup */}
-                  <div className="bg-gradient-to-br from-white via-slate-50 to-indigo-50 rounded-3xl p-8 shadow-3xl border border-white/50 backdrop-blur-xl">
+                  <div className="bg-gradient-to-br from-white via-slate-50 to-indigo-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl sm:shadow-3xl border border-white/50 backdrop-blur-xl">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center justify-between mb-4 sm:mb-6 lg:mb-8">
                       <div className="flex items-center">
-                        <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mr-4">
-                          <Crown className="w-6 h-6 text-white" />
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl sm:rounded-2xl flex items-center justify-center mr-2 sm:mr-3 lg:mr-4">
+                          <Crown className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-slate-800">Welcome back, Sarah!</h3>
-                          <p className="text-slate-500 text-sm">Ready for today's adventure?</p>
+                          <h3 className="font-bold text-slate-800 text-sm sm:text-base lg:text-lg">Welcome back, Sarah!</h3>
+                          <p className="text-slate-500 text-xs sm:text-sm">Ready for today's adventure?</p>
                         </div>
                       </div>
-                      <div className="flex space-x-2">
-                        <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                        <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                        <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                      <div className="flex space-x-1 sm:space-x-2">
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-400 rounded-full"></div>
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-400 rounded-full"></div>
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-400 rounded-full"></div>
                       </div>
                     </div>
 
                     {/* Dashboard Content */}
-                    <div className="grid grid-cols-2 gap-6 mb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6">
                       {/* Student Card */}
-                      <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-                        <div className="flex items-center mb-4">
-                          <div className="w-10 h-10 bg-gradient-to-r from-pink-400 to-rose-400 rounded-xl flex items-center justify-center mr-3">
-                            <Users className="w-5 h-5 text-white" />
+                      <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg border border-slate-100">
+                        <div className="flex items-center mb-3 sm:mb-4">
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-gradient-to-r from-pink-400 to-rose-400 rounded-lg sm:rounded-xl flex items-center justify-center mr-2 sm:mr-3">
+                            <Users className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-white" />
                           </div>
                           <div>
-                            <h4 className="font-semibold text-slate-800">Ahmad</h4>
+                            <h4 className="font-semibold text-slate-800 text-xs sm:text-sm lg:text-base">Ahmad</h4>
                             <p className="text-slate-500 text-xs">Tingkatan 3</p>
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
+                          <div className="flex justify-between text-xs sm:text-sm">
                             <span className="text-slate-600">XP Progress</span>
                             <span className="font-semibold text-indigo-600">850 XP</span>
                           </div>
-                          <div className="w-full bg-slate-200 rounded-full h-2">
-                            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full w-4/5"></div>
+                          <div className="w-full bg-slate-200 rounded-full h-1.5 sm:h-2">
+                            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-1.5 sm:h-2 rounded-full w-4/5"></div>
                           </div>
                         </div>
                       </div>
 
                       {/* Achievement Card */}
-                      <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+                      <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg border border-slate-100">
                         <div className="text-center">
-                          <div className="w-12 h-12 bg-gradient-to-r from-amber-400 to-orange-400 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                            <Trophy className="w-6 h-6 text-white" />
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-r from-amber-400 to-orange-400 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                            <Trophy className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" />
                           </div>
-                          <h4 className="font-semibold text-slate-800 mb-1">Perfect Score!</h4>
+                          <h4 className="font-semibold text-slate-800 text-xs sm:text-sm lg:text-base mb-1">Perfect Score!</h4>
                           <p className="text-slate-500 text-xs">Mathematics Exam</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Progress Chart */}
-                    <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-semibold text-slate-800">Weekly Progress</h4>
-                        <div className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">95%</div>
+                    <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg border border-slate-100">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <h4 className="font-semibold text-slate-800 text-xs sm:text-sm lg:text-base">Weekly Progress</h4>
+                        <div className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">95%</div>
                       </div>
-                      <div className="space-y-3">
+                      <div className="space-y-2 sm:space-y-3">
                         <div className="flex items-center">
-                          <div className="w-3 h-3 bg-green-400 rounded-full mr-3"></div>
-                          <div className="flex-1 bg-slate-200 rounded-full h-2">
-                            <div className="bg-gradient-to-r from-green-400 to-emerald-400 h-2 rounded-full w-11/12"></div>
+                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-400 rounded-full mr-2 sm:mr-3"></div>
+                          <div className="flex-1 bg-slate-200 rounded-full h-1.5 sm:h-2">
+                            <div className="bg-gradient-to-r from-green-400 to-emerald-400 h-1.5 sm:h-2 rounded-full w-11/12"></div>
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <div className="w-3 h-3 bg-blue-400 rounded-full mr-3"></div>
-                          <div className="flex-1 bg-slate-200 rounded-full h-2">
-                            <div className="bg-gradient-to-r from-blue-400 to-indigo-400 h-2 rounded-full w-4/5"></div>
+                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-blue-400 rounded-full mr-2 sm:mr-3"></div>
+                          <div className="flex-1 bg-slate-200 rounded-full h-1.5 sm:h-2">
+                            <div className="bg-gradient-to-r from-blue-400 to-indigo-400 h-1.5 sm:h-2 rounded-full w-4/5"></div>
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <div className="w-3 h-3 bg-purple-400 rounded-full mr-3"></div>
-                          <div className="flex-1 bg-slate-200 rounded-full h-2">
-                            <div className="bg-gradient-to-r from-purple-400 to-pink-400 h-2 rounded-full w-3/4"></div>
+                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-purple-400 rounded-full mr-2 sm:mr-3"></div>
+                          <div className="flex-1 bg-slate-200 rounded-full h-1.5 sm:h-2">
+                            <div className="bg-gradient-to-r from-purple-400 to-pink-400 h-1.5 sm:h-2 rounded-full w-3/4"></div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Floating Achievement Badges */}
-                  <div className="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl shadow-2xl flex items-center justify-center animate-bounce-gentle">
-                    <Star className="w-10 h-10 text-white" />
+                  {/* Floating Achievement Badges - Responsive */}
+                  <div className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 lg:-top-6 lg:-right-6 w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl flex items-center justify-center animate-bounce-gentle">
+                    <Star className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white" />
                   </div>
-                  <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl shadow-2xl flex items-center justify-center animate-float">
-                    <Brain className="w-8 h-8 text-white" />
+                  <div className="absolute -bottom-3 -left-3 sm:-bottom-4 sm:-left-4 lg:-bottom-6 lg:-left-6 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl flex items-center justify-center animate-float">
+                    <Brain className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-white" />
                   </div>
-                  <div className="absolute top-1/2 -right-4 w-14 h-14 bg-gradient-to-br from-pink-400 to-rose-500 rounded-2xl shadow-xl flex items-center justify-center animate-pulse-soft">
-                    <Lightbulb className="w-7 h-7 text-white" />
+                  <div className="absolute top-1/2 -right-2 sm:-right-3 lg:-right-4 w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 bg-gradient-to-br from-pink-400 to-rose-500 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl flex items-center justify-center animate-pulse-soft">
+                    <Lightbulb className="w-4 h-4 sm:w-5 sm:h-5 lg:w-7 lg:h-7 text-white" />
                   </div>
                 </div>
               </RevealOnScroll>
@@ -411,7 +384,7 @@ export function LandingPage() {
             </div>
           </RevealOnScroll>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10 auto-rows-fr">
             {[
               {
                 icon: Gamepad2,
@@ -463,15 +436,15 @@ export function LandingPage() {
               }
             ].map((feature, index) => (
               <RevealOnScroll key={index} animationType="slide-up" delay={feature.delay}>
-                <div className="group bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-xl transition-all duration-500 p-6 sm:p-8 border border-white/50 hover:border-white/80 hover:scale-105">
-                  <div className={`w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                <div className="group bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-xl transition-all duration-500 p-6 sm:p-8 border border-white/50 hover:border-white/80 hover:scale-105 h-full flex flex-col">
+                  <div className={`w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg flex-shrink-0`}>
                     <feature.icon className="w-7 h-7 sm:w-10 sm:h-10 text-white" />
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4">{feature.title}</h3>
-                  <p className="text-slate-600 leading-relaxed text-sm sm:text-lg">
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4 flex-shrink-0">{feature.title}</h3>
+                  <p className="text-slate-600 leading-relaxed text-sm sm:text-lg flex-grow">
                     {feature.description}
                   </p>
-                  <div className={`mt-4 sm:mt-6 w-full h-1 bg-gradient-to-r ${feature.color} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                  <div className={`mt-4 sm:mt-6 w-full h-1 bg-gradient-to-r ${feature.color} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0`}></div>
                 </div>
               </RevealOnScroll>
             ))}
@@ -500,7 +473,7 @@ export function LandingPage() {
             </div>
           </RevealOnScroll>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 auto-rows-fr">
             {[
               {
                 title: "Create & Add Children",
@@ -525,13 +498,13 @@ export function LandingPage() {
               }
             ].map((item, index) => (
               <RevealOnScroll key={index} animationType="scale-in" delay={item.delay}>
-                <div className="text-center group">
-                  <div className="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-lg p-6 sm:p-8 border border-white/50 hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                    <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br ${item.bgColor} rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6`}>
+                <div className="text-center group h-full">
+                  <div className="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-lg p-6 sm:p-8 border border-white/50 hover:shadow-xl transition-all duration-300 group-hover:scale-105 h-full flex flex-col">
+                    <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br ${item.bgColor} rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 flex-shrink-0`}>
                       <item.icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4">{item.title}</h3>
-                    <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4 flex-shrink-0">{item.title}</h3>
+                    <p className="text-slate-600 leading-relaxed text-sm sm:text-base flex-grow">
                       {item.description}
                     </p>
                   </div>
