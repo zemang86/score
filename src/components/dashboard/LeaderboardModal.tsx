@@ -31,13 +31,14 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   const [activeType, setActiveType] = useState<LeaderboardType>('xp')
   const [userStudents, setUserStudents] = useState<string[]>([])
   const [error, setError] = useState('')
+  const [levelFilter, setLevelFilter] = useState<string>('Global')
 
   useEffect(() => {
     if (isOpen && user) {
       fetchLeaderboard()
       fetchUserStudents()
     }
-  }, [isOpen, user, activeType])
+  }, [isOpen, user, activeType, levelFilter])
 
   const fetchUserStudents = async () => {
     if (!user) return
@@ -62,10 +63,17 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
     try {
       console.log('Fetching leaderboard data from view...')
       
-      // Fetch data from the leaderboard_data view
-      const { data: leaderboardData, error } = await supabase
+      // Fetch data from the leaderboard_data view with optional level filter
+      let query = supabase
         .from('leaderboard_data')
         .select('*')
+      
+      // Apply level filter if not Global
+      if (levelFilter !== 'Global') {
+        query = query.eq('student_level', levelFilter)
+      }
+
+      const { data: leaderboardData, error } = await query
 
       if (error) {
         console.error('Error fetching leaderboard:', error)
@@ -192,13 +200,38 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                   <p className="text-sm text-blue-100 drop-shadow">See how you rank among students worldwide!</p>
                 </div>
               </div>
-              <button
-                onClick={onClose}
-                className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-200 rounded-lg p-2 shadow-lg border border-white/30"
-                title="Close"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              
+              {/* Level Filter Dropdown */}
+              <div className="flex items-center space-x-3">
+                <div className="relative">
+                  <select
+                    value={levelFilter}
+                    onChange={(e) => setLevelFilter(e.target.value)}
+                    className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-3 py-2 text-sm font-medium hover:bg-white/30 transition-all duration-200 appearance-none pr-8"
+                  >
+                    <option value="Global" className="bg-blue-600 text-white">Global</option>
+                    <option value="Darjah 1" className="bg-blue-600 text-white">Darjah 1</option>
+                    <option value="Darjah 2" className="bg-blue-600 text-white">Darjah 2</option>
+                    <option value="Darjah 3" className="bg-blue-600 text-white">Darjah 3</option>
+                    <option value="Darjah 4" className="bg-blue-600 text-white">Darjah 4</option>
+                    <option value="Darjah 5" className="bg-blue-600 text-white">Darjah 5</option>
+                    <option value="Darjah 6" className="bg-blue-600 text-white">Darjah 6</option>
+                  </select>
+                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={onClose}
+                  className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-200 rounded-lg p-2 shadow-lg border border-white/30"
+                  title="Close"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -238,7 +271,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-3 sm:p-4">
+          <div className="p-3 sm:p-4 overflow-visible">
             {loading ? (
               <div className="text-center py-6">
                 <div className="animate-spin rounded-full h-10 w-10 border-4 border-amber-200 border-t-amber-500 mx-auto mb-3"></div>
@@ -257,12 +290,47 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
               </div>
             ) : (
               <>
+                {/* Sticky Section: Your Students Positions */}
+                {userStudents.length > 0 && (
+                  <div className="mb-4 bg-gradient-to-r from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-xl p-4 shadow-lg sticky top-0 z-10">
+                    <h3 className="text-sm font-bold text-indigo-800 mb-3 text-center">📍 Your Students</h3>
+                    <div className="grid grid-cols-3 gap-2">
+                      {leaderboard
+                        .filter(entry => userStudents.includes(entry.student_id))
+                        .slice(0, 3)
+                        .map((entry, index) => (
+                          <div
+                            key={entry.student_id}
+                            className="bg-white rounded-lg p-2 shadow-md border border-indigo-200"
+                          >
+                            <div className="text-center">
+                              <div className={`w-6 h-6 rounded-full mx-auto mb-1 flex items-center justify-center text-xs font-bold ${
+                                entry.rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' :
+                                entry.rank === 2 ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white' :
+                                entry.rank === 3 ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white' :
+                                'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
+                              }`}>
+                                {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
+                              </div>
+                              <div className="font-bold text-xs text-indigo-800 truncate" title={entry.student_name}>
+                                {entry.student_name}
+                              </div>
+                              <div className="text-xs text-indigo-600">
+                                {getTypeValue(entry, activeType)}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="mb-3">
                   <h3 className="text-base font-bold text-center bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
                     Top Students by {getTypeLabel(activeType)}
                   </h3>
                   <p className="text-xs text-blue-600 text-center mt-1">
-                    {leaderboard.length} students competing worldwide
+                    {leaderboard.length} students competing {levelFilter === 'Global' ? 'worldwide' : `in ${levelFilter}`}
                   </p>
                 </div>
 
@@ -274,13 +342,15 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                       return (
                         <div
                           key={entry.student_id}
-                          className={`p-3 rounded-xl border-2 transition-all duration-300 transform hover:scale-102 hover:shadow-lg ${
+                          className={`p-3 rounded-xl border-2 transition-all duration-300 transform hover:scale-102 hover:shadow-lg overflow-visible ${
                             isUserStudent 
                               ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-2 ring-indigo-200 animate-pulse-glow' 
-                              : entry.rank <= 3
-                              ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-300'
-                              : entry.rank <= 10
-                              ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-300'
+                              : entry.rank === 1
+                              ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-400'
+                              : entry.rank === 2
+                              ? 'bg-gradient-to-r from-gray-50 to-gray-100 border-gray-400'
+                              : entry.rank === 3
+                              ? 'bg-gradient-to-r from-orange-50 to-red-50 border-orange-400'
                               : 'bg-white border-gray-200 hover:border-gray-300'
                           }`}
                         >
@@ -293,11 +363,9 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                   ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white'
                                   : entry.rank === 3
                                   ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white'
-                                  : entry.rank <= 10
-                                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
                                   : 'bg-gray-100 text-gray-600'
                               }`}>
-                                {entry.rank === 1 ? '👑' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank <= 10 ? '🌟' : `#${entry.rank}`}
+                                {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
                               </div>
                               <div>
                                 <div className={`font-bold text-sm flex items-center ${isUserStudent ? 'text-indigo-700' : 'text-gray-800'}`}>
@@ -311,7 +379,13 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className={`text-sm font-bold ${isUserStudent ? 'text-indigo-700' : entry.rank <= 3 ? 'text-yellow-700' : entry.rank <= 10 ? 'text-blue-700' : 'text-gray-800'}`}>
+                              <div className={`text-sm font-bold ${
+                                isUserStudent ? 'text-indigo-700' : 
+                                entry.rank === 1 ? 'text-yellow-700' : 
+                                entry.rank === 2 ? 'text-gray-700' : 
+                                entry.rank === 3 ? 'text-orange-700' : 
+                                'text-gray-800'
+                              }`}>
                                 {getTypeValue(entry, activeType)}
                               </div>
                               {activeType === 'xp' && entry.total_exams > 0 && (
