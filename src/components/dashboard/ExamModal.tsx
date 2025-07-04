@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Student, Question } from '../../lib/supabase'
 import { Button } from '../ui/Button'
-import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3, Lock, BookOpenCheck, XCircle } from 'lucide-react'
+import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3, Lock, BookOpenCheck, XCircle, MapPin } from 'lucide-react'
 import { checkShortAnswer } from '../../utils/answerChecker'
 
 interface ExamModalProps {
@@ -48,7 +48,8 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       examScore: 0,
       totalQuestions: 0,
       matchingPairs: [],
-      selectedLeftItem: null
+      selectedLeftItem: null,
+      showSubmitWarning: false
     }
   }
 
@@ -65,6 +66,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   const [error, setError] = useState('')
   const [examScore, setExamScore] = useState(initialState.examScore)
   const [totalQuestions, setTotalQuestions] = useState(initialState.totalQuestions)
+  const [showSubmitWarning, setShowSubmitWarning] = useState(initialState.showSubmitWarning)
   
   // Matching question state
   const [matchingPairs, setMatchingPairs] = useState<MatchingPair[]>(initialState.matchingPairs)
@@ -83,7 +85,8 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       examScore,
       totalQuestions,
       matchingPairs,
-      selectedLeftItem
+      selectedLeftItem,
+      showSubmitWarning
     }
     sessionStorage.setItem(`exam-state-${student.id}`, JSON.stringify(stateToSave))
   }
@@ -344,7 +347,8 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       initializeMatchingQuestion(questions[nextIndex])
       setSelectedLeftItem(null)
     } else {
-      finishExam()
+      // Check for unanswered questions before finishing
+      checkUnansweredQuestionsBeforeSubmit()
     }
   }
 
@@ -355,6 +359,199 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       initializeMatchingQuestion(questions[prevIndex])
       setSelectedLeftItem(null)
     }
+  }
+
+  // New function to jump to specific question
+  const jumpToQuestion = (questionIndex: number) => {
+    if (questionIndex >= 0 && questionIndex < questions.length) {
+      setCurrentQuestionIndex(questionIndex)
+      initializeMatchingQuestion(questions[questionIndex])
+      setSelectedLeftItem(null)
+    }
+  }
+
+  // Check if a question is answered
+  const isQuestionAnswered = (questionIndex: number) => {
+    const question = questions[questionIndex]
+    if (!question) return false
+
+    switch (question.type) {
+      case 'MCQ':
+      case 'ShortAnswer':
+      case 'Subjective':
+        return !!question.userAnswer && question.userAnswer !== ''
+      case 'Matching':
+        return Array.isArray(question.userAnswer) && question.userAnswer.length > 0
+      default:
+        return false
+    }
+  }
+
+  // Get list of unanswered questions
+  const getUnansweredQuestions = () => {
+    return questions
+      .map((_: ExamQuestion, index: number) => ({ index, number: index + 1 }))
+      .filter(({ index }: { index: number }) => !isQuestionAnswered(index))
+  }
+
+  // Check for unanswered questions before submitting
+  const checkUnansweredQuestionsBeforeSubmit = () => {
+    const unanswered = getUnansweredQuestions()
+    if (unanswered.length > 0) {
+      setShowSubmitWarning(true)
+    } else {
+      finishExam()
+    }
+  }
+
+  // Proceed with submission despite unanswered questions
+  const proceedWithSubmit = () => {
+    setShowSubmitWarning(false)
+    finishExam()
+  }
+
+  // Go back to review unanswered questions
+  const reviewUnansweredQuestions = () => {
+    setShowSubmitWarning(false)
+    const unanswered = getUnansweredQuestions()
+    if (unanswered.length > 0) {
+      jumpToQuestion(unanswered[0].index)
+    }
+  }
+
+  // Render the question progress tracker
+  const renderProgressTracker = () => {
+    if (questions.length === 0) return null
+
+    return (
+      <div className="bg-gradient-to-r from-slate-50 to-blue-50 border border-gray-200 rounded-xl p-4 mb-4 shadow-sm">
+        <div className="flex items-center mb-3">
+          <Target className="w-5 h-5 text-blue-600 mr-2" />
+          <h4 className="text-sm font-bold text-gray-800">Question Progress</h4>
+          <div className="ml-auto text-xs text-gray-600 bg-white px-2 py-1 rounded-full">
+            {questions.filter((_, index) => isQuestionAnswered(index)).length}/{questions.length} completed
+          </div>
+        </div>
+        
+        {/* Progress Grid with Gaming Animations */}
+        <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-2 mb-4">
+          {questions.map((_, index) => {
+            const isAnswered = isQuestionAnswered(index)
+            const isCurrent = index === currentQuestionIndex
+            
+            return (
+              <button
+                key={index}
+                onClick={() => jumpToQuestion(index)}
+                className={`
+                  relative w-10 h-10 rounded-xl text-xs font-bold transition-all duration-500 
+                  flex items-center justify-center transform hover:scale-110 active:scale-95
+                  ${isCurrent 
+                    ? 'border-2 border-blue-400 bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg animate-pulse-glow ring-4 ring-blue-200' 
+                    : isAnswered 
+                      ? 'border-2 border-green-400 bg-gradient-to-br from-green-400 to-green-500 text-white shadow-md hover:shadow-lg animate-success-bounce' 
+                      : 'border-2 border-yellow-400 bg-gradient-to-br from-yellow-300 to-yellow-400 text-yellow-800 shadow-sm hover:shadow-md animate-gentle-pulse'
+                  }
+                `}
+                title={`Question ${index + 1} - ${isAnswered ? 'Answered' : 'Unanswered'}`}
+              >
+                {/* Gaming-style inner glow */}
+                <div className={`absolute inset-0 rounded-xl ${
+                  isCurrent ? 'bg-gradient-to-br from-blue-300/20 to-blue-600/20 animate-rotate-border' : ''
+                }`}></div>
+                
+                {/* Question number */}
+                <span className="relative z-10">{index + 1}</span>
+                
+                {/* Success sparkle for answered questions */}
+                {isAnswered && !isCurrent && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-2 h-2 text-green-500" />
+                  </div>
+                )}
+              </button>
+            )
+          })}
+        </div>
+        
+        {/* Enhanced Legend with Gaming Style */}
+        <div className="flex items-center justify-center space-x-6 text-xs">
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg mr-2 animate-pulse-glow"></div>
+            <span className="text-gray-700 font-medium">Current</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-gradient-to-br from-green-400 to-green-500 rounded-lg mr-2"></div>
+            <span className="text-gray-700 font-medium">Completed</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-gradient-to-br from-yellow-300 to-yellow-400 rounded-lg mr-2"></div>
+            <span className="text-gray-700 font-medium">Pending</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Render submit warning modal
+  const renderSubmitWarningModal = () => {
+    if (!showSubmitWarning) return null
+
+    const unanswered = getUnansweredQuestions()
+
+    return (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+        <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <div className="flex items-center mb-4">
+            <AlertCircle className="w-6 h-6 text-yellow-600 mr-3" />
+            <h3 className="text-lg font-bold text-gray-900">Unanswered Questions</h3>
+          </div>
+          
+          <div className="mb-4">
+            <p className="text-gray-700 mb-3">
+              You have {unanswered.length} unanswered question{unanswered.length !== 1 ? 's' : ''}:
+            </p>
+            
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+              <div className="flex flex-wrap gap-2">
+                {unanswered.map(({ index, number }) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setShowSubmitWarning(false)
+                      jumpToQuestion(index)
+                    }}
+                    className="px-2 py-1 bg-yellow-200 text-yellow-800 rounded font-medium text-sm hover:bg-yellow-300 transition-colors"
+                  >
+                    Question {number}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <p className="text-gray-600 text-sm">
+              You can either go back to review these questions or submit the exam as is.
+            </p>
+          </div>
+          
+          <div className="flex space-x-3">
+            <Button
+              variant="outline"
+              onClick={reviewUnansweredQuestions}
+              className="flex-1"
+            >
+              Review Questions
+            </Button>
+            <Button
+              onClick={proceedWithSubmit}
+              className="flex-1 bg-gradient-to-r from-red-500 to-red-600"
+            >
+              Submit Anyway
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const gradeQuestion = (question: ExamQuestion): boolean => {
@@ -520,7 +717,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     if (step === 'exam' && examStarted) {
       saveState()
     }
-  }, [step, selectedSubject, selectedMode, questions, currentQuestionIndex, timeLeft, examStarted, examScore, totalQuestions, matchingPairs, selectedLeftItem])
+  }, [step, selectedSubject, selectedMode, questions, currentQuestionIndex, timeLeft, examStarted, examScore, totalQuestions, matchingPairs, selectedLeftItem, showSubmitWarning])
 
   // Timer effect
   useEffect(() => {
@@ -548,6 +745,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     setTotalQuestions(0)
     setMatchingPairs([])
     setSelectedLeftItem(null)
+    setShowSubmitWarning(false)
     onClose()
   }
 
@@ -945,32 +1143,76 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
             {/* Exam Step */}
             {step === 'exam' && questions.length > 0 && (
               <div className="space-y-4">
+                {/* Question Progress Tracker */}
+                {renderProgressTracker()}
+
                 {questions[currentQuestionIndex] && (
                   <>
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <h3 className="text-base sm:text-lg font-bold text-blue-700 mb-3">
-                        {questions[currentQuestionIndex].question_text}
-                      </h3>
+                    {/* Question Content with Animation */}
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-4 sm:p-6 shadow-lg animate-slide-in">
+                      <div className="flex items-start justify-between mb-4">
+                        <h3 className="text-lg sm:text-xl font-bold text-blue-800 leading-tight flex-1">
+                          {questions[currentQuestionIndex].question_text}
+                        </h3>
+                        <div className="ml-4 flex-shrink-0">
+                          <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                            {questions[currentQuestionIndex].type}
+                          </div>
+                        </div>
+                      </div>
                       
-                      {renderQuestionContent()}
+                      <div className="animate-fade-in-delayed">
+                        {renderQuestionContent()}
+                      </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0">
-                      <Button
-                        variant="outline"
-                        onClick={previousQuestion}
-                        disabled={currentQuestionIndex === 0}
-                        className="text-sm"
-                      >
-                        ← Previous
-                      </Button>
-                      <Button
-                        onClick={nextQuestion}
-                        disabled={!hasUserAnswer()}
-                        className="bg-gradient-to-r from-green-500 to-green-600 text-sm"
-                      >
-                        {currentQuestionIndex === questions.length - 1 ? 'Finish Exam' : 'Next →'}
-                      </Button>
+                    {/* Enhanced Navigation with Gaming Style */}
+                    <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                      <div className="flex items-center justify-between space-x-4">
+                        {/* Previous Button */}
+                        <Button
+                          variant="outline"
+                          onClick={previousQuestion}
+                          disabled={currentQuestionIndex === 0}
+                          className={`
+                            flex-shrink-0 min-w-[100px] transition-all duration-300 border-2
+                            ${currentQuestionIndex === 0 
+                              ? 'opacity-50 cursor-not-allowed' 
+                              : 'hover:border-blue-400 hover:bg-blue-50 hover:scale-105 active:scale-95'
+                            }
+                          `}
+                        >
+                          ← Previous
+                        </Button>
+                        
+                        {/* Center Progress Info */}
+                        <div className="flex-1 text-center">
+                          <div className="text-sm text-gray-600">
+                            Question <span className="font-bold text-blue-600">{currentQuestionIndex + 1}</span> of <span className="font-bold">{questions.length}</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                            <div 
+                              className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full transition-all duration-500 ease-out"
+                              style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
+                            ></div>
+                          </div>
+                        </div>
+
+                        {/* Next/Submit Button */}
+                        <Button
+                          onClick={nextQuestion}
+                          className={`
+                            flex-shrink-0 min-w-[100px] bg-gradient-to-r transition-all duration-300
+                            ${currentQuestionIndex === questions.length - 1
+                              ? 'from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg hover:shadow-xl'
+                              : 'from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl'
+                            } 
+                            hover:scale-105 active:scale-95 transform
+                          `}
+                        >
+                          {currentQuestionIndex === questions.length - 1 ? 'Submit Exam' : 'Next →'}
+                        </Button>
+                      </div>
                     </div>
                   </>
                 )}
@@ -1101,6 +1343,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
             )}
           </div>
         </div>
+
+        {/* Submit Warning Modal */}
+        {renderSubmitWarningModal()}
       </div>
     </div>
   )
