@@ -177,7 +177,7 @@ export function ExamResults({
   return (
     <div className="space-y-6">
       {/* Main Results Card */}
-      <div className={`relative rounded-2xl p-8 shadow-lg transition-all duration-1000 ${
+      <div className={`relative rounded-2xl p-6 shadow-lg transition-all duration-1000 ${
         examScore >= 80 ? 'bg-gradient-to-br from-green-50 to-emerald-50' :
         examScore >= 60 ? 'bg-gradient-to-br from-blue-50 to-sky-50' :
         'bg-gradient-to-br from-orange-50 to-red-50'
@@ -194,30 +194,30 @@ export function ExamResults({
               <div className="absolute top-8 left-1/2 transform -translate-x-1/2 text-lg animate-bounce" style={{ animationDelay: '800ms' }}>🎯</div>
             </div>
           )}
-          <h2 className="text-2xl font-bold text-gray-800 mb-2 relative z-10">
+          <h2 className="text-xl font-bold text-gray-800 mb-2 relative z-10">
             {getGamingMessage(animatedScore)}
           </h2>
-          <p className="text-gray-600 relative z-10">{getPerformanceMessage(animatedScore)}</p>
+          <p className="text-sm text-gray-600 font-medium relative z-10">{getPerformanceMessage(animatedScore)}</p>
         </div>
 
         {/* Score Display */}
-        <div className="text-center mb-6">
-          <div className={`text-6xl font-bold mb-2 ${getScoreColor(animatedScore)}`}>
+        <div className="text-center mb-4">
+          <div className={`text-4xl font-bold mb-1 ${getScoreColor(animatedScore)}`}>
             {animatedScore}%
           </div>
-          <div className="text-lg text-gray-600">
+          <div className="text-sm text-gray-600 font-medium">
             {correctAnswers} out of {totalQuestions} correct
           </div>
         </div>
 
         {/* Star Rating */}
-        <div className={`flex justify-center mb-6 transition-all duration-1000 ${
+        <div className={`flex justify-center mb-4 transition-all duration-1000 ${
           showStars ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
         }`}>
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
-              className={`w-8 h-8 mx-1 transition-all duration-300 ${
+              className={`w-6 h-6 mx-1 transition-all duration-300 ${
                 i < stars 
                   ? 'text-yellow-400 fill-yellow-400' 
                   : 'text-gray-300'
@@ -228,13 +228,13 @@ export function ExamResults({
         </div>
 
         {/* XP Gained */}
-        <div className="text-center mb-6">
-          <div className="bg-white rounded-lg p-4 shadow-sm">
+        <div className="text-center mb-4">
+          <div className="bg-white rounded-lg p-3 shadow-sm">
             <div className="flex items-center justify-center space-x-2">
-              <Trophy className="w-5 h-5 text-yellow-500" />
-              <span className="text-lg font-bold text-gray-800">+{xpGained} XP</span>
+              <Trophy className="w-4 h-4 text-yellow-500" />
+              <span className="text-base font-bold text-gray-800">+{xpGained} XP</span>
             </div>
-            <div className="text-sm text-gray-600 mt-1">
+            <div className="text-xs text-gray-600 font-medium mt-1">
               New Total: {student.xp + xpGained} XP
             </div>
           </div>
@@ -245,23 +245,23 @@ export function ExamResults({
           showBadges ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4'
         }`}>
           {earnedBadges.length > 0 && (
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-bold text-gray-800 mb-3">🏆 Achievements Unlocked!</h3>
-              <div className="grid grid-cols-2 gap-3">
+            <div className="text-center mb-4">
+              <h3 className="text-base font-bold text-gray-800 mb-3">🏆 Achievements Unlocked!</h3>
+              <div className="grid grid-cols-2 gap-2">
                 {earnedBadges.map((badge, index) => (
-                  <div
-                    key={index}
-                    className={`${badge.color} text-white rounded-lg p-3 shadow-md transform hover:scale-105 transition-all duration-200 animate-fade-in-up`}
-                    style={{ 
-                      animationDelay: `${index * 200}ms`,
-                      opacity: showBadges ? 1 : 0,
-                      transform: showBadges ? 'translateY(0)' : 'translateY(20px)'
-                    }}
-                  >
-                    <div className="text-2xl mb-1">{badge.icon}</div>
-                    <div className="font-bold text-sm">{badge.name}</div>
-                    <div className="text-xs opacity-90">{badge.description}</div>
-                  </div>
+                                      <div
+                      key={index}
+                      className={`${badge.color} text-white rounded-lg p-2 shadow-md transform hover:scale-105 transition-all duration-200 animate-fade-in-up`}
+                      style={{ 
+                        animationDelay: `${index * 200}ms`,
+                        opacity: showBadges ? 1 : 0,
+                        transform: showBadges ? 'translateY(0)' : 'translateY(20px)'
+                      }}
+                    >
+                      <div className="text-xl mb-1">{badge.icon}</div>
+                      <div className="font-bold text-xs">{badge.name}</div>
+                      <div className="text-xs opacity-90 font-medium">{badge.description}</div>
+                    </div>
                 ))}
               </div>
             </div>
@@ -277,11 +277,11 @@ export function ExamResults({
             className="flex items-center justify-between w-full text-left"
           >
             <div className="flex items-center space-x-2">
-              <Target className="w-5 h-5 text-blue-600" />
-              <h3 className="text-lg font-bold text-gray-800">Question Review</h3>
+              <Target className="w-4 h-4 text-blue-600" />
+              <h3 className="text-base font-bold text-gray-800">Question Review</h3>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 font-medium">
                 {correctAnswers}/{totalQuestions} correct
               </span>
               {showQuestionReview ? 
@@ -354,20 +354,20 @@ export function ExamResults({
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Button 
           onClick={onClose} 
-          className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg flex items-center space-x-2"
+          className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg flex items-center space-x-2"
         >
-          <Trophy className="w-5 h-5" />
-          <span>Continue Learning</span>
+          <Trophy className="w-4 h-4" />
+          <span className="text-sm">Continue Learning</span>
         </Button>
         
         {onTryAgain && (
           <Button 
             onClick={onTryAgain} 
             variant="outline"
-            className="border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-3 px-6 rounded-lg flex items-center space-x-2"
+            className="border-blue-600 text-blue-600 hover:bg-blue-50 font-medium py-2 px-4 rounded-lg flex items-center space-x-2"
           >
-            <RefreshCw className="w-5 h-5" />
-            <span>Try Again</span>
+            <RefreshCw className="w-4 h-4" />
+            <span className="text-sm">Try Again</span>
           </Button>
         )}
       </div>
