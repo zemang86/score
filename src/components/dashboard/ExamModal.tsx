@@ -125,6 +125,109 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     return levelMap[currentLevel] || [currentLevel] // Fallback to current level if not found
   }
 
+  // Smart question selection that prioritizes fresh, newer questions
+  const getSmartQuestionSelection = async (
+    allowedLevels: string[], 
+    subject: string, 
+    questionTypes: string[], 
+    requiredCount: number
+  ) => {
+    // Step 1: Fetch all available questions for the criteria
+    const { data: allQuestions, error: questionsError } = await supabase
+      .from('questions')
+      .select('*')
+      .in('level', allowedLevels)
+      .eq('subject', subject)
+      .in('type', questionTypes)
+      .order('created_at', { ascending: false }) // Newest first
+
+    if (questionsError) throw questionsError
+
+    if (!allQuestions || allQuestions.length === 0) {
+      throw new Error(
+        `No questions available for ${subject} at levels: ${allowedLevels.join(', ')}.`
+      )
+    }
+
+    // Step 2: Get previously answered question IDs for this student
+    const { data: studentExams, error: examsError } = await supabase
+      .from('exams')
+      .select('question_ids')
+      .eq('student_id', student.id)
+      .eq('subject', subject)
+      .eq('completed', true)
+
+    if (examsError) throw examsError
+
+    // Extract all previously answered question IDs
+    const answeredQuestionIds = new Set<string>()
+    if (studentExams) {
+      studentExams.forEach((exam: any) => {
+        if (Array.isArray(exam.question_ids)) {
+          exam.question_ids.forEach((id: string) => answeredQuestionIds.add(id))
+        }
+      })
+    }
+
+    console.log(`Student ${student.name} has previously answered ${answeredQuestionIds.size} questions in ${subject}`)
+
+    // Step 3: Separate fresh questions from previously answered ones
+    const freshQuestions = allQuestions.filter((q: Question) => !answeredQuestionIds.has(q.id))
+    const answeredQuestions = allQuestions.filter((q: Question) => answeredQuestionIds.has(q.id))
+
+    console.log(`Found ${freshQuestions.length} fresh questions and ${answeredQuestions.length} previously answered questions`)
+
+    // Step 4: Smart selection strategy
+    let selectedQuestions: typeof allQuestions = []
+
+    if (freshQuestions.length >= requiredCount) {
+      // Enough fresh questions - prioritize newest with some randomization
+      const newestQuestions = freshQuestions.slice(0, Math.min(requiredCount * 2, freshQuestions.length))
+      const shuffledNewest = newestQuestions.sort(() => 0.5 - Math.random())
+      selectedQuestions = shuffledNewest.slice(0, requiredCount)
+      
+      console.log(`Selected ${selectedQuestions.length} fresh questions (newest first with randomization)`)
+    } else if (freshQuestions.length > 0) {
+      // Use all fresh questions + fill remainder with least recently answered
+      selectedQuestions = [...freshQuestions]
+      
+      // Sort previously answered questions by most recent exam date (oldest exams first for variety)
+      const questionsWithLastAnswered = answeredQuestions.map((question: Question) => {
+        let lastAnsweredDate = null
+        for (const exam of studentExams || []) {
+          if (Array.isArray(exam.question_ids) && exam.question_ids.includes(question.id)) {
+            lastAnsweredDate = exam.created_at
+            break // Get most recent exam that included this question
+          }
+        }
+        return { ...question, lastAnsweredDate }
+      })
+
+      questionsWithLastAnswered.sort((a: any, b: any) => {
+        if (!a.lastAnsweredDate) return -1
+        if (!b.lastAnsweredDate) return 1
+        return new Date(a.lastAnsweredDate).getTime() - new Date(b.lastAnsweredDate).getTime()
+      })
+
+      const needed = requiredCount - freshQuestions.length
+      const oldQuestions = questionsWithLastAnswered
+        .slice(0, needed)
+        .sort(() => 0.5 - Math.random()) // Randomize the old questions
+
+      selectedQuestions = selectedQuestions.concat(oldQuestions)
+      
+      console.log(`Selected ${freshQuestions.length} fresh + ${oldQuestions.length} previously answered questions`)
+    } else {
+      // No fresh questions available - use the most varied set of answered questions
+      const shuffledAnswered = answeredQuestions.sort(() => 0.5 - Math.random())
+      selectedQuestions = shuffledAnswered.slice(0, requiredCount)
+      
+      console.log(`No fresh questions available - selected ${selectedQuestions.length} from previously answered questions`)
+    }
+
+    return selectedQuestions
+  }
+
   const startExam = async () => {
     setLoading(true)
     setError('')
@@ -137,40 +240,35 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       
       console.log(`Student ${student.name} (${student.level}) can access questions from levels:`, allowedLevels)
       
-      // Fetch questions from database using the allowed levels
-      const { data: fetchedQuestions, error: fetchError } = await supabase
-        .from('questions')
-        .select('*')
-        .in('level', allowedLevels) // Use 'in' instead of 'eq' to fetch from multiple levels
-        .eq('subject', selectedSubject)
-        .in('type', config.types)
-        .limit(config.questionCount * 3) // Fetch more to ensure we have enough after filtering
+      // Use smart question selection instead of random selection
+      const selectedQuestions = await getSmartQuestionSelection(
+        allowedLevels,
+        selectedSubject,
+        config.types,
+        config.questionCount
+      )
 
-      if (fetchError) throw fetchError
-
-      if (!fetchedQuestions || fetchedQuestions.length < config.questionCount) {
-        // Provide more detailed error message showing which levels were searched
+      if (selectedQuestions.length < config.questionCount) {
         throw new Error(
           `Not enough questions available for ${selectedSubject} at levels: ${allowedLevels.join(', ')}. ` +
-          `Found ${fetchedQuestions?.length || 0} questions, need ${config.questionCount}.`
+          `Found ${selectedQuestions.length} questions, need ${config.questionCount}.`
         )
       }
-
-      // Randomize and select questions
-      const shuffled = fetchedQuestions.sort(() => 0.5 - Math.random())
-      const selectedQuestions = shuffled.slice(0, config.questionCount)
 
       console.log(`Selected ${selectedQuestions.length} questions from levels:`, 
         [...new Set(selectedQuestions.map(q => q.level))].join(', '))
 
-      setQuestions(selectedQuestions)
+      // Final shuffle to ensure the order isn't predictable
+      const finalQuestions = selectedQuestions.sort(() => 0.5 - Math.random())
+
+      setQuestions(finalQuestions)
       setTimeLeft(config.timeMinutes * 60) // Convert to seconds
       setStep('exam')
       setExamStarted(true)
       setCurrentQuestionIndex(0)
       
       // Initialize matching pairs for the first question if it's a matching type
-      initializeMatchingQuestion(selectedQuestions[0])
+      initializeMatchingQuestion(finalQuestions[0])
     } catch (err: any) {
       setError(err.message || 'Failed to start exam')
     } finally {
