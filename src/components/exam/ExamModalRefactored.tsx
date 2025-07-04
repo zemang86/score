@@ -262,6 +262,7 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
   }
 
   const nextQuestion = () => {
+    setError('') // Clear any previous errors
     if (currentQuestionIndex < questions.length - 1) {
       const nextIndex = currentQuestionIndex + 1
       setCurrentQuestionIndex(nextIndex)
@@ -273,6 +274,7 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
   }
 
   const previousQuestion = () => {
+    setError('') // Clear any previous errors
     if (currentQuestionIndex > 0) {
       const prevIndex = currentQuestionIndex - 1
       setCurrentQuestionIndex(prevIndex)
@@ -353,7 +355,8 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
       // Clear session storage
       sessionStorage.removeItem(`exam-state-${student.id}`)
     } catch (err: any) {
-      setError('Failed to save exam results')
+      console.error('Exam submission error:', err)
+      setError(`Failed to save exam results: ${err.message || 'Unknown error'}`)
     } finally {
       setLoading(false)
     }
@@ -441,6 +444,13 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
 
             {step === 'exam' && questions.length > 0 && (
               <div className="space-y-4">
+                {error && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                    <strong className="font-bold">Error: </strong>
+                    <span className="block sm:inline">{error}</span>
+                  </div>
+                )}
+                
                 <ExamProgressTracker 
                   questions={questions}
                   currentQuestionIndex={currentQuestionIndex}
@@ -492,9 +502,11 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
 
                         <Button
                           onClick={nextQuestion}
-                          className="flex-shrink-0 min-w-[100px] bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
+                          disabled={loading}
+                          className="flex-shrink-0 min-w-[100px] bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:opacity-50"
                         >
-                          {currentQuestionIndex === questions.length - 1 ? 'Submit Exam' : 'Next →'}
+                          {loading && currentQuestionIndex === questions.length - 1 ? 'Submitting...' : 
+                           currentQuestionIndex === questions.length - 1 ? 'Submit Exam' : 'Next →'}
                         </Button>
                       </div>
                     </div>
