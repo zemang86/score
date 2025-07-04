@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { X, BookOpen } from 'lucide-react'
+import { X, BookOpen, AlertCircle } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { ExamSetup, ExamTimer, ExamProgressTracker, ExamQuestionRenderer } from './index'
@@ -262,6 +262,38 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
     }
   }
 
+  // Get list of unanswered questions
+  const getUnansweredQuestions = () => {
+    return questions
+      .map((_, index) => ({ index, number: index + 1 }))
+      .filter(({ index }) => !isQuestionAnswered(index))
+  }
+
+  // Check for unanswered questions before submitting
+  const checkUnansweredQuestionsBeforeSubmit = () => {
+    const unanswered = getUnansweredQuestions()
+    if (unanswered.length > 0) {
+      setShowSubmitWarning(true)
+    } else {
+      finishExam()
+    }
+  }
+
+  // Proceed with submission despite unanswered questions
+  const proceedWithSubmit = () => {
+    setShowSubmitWarning(false)
+    finishExam()
+  }
+
+  // Go back to review unanswered questions
+  const reviewUnansweredQuestions = () => {
+    setShowSubmitWarning(false)
+    const unanswered = getUnansweredQuestions()
+    if (unanswered.length > 0) {
+      jumpToQuestion(unanswered[0].index)
+    }
+  }
+
   const nextQuestion = () => {
     setError('') // Clear any previous errors
     if (currentQuestionIndex < questions.length - 1) {
@@ -270,7 +302,7 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
       initializeMatchingQuestion(questions[nextIndex])
       setSelectedLeftItem(null)
     } else {
-      finishExam()
+      checkUnansweredQuestionsBeforeSubmit()
     }
   }
 
@@ -552,6 +584,61 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
           </div>
         </div>
       </div>
+
+      {/* Submit Warning Modal */}
+      {showSubmitWarning && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center mb-4">
+              <AlertCircle className="w-6 h-6 text-yellow-600 mr-3" />
+              <h3 className="text-lg font-bold text-gray-900">Unanswered Questions</h3>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-gray-700 mb-3">
+                You have {getUnansweredQuestions().length} unanswered question{getUnansweredQuestions().length !== 1 ? 's' : ''}:
+              </p>
+              
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                <div className="flex flex-wrap gap-2">
+                  {getUnansweredQuestions().map(({ index, number }) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setShowSubmitWarning(false)
+                        jumpToQuestion(index)
+                      }}
+                      className="px-2 py-1 bg-yellow-200 text-yellow-800 rounded font-medium text-sm hover:bg-yellow-300 transition-colors"
+                    >
+                      Question {number}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <p className="text-gray-600 text-sm">
+                You can either go back to review these questions or submit the exam as is.
+              </p>
+            </div>
+            
+            <div className="flex space-x-3">
+              <Button
+                variant="outline"
+                onClick={reviewUnansweredQuestions}
+                className="flex-1"
+              >
+                Review Questions
+              </Button>
+              <Button
+                onClick={proceedWithSubmit}
+                className="flex-1 bg-gradient-to-r from-red-500 to-red-600"
+              >
+                Submit Anyway
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

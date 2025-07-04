@@ -177,18 +177,27 @@ export function ExamResults({
   return (
     <div className="space-y-6">
       {/* Main Results Card */}
-      <div className={`relative rounded-2xl p-8 shadow-lg ${
+      <div className={`relative rounded-2xl p-8 shadow-lg transition-all duration-1000 ${
         examScore >= 80 ? 'bg-gradient-to-br from-green-50 to-emerald-50' :
         examScore >= 60 ? 'bg-gradient-to-br from-blue-50 to-sky-50' :
         'bg-gradient-to-br from-orange-50 to-red-50'
       } ${showCelebration ? 'animate-pulse' : ''}`}>
         
         {/* Gaming Message */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <div className="text-center mb-6 relative">
+          {showCelebration && examScore >= 90 && (
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-0 left-1/4 text-2xl animate-bounce" style={{ animationDelay: '0ms' }}>🎉</div>
+              <div className="absolute top-0 right-1/4 text-2xl animate-bounce" style={{ animationDelay: '200ms' }}>🎊</div>
+              <div className="absolute top-4 left-1/3 text-xl animate-bounce" style={{ animationDelay: '400ms' }}>⭐</div>
+              <div className="absolute top-4 right-1/3 text-xl animate-bounce" style={{ animationDelay: '600ms' }}>🏆</div>
+              <div className="absolute top-8 left-1/2 transform -translate-x-1/2 text-lg animate-bounce" style={{ animationDelay: '800ms' }}>🎯</div>
+            </div>
+          )}
+          <h2 className="text-2xl font-bold text-gray-800 mb-2 relative z-10">
             {getGamingMessage(animatedScore)}
           </h2>
-          <p className="text-gray-600">{getPerformanceMessage(animatedScore)}</p>
+          <p className="text-gray-600 relative z-10">{getPerformanceMessage(animatedScore)}</p>
         </div>
 
         {/* Score Display */}
@@ -242,8 +251,12 @@ export function ExamResults({
                 {earnedBadges.map((badge, index) => (
                   <div
                     key={index}
-                    className={`${badge.color} text-white rounded-lg p-3 shadow-md transform hover:scale-105 transition-all duration-200`}
-                    style={{ animationDelay: `${index * 200}ms` }}
+                    className={`${badge.color} text-white rounded-lg p-3 shadow-md transform hover:scale-105 transition-all duration-200 animate-fade-in-up`}
+                    style={{ 
+                      animationDelay: `${index * 200}ms`,
+                      opacity: showBadges ? 1 : 0,
+                      transform: showBadges ? 'translateY(0)' : 'translateY(20px)'
+                    }}
                   >
                     <div className="text-2xl mb-1">{badge.icon}</div>
                     <div className="font-bold text-sm">{badge.name}</div>
