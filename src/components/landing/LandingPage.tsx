@@ -127,45 +127,45 @@ export function LandingPage() {
             <RevealOnScroll animationType="slide-right" delay={100}>
               <EdventureLogo size="md" className="sm:scale-110" />
             </RevealOnScroll>
+            
             <RevealOnScroll animationType="slide-left" delay={200}>
               <div className="flex items-center space-x-2 sm:space-x-4">
-                {/* Language Switcher */}
-                <div className="flex items-center space-x-1 mr-2">
-                  <Globe className="w-4 h-4 text-slate-500" />
-                  <button 
-                    onClick={() => changeLanguage('en')} 
-                    className={`px-2 py-1 text-xs font-medium rounded-md ${
-                      i18n.language === 'en' 
-                        ? 'bg-indigo-100 text-indigo-700' 
-                        : 'text-slate-600 hover:bg-slate-100'
-                    }`}
-                  >
-                    EN
-                  </button>
-                  <button 
-                    onClick={() => changeLanguage('ms')} 
-                    className={`px-2 py-1 text-xs font-medium rounded-md ${
-                      i18n.language === 'ms' 
-                        ? 'bg-indigo-100 text-indigo-700' 
-                        : 'text-slate-600 hover:bg-slate-100'
-                    }`}
-                  >
-                    MS
-                  </button>
+                {/* Language Switcher - Optimized for Mobile */}
+                <div className="flex items-center space-x-1 sm:space-x-2">
+                  <Globe className="w-4 h-4 text-slate-500 hidden sm:block" />
+                  <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-lg border border-slate-200/50 p-1">
+                    <button 
+                      onClick={() => changeLanguage('en')} 
+                      className={`px-2 py-1 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 ${
+                        i18n.language === 'en' 
+                          ? 'bg-indigo-500 text-white shadow-sm' 
+                          : 'text-slate-600 hover:bg-slate-100'
+                      }`}
+                    >
+                      EN
+                    </button>
+                    <button 
+                      onClick={() => changeLanguage('ms')} 
+                      className={`px-2 py-1 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 ${
+                        i18n.language === 'ms' 
+                          ? 'bg-indigo-500 text-white shadow-sm' 
+                          : 'text-slate-600 hover:bg-slate-100'
+                      }`}
+                    >
+                      MS
+                    </button>
+                  </div>
                 </div>
                 
-                <Button 
-                  variant="ghost" 
-                  onClick={handleGetStarted} 
-                  className="text-slate-700 hover:text-indigo-600 font-medium px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-base"
-                >
-                  {t('nav.signIn')}
-                </Button>
+                {/* Get Started Button - Enhanced for Mobile */}
                 <Button 
                   onClick={handleGetStarted} 
                   variant="gradient-primary"
+                  size="sm"
+                  className="px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                 >
-                  {t('nav.getStarted')}
+                  <span className="hidden sm:inline">{t('nav.getStarted')}</span>
+                  <span className="sm:hidden">Start</span>
                 </Button>
               </div>
             </RevealOnScroll>
