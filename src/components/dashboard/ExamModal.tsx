@@ -1357,78 +1357,90 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                   </div>
                 )}
 
-                                 {/* Compact Gaming-Style Score Display */}
-                 <div className={`text-center p-4 rounded-2xl shadow-xl relative overflow-hidden ${
-                   examScore >= 90 ? 'bg-gradient-to-br from-yellow-100 via-orange-100 to-red-100 border-4 border-yellow-400' :
-                   examScore >= 80 ? 'bg-gradient-to-br from-green-100 via-emerald-100 to-teal-100 border-4 border-green-400' :
-                   examScore >= 70 ? 'bg-gradient-to-br from-blue-100 via-cyan-100 to-sky-100 border-4 border-blue-400' :
-                   examScore >= 60 ? 'bg-gradient-to-br from-purple-100 via-violet-100 to-indigo-100 border-4 border-purple-400' :
-                   'bg-gradient-to-br from-gray-100 via-slate-100 to-zinc-100 border-4 border-gray-400'
-                 } ${showCelebration ? 'animate-celebration-pulse' : ''}`}>
-                   
-                   {/* Gaming Message - Smaller */}
-                   <div className="text-lg font-bold mb-2 animate-slide-in">
-                     {getGamingMessage(examScore)}
-                   </div>
-                   
-                   {/* Animated Score Counter - Smaller */}
-                   <div className={`text-4xl sm:text-5xl font-black mb-3 animate-score-count-up ${getScoreColor(examScore)}`}>
-                     {animatedScore}%
-                   </div>
-                   
-                   {/* Star Rating - Smaller */}
-                   <div className="flex justify-center mb-3 space-x-1">
-                     {[...Array(5)].map((_, i) => (
-                       <Star
-                         key={i}
-                         className={`w-6 h-6 transition-all duration-300 ${
-                           i < getStarRating(examScore) 
-                             ? 'text-yellow-400 fill-current' 
-                             : 'text-gray-300'
-                         } ${showStars ? 'animate-star-pop' : ''}`}
-                         style={{ animationDelay: `${i * 0.1}s` }}
-                       />
-                     ))}
-                   </div>
-                   
-                   {/* Performance Stats - Smaller */}
-                   <div className="grid grid-cols-2 gap-3 mb-4">
-                     <div className="bg-white/80 backdrop-blur-sm rounded-lg p-2 shadow-lg">
-                       <div className="text-xs font-medium text-gray-600">Questions Correct</div>
-                       <div className="text-lg font-bold text-green-600">
-                         {questions.filter(q => q.isCorrect).length}/{questions.length}
-                       </div>
+                                                  {/* Two-Column Layout: Score + Achievements */}
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   {/* Left Column: Score Display */}
+                   <div className={`text-center p-4 rounded-2xl shadow-xl relative overflow-hidden ${
+                     examScore >= 90 ? 'bg-gradient-to-br from-yellow-100 via-orange-100 to-red-100 border-4 border-yellow-400' :
+                     examScore >= 80 ? 'bg-gradient-to-br from-green-100 via-emerald-100 to-teal-100 border-4 border-green-400' :
+                     examScore >= 70 ? 'bg-gradient-to-br from-blue-100 via-cyan-100 to-sky-100 border-4 border-blue-400' :
+                     examScore >= 60 ? 'bg-gradient-to-br from-purple-100 via-violet-100 to-indigo-100 border-4 border-purple-400' :
+                     'bg-gradient-to-br from-gray-100 via-slate-100 to-zinc-100 border-4 border-gray-400'
+                   } ${showCelebration ? 'animate-celebration-pulse' : ''}`}>
+                     
+                     {/* Gaming Message */}
+                     <div className="text-lg font-bold mb-2 animate-slide-in">
+                       {getGamingMessage(examScore)}
                      </div>
-                     <div className="bg-white/80 backdrop-blur-sm rounded-lg p-2 shadow-lg">
-                       <div className="text-xs font-medium text-gray-600">XP Earned</div>
-                       <div className="text-lg font-bold text-blue-600">
-                         +{getXPGained(questions.filter(q => q.isCorrect).length, examScore)}
-                       </div>
+                     
+                     {/* Animated Score Counter */}
+                     <div className={`text-4xl sm:text-5xl font-black mb-3 animate-score-count-up ${getScoreColor(examScore)}`}>
+                       {animatedScore}%
                      </div>
-                   </div>
-                 </div>
-
-                                 {/* Compact Achievement Badges - Horizontal */}
-                 {showBadges && earnedBadges.length > 0 && (
-                   <div className="bg-white rounded-xl p-4 shadow-xl border-2 border-yellow-200">
-                     <div className="text-center mb-3">
-                       <Trophy className="w-6 h-6 text-yellow-500 mx-auto mb-1" />
-                       <h3 className="text-lg font-bold text-gray-800">🎉 Achievements! 🎉</h3>
-                     </div>
-                     <div className="flex flex-wrap justify-center gap-2">
-                       {earnedBadges.map((badge, index) => (
-                         <div
-                           key={index}
-                           className={`${badge.color} text-white rounded-lg p-2 text-center shadow-lg animate-badge-bounce flex-shrink-0 w-20 min-w-[80px]`}
-                           style={{ animationDelay: `${index * 0.2}s` }}
-                         >
-                           <div className="text-lg mb-1">{badge.icon}</div>
-                           <div className="font-bold text-xs leading-tight">{badge.name}</div>
-                         </div>
+                     
+                     {/* Star Rating */}
+                     <div className="flex justify-center mb-3 space-x-1">
+                       {[...Array(5)].map((_, i) => (
+                         <Star
+                           key={i}
+                           className={`w-6 h-6 transition-all duration-300 ${
+                             i < getStarRating(examScore) 
+                               ? 'text-yellow-400 fill-current' 
+                               : 'text-gray-300'
+                           } ${showStars ? 'animate-star-pop' : ''}`}
+                           style={{ animationDelay: `${i * 0.1}s` }}
+                         />
                        ))}
                      </div>
+                     
+                     {/* Performance Stats */}
+                     <div className="grid grid-cols-2 gap-3">
+                       <div className="bg-white/80 backdrop-blur-sm rounded-lg p-2 shadow-lg">
+                         <div className="text-xs font-medium text-gray-600">Questions Correct</div>
+                         <div className="text-lg font-bold text-green-600">
+                           {questions.filter(q => q.isCorrect).length}/{questions.length}
+                         </div>
+                       </div>
+                       <div className="bg-white/80 backdrop-blur-sm rounded-lg p-2 shadow-lg">
+                         <div className="text-xs font-medium text-gray-600">XP Earned</div>
+                         <div className="text-lg font-bold text-blue-600">
+                           +{getXPGained(questions.filter(q => q.isCorrect).length, examScore)}
+                         </div>
+                       </div>
+                     </div>
                    </div>
-                 )}
+
+                                        {/* Right Column: Achievement Badges */}
+                     <div className="h-full">
+                       {showBadges && earnedBadges.length > 0 ? (
+                         <div className="bg-white rounded-xl p-4 shadow-xl border-2 border-yellow-200 h-full">
+                           <div className="text-center mb-3">
+                             <Trophy className="w-6 h-6 text-yellow-500 mx-auto mb-1" />
+                             <h3 className="text-lg font-bold text-gray-800">🎉 Achievements! 🎉</h3>
+                           </div>
+                           <div className="grid grid-cols-2 gap-2">
+                             {earnedBadges.map((badge, index) => (
+                               <div
+                                 key={index}
+                                 className={`${badge.color} text-white rounded-lg p-3 text-center shadow-lg animate-badge-bounce`}
+                                 style={{ animationDelay: `${index * 0.2}s` }}
+                               >
+                                 <div className="text-2xl mb-1">{badge.icon}</div>
+                                 <div className="font-bold text-xs leading-tight">{badge.name}</div>
+                               </div>
+                             ))}
+                           </div>
+                         </div>
+                       ) : (
+                         <div className="bg-white rounded-xl p-4 shadow-xl border-2 border-gray-200 h-full flex items-center justify-center">
+                           <div className="text-center text-gray-500">
+                             <Trophy className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                             <p className="text-sm">Complete more challenges<br />to earn achievements!</p>
+                           </div>
+                         </div>
+                       )}
+                     </div>
+                 </div>
 
                                  {/* Compact Next Challenge Prompt */}
                  <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl p-4 shadow-xl">
