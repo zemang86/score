@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Student, Question } from '../../lib/supabase'
 import { Button } from '../ui/Button'
-import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3, Lock, BookOpenCheck, XCircle } from 'lucide-react'
+import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3, Lock, BookOpenCheck, XCircle, MapPin } from 'lucide-react'
 import { checkShortAnswer } from '../../utils/answerChecker'
 
 interface ExamModalProps {
@@ -48,7 +48,8 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       examScore: 0,
       totalQuestions: 0,
       matchingPairs: [],
-      selectedLeftItem: null
+      selectedLeftItem: null,
+      showSubmitWarning: false
     }
   }
 
@@ -65,6 +66,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   const [error, setError] = useState('')
   const [examScore, setExamScore] = useState(initialState.examScore)
   const [totalQuestions, setTotalQuestions] = useState(initialState.totalQuestions)
+  const [showSubmitWarning, setShowSubmitWarning] = useState(initialState.showSubmitWarning)
   
   // Matching question state
   const [matchingPairs, setMatchingPairs] = useState<MatchingPair[]>(initialState.matchingPairs)
@@ -83,7 +85,8 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       examScore,
       totalQuestions,
       matchingPairs,
-      selectedLeftItem
+      selectedLeftItem,
+      showSubmitWarning
     }
     sessionStorage.setItem(`exam-state-${student.id}`, JSON.stringify(stateToSave))
   }
@@ -344,7 +347,8 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       initializeMatchingQuestion(questions[nextIndex])
       setSelectedLeftItem(null)
     } else {
-      finishExam()
+      // Check for unanswered questions before finishing
+      checkUnansweredQuestionsBeforeSubmit()
     }
   }
 
@@ -355,6 +359,181 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       initializeMatchingQuestion(questions[prevIndex])
       setSelectedLeftItem(null)
     }
+  }
+
+  // New function to jump to specific question
+  const jumpToQuestion = (questionIndex: number) => {
+    if (questionIndex >= 0 && questionIndex < questions.length) {
+      setCurrentQuestionIndex(questionIndex)
+      initializeMatchingQuestion(questions[questionIndex])
+      setSelectedLeftItem(null)
+    }
+  }
+
+  // Check if a question is answered
+  const isQuestionAnswered = (questionIndex: number) => {
+    const question = questions[questionIndex]
+    if (!question) return false
+
+    switch (question.type) {
+      case 'MCQ':
+      case 'ShortAnswer':
+      case 'Subjective':
+        return !!question.userAnswer && question.userAnswer !== ''
+      case 'Matching':
+        return Array.isArray(question.userAnswer) && question.userAnswer.length > 0
+      default:
+        return false
+    }
+  }
+
+  // Get list of unanswered questions
+  const getUnansweredQuestions = () => {
+    return questions
+      .map((_: ExamQuestion, index: number) => ({ index, number: index + 1 }))
+      .filter(({ index }: { index: number }) => !isQuestionAnswered(index))
+  }
+
+  // Check for unanswered questions before submitting
+  const checkUnansweredQuestionsBeforeSubmit = () => {
+    const unanswered = getUnansweredQuestions()
+    if (unanswered.length > 0) {
+      setShowSubmitWarning(true)
+    } else {
+      finishExam()
+    }
+  }
+
+  // Proceed with submission despite unanswered questions
+  const proceedWithSubmit = () => {
+    setShowSubmitWarning(false)
+    finishExam()
+  }
+
+  // Go back to review unanswered questions
+  const reviewUnansweredQuestions = () => {
+    setShowSubmitWarning(false)
+    const unanswered = getUnansweredQuestions()
+    if (unanswered.length > 0) {
+      jumpToQuestion(unanswered[0].index)
+    }
+  }
+
+  // Render the question progress tracker
+  const renderProgressTracker = () => {
+    if (questions.length === 0) return null
+
+    return (
+      <div className="bg-white border border-gray-200 rounded-lg p-3 mb-4">
+        <div className="flex items-center mb-2">
+          <Target className="w-4 h-4 text-blue-600 mr-2" />
+          <h4 className="text-sm font-semibold text-gray-700">Question Progress</h4>
+        </div>
+        <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+          {questions.map((_, index) => {
+            const isAnswered = isQuestionAnswered(index)
+            const isCurrent = index === currentQuestionIndex
+            
+            return (
+              <button
+                key={index}
+                onClick={() => jumpToQuestion(index)}
+                className={`
+                  w-8 h-8 rounded-lg border-2 text-xs font-bold transition-all duration-300 
+                  flex items-center justify-center
+                  ${isCurrent 
+                    ? 'border-blue-500 bg-blue-500 text-white shadow-md ring-2 ring-blue-200' 
+                    : isAnswered 
+                      ? 'border-green-400 bg-green-100 text-green-700 hover:bg-green-200' 
+                      : 'border-yellow-400 bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                  }
+                `}
+                title={`Question ${index + 1} - ${isAnswered ? 'Answered' : 'Unanswered'}`}
+              >
+                {index + 1}
+              </button>
+            )
+          })}
+        </div>
+        
+        {/* Legend */}
+        <div className="flex items-center justify-center mt-3 space-x-4 text-xs">
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-blue-500 rounded mr-1"></div>
+            <span className="text-gray-600">Current</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-green-100 border border-green-400 rounded mr-1"></div>
+            <span className="text-gray-600">Answered</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-yellow-100 border border-yellow-400 rounded mr-1"></div>
+            <span className="text-gray-600">Unanswered</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Render submit warning modal
+  const renderSubmitWarningModal = () => {
+    if (!showSubmitWarning) return null
+
+    const unanswered = getUnansweredQuestions()
+
+    return (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+        <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <div className="flex items-center mb-4">
+            <AlertCircle className="w-6 h-6 text-yellow-600 mr-3" />
+            <h3 className="text-lg font-bold text-gray-900">Unanswered Questions</h3>
+          </div>
+          
+          <div className="mb-4">
+            <p className="text-gray-700 mb-3">
+              You have {unanswered.length} unanswered question{unanswered.length !== 1 ? 's' : ''}:
+            </p>
+            
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+              <div className="flex flex-wrap gap-2">
+                {unanswered.map(({ index, number }) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setShowSubmitWarning(false)
+                      jumpToQuestion(index)
+                    }}
+                    className="px-2 py-1 bg-yellow-200 text-yellow-800 rounded font-medium text-sm hover:bg-yellow-300 transition-colors"
+                  >
+                    Question {number}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <p className="text-gray-600 text-sm">
+              You can either go back to review these questions or submit the exam as is.
+            </p>
+          </div>
+          
+          <div className="flex space-x-3">
+            <Button
+              variant="outline"
+              onClick={reviewUnansweredQuestions}
+              className="flex-1"
+            >
+              Review Questions
+            </Button>
+            <Button
+              onClick={proceedWithSubmit}
+              className="flex-1 bg-gradient-to-r from-red-500 to-red-600"
+            >
+              Submit Anyway
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const gradeQuestion = (question: ExamQuestion): boolean => {
@@ -520,7 +699,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     if (step === 'exam' && examStarted) {
       saveState()
     }
-  }, [step, selectedSubject, selectedMode, questions, currentQuestionIndex, timeLeft, examStarted, examScore, totalQuestions, matchingPairs, selectedLeftItem])
+  }, [step, selectedSubject, selectedMode, questions, currentQuestionIndex, timeLeft, examStarted, examScore, totalQuestions, matchingPairs, selectedLeftItem, showSubmitWarning])
 
   // Timer effect
   useEffect(() => {
@@ -548,6 +727,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     setTotalQuestions(0)
     setMatchingPairs([])
     setSelectedLeftItem(null)
+    setShowSubmitWarning(false)
     onClose()
   }
 
@@ -945,6 +1125,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
             {/* Exam Step */}
             {step === 'exam' && questions.length > 0 && (
               <div className="space-y-4">
+                {/* Question Progress Tracker */}
+                {renderProgressTracker()}
+
                 {questions[currentQuestionIndex] && (
                   <>
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -964,13 +1147,14 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                       >
                         ← Previous
                       </Button>
-                      <Button
-                        onClick={nextQuestion}
-                        disabled={!hasUserAnswer()}
-                        className="bg-gradient-to-r from-green-500 to-green-600 text-sm"
-                      >
-                        {currentQuestionIndex === questions.length - 1 ? 'Finish Exam' : 'Next →'}
-                      </Button>
+                      <div className="flex space-x-2">
+                        <Button
+                          onClick={nextQuestion}
+                          className="bg-gradient-to-r from-green-500 to-green-600 text-sm"
+                        >
+                          {currentQuestionIndex === questions.length - 1 ? 'Submit Exam' : 'Next →'}
+                        </Button>
+                      </div>
                     </div>
                   </>
                 )}
@@ -1101,6 +1285,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
             )}
           </div>
         </div>
+
+        {/* Submit Warning Modal */}
+        {renderSubmitWarningModal()}
       </div>
     </div>
   )
