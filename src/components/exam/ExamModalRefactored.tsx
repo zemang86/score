@@ -339,10 +339,8 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
           student_id: student.id,
           subject: selectedSubject,
           mode: selectedMode,
-          questions_count: questions.length,
-          correct_answers: correctAnswers,
+          total_questions: questions.length,
           score: score,
-          time_taken: getModeConfig(selectedMode).timeMinutes * 60 - timeLeft,
           question_ids: questions.map(q => q.id),
           completed: true
         })
