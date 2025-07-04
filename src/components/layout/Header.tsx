@@ -58,12 +58,12 @@ export function Header() {
           </button>
 
           <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Language Switcher - Mobile Optimized */}
-            <div className="flex items-center space-x-1 mr-1 sm:mr-2">
+            {/* Language Switcher - Landing Page Consistent */}
+            <div className="flex items-center space-x-1 mr-2">
               <Globe className="w-4 h-4 text-slate-500" />
               <button 
                 onClick={() => changeLanguage('en')} 
-                className={`px-2 py-1.5 text-xs font-medium rounded-lg touch-target ${
+                className={`px-2 py-1 text-xs font-medium rounded-md ${
                   currentLanguage === 'en' 
                     ? 'bg-indigo-100 text-indigo-700' 
                     : 'text-slate-600 hover:bg-slate-100'
@@ -73,7 +73,7 @@ export function Header() {
               </button>
               <button 
                 onClick={() => changeLanguage('ms')} 
-                className={`px-2 py-1.5 text-xs font-medium rounded-lg touch-target ${
+                className={`px-2 py-1 text-xs font-medium rounded-md ${
                   currentLanguage === 'ms' 
                     ? 'bg-indigo-100 text-indigo-700' 
                     : 'text-slate-600 hover:bg-slate-100'
@@ -111,8 +111,8 @@ export function Header() {
               )}
             </div>
 
-            {/* Navigation Buttons - Mobile Optimized */}
-            {user && !isAdminPage && (
+            {/* Navigation Buttons - Admin Only */}
+            {user && !isAdminPage && isAdmin && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -124,15 +124,15 @@ export function Header() {
               </Button>
             )}
             
-            {/* Sign Out Button - Mobile Optimized */}
+            {/* Sign Out Button - Smaller Size */}
             <Button
               variant="error"
               size="sm"
               onClick={handleSignOut}
-              icon={<LogOut className="w-4 h-4" />}
-              className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 touch-target rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+              icon={<LogOut className="w-3 h-3" />}
+              className="bg-red-500 hover:bg-red-600 text-white px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 text-xs"
             >
-              <span className="hidden sm:inline">Sign Out</span>
+              <span className="hidden sm:inline text-xs">Sign Out</span>
             </Button>
           </div>
         </div>
