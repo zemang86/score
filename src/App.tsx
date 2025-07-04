@@ -1,12 +1,12 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { OptimizedAuthProvider as AuthProvider, useAuth } from './contexts/OptimizedAuthContext'
 
 // Regular imports instead of lazy loading to prevent tab switching issues
 import { LandingPage } from './components/landing/LandingPage'
 import { AuthPage } from './components/auth/AuthPage'
 import { AdminLoginPage } from './components/admin/AdminLoginPage'
-import { ParentDashboard } from './components/dashboard/ParentDashboard'
+import { ParentDashboardOptimized as ParentDashboard } from './components/dashboard/ParentDashboardOptimized'
 import { AdminDashboard } from './components/admin/AdminDashboard'
 
 // Simplified loading component

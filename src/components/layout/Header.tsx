@@ -1,5 +1,5 @@
 import React from 'react'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { Button } from '../ui/Button'
 import { LogOut, User, Crown, BarChart3, Home, Globe } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'

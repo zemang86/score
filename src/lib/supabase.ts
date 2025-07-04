@@ -18,9 +18,7 @@ try {
   throw new Error('Invalid Supabase URL format. Please check your VITE_SUPABASE_URL in .env file.')
 }
 
-console.log('🔧 Supabase Configuration:')
-console.log('URL:', supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : 'Missing')
-console.log('Anon Key:', supabaseAnonKey ? `${supabaseAnonKey.substring(0, 20)}...` : 'Missing')
+// Production: Configuration logging removed
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -42,11 +40,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 
 // Enhanced connection test with detailed error reporting
 const testSupabaseConnection = async () => {
-  console.log('🧪 Testing Supabase connection...')
-  
   try {
     // Test 1: Basic connection
-    console.log('📡 Test 1: Basic connection test')
     const { data, error } = await Promise.race([
       supabase.from('users').select('count').limit(1),
       new Promise((_, reject) => 
@@ -55,58 +50,19 @@ const testSupabaseConnection = async () => {
     ]) as any
 
     if (error) {
-      console.error('❌ Basic connection test failed:', error)
-      console.error('Error details:', {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-        hint: error.hint
-      })
       return { success: false, error: error.message }
     }
 
-    console.log('✅ Basic connection test successful')
-
     // Test 2: Auth session
-    console.log('📡 Test 2: Auth session test')
-    const { data: session, error: sessionError } = await supabase.auth.getSession()
+    await supabase.auth.getSession()
     
-    if (sessionError) {
-      console.warn('⚠️ Auth session test warning:', sessionError)
-    } else {
-      console.log('✅ Auth session test completed')
-      console.log('Session status:', session.session ? 'Active session found' : 'No active session')
-    }
-
     return { success: true }
   } catch (error: any) {
-    console.error('❌ Connection test failed with error:', error)
-    
-    if (error.message === 'Connection timeout') {
-      console.error('💥 Connection timed out - possible network or configuration issue')
-    } else if (error.message?.includes('fetch')) {
-      console.error('💥 Network fetch error - check internet connection and Supabase URL')
-    }
-    
     return { success: false, error: error.message }
   }
 }
 
-// Test connection on initialization
-testSupabaseConnection().then(result => {
-  if (result.success) {
-    console.log('🎉 Supabase database is ready!')
-  } else {
-    console.error('💥 Supabase database connection failed:', result.error)
-    console.error('🔧 Please check:')
-    console.error('  1. Your internet connection')
-    console.error('  2. VITE_SUPABASE_URL in .env file')
-    console.error('  3. VITE_SUPABASE_ANON_KEY in .env file')
-    console.error('  4. Your Supabase project is active')
-  }
-}).catch(err => {
-  console.error('❌ Failed to test Supabase connection:', err)
-})
+// Test connection on initialization (logging removed for production)
 
 // Database types
 export interface User {
@@ -197,15 +153,11 @@ export interface Admin {
 
 // Helper function to fetch complete user profile including admin status
 export const fetchUserProfile = async (userId: string): Promise<UserWithAdminStatus | null> => {
-  console.log('🔍 fetchUserProfile: Starting profile fetch for user:', userId)
-  
   if (!userId) {
-    console.log('❌ fetchUserProfile: No userId provided')
     return null
   }
   
   try {
-    console.log('📡 fetchUserProfile: Making database queries')
     
     // Add timeout to prevent hanging - 15 seconds
     const timeoutPromise = new Promise<never>((_, reject) => {
@@ -231,58 +183,39 @@ export const fetchUserProfile = async (userId: string): Promise<UserWithAdminSta
         timeoutPromise
       ])
 
-      console.log('📡 fetchUserProfile: Database queries completed')
-
       if (userResult.error) {
-        console.error('❌ fetchUserProfile: User query error:', userResult.error)
-        
         if (userResult.error.code === 'PGRST116') {
-          console.log('⚠️ fetchUserProfile: User profile not found')
           return null
         }
-        
         return null
       }
 
-      console.log('✅ fetchUserProfile: User data retrieved')
-
       const isAdmin = !adminResult.error && !!adminResult.data
-      
-      console.log('✅ fetchUserProfile: Admin check completed, isAdmin:', isAdmin)
       
       const finalProfile = {
         ...userResult.data as User,
         isAdmin
       }
       
-      console.log('✅ fetchUserProfile: Final profile object being returned')
-      
       return finalProfile
     } catch (raceError) {
       if (raceError instanceof Error && raceError.message === 'Query timeout') {
-        console.error('❌ fetchUserProfile: Query timed out')
         return null
       }
       throw raceError
     }
   } catch (error) {
-    console.error('❌ fetchUserProfile: Unexpected error:', error)
     return null
   }
 }
 
 // Helper function to check if user is admin
 export const checkIsAdmin = async (userId: string): Promise<boolean> => {
-  console.log('🔍 checkIsAdmin: Starting admin check for user:', userId)
-  
   if (!userId) {
-    console.log('❌ checkIsAdmin: No userId provided')
     return false
   }
   
   try {
-    console.log('📡 checkIsAdmin: Making database query to admins table')
-    
     // Add timeout - 15 seconds
     const timeoutPromise = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error('Query timeout')), 15000)
@@ -298,28 +231,21 @@ export const checkIsAdmin = async (userId: string): Promise<boolean> => {
       const result = await Promise.race([queryPromise, timeoutPromise])
       const { data, error } = result
 
-      console.log('📡 checkIsAdmin: Database query completed')
-
       const isAdmin = !error && !!data
-      console.log('✅ checkIsAdmin: Admin status determined:', isAdmin)
       return isAdmin
     } catch (raceError) {
       if (raceError instanceof Error && raceError.message === 'Query timeout') {
-        console.error('❌ checkIsAdmin: Query timed out')
         return false
       }
       throw raceError
     }
   } catch (error) {
-    console.error('❌ checkIsAdmin: Unexpected error:', error)
     return false
   }
 }
 
 // Helper function to make a user an admin
 export const makeUserAdmin = async (userId: string): Promise<{ success: boolean; error?: string }> => {
-  console.log('👑 makeUserAdmin: Making user admin:', userId)
-  
   if (!userId) {
     return { success: false, error: 'No userId provided' }
   }
@@ -330,22 +256,17 @@ export const makeUserAdmin = async (userId: string): Promise<{ success: boolean;
       .insert([{ id: userId }])
     
     if (error) {
-      console.error('❌ makeUserAdmin: Error:', error)
       return { success: false, error: error.message }
     }
     
-    console.log('✅ makeUserAdmin: User successfully made admin')
     return { success: true }
   } catch (error) {
-    console.error('❌ makeUserAdmin: Unexpected error:', error)
     return { success: false, error: 'Unexpected error occurred' }
   }
 }
 
 // Helper function to remove admin status from a user
 export const removeUserAdmin = async (userId: string): Promise<{ success: boolean; error?: string }> => {
-  console.log('👑 removeUserAdmin: Removing admin status from user:', userId)
-  
   if (!userId) {
     return { success: false, error: 'No userId provided' }
   }
@@ -357,22 +278,17 @@ export const removeUserAdmin = async (userId: string): Promise<{ success: boolea
       .eq('id', userId)
     
     if (error) {
-      console.error('❌ removeUserAdmin: Error:', error)
       return { success: false, error: error.message }
     }
     
-    console.log('✅ removeUserAdmin: Admin status successfully removed')
     return { success: true }
   } catch (error) {
-    console.error('❌ removeUserAdmin: Unexpected error:', error)
     return { success: false, error: 'Unexpected error occurred' }
   }
 }
 
 // Test database connection
 export const testDatabaseConnection = async (): Promise<{ success: boolean; error?: string }> => {
-  console.log('🧪 Testing database connection...')
-  
   try {
     // Test basic query with timeout
     const { data, error } = await Promise.race([
@@ -383,15 +299,11 @@ export const testDatabaseConnection = async (): Promise<{ success: boolean; erro
     ]) as any
     
     if (error) {
-      console.error('❌ Database connection test failed:', error)
       return { success: false, error: error.message }
     }
     
-    console.log('✅ Database connection test successful')
     return { success: true }
   } catch (error: any) {
-    console.error('❌ Database connection test error:', error)
-    
     if (error.message === 'Connection timeout') {
       return { success: false, error: 'Connection timeout - please check your network and Supabase configuration' }
     }
@@ -423,11 +335,4 @@ export const handleSupabaseError = (error: any, operation: string) => {
   return error.message || `${operation} failed. Please try again.`
 }
 
-// Initialize connection test
-testSupabaseConnection().then(result => {
-  if (result.success) {
-    console.log('🎉 Supabase database is ready!')
-  } else {
-    console.error('💥 Supabase database connection failed:', result.error)
-  }
-})
+// Initialize connection test (logging removed for production)

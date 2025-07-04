@@ -1,6 +1,6 @@
 // DEMONSTRATION: ParentDashboard with Database Optimization
 import React, { useState } from 'react'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { useDashboardData } from '../../hooks/useDashboardData'
 
 // Import all existing components
