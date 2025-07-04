@@ -154,6 +154,52 @@
   }
 }
 
+/* Gaming-specific animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.6);
+  }
+}
+
+@keyframes championship-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(251, 191, 36, 0.8), 0 0 35px rgba(251, 191, 36, 0.6);
+  }
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes rotate-border {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hover-scale {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.02);
+  }
+}
+
 /* Utility classes for different animation types */
 .animate-fade-in-up {
   animation: fadeInUp 0.8s ease-out forwards;
@@ -169,4 +215,91 @@
 
 .animate-scale-in-bounce {
   animation: scaleInBounce 0.9s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Gaming animation utilities */
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-championship-glow {
+  animation: championship-glow 3s ease-in-out infinite;
+}
+
+.animate-gentle-pulse {
+  animation: gentle-pulse 3s ease-in-out infinite;
+}
+
+.animate-rotate-border {
+  animation: rotate-border 8s linear infinite;
+}
+
+.hover\:scale-102:hover {
+  transform: scale(1.02);
+}
+
+.hover\:scale-105:hover {
+  transform: scale(1.05);
+}
+
+/* Gaming-specific hover effects */
+.gaming-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gaming-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Competitive spirit animations */
+.battle-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.battle-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.battle-card:hover::before {
+  left: 100%;
+}
+
+/* Podium spotlight effect */
+.podium-spotlight {
+  position: relative;
+}
+
+.podium-spotlight::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: rotate-border 10s linear infinite;
+  pointer-events: none;
+}
+
+/* Championship crown animation */
+.crown-float {
+  animation: crown-float 4s ease-in-out infinite;
+}
+
+@keyframes crown-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
