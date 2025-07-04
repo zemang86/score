@@ -1,27 +1,34 @@
 // Answer checker utility for short answer questions
 import { OpenAI } from "openai";
 
+export interface CheckResult {
+  result: "correct" | "incorrect" | "unknown";
+  method: "exact" | "fuzzy" | "ai" | "validation" | "none" | "error";
+  reason: string;
+}
+
+export interface CheckOptions {
+  fuzzyThreshold?: number;
+  openaiApiKey?: string;
+  openaiModel?: string;
+}
+
 /**
  * Normalizes text by removing punctuation, converting to lowercase, and standardizing whitespace
- * @param {string} text - The text to normalize
- * @returns {string} - Normalized text
  */
-export function normalize(text) {
+export function normalize(text: string): string {
   if (!text) return "";
   return text.trim().toLowerCase().replace(/[^\w\s]|_/g, "").replace(/\s+/g, " ");
 }
 
 /**
  * Calculates Levenshtein distance between two strings for fuzzy matching
- * @param {string} a - First string
- * @param {string} b - Second string
- * @returns {number} - The edit distance between the strings
  */
-export function levenshtein(a, b) {
+export function levenshtein(a: string, b: string): number {
   if (a.length === 0) return b.length;
   if (b.length === 0) return a.length;
   
-  const matrix = [];
+  const matrix: number[][] = [];
   
   // Initialize matrix
   for (let i = 0; i <= b.length; i++) matrix[i] = [i];
@@ -50,16 +57,12 @@ export function levenshtein(a, b) {
 /**
  * Main function to check if a student's short answer is correct
  * Uses a three-step approach: exact match, fuzzy match, and AI-based checking
- * 
- * @param {string} studentAnswer - The student's answer to check
- * @param {string} correctAnswer - The correct answer to compare against
- * @param {Object} options - Optional configuration
- * @param {number} options.fuzzyThreshold - Maximum Levenshtein distance for fuzzy matching (default: 2)
- * @param {string} options.openaiApiKey - OpenAI API key (required for AI checking)
- * @param {string} options.openaiModel - OpenAI model to use (default: "gpt-4o-mini")
- * @returns {Promise<Object>} - Result object with { result, method, reason }
  */
-export async function checkShortAnswer(studentAnswer, correctAnswer, options = {}) {
+export async function checkShortAnswer(
+  studentAnswer: string, 
+  correctAnswer: string, 
+  options: CheckOptions = {}
+): Promise<CheckResult> {
   // Default options
   const {
     fuzzyThreshold = 2,
@@ -132,7 +135,7 @@ Return only "correct" or "incorrect" and a one-sentence reason.
     });
 
     // Parse the AI output
-    const text = completion.choices[0].message.content.toLowerCase();
+    const text = completion.choices[0]?.message?.content?.toLowerCase() || "";
     const isCorrect = text.includes("correct");
     
     // Extract reason (everything after the first space)
@@ -143,8 +146,7 @@ Return only "correct" or "incorrect" and a one-sentence reason.
       method: "ai", 
       reason 
     };
-  } catch (error) {
-    console.error("Error during AI check:", error);
+  } catch (error: any) {
     return { 
       result: "unknown", 
       method: "error",
@@ -152,17 +154,3 @@ Return only "correct" or "incorrect" and a one-sentence reason.
     };
   }
 }
-
-/**
- * Example usage:
- * 
- * // With environment variable OPENAI_API_KEY set
- * const result = await checkShortAnswer("fotosintesis", "Photosynthesis");
- * console.log(result);
- * 
- * // With explicit API key
- * const result = await checkShortAnswer("fotosintesis", "Photosynthesis", {
- *   openaiApiKey: "your-api-key-here"
- * });
- * console.log(result);
- */
