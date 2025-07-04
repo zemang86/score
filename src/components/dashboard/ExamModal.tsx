@@ -1358,7 +1358,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                 )}
 
                                                   {/* Two-Column Layout: Score + Achievements */}
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                    {/* Left Column: Score Display */}
                    <div className={`text-center p-4 rounded-2xl shadow-xl relative overflow-hidden ${
                      examScore >= 90 ? 'bg-gradient-to-br from-yellow-100 via-orange-100 to-red-100 border-4 border-yellow-400' :
@@ -1413,29 +1413,29 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                                         {/* Right Column: Achievement Badges */}
                      <div className="h-full">
                        {showBadges && earnedBadges.length > 0 ? (
-                         <div className="bg-white rounded-xl p-4 shadow-xl border-2 border-yellow-200 h-full">
-                           <div className="text-center mb-3">
-                             <Trophy className="w-6 h-6 text-yellow-500 mx-auto mb-1" />
-                             <h3 className="text-lg font-bold text-gray-800">🎉 Achievements! 🎉</h3>
+                                                    <div className="bg-white rounded-xl p-3 sm:p-4 shadow-xl border-2 border-yellow-200 h-full">
+                           <div className="text-center mb-2 sm:mb-3">
+                             <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 mx-auto mb-1" />
+                             <h3 className="text-base sm:text-lg font-bold text-gray-800">🎉 Achievements! 🎉</h3>
                            </div>
-                           <div className="grid grid-cols-2 gap-2">
+                           <div className="grid grid-cols-3 sm:grid-cols-2 gap-1.5 sm:gap-2 max-h-32 sm:max-h-none overflow-y-auto">
                              {earnedBadges.map((badge, index) => (
                                <div
                                  key={index}
-                                 className={`${badge.color} text-white rounded-lg p-3 text-center shadow-lg animate-badge-bounce`}
+                                 className={`${badge.color} text-white rounded-lg p-2 sm:p-3 text-center shadow-lg animate-badge-bounce`}
                                  style={{ animationDelay: `${index * 0.2}s` }}
                                >
-                                 <div className="text-2xl mb-1">{badge.icon}</div>
-                                 <div className="font-bold text-xs leading-tight">{badge.name}</div>
+                                 <div className="text-lg sm:text-2xl mb-0.5 sm:mb-1">{badge.icon}</div>
+                                 <div className="font-bold text-[10px] sm:text-xs leading-tight">{badge.name}</div>
                                </div>
                              ))}
                            </div>
                          </div>
                        ) : (
-                         <div className="bg-white rounded-xl p-4 shadow-xl border-2 border-gray-200 h-full flex items-center justify-center">
+                         <div className="bg-white rounded-xl p-3 sm:p-4 shadow-xl border-2 border-gray-200 h-full flex items-center justify-center">
                            <div className="text-center text-gray-500">
-                             <Trophy className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                             <p className="text-sm">Complete more challenges<br />to earn achievements!</p>
+                             <Trophy className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2 opacity-50" />
+                             <p className="text-xs sm:text-sm">Complete more challenges<br />to earn achievements!</p>
                            </div>
                          </div>
                        )}
@@ -1455,7 +1455,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                      </p>
                      <Button
                        onClick={handleResultsComplete}
-                       className="bg-white text-blue-600 hover:bg-blue-50 font-bold py-2 px-4 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+                       className="bg-white text-blue-700 hover:bg-blue-50 hover:text-blue-800 font-bold py-2 px-4 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 border-2 border-white"
                        size="sm"
                      >
                        Continue Adventure! 🎮
