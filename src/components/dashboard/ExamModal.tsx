@@ -1116,7 +1116,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
           <div className="p-3 sm:p-4">
             {/* Gaming-Enhanced Setup Step */}
             {step === 'setup' && (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {error && (
                   <div className="bg-red-50 border-2 border-red-200 rounded-lg p-3 animate-slide-in">
                     <div className="flex items-center">
@@ -1126,109 +1126,108 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                   </div>
                 )}
 
-                {/* Student Gaming Profile Card */}
-                <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl p-4 text-white shadow-lg animate-slide-in">
-                  <div className="flex items-center justify-between mb-3">
+                {/* Compact Student Gaming Profile Card */}
+                <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl p-3 text-white shadow-lg animate-slide-in">
+                  <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center">
-                      <div className="bg-white/20 backdrop-blur-sm rounded-full p-2 mr-3">
-                        <Star className="w-6 h-6 text-yellow-300" />
+                      <div className="bg-white/20 backdrop-blur-sm rounded-full p-1.5 mr-3">
+                        <Star className="w-5 h-5 text-yellow-300" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-lg">{student.name}</h3>
-                        <p className="text-sm opacity-90">{student.level} • {student.school}</p>
+                        <h3 className="font-bold text-base">{student.name}</h3>
+                        <p className="text-xs opacity-90">{student.level} • {student.school}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm opacity-90">Total XP</div>
-                      <div className="text-xl font-bold">{student.xp}</div>
+                      <div className="text-xs opacity-90">Total XP</div>
+                      <div className="text-lg font-bold">{student.xp}</div>
                     </div>
                   </div>
                   
                   {/* XP Progress Bar */}
-                  <div className="mb-2">
+                  <div>
                     <div className="flex justify-between text-xs opacity-90 mb-1">
                       <span>Level Progress</span>
                       <span>{Math.min(student.xp % 100, 99)}/100 XP</span>
                     </div>
-                    <div className="w-full bg-white/20 rounded-full h-2">
+                    <div className="w-full bg-white/20 rounded-full h-1.5">
                       <div 
-                        className="bg-yellow-300 h-2 rounded-full transition-all duration-1000 animate-pulse-glow"
+                        className="bg-yellow-300 h-1.5 rounded-full transition-all duration-1000 animate-pulse-glow"
                         style={{ width: `${Math.min((student.xp % 100), 99)}%` }}
                       ></div>
                     </div>
                   </div>
                 </div>
 
-                {/* Success Criteria */}
-                <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl p-4 shadow-lg">
-                  <div className="flex items-center mb-3">
-                    <div className="bg-white/20 rounded-lg p-2 mr-3">
-                      <Target className="w-5 h-5 text-white" />
+                {/* Compact Success Criteria */}
+                <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg p-3 shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Target className="w-4 h-4 text-white mr-2" />
+                      <h3 className="text-sm font-bold">Success Targets</h3>
                     </div>
-                    <h3 className="text-lg font-bold">✅ Success Criteria</h3>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="bg-white/20 rounded-lg p-3 text-center">
-                      <div className="text-2xl font-bold">70%+</div>
-                      <div className="text-xs opacity-90">Good Performance</div>
-                    </div>
-                    <div className="bg-white/20 rounded-lg p-3 text-center">
-                      <div className="text-2xl font-bold">90%+</div>
-                      <div className="text-xs opacity-90">Excellent Achievement</div>
-                    </div>
-                    <div className="bg-white/20 rounded-lg p-3 text-center">
-                      <div className="text-2xl font-bold">100%</div>
-                      <div className="text-xs opacity-90">Perfect Score</div>
+                    <div className="flex items-center space-x-4 text-xs">
+                      <div className="text-center">
+                        <div className="font-bold">70%+</div>
+                        <div className="opacity-75">Good</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold">90%+</div>
+                        <div className="opacity-75">Excellent</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold">100%</div>
+                        <div className="opacity-75">Perfect</div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Gaming-Style Subject Selection */}
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                    <BookOpen className="w-4 h-4 mr-2" />
-                    Choose Subject Domain
-                  </label>
-                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+                                 {/* Gaming-Style Subject Selection */}
+                 <div>
+                   <label className="block text-sm font-bold text-gray-700 mb-2.5 flex items-center">
+                     <BookOpen className="w-4 h-4 mr-2" />
+                     Choose Subject Domain
+                   </label>
+                                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
                      {subjects.map((subject) => (
                        <button
                          key={subject}
                          onClick={() => setSelectedSubject(subject)}
-                         className={`group p-3 sm:p-4 rounded-xl border-2 font-medium transition-all duration-300 text-xs sm:text-sm transform hover:scale-105 hover:shadow-lg min-h-[80px] sm:min-h-[90px] touch-target ${
+                         className={`group p-2 sm:p-3 rounded-xl border-2 font-medium transition-all duration-300 text-xs sm:text-sm transform hover:scale-105 hover:shadow-lg min-h-[70px] sm:min-h-[80px] touch-target ${
                            selectedSubject === subject
                              ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white border-blue-700 shadow-lg animate-pulse-glow'
                              : 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50 hover:border-blue-400'
                          }`}
                        >
                          <div className="flex flex-col items-center justify-center h-full">
-                           <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full mb-1 sm:mb-2 flex items-center justify-center ${
+                           <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full mb-1 flex items-center justify-center ${
                              selectedSubject === subject ? 'bg-white/20' : 'bg-blue-100'
                            }`}>
-                             {subject === 'Mathematics' && <span className="text-sm sm:text-lg">🧮</span>}
-                             {subject === 'English' && <span className="text-sm sm:text-lg">📚</span>}
-                             {subject === 'Science' && <span className="text-sm sm:text-lg">🧪</span>}
-                             {subject === 'Bahasa Melayu' && <span className="text-sm sm:text-lg">🗣️</span>}
-                             {subject === 'History' && <span className="text-sm sm:text-lg">🏛️</span>}
+                             {subject === 'Mathematics' && <span className="text-sm sm:text-base">🧮</span>}
+                             {subject === 'English' && <span className="text-sm sm:text-base">📚</span>}
+                             {subject === 'Science' && <span className="text-sm sm:text-base">🧪</span>}
+                             {subject === 'Bahasa Melayu' && <span className="text-sm sm:text-base">🗣️</span>}
+                             {subject === 'History' && <span className="text-sm sm:text-base">🏛️</span>}
                            </div>
-                           <span className="text-center leading-tight">{subject}</span>
+                           <span className="text-center leading-tight text-xs sm:text-sm">{subject}</span>
                          </div>
                        </button>
                      ))}
                    </div>
                 </div>
 
-                {/* Gaming-Style Difficulty Selection */}
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                    <Target className="w-4 h-4 mr-2" />
-                    Choose Difficulty Level
-                  </label>
-                  <div className="space-y-3">
+                                 {/* Gaming-Style Difficulty Selection */}
+                 <div>
+                   <label className="block text-sm font-bold text-gray-700 mb-2.5 flex items-center">
+                     <Target className="w-4 h-4 mr-2" />
+                     Choose Difficulty Level
+                   </label>
+                   <div className="space-y-2.5">
                                          {/* Easy Mode - Enhanced Gaming Style */}
                      <button
                        onClick={() => setSelectedMode('Easy')}
-                       className={`group w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-102 hover:shadow-lg min-h-[64px] sm:min-h-[80px] touch-target ${
+                       className={`group w-full p-3 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-102 hover:shadow-lg min-h-[60px] sm:min-h-[70px] touch-target ${
                          selectedMode === 'Easy'
                            ? 'bg-gradient-to-r from-green-500 to-green-600 text-white border-green-700 shadow-lg animate-pulse-glow'
                            : 'bg-white text-green-600 border-green-300 hover:bg-green-50 hover:border-green-400'
@@ -1262,7 +1261,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                      <div className="relative">
                        <button
                          disabled={true}
-                         className="group w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-60 min-h-[64px] sm:min-h-[80px]"
+                         className="group w-full p-3 rounded-xl border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-60 min-h-[60px] sm:min-h-[70px]"
                        >
                          <div className="flex items-center justify-between h-full">
                            <div className="flex items-center flex-1">
@@ -1291,7 +1290,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                      <div className="relative">
                        <button
                          disabled={true}
-                         className="group w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-60 min-h-[64px] sm:min-h-[80px]"
+                         className="group w-full p-3 rounded-xl border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-60 min-h-[60px] sm:min-h-[70px]"
                        >
                          <div className="flex items-center justify-between h-full">
                            <div className="flex items-center flex-1">
@@ -1319,18 +1318,18 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                 </div>
 
                 {/* Gaming-Enhanced Action Buttons - Mobile Optimized */}
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-3">
                   <Button
                     variant="outline"
                     onClick={handleModalClose}
-                    className="w-full sm:flex-1 py-3 sm:py-2 text-sm sm:text-base border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 min-h-[44px] touch-target"
+                    className="w-full sm:flex-1 py-2.5 sm:py-2 text-sm sm:text-base border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 min-h-[44px] touch-target"
                     disabled={loading}
                   >
                     Cancel Mission
                   </Button>
                   <Button
                     onClick={startExam}
-                    className="w-full sm:flex-1 py-3 sm:py-2 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 hover:from-orange-600 hover:via-red-600 hover:to-pink-600 text-white font-bold text-sm sm:text-base transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl animate-pulse-glow min-h-[44px] touch-target"
+                    className="w-full sm:flex-1 py-2.5 sm:py-2 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 hover:from-orange-600 hover:via-red-600 hover:to-pink-600 text-white font-bold text-sm sm:text-base transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl animate-pulse-glow min-h-[44px] touch-target"
                     disabled={loading}
                     loading={loading}
                     icon={!loading ? <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> : undefined}
