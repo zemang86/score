@@ -1114,11 +1114,11 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-3 sm:p-4">
-            {/* Setup Step */}
+            {/* Gaming-Enhanced Setup Step */}
             {step === 'setup' && (
               <div className="space-y-4">
                 {error && (
-                  <div className="bg-red-50 border-2 border-red-200 rounded-lg p-3">
+                  <div className="bg-red-50 border-2 border-red-200 rounded-lg p-3 animate-slide-in">
                     <div className="flex items-center">
                       <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
                       <p className="text-red-700 font-medium text-sm">{error}</p>
@@ -1126,133 +1126,235 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                   </div>
                 )}
 
-                {/* Level Information - Compact */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <h3 className="text-sm font-semibold text-blue-800 mb-2">Smart Question Selection</h3>
-                  <p className="text-xs text-blue-700 mb-2">
-                    Based on your level ({student.level}), you'll receive questions from:
-                  </p>
-                  <div className="flex flex-wrap gap-1">
-                    {getAllowedLevels(student.level).map((level, index) => (
-                      <span key={index} className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-200 text-blue-800">
-                        {level}
-                      </span>
-                    ))}
+                {/* Student Gaming Profile Card */}
+                <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl p-4 text-white shadow-lg animate-slide-in">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-full p-2 mr-3">
+                        <Star className="w-6 h-6 text-yellow-300" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg">{student.name}</h3>
+                        <p className="text-sm opacity-90">{student.level} • {student.school}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm opacity-90">Total XP</div>
+                      <div className="text-xl font-bold">{student.xp}</div>
+                    </div>
+                  </div>
+                  
+                  {/* XP Progress Bar */}
+                  <div className="mb-2">
+                    <div className="flex justify-between text-xs opacity-90 mb-1">
+                      <span>Level Progress</span>
+                      <span>{Math.min(student.xp % 100, 99)}/100 XP</span>
+                    </div>
+                    <div className="w-full bg-white/20 rounded-full h-2">
+                      <div 
+                        className="bg-yellow-300 h-2 rounded-full transition-all duration-1000 animate-pulse-glow"
+                        style={{ width: `${Math.min((student.xp % 100), 99)}%` }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Subject Selection - Compact Grid */}
+                {/* Mission Briefing Section */}
+                <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white rounded-xl p-4 border-2 border-cyan-400 shadow-xl relative overflow-hidden">
+                  {/* Gaming Background Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 animate-pulse"></div>
+                  
+                  <div className="relative z-10">
+                    <div className="flex items-center mb-3">
+                      <div className="bg-cyan-500 rounded-lg p-2 mr-3">
+                        <Target className="w-5 h-5 text-white" />
+                      </div>
+                      <h3 className="text-lg font-bold text-cyan-300">🎯 MISSION BRIEFING</h3>
+                    </div>
+                    
+                    <p className="text-sm text-gray-300 mb-3">
+                      <span className="text-cyan-300 font-semibold">Your mission, should you choose to accept it:</span> Demonstrate your knowledge and skills in the selected subject. Choose your parameters wisely, agent.
+                    </p>
+                    
+                    {/* Potential Rewards Preview */}
+                    <div className="bg-black/30 rounded-lg p-3 mb-3">
+                      <h4 className="text-sm font-bold text-yellow-300 mb-2">🏆 POTENTIAL REWARDS</h4>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="flex items-center">
+                          <Zap className="w-3 h-3 text-blue-400 mr-1" />
+                          <span>10-100+ XP</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Trophy className="w-3 h-3 text-yellow-400 mr-1" />
+                          <span>Achievement Badges</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Success Criteria */}
+                    <div className="bg-green-900/30 rounded-lg p-3">
+                      <h4 className="text-sm font-bold text-green-300 mb-2">✅ SUCCESS CRITERIA</h4>
+                      <ul className="text-xs text-green-200 space-y-1">
+                        <li>• 70%+ = Good Performance</li>
+                        <li>• 90%+ = Excellent Achievement</li>
+                        <li>• 100% = Perfect Mission Complete</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gaming-Style Subject Selection */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Choose Subject</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    Choose Subject Domain
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {subjects.map((subject) => (
                       <button
                         key={subject}
                         onClick={() => setSelectedSubject(subject)}
-                        className={`p-2 rounded-lg border-2 font-medium transition-all duration-300 text-xs sm:text-sm ${
+                        className={`group p-3 rounded-xl border-2 font-medium transition-all duration-300 text-xs sm:text-sm transform hover:scale-105 hover:shadow-lg ${
                           selectedSubject === subject
-                            ? 'bg-blue-500 text-white border-blue-700 shadow-md'
-                            : 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50'
+                            ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white border-blue-700 shadow-lg animate-pulse-glow'
+                            : 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50 hover:border-blue-400'
                         }`}
                       >
-                        {subject}
+                        <div className="flex flex-col items-center">
+                          <div className={`w-8 h-8 rounded-full mb-2 flex items-center justify-center ${
+                            selectedSubject === subject ? 'bg-white/20' : 'bg-blue-100'
+                          }`}>
+                            {subject === 'Mathematics' && <span className="text-lg">🧮</span>}
+                            {subject === 'English' && <span className="text-lg">📚</span>}
+                            {subject === 'Science' && <span className="text-lg">🧪</span>}
+                            {subject === 'Bahasa Melayu' && <span className="text-lg">🗣️</span>}
+                            {subject === 'History' && <span className="text-lg">🏛️</span>}
+                          </div>
+                          <span>{subject}</span>
+                        </div>
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Mode Selection - Compact */}
+                {/* Gaming-Style Difficulty Selection */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">Choose Difficulty</label>
-                  <div className="space-y-2">
-                    {/* Easy Mode - Enabled */}
+                  <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                    <Target className="w-4 h-4 mr-2" />
+                    Choose Difficulty Level
+                  </label>
+                  <div className="space-y-3">
+                    {/* Easy Mode - Enhanced Gaming Style */}
                     <button
                       onClick={() => setSelectedMode('Easy')}
-                      className={`w-full p-3 rounded-lg border-2 transition-all duration-300 text-left ${
+                      className={`group w-full p-4 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-102 hover:shadow-lg ${
                         selectedMode === 'Easy'
-                          ? 'bg-green-500 text-white border-green-700 shadow-md'
-                          : 'bg-white text-green-600 border-green-300 hover:bg-green-50'
+                          ? 'bg-gradient-to-r from-green-500 to-green-600 text-white border-green-700 shadow-lg animate-pulse-glow'
+                          : 'bg-white text-green-600 border-green-300 hover:bg-green-50 hover:border-green-400'
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-bold text-sm">Easy Mode</div>
-                          <div className="text-xs opacity-90">
-                            10 questions • 15 minutes
+                        <div className="flex items-center">
+                          <div className={`w-10 h-10 rounded-full mr-3 flex items-center justify-center ${
+                            selectedMode === 'Easy' ? 'bg-white/20' : 'bg-green-100'
+                          }`}>
+                            <span className="text-xl">🛡️</span>
+                          </div>
+                          <div>
+                            <div className="font-bold text-sm">Easy Mode</div>
+                            <div className="text-xs opacity-90">
+                              10 questions • 15 minutes • Perfect for beginners
+                            </div>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-1">
-                          <Clock className="w-4 h-4" />
-                          <Target className="w-4 h-4" />
+                        <div className="flex flex-col items-center space-y-1">
+                          <div className="flex items-center space-x-1">
+                            <Clock className="w-4 h-4" />
+                            <Target className="w-4 h-4" />
+                          </div>
+                          <div className="text-xs font-bold">+10-50 XP</div>
                         </div>
                       </div>
                     </button>
 
-                    {/* Medium Mode - Disabled with Coming Soon */}
+                    {/* Medium Mode - Disabled with Gaming Style */}
                     <div className="relative">
                       <button
                         disabled={true}
-                        className="w-full p-3 rounded-lg border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-80 cursor-not-allowed"
+                        className="group w-full p-4 rounded-xl border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-60"
                       >
                         <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-bold text-sm">Medium Mode</div>
-                            <div className="text-xs opacity-90">
-                              20 questions • 30 minutes
+                          <div className="flex items-center">
+                            <div className="w-10 h-10 rounded-full mr-3 flex items-center justify-center bg-gray-200">
+                              <span className="text-xl opacity-50">⚔️</span>
+                            </div>
+                            <div>
+                              <div className="font-bold text-sm">Medium Mode</div>
+                              <div className="text-xs opacity-90">
+                                20 questions • 30 minutes • Balanced challenge
+                              </div>
                             </div>
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <Lock className="w-4 h-4" />
+                          <div className="flex flex-col items-center space-y-1">
+                            <Lock className="w-5 h-5" />
+                            <div className="text-xs font-bold">+20-75 XP</div>
                           </div>
                         </div>
                       </button>
-                      <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg rounded-tr-lg">
+                      <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg animate-pulse">
                         Coming Soon
                       </div>
                     </div>
 
-                    {/* Full Mode - Disabled with Coming Soon */}
+                    {/* Full Mode - Disabled with Gaming Style */}
                     <div className="relative">
                       <button
                         disabled={true}
-                        className="w-full p-3 rounded-lg border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-80 cursor-not-allowed"
+                        className="group w-full p-4 rounded-xl border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-60"
                       >
                         <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-bold text-sm">Full Mode</div>
-                            <div className="text-xs opacity-90">
-                              40+ questions • 60 minutes
+                          <div className="flex items-center">
+                            <div className="w-10 h-10 rounded-full mr-3 flex items-center justify-center bg-gray-200">
+                              <span className="text-xl opacity-50">👑</span>
+                            </div>
+                            <div>
+                              <div className="font-bold text-sm">Full Mode</div>
+                              <div className="text-xs opacity-90">
+                                40+ questions • 60 minutes • Ultimate challenge
+                              </div>
                             </div>
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <Lock className="w-4 h-4" />
+                          <div className="flex flex-col items-center space-y-1">
+                            <Lock className="w-5 h-5" />
+                            <div className="text-xs font-bold">+50-150 XP</div>
                           </div>
                         </div>
                       </button>
-                      <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg rounded-tr-lg">
+                      <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg animate-pulse">
                         Coming Soon
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">
+                {/* Gaming-Enhanced Action Buttons */}
+                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-4">
                   <Button
                     variant="outline"
                     onClick={handleModalClose}
-                    className="flex-1 text-sm"
+                    className="flex-1 text-sm border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
                     disabled={loading}
                   >
-                    Cancel
+                    Cancel Mission
                   </Button>
                   <Button
                     onClick={startExam}
-                    className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-sm"
+                    className="flex-1 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 hover:from-orange-600 hover:via-red-600 hover:to-pink-600 text-white font-bold text-sm transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl animate-pulse-glow"
                     disabled={loading}
                     loading={loading}
-                    icon={!loading ? <Zap className="w-4 h-4" /> : undefined}
+                    icon={!loading ? <Zap className="w-5 h-5" /> : undefined}
                   >
-                    {loading ? 'Loading...' : 'Start Exam!'}
+                    {loading ? '🚀 Initializing Mission...' : '🚀 Start Exam!'}
                   </Button>
                 </div>
               </div>
