@@ -7,6 +7,50 @@ import { ExamResults } from './ExamResults'
 import { ExamModalProps, ExamQuestion, MatchingPair, ExamMode, Subject, ExamStep } from './types'
 import { checkShortAnswer } from '../../utils/answerChecker'
 
+// Utility function to sync offline exams
+const syncOfflineExams = async () => {
+  try {
+    const offlineExams = JSON.parse(localStorage.getItem('offline-exams') || '[]')
+    
+    if (offlineExams.length === 0) return
+    
+    console.log(`🔄 Syncing ${offlineExams.length} offline exams...`)
+    
+    const syncPromises = offlineExams.map(async (examData: any) => {
+      try {
+        const { offline, timestamp, ...cleanExamData } = examData
+        
+        const { error } = await supabase
+          .from('exams')
+          .insert(cleanExamData)
+        
+        if (error) {
+          console.error('❌ Failed to sync offline exam:', error)
+          return false
+        }
+        
+        return true
+      } catch (error) {
+        console.error('❌ Error syncing offline exam:', error)
+        return false
+      }
+    })
+    
+    const results = await Promise.all(syncPromises)
+    const successCount = results.filter(result => result).length
+    
+    if (successCount > 0) {
+      // Remove successfully synced exams
+      const remainingExams = offlineExams.filter((_: any, index: number) => !results[index])
+      localStorage.setItem('offline-exams', JSON.stringify(remainingExams))
+      
+      console.log(`✅ Successfully synced ${successCount} offline exams`)
+    }
+  } catch (error) {
+    console.error('❌ Error during offline sync:', error)
+  }
+}
+
 export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }: ExamModalProps) {
   // Initialize state from session storage if available
   const getInitialState = () => {
@@ -76,6 +120,26 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
   useEffect(() => {
     saveState()
   }, [step, selectedSubject, selectedMode, questions, currentQuestionIndex, timeLeft, examStarted, examScore, totalQuestions, matchingPairs, selectedLeftItem, showSubmitWarning])
+
+  // Sync offline exams when component mounts or comes back online
+  useEffect(() => {
+    // Try to sync offline exams on mount
+    if (navigator.onLine) {
+      syncOfflineExams()
+    }
+
+    // Listen for online events to sync when connection is restored
+    const handleOnline = () => {
+      console.log('🌐 Connection restored, syncing offline exams...')
+      syncOfflineExams()
+    }
+
+    window.addEventListener('online', handleOnline)
+    
+    return () => {
+      window.removeEventListener('online', handleOnline)
+    }
+  }, [])
 
   const getModeConfig = (mode: ExamMode) => {
     switch (mode) {
@@ -352,6 +416,8 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
     setLoading(true)
     
     try {
+      console.log('🎯 Starting exam submission...')
+      
       const gradedQuestions = await Promise.all(
         questions.map(async (question) => ({
           ...question,
@@ -366,21 +432,114 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
       setExamScore(score)
       setTotalQuestions(questions.length)
       
-      const { error: saveError } = await supabase
-        .from('exams')
-        .insert({
+      console.log('📊 Exam results calculated:', {
+        totalQuestions: questions.length,
+        correctAnswers,
+        score,
+        studentId: student.id,
+        subject: selectedSubject,
+        mode: selectedMode
+      })
+      
+      // Check authentication before submission
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        throw new Error('Authentication required. Please sign in again.')
+      }
+      
+      console.log('🔐 Authentication verified, saving exam...')
+      
+      // Check network connectivity
+      const isOnline = navigator.onLine
+      if (!isOnline) {
+        console.warn('🌐 No internet connection detected, attempting offline storage...')
+        
+        // Store exam results locally for later sync
+        const offlineExamData = {
           student_id: student.id,
           subject: selectedSubject,
           mode: selectedMode,
           total_questions: questions.length,
           score: score,
           question_ids: questions.map(q => q.id),
-          completed: true
-        })
+          completed: true,
+          timestamp: new Date().toISOString(),
+          offline: true
+        }
+        
+        const offlineExams = JSON.parse(localStorage.getItem('offline-exams') || '[]')
+        offlineExams.push(offlineExamData)
+        localStorage.setItem('offline-exams', JSON.stringify(offlineExams))
+        
+        console.log('💾 Exam saved offline for later sync')
+        
+        // Show results but with offline notice
+        setStep('results')
+        onExamComplete(score, questions.length)
+        sessionStorage.removeItem(`exam-state-${student.id}`)
+        
+        // Show offline message
+        setError('Exam completed offline. Results will be synced when connection is restored.')
+        return
+      }
       
-      if (saveError) throw saveError
+      // Prepare exam data
+      const examData = {
+        student_id: student.id,
+        subject: selectedSubject,
+        mode: selectedMode,
+        total_questions: questions.length,
+        score: score,
+        question_ids: questions.map(q => q.id),
+        completed: true
+      }
+      
+      console.log('💾 Attempting to save exam data:', examData)
+      
+      // Save exam with retry logic
+      let saveError: any = null
+      let retryCount = 0
+      const maxRetries = 3
+      
+      while (retryCount < maxRetries) {
+        try {
+          const { error } = await supabase
+            .from('exams')
+            .insert(examData)
+          
+          if (error) {
+            saveError = error
+            console.warn(`❌ Exam save attempt ${retryCount + 1} failed:`, error)
+            
+            if (retryCount < maxRetries - 1) {
+              console.log(`⏳ Retrying in ${(retryCount + 1) * 1000}ms...`)
+              await new Promise(resolve => setTimeout(resolve, (retryCount + 1) * 1000))
+            }
+            retryCount++
+          } else {
+            console.log('✅ Exam saved successfully!')
+            saveError = null
+            break
+          }
+        } catch (networkError: any) {
+          console.warn(`🌐 Network error on attempt ${retryCount + 1}:`, networkError)
+          saveError = networkError
+          
+          if (retryCount < maxRetries - 1) {
+            console.log(`⏳ Retrying in ${(retryCount + 1) * 1000}ms...`)
+            await new Promise(resolve => setTimeout(resolve, (retryCount + 1) * 1000))
+          }
+          retryCount++
+        }
+      }
+      
+      if (saveError) {
+        console.error('❌ All exam save attempts failed:', saveError)
+        throw saveError
+      }
       
       // Update student XP
+      console.log('⭐ Updating student XP...')
       const xpGained = correctAnswers * 10 + (score === 100 ? 100 : score >= 90 ? 50 : score >= 80 ? 25 : 0)
       const { error: xpError } = await supabase
         .from('students')
@@ -390,6 +549,8 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
       if (xpError) {
         console.error('Failed to update student XP:', xpError)
         // Don't throw error - exam submission was successful
+      } else {
+        console.log(`✅ Student XP updated: +${xpGained} XP`)
       }
       
       setStep('results')
@@ -397,9 +558,28 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
       
       // Clear session storage
       sessionStorage.removeItem(`exam-state-${student.id}`)
+      
+      console.log('🎉 Exam submission completed successfully!')
+      
     } catch (err: any) {
-      console.error('Exam submission error:', err)
-      setError(`Failed to save exam results: ${err.message || 'Unknown error'}`)
+      console.error('💥 Exam submission error:', err)
+      
+      // Provide more helpful error messages
+      let errorMessage = 'Unknown error occurred'
+      
+      if (err.message === 'Failed to fetch') {
+        errorMessage = 'Network connection failed. Please check your internet connection and try again.'
+      } else if (err.message?.includes('Authentication')) {
+        errorMessage = 'Authentication required. Please sign in again.'
+      } else if (err.code === 'PGRST301') {
+        errorMessage = 'Database connection issue. Please try refreshing the page.'
+      } else if (err.code === 'PGRST116') {
+        errorMessage = 'Data access issue. Please check your permissions.'
+      } else if (err.message) {
+        errorMessage = err.message
+      }
+      
+      setError(`Failed to save exam results: ${errorMessage}`)
     } finally {
       setLoading(false)
     }
@@ -488,9 +668,38 @@ export function ExamModalRefactored({ isOpen, onClose, student, onExamComplete }
             {step === 'exam' && questions.length > 0 && (
               <div className="space-y-4">
                 {error && (
-                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-                    <strong className="font-bold">Error: </strong>
-                    <span className="block sm:inline">{error}</span>
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 mr-3">
+                        <svg className="w-5 h-5 text-red-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 6.5c-.77.833-.192 2.5 1.732 2.5z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <strong className="font-bold">Error: </strong>
+                        <span className="block sm:inline">{error}</span>
+                        {error.includes('Network connection failed') && (
+                          <div className="mt-2 text-sm">
+                            <p className="font-semibold">Try these steps:</p>
+                            <ul className="list-disc list-inside mt-1 space-y-1">
+                              <li>Check your internet connection</li>
+                              <li>Refresh the page and try again</li>
+                              <li>If offline, your results will be saved locally</li>
+                            </ul>
+                          </div>
+                        )}
+                        {error.includes('Authentication required') && (
+                          <div className="mt-2 text-sm">
+                            <p className="font-semibold">Please sign in again to continue.</p>
+                          </div>
+                        )}
+                        {error.includes('Database connection issue') && (
+                          <div className="mt-2 text-sm">
+                            <p className="font-semibold">Please refresh the page and try again.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
                 
