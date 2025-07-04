@@ -332,17 +332,5 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refreshUserProfile,
   }
 
-    hasUser: !!user,
-    userEmail: user?.email,
-    userId: user?.id,
-    subscriptionPlan,
-    maxStudents,
-    dailyExamLimit,
-    isAdmin,
-    loading,
-    profileLoading,
-    profileExists: !!profile
-  })
-
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
