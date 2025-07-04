@@ -185,18 +185,22 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white rounded-lg sm:rounded-xl shadow-xl max-w-2xl w-full max-h-[95vh] overflow-hidden flex flex-col">
-        {/* Enhanced Header with App-Consistent Styling */}
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-          <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-500 to-indigo-600 relative overflow-hidden">
-            <div className="flex items-center justify-between">
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl max-w-2xl w-full max-h-[95vh] overflow-hidden flex flex-col border border-white/50">
+        {/* Enhanced Header with Landing Page Consistent Styling */}
+        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-white/30">
+          <div className="p-4 sm:p-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 relative overflow-hidden">
+            {/* Background decorative elements */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl animate-pulse-soft"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-3xl animate-float"></div>
+            
+            <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center">
-                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-2.5 mr-3 shadow-lg">
-                  <Trophy className="w-6 h-6 text-white" />
+                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 mr-4 shadow-lg border border-white/30">
+                  <Trophy className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white drop-shadow-lg">🏆 Global Leaderboard 🏆</h2>
-                  <p className="text-sm text-blue-100 drop-shadow">See how you rank among students worldwide!</p>
+                  <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-1">🏆 Global Leaderboard 🏆</h2>
+                  <p className="text-sm text-blue-100 drop-shadow font-medium">See how you rank among students worldwide!</p>
                 </div>
               </div>
               

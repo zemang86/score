@@ -274,27 +274,31 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white rounded-lg sm:rounded-xl shadow-xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col">
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col border border-white/50">
         
-        {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-          <div className="p-3 sm:p-4 bg-gradient-to-r from-indigo-100 to-blue-100">
-            <div className="flex items-center justify-between">
+        {/* Enhanced Sticky Header */}
+        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-white/30">
+          <div className="p-4 sm:p-6 bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 relative overflow-hidden">
+            {/* Background decorative elements */}
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-2xl animate-pulse-soft"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-3xl animate-float"></div>
+            
+            <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center">
-                <div className="bg-indigo-500 rounded-lg p-2 mr-3 shadow-md">
-                  <BarChart3 className="w-5 h-5 text-white" />
+                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 mr-4 shadow-lg border border-white/30">
+                  <BarChart3 className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-indigo-700">Family Learning Reports</h2>
-                  <p className="text-xs text-indigo-600">Comprehensive insights into your family's progress</p>
+                  <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-1">📊 Family Learning Reports</h2>
+                  <p className="text-sm text-blue-100 drop-shadow font-medium">Comprehensive insights into your family's progress</p>
                 </div>
               </div>
               <button
                 onClick={onClose}
-                className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
+                className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-300 rounded-2xl p-3 shadow-lg border border-white/30 hover:scale-110"
                 title="Close"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
           </div>
