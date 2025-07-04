@@ -1,13 +1,13 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { OptimizedAuthProvider as AuthProvider, useAuth } from './contexts/OptimizedAuthContext'
 
-// Regular imports instead of lazy loading to prevent tab switching issues
-import { LandingPage } from './components/landing/LandingPage'
-import { AuthPage } from './components/auth/AuthPage'
-import { AdminLoginPage } from './components/admin/AdminLoginPage'
-import { ParentDashboardOptimized as ParentDashboard } from './components/dashboard/ParentDashboardOptimized'
-import { AdminDashboard } from './components/admin/AdminDashboard'
+// Lazy loading for better performance and code splitting
+const LandingPage = React.lazy(() => import('./components/landing/LandingPage').then(module => ({ default: module.LandingPage })))
+const AuthPage = React.lazy(() => import('./components/auth/AuthPage').then(module => ({ default: module.AuthPage })))
+const AdminLoginPage = React.lazy(() => import('./components/admin/AdminLoginPage').then(module => ({ default: module.AdminLoginPage })))
+const ParentDashboard = React.lazy(() => import('./components/dashboard/ParentDashboardOptimized').then(module => ({ default: module.ParentDashboardOptimized })))
+const AdminDashboard = React.lazy(() => import('./components/admin/AdminDashboard').then(module => ({ default: module.AdminDashboard })))
 
 // Simplified loading component
 function LoadingSpinner() {
@@ -56,7 +56,8 @@ function AppContent() {
 
 
   return (
-    <Routes>
+    <Suspense fallback={<LoadingSpinner />}>
+      <Routes>
         <Route 
           path="/" 
           element={<LandingPage />}
@@ -107,6 +108,7 @@ function AppContent() {
           } 
         />
       </Routes>
+    </Suspense>
   )
 }
 

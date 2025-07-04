@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'warning' | 'error' | 'gradient-primary' | 'white'
@@ -12,7 +12,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   pulse?: boolean
 }
 
-export function Button({
+const Button = React.memo<ButtonProps>(({
   variant = 'primary',
   size = 'md',
   className = '',
@@ -25,7 +25,7 @@ export function Button({
   pulse = false,
   disabled,
   ...props
-}: ButtonProps) {
+}) => {
   const baseClasses = 'inline-flex items-center justify-center font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden'
   
   const variantClasses = {
@@ -49,26 +49,30 @@ export function Button({
 
   const isDisabled = disabled || loading
 
-  // Success state overrides
-  const displayVariant = success ? 'success' : variant
-  const displayIcon = success ? (
-    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-    </svg>
-  ) : icon
+  // Memoized success state calculations
+  const { displayVariant, displayIcon, displayText } = useMemo(() => ({
+    displayVariant: success ? 'success' : variant,
+    displayIcon: success ? (
+      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+      </svg>
+    ) : icon,
+    displayText: success ? 'Success!' : (loading ? loadingText : children)
+  }), [success, variant, icon, loading, loadingText, children])
 
-  const displayText = success ? 'Success!' : (loading ? loadingText : children)
+  // Memoized className calculation
+  const buttonClassName = useMemo(() => `
+    ${baseClasses} 
+    ${variantClasses[displayVariant]} 
+    ${sizeClasses[size]} 
+    ${fullWidth ? 'w-full' : ''} 
+    ${pulse ? 'animate-pulse' : ''} 
+    ${className}
+  `, [baseClasses, variantClasses, displayVariant, sizeClasses, size, fullWidth, pulse, className])
 
   return (
     <button
-      className={`
-        ${baseClasses} 
-        ${variantClasses[displayVariant]} 
-        ${sizeClasses[size]} 
-        ${fullWidth ? 'w-full' : ''} 
-        ${pulse ? 'animate-pulse' : ''} 
-        ${className}
-      `}
+      className={buttonClassName}
       disabled={isDisabled}
       aria-label={loading ? loadingText : undefined}
       {...props}
@@ -101,4 +105,6 @@ export function Button({
       )}
     </button>
   )
-}
+})
+
+export { Button }

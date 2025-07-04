@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { Student } from '../../lib/supabase'
 import { User, School, GraduationCap, Calendar, Star, Edit, Zap, Trophy, ArrowUp } from 'lucide-react'
 import { Button } from '../ui/Button'
@@ -15,35 +15,36 @@ interface StudentCardProps {
   onOpenProgressModal?: (student: Student) => void
 }
 
-export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStudentUpdated, onOpenExamModal, onOpenEditModal, onOpenProgressModal }: StudentCardProps) {
+const StudentCard = React.memo<StudentCardProps>(({ student, onEdit, onDelete, onExamComplete, onStudentUpdated, onOpenExamModal, onOpenEditModal, onOpenProgressModal }) => {
 
+  // Memoized expensive calculations
+  const ageDisplay = useMemo(() => 
+    calculateAgeInYearsAndMonths(student.date_of_birth), 
+    [student.date_of_birth]
+  )
 
-  const getAgeDisplay = (dateOfBirth: string) => {
-    return calculateAgeInYearsAndMonths(dateOfBirth)
-  }
-
-  const getLevelColor = (level: string) => {
-    if (level.includes('Darjah')) {
+  const levelColor = useMemo(() => {
+    if (student.level.includes('Darjah')) {
       return 'bg-gradient-to-r from-green-400 to-emerald-500 text-white'
-    } else if (level.includes('Tingkatan')) {
+    } else if (student.level.includes('Tingkatan')) {
       return 'bg-gradient-to-r from-blue-400 to-indigo-500 text-white'
     }
     return 'bg-gradient-to-r from-slate-400 to-slate-500 text-white'
-  }
+  }, [student.level])
 
-  const getXPDisplay = (xp: number) => {
+  const xpInfo = useMemo(() => {
+    const xp = student.xp
     if (xp === 0) return { text: 'Just started!', color: 'text-slate-600', emoji: '🌟' }
     if (xp < 100) return { text: `${xp} XP - Beginner`, color: 'text-green-600', emoji: '🎮' }
     if (xp < 500) return { text: `${xp} XP - Learning`, color: 'text-blue-600', emoji: '📚' }
     if (xp < 1000) return { text: `${xp} XP - Improving`, color: 'text-purple-600', emoji: '🚀' }
     return { text: `${xp} XP - Expert`, color: 'text-amber-600', emoji: '👑' }
-  }
+  }, [student.xp])
 
-
-
-
-
-  const xpInfo = getXPDisplay(student.xp)
+  // Memoized event handlers to prevent child re-renders
+  const handleOpenExam = useCallback(() => onOpenExamModal?.(student), [onOpenExamModal, student])
+  const handleOpenEdit = useCallback(() => onOpenEditModal?.(student), [onOpenEditModal, student])
+  const handleOpenProgress = useCallback(() => onOpenProgressModal?.(student), [onOpenProgressModal, student])
 
   return (
     <>
@@ -56,7 +57,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
             </div>
             <div>
               <h3 className="text-base font-bold text-slate-800">{student.name}</h3>
-              <p className="text-xs text-slate-500">{getAgeDisplay(student.date_of_birth)}</p>
+              <p className="text-xs text-slate-500">{ageDisplay}</p>
             </div>
           </div>
           
@@ -65,7 +66,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
             size="sm" 
             className="text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 p-1.5 rounded-lg" 
             icon={<Edit className="w-4 h-4" />}
-            onClick={() => onOpenEditModal?.(student)}
+            onClick={handleOpenEdit}
             title="Edit student information"
           >
           </Button>
@@ -79,7 +80,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
               <School className="w-4 h-4 mr-2 flex-shrink-0" />
               <span className="font-medium truncate max-w-[140px]">{student.school}</span>
             </div>
-            <span className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium shadow-sm ${getLevelColor(student.level)}`}>
+            <span className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium shadow-sm ${levelColor}`}>
               {student.level}
             </span>
           </div>
@@ -98,7 +99,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
               variant="gradient-primary"
               size="sm" 
               className="flex-1 text-sm py-2 shadow-md hover:shadow-lg"
-              onClick={() => onOpenExamModal?.(student)}
+              onClick={handleOpenExam}
               icon={<Zap className="w-4 h-4" />}
             >
               Start Exam
@@ -107,7 +108,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
               variant="outline" 
               size="sm" 
               className="flex-1 text-sm py-2 border-indigo-300 text-indigo-600 hover:bg-indigo-50 hover:border-indigo-400"
-              onClick={() => onOpenProgressModal?.(student)}
+              onClick={handleOpenProgress}
               icon={<Trophy className="w-4 h-4" />}
             >
               Progress
@@ -115,8 +116,8 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
           </div>
         </div>
       </div>
-
-
     </>
   )
-}
+})
+
+export { StudentCard }

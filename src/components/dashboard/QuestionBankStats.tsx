@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
 import { BookOpen, Clock, Database } from 'lucide-react'
 
@@ -20,11 +20,7 @@ export function QuestionBankStats() {
     'Tingkatan 1', 'Tingkatan 2', 'Tingkatan 3', 'Tingkatan 4', 'Tingkatan 5'
   ]
 
-  useEffect(() => {
-    fetchQuestionStats()
-  }, [])
-
-  const fetchQuestionStats = async () => {
+  const fetchQuestionStats = useCallback(async () => {
     try {
       setLoading(true)
 
@@ -74,9 +70,16 @@ export function QuestionBankStats() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [allLevels])
 
-  const totalQuestions = questionStats.reduce((sum, stat) => sum + stat.count, 0)
+  useEffect(() => {
+    fetchQuestionStats()
+  }, [fetchQuestionStats])
+
+  const totalQuestions = useMemo(() => 
+    questionStats.reduce((sum, stat) => sum + stat.count, 0), 
+    [questionStats]
+  )
 
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-xl border border-white/30 shadow-md">
