@@ -1159,46 +1159,27 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                   </div>
                 </div>
 
-                {/* Mission Briefing Section */}
-                <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white rounded-xl p-4 border-2 border-cyan-400 shadow-xl relative overflow-hidden">
-                  {/* Gaming Background Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 animate-pulse"></div>
+                {/* Success Criteria */}
+                <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl p-4 shadow-lg">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-white/20 rounded-lg p-2 mr-3">
+                      <Target className="w-5 h-5 text-white" />
+                    </div>
+                    <h3 className="text-lg font-bold">✅ Success Criteria</h3>
+                  </div>
                   
-                  <div className="relative z-10">
-                    <div className="flex items-center mb-3">
-                      <div className="bg-cyan-500 rounded-lg p-2 mr-3">
-                        <Target className="w-5 h-5 text-white" />
-                      </div>
-                      <h3 className="text-lg font-bold text-cyan-300">🎯 MISSION BRIEFING</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="bg-white/20 rounded-lg p-3 text-center">
+                      <div className="text-2xl font-bold">70%+</div>
+                      <div className="text-xs opacity-90">Good Performance</div>
                     </div>
-                    
-                    <p className="text-sm text-gray-300 mb-3">
-                      <span className="text-cyan-300 font-semibold">Your mission, should you choose to accept it:</span> Demonstrate your knowledge and skills in the selected subject. Choose your parameters wisely, agent.
-                    </p>
-                    
-                    {/* Potential Rewards Preview */}
-                    <div className="bg-black/30 rounded-lg p-3 mb-3">
-                      <h4 className="text-sm font-bold text-yellow-300 mb-2">🏆 POTENTIAL REWARDS</h4>
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div className="flex items-center">
-                          <Zap className="w-3 h-3 text-blue-400 mr-1" />
-                          <span>10-100+ XP</span>
-                        </div>
-                        <div className="flex items-center">
-                          <Trophy className="w-3 h-3 text-yellow-400 mr-1" />
-                          <span>Achievement Badges</span>
-                        </div>
-                      </div>
+                    <div className="bg-white/20 rounded-lg p-3 text-center">
+                      <div className="text-2xl font-bold">90%+</div>
+                      <div className="text-xs opacity-90">Excellent Achievement</div>
                     </div>
-                    
-                    {/* Success Criteria */}
-                    <div className="bg-green-900/30 rounded-lg p-3">
-                      <h4 className="text-sm font-bold text-green-300 mb-2">✅ SUCCESS CRITERIA</h4>
-                      <ul className="text-xs text-green-200 space-y-1">
-                        <li>• 70%+ = Good Performance</li>
-                        <li>• 90%+ = Excellent Achievement</li>
-                        <li>• 100% = Perfect Mission Complete</li>
-                      </ul>
+                    <div className="bg-white/20 rounded-lg p-3 text-center">
+                      <div className="text-2xl font-bold">100%</div>
+                      <div className="text-xs opacity-90">Perfect Score</div>
                     </div>
                   </div>
                 </div>
@@ -1209,32 +1190,32 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                     <BookOpen className="w-4 h-4 mr-2" />
                     Choose Subject Domain
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {subjects.map((subject) => (
-                      <button
-                        key={subject}
-                        onClick={() => setSelectedSubject(subject)}
-                        className={`group p-3 rounded-xl border-2 font-medium transition-all duration-300 text-xs sm:text-sm transform hover:scale-105 hover:shadow-lg ${
-                          selectedSubject === subject
-                            ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white border-blue-700 shadow-lg animate-pulse-glow'
-                            : 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50 hover:border-blue-400'
-                        }`}
-                      >
-                        <div className="flex flex-col items-center">
-                          <div className={`w-8 h-8 rounded-full mb-2 flex items-center justify-center ${
-                            selectedSubject === subject ? 'bg-white/20' : 'bg-blue-100'
-                          }`}>
-                            {subject === 'Mathematics' && <span className="text-lg">🧮</span>}
-                            {subject === 'English' && <span className="text-lg">📚</span>}
-                            {subject === 'Science' && <span className="text-lg">🧪</span>}
-                            {subject === 'Bahasa Melayu' && <span className="text-lg">🗣️</span>}
-                            {subject === 'History' && <span className="text-lg">🏛️</span>}
-                          </div>
-                          <span>{subject}</span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
+                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+                     {subjects.map((subject) => (
+                       <button
+                         key={subject}
+                         onClick={() => setSelectedSubject(subject)}
+                         className={`group p-3 sm:p-4 rounded-xl border-2 font-medium transition-all duration-300 text-xs sm:text-sm transform hover:scale-105 hover:shadow-lg min-h-[80px] sm:min-h-[90px] touch-target ${
+                           selectedSubject === subject
+                             ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white border-blue-700 shadow-lg animate-pulse-glow'
+                             : 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50 hover:border-blue-400'
+                         }`}
+                       >
+                         <div className="flex flex-col items-center justify-center h-full">
+                           <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full mb-1 sm:mb-2 flex items-center justify-center ${
+                             selectedSubject === subject ? 'bg-white/20' : 'bg-blue-100'
+                           }`}>
+                             {subject === 'Mathematics' && <span className="text-sm sm:text-lg">🧮</span>}
+                             {subject === 'English' && <span className="text-sm sm:text-lg">📚</span>}
+                             {subject === 'Science' && <span className="text-sm sm:text-lg">🧪</span>}
+                             {subject === 'Bahasa Melayu' && <span className="text-sm sm:text-lg">🗣️</span>}
+                             {subject === 'History' && <span className="text-sm sm:text-lg">🏛️</span>}
+                           </div>
+                           <span className="text-center leading-tight">{subject}</span>
+                         </div>
+                       </button>
+                     ))}
+                   </div>
                 </div>
 
                 {/* Gaming-Style Difficulty Selection */}
@@ -1244,117 +1225,117 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                     Choose Difficulty Level
                   </label>
                   <div className="space-y-3">
-                    {/* Easy Mode - Enhanced Gaming Style */}
-                    <button
-                      onClick={() => setSelectedMode('Easy')}
-                      className={`group w-full p-4 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-102 hover:shadow-lg ${
-                        selectedMode === 'Easy'
-                          ? 'bg-gradient-to-r from-green-500 to-green-600 text-white border-green-700 shadow-lg animate-pulse-glow'
-                          : 'bg-white text-green-600 border-green-300 hover:bg-green-50 hover:border-green-400'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div className={`w-10 h-10 rounded-full mr-3 flex items-center justify-center ${
-                            selectedMode === 'Easy' ? 'bg-white/20' : 'bg-green-100'
-                          }`}>
-                            <span className="text-xl">🛡️</span>
-                          </div>
-                          <div>
-                            <div className="font-bold text-sm">Easy Mode</div>
-                            <div className="text-xs opacity-90">
-                              10 questions • 15 minutes • Perfect for beginners
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-center space-y-1">
-                          <div className="flex items-center space-x-1">
-                            <Clock className="w-4 h-4" />
-                            <Target className="w-4 h-4" />
-                          </div>
-                          <div className="text-xs font-bold">+10-50 XP</div>
-                        </div>
-                      </div>
-                    </button>
+                                         {/* Easy Mode - Enhanced Gaming Style */}
+                     <button
+                       onClick={() => setSelectedMode('Easy')}
+                       className={`group w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-300 text-left transform hover:scale-102 hover:shadow-lg min-h-[64px] sm:min-h-[80px] touch-target ${
+                         selectedMode === 'Easy'
+                           ? 'bg-gradient-to-r from-green-500 to-green-600 text-white border-green-700 shadow-lg animate-pulse-glow'
+                           : 'bg-white text-green-600 border-green-300 hover:bg-green-50 hover:border-green-400'
+                       }`}
+                     >
+                       <div className="flex items-center justify-between h-full">
+                         <div className="flex items-center flex-1">
+                           <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 flex items-center justify-center flex-shrink-0 ${
+                             selectedMode === 'Easy' ? 'bg-white/20' : 'bg-green-100'
+                           }`}>
+                             <span className="text-lg sm:text-xl">🛡️</span>
+                           </div>
+                           <div className="min-w-0 flex-1">
+                             <div className="font-bold text-sm sm:text-base">Easy Mode</div>
+                             <div className="text-xs sm:text-sm opacity-90 leading-tight">
+                               10 questions • 15 minutes
+                             </div>
+                           </div>
+                         </div>
+                         <div className="flex flex-col items-center space-y-1 flex-shrink-0 ml-2">
+                           <div className="flex items-center space-x-1">
+                             <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                             <Target className="w-3 h-3 sm:w-4 sm:h-4" />
+                           </div>
+                           <div className="text-xs font-bold">+10-50 XP</div>
+                         </div>
+                       </div>
+                     </button>
 
-                    {/* Medium Mode - Disabled with Gaming Style */}
-                    <div className="relative">
-                      <button
-                        disabled={true}
-                        className="group w-full p-4 rounded-xl border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-60"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 rounded-full mr-3 flex items-center justify-center bg-gray-200">
-                              <span className="text-xl opacity-50">⚔️</span>
-                            </div>
-                            <div>
-                              <div className="font-bold text-sm">Medium Mode</div>
-                              <div className="text-xs opacity-90">
-                                20 questions • 30 minutes • Balanced challenge
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-center space-y-1">
-                            <Lock className="w-5 h-5" />
-                            <div className="text-xs font-bold">+20-75 XP</div>
-                          </div>
-                        </div>
-                      </button>
-                      <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg animate-pulse">
-                        Coming Soon
-                      </div>
-                    </div>
+                                         {/* Medium Mode - Disabled with Gaming Style */}
+                     <div className="relative">
+                       <button
+                         disabled={true}
+                         className="group w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-60 min-h-[64px] sm:min-h-[80px]"
+                       >
+                         <div className="flex items-center justify-between h-full">
+                           <div className="flex items-center flex-1">
+                             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 flex items-center justify-center bg-gray-200 flex-shrink-0">
+                               <span className="text-lg sm:text-xl opacity-50">⚔️</span>
+                             </div>
+                             <div className="min-w-0 flex-1">
+                               <div className="font-bold text-sm sm:text-base">Medium Mode</div>
+                               <div className="text-xs sm:text-sm opacity-90 leading-tight">
+                                 20 questions • 30 minutes
+                               </div>
+                             </div>
+                           </div>
+                           <div className="flex flex-col items-center space-y-1 flex-shrink-0 ml-2">
+                             <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
+                             <div className="text-xs font-bold">+20-75 XP</div>
+                           </div>
+                         </div>
+                       </button>
+                       <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-2 sm:px-3 py-1 rounded-bl-lg rounded-tr-lg animate-pulse">
+                         Coming Soon
+                       </div>
+                     </div>
 
-                    {/* Full Mode - Disabled with Gaming Style */}
-                    <div className="relative">
-                      <button
-                        disabled={true}
-                        className="group w-full p-4 rounded-xl border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-60"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 rounded-full mr-3 flex items-center justify-center bg-gray-200">
-                              <span className="text-xl opacity-50">👑</span>
-                            </div>
-                            <div>
-                              <div className="font-bold text-sm">Full Mode</div>
-                              <div className="text-xs opacity-90">
-                                40+ questions • 60 minutes • Ultimate challenge
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-center space-y-1">
-                            <Lock className="w-5 h-5" />
-                            <div className="text-xs font-bold">+50-150 XP</div>
-                          </div>
-                        </div>
-                      </button>
-                      <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg animate-pulse">
-                        Coming Soon
-                      </div>
-                    </div>
+                     {/* Full Mode - Disabled with Gaming Style */}
+                     <div className="relative">
+                       <button
+                         disabled={true}
+                         className="group w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-300 text-left bg-gray-100 text-gray-500 border-gray-300 opacity-60 min-h-[64px] sm:min-h-[80px]"
+                       >
+                         <div className="flex items-center justify-between h-full">
+                           <div className="flex items-center flex-1">
+                             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 flex items-center justify-center bg-gray-200 flex-shrink-0">
+                               <span className="text-lg sm:text-xl opacity-50">👑</span>
+                             </div>
+                             <div className="min-w-0 flex-1">
+                               <div className="font-bold text-sm sm:text-base">Full Mode</div>
+                               <div className="text-xs sm:text-sm opacity-90 leading-tight">
+                                 40+ questions • 60 minutes
+                               </div>
+                             </div>
+                           </div>
+                           <div className="flex flex-col items-center space-y-1 flex-shrink-0 ml-2">
+                             <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
+                             <div className="text-xs font-bold">+50-150 XP</div>
+                           </div>
+                         </div>
+                       </button>
+                       <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-2 sm:px-3 py-1 rounded-bl-lg rounded-tr-lg animate-pulse">
+                         Coming Soon
+                       </div>
+                     </div>
                   </div>
                 </div>
 
-                {/* Gaming-Enhanced Action Buttons */}
-                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-4">
+                {/* Gaming-Enhanced Action Buttons - Mobile Optimized */}
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
                   <Button
                     variant="outline"
                     onClick={handleModalClose}
-                    className="flex-1 text-sm border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
+                    className="w-full sm:flex-1 py-3 sm:py-2 text-sm sm:text-base border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 min-h-[44px] touch-target"
                     disabled={loading}
                   >
                     Cancel Mission
                   </Button>
                   <Button
                     onClick={startExam}
-                    className="flex-1 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 hover:from-orange-600 hover:via-red-600 hover:to-pink-600 text-white font-bold text-sm transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl animate-pulse-glow"
+                    className="w-full sm:flex-1 py-3 sm:py-2 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 hover:from-orange-600 hover:via-red-600 hover:to-pink-600 text-white font-bold text-sm sm:text-base transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl animate-pulse-glow min-h-[44px] touch-target"
                     disabled={loading}
                     loading={loading}
-                    icon={!loading ? <Zap className="w-5 h-5" /> : undefined}
+                    icon={!loading ? <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> : undefined}
                   >
-                    {loading ? '🚀 Initializing Mission...' : '🚀 Start Exam!'}
+                    {loading ? '🚀 Loading...' : '🚀 Start Exam!'}
                   </Button>
                 </div>
               </div>
