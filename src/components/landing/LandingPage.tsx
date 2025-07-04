@@ -384,7 +384,7 @@ export function LandingPage() {
             </div>
           </RevealOnScroll>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10 auto-rows-fr">
             {[
               {
                 icon: Gamepad2,
@@ -436,15 +436,15 @@ export function LandingPage() {
               }
             ].map((feature, index) => (
               <RevealOnScroll key={index} animationType="slide-up" delay={feature.delay}>
-                <div className="group bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-xl transition-all duration-500 p-6 sm:p-8 border border-white/50 hover:border-white/80 hover:scale-105">
-                  <div className={`w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                <div className="group bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-xl transition-all duration-500 p-6 sm:p-8 border border-white/50 hover:border-white/80 hover:scale-105 h-full flex flex-col">
+                  <div className={`w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg flex-shrink-0`}>
                     <feature.icon className="w-7 h-7 sm:w-10 sm:h-10 text-white" />
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4">{feature.title}</h3>
-                  <p className="text-slate-600 leading-relaxed text-sm sm:text-lg">
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4 flex-shrink-0">{feature.title}</h3>
+                  <p className="text-slate-600 leading-relaxed text-sm sm:text-lg flex-grow">
                     {feature.description}
                   </p>
-                  <div className={`mt-4 sm:mt-6 w-full h-1 bg-gradient-to-r ${feature.color} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                  <div className={`mt-4 sm:mt-6 w-full h-1 bg-gradient-to-r ${feature.color} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0`}></div>
                 </div>
               </RevealOnScroll>
             ))}
@@ -473,7 +473,7 @@ export function LandingPage() {
             </div>
           </RevealOnScroll>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 auto-rows-fr">
             {[
               {
                 title: "Create & Add Children",
@@ -498,13 +498,13 @@ export function LandingPage() {
               }
             ].map((item, index) => (
               <RevealOnScroll key={index} animationType="scale-in" delay={item.delay}>
-                <div className="text-center group">
-                  <div className="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-lg p-6 sm:p-8 border border-white/50 hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                    <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br ${item.bgColor} rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6`}>
+                <div className="text-center group h-full">
+                  <div className="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-lg p-6 sm:p-8 border border-white/50 hover:shadow-xl transition-all duration-300 group-hover:scale-105 h-full flex flex-col">
+                    <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br ${item.bgColor} rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 flex-shrink-0`}>
                       <item.icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4">{item.title}</h3>
-                    <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4 flex-shrink-0">{item.title}</h3>
+                    <p className="text-slate-600 leading-relaxed text-sm sm:text-base flex-grow">
                       {item.description}
                     </p>
                   </div>
