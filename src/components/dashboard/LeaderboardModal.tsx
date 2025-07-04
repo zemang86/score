@@ -344,19 +344,19 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                           key={entry.student_id}
                           className={`p-3 rounded-xl border-2 transition-all duration-300 transform hover:scale-102 hover:shadow-lg overflow-visible ${
                             isUserStudent 
-                              ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-2 ring-indigo-200 animate-pulse-glow' 
+                              ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-2 ring-indigo-200' 
                               : entry.rank === 1
-                              ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-400'
+                              ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 border-yellow-300'
                               : entry.rank === 2
-                              ? 'bg-gradient-to-r from-gray-50 to-gray-100 border-gray-400'
+                              ? 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-300'
                               : entry.rank === 3
-                              ? 'bg-gradient-to-r from-orange-50 to-red-50 border-orange-400'
+                              ? 'bg-gradient-to-r from-orange-100 to-orange-200 border-orange-300'
                               : 'bg-white border-gray-200 hover:border-gray-300'
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center">
-                              <div className={`mr-3 flex items-center justify-center w-8 h-8 rounded-full font-bold ${
+                              <div className={`mr-3 flex items-center justify-center w-8 h-8 rounded-full font-bold relative ${
                                 entry.rank === 1 
                                   ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' 
                                   : entry.rank === 2
@@ -365,7 +365,17 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                   ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white'
                                   : 'bg-gray-100 text-gray-600'
                               }`}>
-                                {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
+                                {/* Inner pulsing effect for top 3 */}
+                                {entry.rank <= 3 && (
+                                  <div className={`absolute inset-0 rounded-full animate-inner-pulse ${
+                                    entry.rank === 1 ? 'bg-yellow-300' :
+                                    entry.rank === 2 ? 'bg-gray-300' :
+                                    'bg-orange-300'
+                                  }`}></div>
+                                )}
+                                <span className="relative z-10">
+                                  {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
+                                </span>
                               </div>
                               <div>
                                 <div className={`font-bold text-sm flex items-center ${isUserStudent ? 'text-indigo-700' : 'text-gray-800'}`}>

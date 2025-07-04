@@ -304,3 +304,19 @@
     transform: translateY(-5px);
   }
 }
+
+/* Inner pulse animation for top 3 rankings */
+@keyframes inner-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
+
+.animate-inner-pulse {
+  animation: inner-pulse 2s ease-in-out infinite;
+}
