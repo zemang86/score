@@ -58,9 +58,11 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
   const [activeTab, setActiveTab] = useState<'overview' | 'exams' | 'subjects' | 'badges'>('overview')
   const [reviewingExam, setReviewingExam] = useState<ExamResult | null>(null)
   const [reviewLoading, setReviewLoading] = useState(false)
+  const [currentStudent, setCurrentStudent] = useState<Student>(student)
 
   useEffect(() => {
     if (isOpen && student) {
+      setCurrentStudent(student) // Update current student when prop changes
       fetchStudentData()
     }
   }, [isOpen, student])
@@ -69,6 +71,18 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
     setLoading(true)
     
     try {
+      // Fetch fresh student data to get updated XP and stats
+      const { data: freshStudentData, error: studentError } = await supabase
+        .from('students')
+        .select('*')
+        .eq('id', student.id)
+        .single()
+
+      if (studentError) throw studentError
+
+      // Update current student with fresh data
+      setCurrentStudent(freshStudentData)
+
       // Fetch exam results
       const { data: exams, error: examsError } = await supabase
         .from('exams')
@@ -312,7 +326,7 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
 
   if (!isOpen) return null
 
-  const xpInfo = getXPLevel(student.xp)
+  const xpInfo = getXPLevel(currentStudent.xp)
   const totalExams = examResults.length
   const averageScore = examResults.length > 0 
     ? Math.round(examResults.reduce((sum, exam) => sum + (exam.score || 0), 0) / examResults.length)
@@ -341,12 +355,12 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                  )}
                  <div>
                    <h2 className="text-xl font-bold text-slate-800">
-                     {reviewingExam ? 'Exam Review' : `${student.name}'s Progress`}
+                     {reviewingExam ? 'Exam Review' : `${currentStudent.name}'s Progress`}
                    </h2>
                    <p className="text-sm text-slate-600">
                      {reviewingExam 
                        ? `${reviewingExam.subject} - ${reviewingExam.mode} Mode - ${formatDate(reviewingExam.date)}`
-                       : `${student.level} • ${student.school}`
+                       : `${currentStudent.level} • ${currentStudent.school}`
                      }
                    </p>
                  </div>
@@ -471,11 +485,11 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                           <Star className="w-5 h-5 text-accent-600 mr-2" />
                           <div>
                             <h3 className="text-base font-bold text-accent-700">Level {xpInfo.level}</h3>
-                            <p className="text-xs text-warning-600">{student.xp} XP Total</p>
+                            <p className="text-xs text-warning-600">{currentStudent.xp} XP Total</p>
                           </div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-bold text-accent-700">{student.xp}</div>
+                          <div className="text-lg font-bold text-accent-700">{currentStudent.xp}</div>
                           <div className="text-xs text-warning-600">Experience Points</div>
                         </div>
                       </div>
