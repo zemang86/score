@@ -31,11 +31,51 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
   }
 
   const getXPDisplay = (xp: number) => {
-    if (xp === 0) return { text: 'Just started!', color: 'text-slate-600', emoji: '🌟', gradient: 'from-slate-400 to-slate-500' }
-    if (xp < 100) return { text: `${xp} XP - Beginner`, color: 'text-green-600', emoji: '🎮', gradient: 'from-green-400 to-emerald-500' }
-    if (xp < 500) return { text: `${xp} XP - Learning`, color: 'text-blue-600', emoji: '📚', gradient: 'from-blue-400 to-indigo-500' }
-    if (xp < 1000) return { text: `${xp} XP - Improving`, color: 'text-purple-600', emoji: '🚀', gradient: 'from-purple-400 to-pink-500' }
-    return { text: `${xp} XP - Expert`, color: 'text-amber-600', emoji: '👑', gradient: 'from-amber-400 to-orange-500' }
+    // Enhanced 99-level system calculation
+    let currentLevel = 1
+    const xpReq = [0, 50, 120, 200, 300, 420, 560, 720, 900, 1100, 1320]
+    
+    // Find current level
+    for (let i = 0; i < xpReq.length; i++) {
+      if (xp >= xpReq[i]) {
+        currentLevel = i + 1
+      } else {
+        break
+      }
+    }
+    
+    // For levels beyond 10
+    if (xp >= 1320) {
+      currentLevel = Math.min(99, Math.floor(10 + (xp - 1320) / 200))
+    }
+    
+    // Get level theme
+    let theme = { name: "Rookie Explorer", emoji: "🌱", color: "text-green-600", gradient: "from-green-400 to-emerald-500" }
+    
+    if (currentLevel > 85) {
+      theme = { name: "Legend", emoji: "👑", color: "text-amber-600", gradient: "from-amber-400 to-yellow-500" }
+    } else if (currentLevel > 65) {
+      theme = { name: "Learning Master", emoji: "🎓", color: "text-indigo-600", gradient: "from-indigo-400 to-purple-500" }
+    } else if (currentLevel > 45) {
+      theme = { name: "Brilliant Scholar", emoji: "📚", color: "text-orange-600", gradient: "from-orange-400 to-red-500" }
+    } else if (currentLevel > 25) {
+      theme = { name: "Knowledge Adventurer", emoji: "⚔️", color: "text-purple-600", gradient: "from-purple-400 to-pink-500" }
+    } else if (currentLevel > 10) {
+      theme = { name: "Learning Explorer", emoji: "🧭", color: "text-blue-600", gradient: "from-blue-400 to-cyan-500" }
+    }
+    
+    const milestones = [10, 20, 30, 40, 50, 60, 70, 80, 90, 99]
+    const isMilestone = milestones.includes(currentLevel)
+    
+    return { 
+      text: `Level ${currentLevel} - ${theme.name}`, 
+      level: currentLevel,
+      color: theme.color, 
+      emoji: theme.emoji, 
+      gradient: theme.gradient,
+      isMilestone,
+      totalXP: xp
+    }
   }
 
   const xpInfo = getXPDisplay(student.xp)
@@ -95,23 +135,54 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
             </span>
           </div>
 
-          {/* XP Progress with enhanced styling */}
-          <div className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-2xl p-4 border border-indigo-200/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+          {/* Enhanced XP Progress with 99-Level System */}
+          <div className={`bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-2xl p-4 border-2 shadow-sm hover:shadow-md transition-all duration-300 ${xpInfo.isMilestone ? 'border-yellow-400 animate-pulse-glow' : 'border-indigo-200/50'}`}>
             <div className="flex items-center justify-between mb-2">
-              <div className={`bg-gradient-to-r ${xpInfo.gradient} rounded-xl p-2 shadow-md`}>
+              <div className={`bg-gradient-to-r ${xpInfo.gradient} rounded-xl p-2 shadow-md relative`}>
                 <Star className="w-5 h-5 text-white" />
+                {xpInfo.isMilestone && (
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <span className="text-xs">🏆</span>
+                  </div>
+                )}
               </div>
               <div className="text-right">
-                <p className={`font-bold text-lg ${xpInfo.color}`}>{xpInfo.emoji}</p>
+                <p className={`font-bold text-2xl ${xpInfo.color} flex items-center justify-end`}>
+                  {xpInfo.emoji}
+                  {xpInfo.isMilestone && <span className="text-xs ml-1 text-yellow-500">✨</span>}
+                </p>
+                <p className="text-xs text-gray-500">Level {xpInfo.level}/99</p>
               </div>
             </div>
-            <div className="flex items-center justify-between">
-              <span className={`font-semibold text-sm ${xpInfo.color}`}>{xpInfo.text}</span>
-              <div className="w-16 h-2 bg-white/70 rounded-full overflow-hidden">
+            
+            {/* Level Name and XP */}
+            <div className="mb-3">
+              <span className={`font-bold text-sm ${xpInfo.color} block`}>
+                Level {xpInfo.level} {xpInfo.isMilestone && '🏆'}
+              </span>
+              <span className="text-xs text-gray-600">{xpInfo.text.split(' - ')[1]}</span>
+            </div>
+            
+            {/* Progress Bar */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs text-gray-600">
+                <span>{xpInfo.totalXP} XP</span>
+                <span>{Math.round((xpInfo.level / 99) * 100)}% to Max</span>
+              </div>
+              <div className="w-full h-2.5 bg-white/70 rounded-full overflow-hidden border border-gray-200">
                 <div 
-                  className={`h-full bg-gradient-to-r ${xpInfo.gradient} rounded-full transition-all duration-1000`}
-                  style={{ width: `${Math.min((student.xp / 1000) * 100, 100)}%` }}
-                ></div>
+                  className={`h-full bg-gradient-to-r ${xpInfo.gradient} rounded-full transition-all duration-1000 relative`}
+                  style={{ width: `${Math.min((xpInfo.level / 99) * 100, 100)}%` }}
+                >
+                  <div className="h-full bg-white/20 animate-pulse"></div>
+                </div>
+              </div>
+              
+              {/* Next Milestone */}
+              <div className="text-center">
+                <span className="text-xs text-gray-500">
+                  Next Milestone: Level {[10, 20, 30, 40, 50, 60, 70, 80, 90, 99].find(m => m > xpInfo.level) || 'Complete!'}
+                </span>
               </div>
             </div>
           </div>

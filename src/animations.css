@@ -316,3 +316,75 @@
 .animate-inner-pulse {
   animation: inner-pulse 2s ease-in-out infinite;
 }
+
+/* 99-Level System Milestone Animations */
+@keyframes milestone-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(234, 179, 8, 0.6), 0 0 16px rgba(234, 179, 8, 0.3);
+    border-color: rgba(234, 179, 8, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(234, 179, 8, 0.8), 0 0 32px rgba(234, 179, 8, 0.5), 0 0 48px rgba(234, 179, 8, 0.2);
+    border-color: rgba(234, 179, 8, 1);
+  }
+}
+
+.animate-pulse-glow {
+  animation: milestone-glow 2.5s ease-in-out infinite;
+}
+
+/* Level progression sparkle */
+@keyframes level-sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.5) rotate(0deg);
+  }
+  25% {
+    opacity: 0.5;
+    transform: scale(0.8) rotate(90deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+  75% {
+    opacity: 0.5;
+    transform: scale(0.8) rotate(270deg);
+  }
+}
+
+.animate-level-sparkle {
+  animation: level-sparkle 1.5s ease-in-out infinite;
+}
+
+/* Enhanced level up celebration */
+@keyframes level-up-celebration {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(1.1) rotate(5deg);
+    opacity: 0.9;
+  }
+  40% {
+    transform: scale(1.2) rotate(-3deg);
+    opacity: 0.8;
+  }
+  60% {
+    transform: scale(1.15) rotate(2deg);
+    opacity: 0.9;
+  }
+  80% {
+    transform: scale(1.05) rotate(-1deg);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-level-up-celebration {
+  animation: level-up-celebration 1.2s ease-in-out;
+}

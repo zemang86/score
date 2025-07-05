@@ -224,11 +224,75 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
   }
 
   const getXPLevel = (xp: number) => {
-    if (xp < 100) return { level: 1, progress: xp, nextLevel: 100 }
-    if (xp < 300) return { level: 2, progress: xp - 100, nextLevel: 200 }
-    if (xp < 600) return { level: 3, progress: xp - 300, nextLevel: 300 }
-    if (xp < 1000) return { level: 4, progress: xp - 600, nextLevel: 400 }
-    return { level: 5, progress: xp - 1000, nextLevel: 0 }
+    // Use the enhanced 99-level system
+    let currentLevel = 1
+    
+    // XP requirements array (first 10 levels for quick reference)
+    const xpReq = [0, 50, 120, 200, 300, 420, 560, 720, 900, 1100, 1320]
+    
+    // Find current level (simplified for now)
+    for (let i = 0; i < xpReq.length; i++) {
+      if (xp >= xpReq[i]) {
+        currentLevel = i + 1
+      } else {
+        break
+      }
+    }
+    
+    // For levels beyond 10, use a reasonable progression
+    if (xp >= 1320) {
+      // Rough calculation for higher levels
+      currentLevel = Math.min(99, Math.floor(10 + (xp - 1320) / 200))
+    }
+    
+    const currentLevelXP = currentLevel <= 10 ? (xpReq[currentLevel - 1] || 0) : ((currentLevel - 10) * 200) + 1320
+    const nextLevelXP = currentLevel >= 99 ? 0 : (currentLevel <= 9 ? xpReq[currentLevel] : ((currentLevel - 9) * 200) + 1320)
+    
+    const progress = currentLevel >= 99 ? 100 : xp - currentLevelXP
+    const requiredXP = currentLevel >= 99 ? 0 : nextLevelXP - currentLevelXP
+    const progressPercentage = currentLevel >= 99 ? 100 : Math.round((progress / requiredXP) * 100)
+    
+    // Get level theme and name
+    let levelTheme = "Rookie Explorer"
+    let levelEmoji = "🌱"
+    let levelColor = "text-green-600"
+    
+    if (currentLevel > 85) {
+      levelTheme = "Legend"
+      levelEmoji = "👑"
+      levelColor = "text-amber-600"
+    } else if (currentLevel > 65) {
+      levelTheme = "Learning Master"
+      levelEmoji = "🎓"
+      levelColor = "text-indigo-600"
+    } else if (currentLevel > 45) {
+      levelTheme = "Brilliant Scholar"
+      levelEmoji = "📚"
+      levelColor = "text-orange-600"
+    } else if (currentLevel > 25) {
+      levelTheme = "Knowledge Adventurer"
+      levelEmoji = "⚔️"
+      levelColor = "text-purple-600"
+    } else if (currentLevel > 10) {
+      levelTheme = "Learning Explorer"
+      levelEmoji = "🧭"
+      levelColor = "text-blue-600"
+    }
+    
+    const milestones = [10, 20, 30, 40, 50, 60, 70, 80, 90, 99]
+    const isMilestone = milestones.includes(currentLevel)
+    
+    return {
+      level: currentLevel,
+      progress: progressPercentage,
+      nextLevel: requiredXP,
+      levelName: `${levelTheme} ${currentLevel}`,
+      levelTheme,
+      levelColor,
+      isMilestone,
+      milestoneReward: isMilestone ? `🏆 Level ${currentLevel} Milestone Achieved!` : undefined,
+      levelEmoji
+    }
   }
 
   const getBadgeColor = (conditionType: string) => {
@@ -499,35 +563,91 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                 {/* Overview Tab */}
                 {activeTab === 'overview' && (
                   <div className="space-y-3 sm:space-y-4">
-                    {/* XP and Level - Compact */}
-                    <div className="bg-gradient-to-r from-accent-100 to-warning-100 border border-accent-300 rounded-lg p-3 shadow-md">
-                      <div className="flex flex-col sm:flex-row items-center justify-between mb-2">
+                    {/* Enhanced XP and Level Display */}
+                    <div className={`bg-gradient-to-r from-accent-100 to-warning-100 border-2 rounded-xl p-4 shadow-lg ${xpInfo.isMilestone ? 'border-yellow-400 animate-pulse-glow' : 'border-accent-300'}`}>
+                      {/* Level Header with Theme */}
+                      <div className="flex flex-col sm:flex-row items-center justify-between mb-3">
                         <div className="flex items-center mb-2 sm:mb-0">
-                          <Star className="w-5 h-5 text-accent-600 mr-2" />
+                          <div className="bg-gradient-to-r from-accent-500 to-warning-500 rounded-xl p-2 mr-3 shadow-md">
+                            <span className="text-xl">{xpInfo.levelEmoji}</span>
+                          </div>
                           <div>
-                            <h3 className="text-base font-bold text-accent-700">Level {xpInfo.level}</h3>
+                            <h3 className={`text-lg font-bold ${xpInfo.levelColor} flex items-center`}>
+                              Level {xpInfo.level}
+                              {xpInfo.isMilestone && <span className="ml-2 text-yellow-500">🏆</span>}
+                            </h3>
+                            <p className="text-xs text-accent-600 font-medium">{xpInfo.levelTheme}</p>
                             <p className="text-xs text-warning-600">{currentStudent.xp} XP Total</p>
                           </div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-bold text-accent-700">{currentStudent.xp}</div>
-                          <div className="text-xs text-warning-600">Experience Points</div>
+                          <div className={`text-2xl font-bold ${xpInfo.levelColor}`}>{xpInfo.level}</div>
+                          <div className="text-xs text-accent-600">/ 99 Levels</div>
                         </div>
                       </div>
-                      {xpInfo.nextLevel > 0 && (
-                        <div>
-                          <div className="flex justify-between text-xs text-accent-700 mb-1">
-                            <span>Progress to Level {xpInfo.level + 1}</span>
-                            <span>{xpInfo.progress}/{xpInfo.nextLevel} XP</span>
-                          </div>
-                          <div className="w-full bg-accent-200 rounded-full h-2 border border-accent-500">
-                            <div 
-                              className="bg-accent-500 h-full rounded-full transition-all duration-500"
-                              style={{ width: `${(xpInfo.progress / xpInfo.nextLevel) * 100}%` }}
-                            ></div>
+
+                      {/* Milestone Reward Banner */}
+                      {xpInfo.isMilestone && xpInfo.milestoneReward && (
+                        <div className="bg-gradient-to-r from-yellow-200 to-orange-200 border border-yellow-400 rounded-lg p-2 mb-3">
+                          <div className="text-center">
+                            <p className="text-xs font-bold text-yellow-800 mb-1">🎉 MILESTONE ACHIEVED! 🎉</p>
+                            <p className="text-xs text-yellow-700">{xpInfo.milestoneReward}</p>
                           </div>
                         </div>
                       )}
+
+                      {/* Progress Bar */}
+                      {xpInfo.nextLevel > 0 ? (
+                        <div>
+                          <div className="flex justify-between text-xs text-accent-700 mb-2">
+                            <span>Progress to Level {xpInfo.level + 1}</span>
+                            <span>{xpInfo.progress}% Complete</span>
+                          </div>
+                          <div className="w-full bg-accent-200 rounded-full h-3 border border-accent-500 overflow-hidden">
+                            <div 
+                              className={`h-full rounded-full transition-all duration-1000 ${xpInfo.isMilestone ? 'bg-gradient-to-r from-yellow-400 to-orange-500' : 'bg-gradient-to-r from-accent-500 to-warning-500'}`}
+                              style={{ width: `${xpInfo.progress}%` }}
+                            >
+                              <div className="h-full bg-white/20 animate-pulse"></div>
+                            </div>
+                          </div>
+                          <div className="flex justify-between text-xs text-accent-600 mt-1">
+                            <span>Current: {currentStudent.xp} XP</span>
+                            <span>Next: {xpInfo.nextLevel + currentStudent.xp} XP</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center py-2">
+                          <div className="text-amber-600 font-bold text-sm mb-1">🏆 MAXIMUM LEVEL REACHED! 🏆</div>
+                          <div className="text-xs text-amber-500">Ultimate Legend Status</div>
+                        </div>
+                      )}
+
+                      {/* Level Stats */}
+                      <div className="flex justify-between mt-3 pt-3 border-t border-accent-300">
+                        <div className="text-center">
+                          <div className="text-xs text-accent-600">Rank</div>
+                          <div className="text-sm font-bold text-accent-700">
+                            {xpInfo.level >= 80 ? 'Legendary' : 
+                             xpInfo.level >= 60 ? 'Master' : 
+                             xpInfo.level >= 40 ? 'Expert' : 
+                             xpInfo.level >= 20 ? 'Advanced' : 
+                             xpInfo.level >= 10 ? 'Skilled' : 'Learning'}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-xs text-accent-600">Progress</div>
+                          <div className="text-sm font-bold text-accent-700">
+                            {Math.round((xpInfo.level / 99) * 100)}%
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-xs text-accent-600">Next Milestone</div>
+                          <div className="text-sm font-bold text-accent-700">
+                            {[10, 20, 30, 40, 50, 60, 70, 80, 90, 99].find(m => m > xpInfo.level) || 'Complete!'}
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Quick Stats - Compact Grid */}
