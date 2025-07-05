@@ -316,5 +316,9 @@ window.debugBadgeIssue = async () => {
   console.log(`Badge check: ${result.newBadges.length} new, ${result.allEarnedBadges.length} total`)
   if (result.allEarnedBadges.length > 0) {
     console.log('Current badges:', result.allEarnedBadges.map(b => b.badge.name))
+    console.log('Badge order (newest first):')
+    result.allEarnedBadges.forEach((sb, index) => {
+      console.log(`  ${index + 1}. ${sb.badge.name} - earned: ${sb.earned_at}`)
+    })
   }
 }
