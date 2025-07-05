@@ -72,7 +72,7 @@ export class BadgeEvaluator {
     })) || []
   }
 
-  private static async getStudentStats(studentId: string) {
+  public static async getStudentStats(studentId: string) {
     // Get student basic info
     const { data: student, error: studentError } = await supabase
       .from('students')
@@ -116,6 +116,8 @@ export class BadgeEvaluator {
     const maxExamsInAnySubject = Array.from(subjectCounts.values()).length > 0 
       ? Math.max(...Array.from(subjectCounts.values()))
       : 0
+    
+    console.log(`🎯 Max exams in any subject: ${maxExamsInAnySubject} (calculated from ${Array.from(subjectCounts.values()).join(', ')})`)
 
     // Calculate streak days (consecutive days with at least 1 exam)
     let currentStreak = 0
@@ -150,7 +152,7 @@ export class BadgeEvaluator {
     }
   }
 
-  private static checkBadgeCondition(badge: Badge, stats: any): boolean {
+  public static checkBadgeCondition(badge: Badge, stats: any): boolean {
     switch (badge.condition_type) {
       case 'first_exam':
         return stats.hasCompletedFirstExam
@@ -168,6 +170,7 @@ export class BadgeEvaluator {
         return stats.totalXP >= badge.condition_value
 
       case 'subject_mastery':
+        console.log(`🔍 Subject mastery check: student has ${stats.maxExamsInAnySubject} max exams in any subject, badge requires ${badge.condition_value}`)
         return stats.maxExamsInAnySubject >= badge.condition_value
 
       default:
@@ -304,4 +307,59 @@ export class BadgeEvaluator {
         return 'bg-gradient-to-r from-gray-400 to-gray-500'
     }
   }
+
 }
+
+// Debug function to trace badge evaluation
+// @ts-ignore
+window.debugBadgeEvaluationForStudent = async (studentId: string) => {
+  console.log(`🔍 Debug: Evaluating badges for student ${studentId}`)
+  
+  // Get all badges
+  const { data: badges } = await supabase
+    .from('badges')
+    .select('*')
+    .eq('is_active', true)
+  
+  if (!badges) {
+    console.log('❌ No badges found')
+    return
+  }
+  
+  console.log(`📋 Found ${badges.length} active badges:`)
+  badges.forEach((badge: any) => {
+    console.log(`  - ${badge.name}: ${badge.condition_type} >= ${badge.condition_value}`)
+  })
+  
+  // Get student stats
+  const stats = await BadgeEvaluator.getStudentStats(studentId)
+  console.log(`📊 Student stats:`, stats)
+  
+  // Check each badge
+  for (const badge of badges) {
+    console.log(`\n🔍 Checking badge: ${badge.name}`)
+    
+    // Check if already earned
+    const { data: existingAward } = await supabase
+      .from('student_badges')
+      .select('*')
+      .eq('student_id', studentId)
+      .eq('badge_id', badge.id)
+      .single()
+    
+    if (existingAward) {
+      console.log(`  ✅ Already earned on ${existingAward.earned_date}`)
+      continue
+    }
+    
+    // Check if qualifies
+    const qualifies = BadgeEvaluator.checkBadgeCondition(badge, stats)
+    console.log(`  ${qualifies ? '✅ QUALIFIES' : '❌ does not qualify'}`)
+    
+    if (qualifies) {
+      console.log(`  🎉 Should award badge: ${badge.name}`)
+    }
+  }
+}
+
+console.log('🔧 Debug function loaded. Call debugBadgeEvaluationForStudent("student_id") from console')
