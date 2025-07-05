@@ -121,67 +121,66 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
           </div>
         </div>
 
-          {/* Compact XP Progress */}
-          <div className={`bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-xl p-3 border shadow-sm transition-all duration-300 ${xpInfo.isMilestone ? 'border-yellow-400' : 'border-indigo-200/50'}`}>
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center">
-                <div className={`bg-gradient-to-r ${xpInfo.gradient} rounded-lg p-1.5 shadow-sm mr-2 relative`}>
-                  <Star className="w-4 h-4 text-white" />
-                  {xpInfo.isMilestone && (
-                    <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-yellow-400 rounded-full flex items-center justify-center">
-                      <span className="text-xs">🏆</span>
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <span className={`font-bold text-sm ${xpInfo.color}`}>
-                    Level {xpInfo.level} {xpInfo.isMilestone && '🏆'}
-                  </span>
-                  <p className="text-xs text-gray-600">{xpInfo.text.split(' - ')[1]}</p>
-                </div>
+        {/* Compact XP Progress */}
+        <div className={`bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-xl p-3 border shadow-sm transition-all duration-300 ${xpInfo.isMilestone ? 'border-yellow-400' : 'border-indigo-200/50'}`}>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center">
+              <div className={`bg-gradient-to-r ${xpInfo.gradient} rounded-lg p-1.5 shadow-sm mr-2 relative`}>
+                <Star className="w-4 h-4 text-white" />
+                {xpInfo.isMilestone && (
+                  <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <span className="text-xs">🏆</span>
+                  </div>
+                )}
               </div>
-              <div className="text-right">
-                <p className={`font-bold text-lg ${xpInfo.color}`}>{xpInfo.emoji}</p>
-                <p className="text-xs text-gray-500">{xpInfo.level}/99</p>
+              <div>
+                <span className={`font-bold text-sm ${xpInfo.color}`}>
+                  Level {xpInfo.level} {xpInfo.isMilestone && '🏆'}
+                </span>
+                <p className="text-xs text-gray-600">{xpInfo.text.split(' - ')[1]}</p>
               </div>
             </div>
-            
-            {/* Compact Progress */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between text-xs text-gray-600">
-                <span>{xpInfo.totalXP} XP</span>
-                <span>Next: Lv{[10, 20, 30, 40, 50, 60, 70, 80, 90, 99].find(m => m > xpInfo.level) || '99'}</span>
-              </div>
-              <div className="w-full h-2 bg-white/70 rounded-full overflow-hidden">
-                <div 
-                  className={`h-full bg-gradient-to-r ${xpInfo.gradient} rounded-full transition-all duration-1000`}
-                  style={{ width: `${Math.min((xpInfo.level / 99) * 100, 100)}%` }}
-                ></div>
-              </div>
+            <div className="text-right">
+              <p className={`font-bold text-lg ${xpInfo.color}`}>{xpInfo.emoji}</p>
+              <p className="text-xs text-gray-500">{xpInfo.level}/99</p>
             </div>
           </div>
+          
+          {/* Compact Progress */}
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-xs text-gray-600">
+              <span>{xpInfo.totalXP} XP</span>
+              <span>Next: Lv{[10, 20, 30, 40, 50, 60, 70, 80, 90, 99].find((m) => m > xpInfo.level) || '99'}</span>
+            </div>
+            <div className="w-full h-2 bg-white/70 rounded-full overflow-hidden">
+              <div 
+                className={`h-full bg-gradient-to-r ${xpInfo.gradient} rounded-full transition-all duration-1000`}
+                style={{ width: `${Math.min((xpInfo.level / 99) * 100, 100)}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
 
-          {/* Compact Action Buttons */}
-          <div className="flex space-x-2 mt-3">
-            <Button 
-              variant="gradient-primary"
-              size="sm" 
-              className="flex-1 text-sm py-2.5 shadow-md hover:shadow-lg transition-all duration-300"
-              onClick={() => onOpenExamModal?.(student)}
-              icon={<Zap className="w-4 h-4" />}
-            >
-              Start Exam
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex-1 text-sm py-2.5 border border-indigo-300 text-indigo-600 hover:bg-indigo-50 transition-all duration-300"
-              onClick={() => onOpenProgressModal?.(student)}
-              icon={<Trophy className="w-4 h-4" />}
-            >
-              Progress
-            </Button>
-          </div>
+        {/* Compact Action Buttons */}
+        <div className="flex space-x-2 mt-3">
+          <Button 
+            variant="gradient-primary"
+            size="sm" 
+            className="flex-1 text-sm py-2.5 shadow-md hover:shadow-lg transition-all duration-300"
+            onClick={() => onOpenExamModal?.(student)}
+            icon={<Zap className="w-4 h-4" />}
+          >
+            Start Exam
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 text-sm py-2.5 border border-indigo-300 text-indigo-600 hover:bg-indigo-50 transition-all duration-300"
+            onClick={() => onOpenProgressModal?.(student)}
+            icon={<Trophy className="w-4 h-4" />}
+          >
+            Progress
+          </Button>
         </div>
       </div>
     </>
