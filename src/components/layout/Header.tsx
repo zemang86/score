@@ -123,15 +123,15 @@ export function Header() {
               </Button>
             )}
             
-            {/* Sign Out Button - Smaller Size */}
+            {/* Sign Out Button - Square Icon Only */}
             <Button
               variant="error"
               size="sm"
               onClick={handleSignOut}
-              icon={<LogOut className="w-3 h-3" />}
-              className="bg-red-500 hover:bg-red-600 text-white px-2 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 text-xs"
+              icon={<LogOut className="w-4 h-4" />}
+              className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+              title="Sign Out"
             >
-              <span className="hidden sm:inline text-xs">Sign Out</span>
             </Button>
           </div>
         </div>
