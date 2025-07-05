@@ -82,117 +82,91 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
 
   return (
     <>
-      <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border-2 border-indigo-200 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] hover:border-indigo-300 hover:ring-4 hover:ring-indigo-100 group overflow-hidden">
-        {/* Background gradient orb */}
-        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-2xl opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>
-        
-        {/* Floating decorative elements */}
-        <div className="absolute top-2 right-2 animate-float opacity-30 group-hover:opacity-50 transition-opacity duration-300">
-          <Sparkles className="w-4 h-4 text-purple-400" />
-        </div>
-        <div className="absolute bottom-2 left-2 animate-pulse-soft opacity-30 group-hover:opacity-50 transition-opacity duration-300">
-          <Heart className="w-3 h-3 text-pink-400" />
-        </div>
+      <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-4 border-2 border-indigo-200 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.01] hover:border-indigo-300 hover:ring-2 hover:ring-indigo-100 group overflow-hidden">
+        {/* Subtle background gradient */}
+        <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-indigo-400/10 to-purple-400/10 rounded-full blur-xl opacity-60"></div>
 
-        {/* Header with student info and edit button */}
-        <div className="flex items-start justify-between mb-4 relative z-10">
+        {/* Compact Header */}
+        <div className="flex items-center justify-between mb-3 relative z-10">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mr-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 ring-2 ring-indigo-200">
-              <User className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mr-3 shadow-md">
+              <User className="w-5 h-5 text-white" />
             </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-800 mb-1 group-hover:text-indigo-700 transition-colors">{student.name}</h3>
-              <p className="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors">{getAgeDisplay(student.date_of_birth)}</p>
+            <div className="min-w-0">
+              <h3 className="text-base font-bold text-slate-800 group-hover:text-indigo-700 transition-colors truncate">{student.name}</h3>
+              <p className="text-xs text-slate-600 group-hover:text-indigo-600 transition-colors">{getAgeDisplay(student.date_of_birth)}</p>
             </div>
           </div>
           
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-xl hover:scale-110 transition-all duration-300" 
-            icon={<Edit className="w-4 h-4" />}
-            onClick={() => onOpenEditModal?.(student)}
-            title="Edit student information"
-          >
-          </Button>
-        </div>
-
-        {/* Student details in enhanced format */}
-        <div className="space-y-4 relative z-10">
-          {/* School and Level in one row */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center text-slate-600 text-sm">
-              <div className="bg-gradient-to-r from-slate-100 to-blue-100 rounded-xl p-2 mr-3 shadow-sm">
-                <School className="w-4 h-4 text-slate-600" />
-              </div>
-              <div>
-                <p className="font-medium text-slate-800 text-sm">{student.school}</p>
-                <p className="text-xs text-slate-500">School</p>
-              </div>
-            </div>
-            <span className={`inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-bold ${getLevelColor(student.level)}`}>
+          <div className="flex items-center space-x-2">
+            <span className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-bold ${getLevelColor(student.level)}`}>
               {student.level}
             </span>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 p-1.5 rounded-lg" 
+              icon={<Edit className="w-3.5 h-3.5" />}
+              onClick={() => onOpenEditModal?.(student)}
+              title="Edit"
+            />
           </div>
+        </div>
 
-          {/* Enhanced XP Progress with 99-Level System */}
-          <div className={`bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-2xl p-4 border-2 shadow-sm hover:shadow-md transition-all duration-300 ${xpInfo.isMilestone ? 'border-yellow-400 animate-pulse-glow' : 'border-indigo-200/50'}`}>
+        {/* School Info - Compact */}
+        <div className="mb-3 relative z-10">
+          <div className="flex items-center text-slate-600">
+            <School className="w-3.5 h-3.5 text-slate-500 mr-2" />
+            <p className="font-medium text-slate-800 text-sm truncate">{student.school}</p>
+          </div>
+        </div>
+
+          {/* Compact XP Progress */}
+          <div className={`bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-xl p-3 border shadow-sm transition-all duration-300 ${xpInfo.isMilestone ? 'border-yellow-400' : 'border-indigo-200/50'}`}>
             <div className="flex items-center justify-between mb-2">
-              <div className={`bg-gradient-to-r ${xpInfo.gradient} rounded-xl p-2 shadow-md relative`}>
-                <Star className="w-5 h-5 text-white" />
-                {xpInfo.isMilestone && (
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
-                    <span className="text-xs">🏆</span>
-                  </div>
-                )}
-              </div>
-              <div className="text-right">
-                <p className={`font-bold text-2xl ${xpInfo.color} flex items-center justify-end`}>
-                  {xpInfo.emoji}
-                  {xpInfo.isMilestone && <span className="text-xs ml-1 text-yellow-500">✨</span>}
-                </p>
-                <p className="text-xs text-gray-500">Level {xpInfo.level}/99</p>
-              </div>
-            </div>
-            
-            {/* Level Name and XP */}
-            <div className="mb-3">
-              <span className={`font-bold text-sm ${xpInfo.color} block`}>
-                Level {xpInfo.level} {xpInfo.isMilestone && '🏆'}
-              </span>
-              <span className="text-xs text-gray-600">{xpInfo.text.split(' - ')[1]}</span>
-            </div>
-            
-            {/* Progress Bar */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs text-gray-600">
-                <span>{xpInfo.totalXP} XP</span>
-                <span>{Math.round((xpInfo.level / 99) * 100)}% to Max</span>
-              </div>
-              <div className="w-full h-2.5 bg-white/70 rounded-full overflow-hidden border border-gray-200">
-                <div 
-                  className={`h-full bg-gradient-to-r ${xpInfo.gradient} rounded-full transition-all duration-1000 relative`}
-                  style={{ width: `${Math.min((xpInfo.level / 99) * 100, 100)}%` }}
-                >
-                  <div className="h-full bg-white/20 animate-pulse"></div>
+              <div className="flex items-center">
+                <div className={`bg-gradient-to-r ${xpInfo.gradient} rounded-lg p-1.5 shadow-sm mr-2 relative`}>
+                  <Star className="w-4 h-4 text-white" />
+                  {xpInfo.isMilestone && (
+                    <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-yellow-400 rounded-full flex items-center justify-center">
+                      <span className="text-xs">🏆</span>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <span className={`font-bold text-sm ${xpInfo.color}`}>
+                    Level {xpInfo.level} {xpInfo.isMilestone && '🏆'}
+                  </span>
+                  <p className="text-xs text-gray-600">{xpInfo.text.split(' - ')[1]}</p>
                 </div>
               </div>
-              
-              {/* Next Milestone */}
-              <div className="text-center">
-                <span className="text-xs text-gray-500">
-                  Next Milestone: Level {[10, 20, 30, 40, 50, 60, 70, 80, 90, 99].find(m => m > xpInfo.level) || 'Complete!'}
-                </span>
+              <div className="text-right">
+                <p className={`font-bold text-lg ${xpInfo.color}`}>{xpInfo.emoji}</p>
+                <p className="text-xs text-gray-500">{xpInfo.level}/99</p>
+              </div>
+            </div>
+            
+            {/* Compact Progress */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between text-xs text-gray-600">
+                <span>{xpInfo.totalXP} XP</span>
+                <span>Next: Lv{[10, 20, 30, 40, 50, 60, 70, 80, 90, 99].find(m => m > xpInfo.level) || '99'}</span>
+              </div>
+              <div className="w-full h-2 bg-white/70 rounded-full overflow-hidden">
+                <div 
+                  className={`h-full bg-gradient-to-r ${xpInfo.gradient} rounded-full transition-all duration-1000`}
+                  style={{ width: `${Math.min((xpInfo.level / 99) * 100, 100)}%` }}
+                ></div>
               </div>
             </div>
           </div>
 
-          {/* Action Buttons with enhanced styling */}
-          <div className="flex space-x-3 pt-2">
+          {/* Compact Action Buttons */}
+          <div className="flex space-x-2 mt-3">
             <Button 
               variant="gradient-primary"
               size="sm" 
-              className="flex-1 text-sm py-3 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 ring-2 ring-indigo-200 hover:ring-indigo-300"
+              className="flex-1 text-sm py-2.5 shadow-md hover:shadow-lg transition-all duration-300"
               onClick={() => onOpenExamModal?.(student)}
               icon={<Zap className="w-4 h-4" />}
             >
@@ -201,7 +175,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex-1 text-sm py-3 border-2 border-indigo-300 text-indigo-600 hover:bg-indigo-50 hover:border-indigo-500 hover:scale-105 transition-all duration-300 bg-white/90 backdrop-blur-sm shadow-md hover:shadow-lg"
+              className="flex-1 text-sm py-2.5 border border-indigo-300 text-indigo-600 hover:bg-indigo-50 transition-all duration-300"
               onClick={() => onOpenProgressModal?.(student)}
               icon={<Trophy className="w-4 h-4" />}
             >
