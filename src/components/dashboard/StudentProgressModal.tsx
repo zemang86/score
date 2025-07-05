@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase'
 import { Student } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { X, TrendingUp, Trophy, Calendar, BookOpen, Target, Star, Award, BarChart3, ArrowLeft, Eye, CheckCircle, XCircle, Clock, Edit3, ArrowUpDown, BookOpenCheck } from 'lucide-react'
+import { BadgeEvaluator, type StudentBadge } from '../../utils/badgeEvaluator'
 
 interface StudentProgressModalProps {
   isOpen: boolean
@@ -47,25 +48,21 @@ interface SubjectStats {
   lastExamDate: string
 }
 
-interface Badge {
-  id: string
-  name: string
-  description: string
-  icon: string
-  earned_at: string
-}
+// Using StudentBadge from badgeEvaluator instead of local interface
 
 export function StudentProgressModal({ isOpen, onClose, student }: StudentProgressModalProps) {
   const [examResults, setExamResults] = useState<ExamResult[]>([])
   const [subjectStats, setSubjectStats] = useState<SubjectStats[]>([])
-  const [badges, setBadges] = useState<Badge[]>([])
+  const [badges, setBadges] = useState<StudentBadge[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'overview' | 'exams' | 'subjects' | 'badges'>('overview')
   const [reviewingExam, setReviewingExam] = useState<ExamResult | null>(null)
   const [reviewLoading, setReviewLoading] = useState(false)
+  const [currentStudent, setCurrentStudent] = useState<Student>(student)
 
   useEffect(() => {
     if (isOpen && student) {
+      setCurrentStudent(student) // Update current student when prop changes
       fetchStudentData()
     }
   }, [isOpen, student])
@@ -74,6 +71,18 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
     setLoading(true)
     
     try {
+      // Fetch fresh student data to get updated XP and stats
+      const { data: freshStudentData, error: studentError } = await supabase
+        .from('students')
+        .select('*')
+        .eq('id', student.id)
+        .single()
+
+      if (studentError) throw studentError
+
+      // Update current student with fresh data
+      setCurrentStudent(freshStudentData)
+
       // Fetch exam results
       const { data: exams, error: examsError } = await supabase
         .from('exams')
@@ -84,31 +93,11 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
 
       if (examsError) throw examsError
 
-      // Fetch student badges
-      const { data: studentBadges, error: badgesError } = await supabase
-        .from('student_badges')
-        .select(`
-          earned_at,
-          badges (
-            id,
-            name,
-            description,
-            icon
-          )
-        `)
-        .eq('student_id', student.id)
-        .order('earned_at', { ascending: false })
-
-      if (badgesError) throw badgesError
+      // Fetch student badges using the badge evaluator
+      const badgeResult = await BadgeEvaluator.evaluateAndAwardBadges(student.id)
 
       setExamResults(exams || [])
-      setBadges(studentBadges?.map(sb => ({
-        id: sb.badges.id,
-        name: sb.badges.name,
-        description: sb.badges.description,
-        icon: sb.badges.icon,
-        earned_at: sb.earned_at
-      })) || [])
+      setBadges(badgeResult.allEarnedBadges || [])
 
       // Calculate subject statistics
       if (exams && exams.length > 0) {
@@ -242,6 +231,27 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
     return { level: 5, progress: xp - 1000, nextLevel: 0 }
   }
 
+  const getBadgeColor = (conditionType: string) => {
+    switch (conditionType) {
+      case 'first_exam':
+        return 'bg-gradient-to-br from-green-400 to-emerald-500 border-green-300'
+      case 'perfect_score':
+        return 'bg-gradient-to-br from-yellow-400 to-orange-500 border-yellow-300'
+      case 'score_range':
+        return 'bg-gradient-to-br from-purple-400 to-pink-500 border-purple-300'
+      case 'exams_completed':
+        return 'bg-gradient-to-br from-blue-400 to-cyan-500 border-blue-300'
+      case 'streak_days':
+        return 'bg-gradient-to-br from-red-400 to-pink-500 border-red-300'
+      case 'xp_earned':
+        return 'bg-gradient-to-br from-indigo-400 to-purple-500 border-indigo-300'
+      case 'subject_mastery':
+        return 'bg-gradient-to-br from-amber-400 to-yellow-500 border-amber-300'
+      default:
+        return 'bg-gradient-to-br from-gray-400 to-gray-500 border-gray-300'
+    }
+  }
+
   const renderQuestionReview = (attempt: ExamAttempt, index: number) => {
     if (!attempt.question) return null
 
@@ -337,7 +347,7 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
 
   if (!isOpen) return null
 
-  const xpInfo = getXPLevel(student.xp)
+  const xpInfo = getXPLevel(currentStudent.xp)
   const totalExams = examResults.length
   const averageScore = examResults.length > 0 
     ? Math.round(examResults.reduce((sum, exam) => sum + (exam.score || 0), 0) / examResults.length)
@@ -366,12 +376,12 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                  )}
                  <div>
                    <h2 className="text-xl font-bold text-slate-800">
-                     {reviewingExam ? 'Exam Review' : `${student.name}'s Progress`}
+                     {reviewingExam ? 'Exam Review' : `${currentStudent.name}'s Progress`}
                    </h2>
                    <p className="text-sm text-slate-600">
                      {reviewingExam 
                        ? `${reviewingExam.subject} - ${reviewingExam.mode} Mode - ${formatDate(reviewingExam.date)}`
-                       : `${student.level} • ${student.school}`
+                       : `${currentStudent.level} • ${currentStudent.school}`
                      }
                    </p>
                  </div>
@@ -496,11 +506,11 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                           <Star className="w-5 h-5 text-accent-600 mr-2" />
                           <div>
                             <h3 className="text-base font-bold text-accent-700">Level {xpInfo.level}</h3>
-                            <p className="text-xs text-warning-600">{student.xp} XP Total</p>
+                            <p className="text-xs text-warning-600">{currentStudent.xp} XP Total</p>
                           </div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-bold text-accent-700">{student.xp}</div>
+                          <div className="text-lg font-bold text-accent-700">{currentStudent.xp}</div>
                           <div className="text-xs text-warning-600">Experience Points</div>
                         </div>
                       </div>
@@ -660,27 +670,71 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                 {/* Badges Tab */}
                 {activeTab === 'badges' && (
                   <div className="space-y-3">
-                    <h3 className="text-base font-bold text-blue-700">Achievement Badges</h3>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base font-bold text-blue-700">Achievement Badges</h3>
+                      {badges.length > 12 && (
+                        <span className="text-xs text-gray-500">Showing newest 12 badges</span>
+                      )}
+                    </div>
                     {badges.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-96 overflow-y-auto">
-                        {badges.map((badge) => (
-                          <div key={badge.id} className="bg-gradient-to-r from-accent-100 to-warning-100 border border-accent-300 rounded-lg p-3 text-center shadow-sm">
-                            <div className="text-xl mb-1">{badge.icon}</div>
-                            <h4 className="font-bold text-accent-700 mb-0.5 text-sm">{badge.name}</h4>
-                            <p className="text-xs text-warning-600 mb-1">{badge.description}</p>
-                            <div className="text-xs text-accent-600">
-                              Earned: {formatDate(badge.earned_at)}
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                        {badges.slice(0, 12).map((studentBadge) => (
+                          <div 
+                            key={studentBadge.id} 
+                            className={`${getBadgeColor(studentBadge.badge.condition_type)} border-2 rounded-lg p-2 text-center shadow-sm hover:shadow-md transition-all duration-200 text-white relative group cursor-pointer`}
+                            title={`${studentBadge.badge.name}: ${studentBadge.badge.description}`}
+                          >
+                            <div className="text-lg mb-1">{studentBadge.badge.icon}</div>
+                            <h4 className="font-bold text-xs leading-tight mb-1 text-white drop-shadow-sm">
+                              {studentBadge.badge.name}
+                            </h4>
+                            <div className="text-xs opacity-90 text-white">
+                              {formatDate(studentBadge.earned_at)}
+                            </div>
+                            
+                            {/* Hover tooltip */}
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 bg-gray-800 text-white text-xs rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                              <div className="font-semibold mb-1">{studentBadge.badge.name}</div>
+                              <div className="text-gray-300">{studentBadge.badge.description}</div>
+                              <div className="text-gray-400 mt-1">Earned: {formatDate(studentBadge.earned_at)}</div>
+                              {/* Arrow */}
+                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-6">
-                        <div className="bg-accent-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-3">
-                          <Award className="w-5 h-5 text-accent-600" />
+                      <div className="text-center py-8">
+                        <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                          <Award className="w-6 h-6 text-blue-600" />
                         </div>
-                        <p className="text-accent-600 text-sm">No badges earned yet!</p>
-                        <p className="text-accent-500 text-xs">Complete exams to start earning awesome badges!</p>
+                        <p className="text-blue-600 text-sm font-medium">No badges earned yet!</p>
+                        <p className="text-blue-500 text-xs mt-1">Complete exams to start earning awesome badges!</p>
+                      </div>
+                    )}
+                    
+                    {/* Badge Categories Legend */}
+                    {badges.length > 0 && (
+                      <div className="mt-4 p-3 bg-gray-50 rounded-lg border">
+                        <h4 className="text-xs font-semibold text-gray-700 mb-2">Badge Categories</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-gradient-to-br from-green-400 to-emerald-500 rounded mr-2"></div>
+                            <span className="text-gray-600">First Steps</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-gradient-to-br from-blue-400 to-cyan-500 rounded mr-2"></div>
+                            <span className="text-gray-600">Progress</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-gradient-to-br from-purple-400 to-pink-500 rounded mr-2"></div>
+                            <span className="text-gray-600">Performance</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded mr-2"></div>
+                            <span className="text-gray-600">Perfect Scores</span>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>

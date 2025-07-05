@@ -202,7 +202,7 @@ export function ParentDashboard() {
         .in('student_id', studentIds)
 
       if (badgesError) {
-        console.error('❌ Error fetching badges:', badgesError)
+        console.error('Error fetching badges:', badgesError)
         throw badgesError
       }
 
@@ -241,10 +241,10 @@ export function ParentDashboard() {
   }
 
   const handleExamComplete = () => {
-    // ✅ Delay refresh to allow modal to close naturally and prevent tab switching issues
+    // Delay refresh to allow badge data to be committed and modal to close
     setTimeout(() => {
-      fetchStudents() // Refresh to update XP and stats
-    }, 1000) // 1 second delay
+      fetchStudents() // Refresh to update XP and stats including badges
+    }, 1500) // 1.5 second delay - optimized from 2 seconds
   }
 
   const handleStudentUpdated = () => {
