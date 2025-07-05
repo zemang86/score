@@ -103,13 +103,19 @@ export class BadgeEvaluator {
     const perfectScores = exams?.filter((e: any) => e.score === 100).length || 0
     const totalXP = student.xp || 0
     
-    // Calculate subject mastery (5+ exams in same subject)
+    // Calculate subject mastery - check if student has completed required exams in ANY subject
     const subjectCounts = new Map<string, number>()
     exams?.forEach((exam: any) => {
       const count = subjectCounts.get(exam.subject) || 0
       subjectCounts.set(exam.subject, count + 1)
     })
-    const subjectMasteryCount = Array.from(subjectCounts.values()).filter(count => count >= 5).length
+    
+    console.log(`📚 Subject breakdown for student:`, Object.fromEntries(subjectCounts))
+    
+    // Get the highest count of exams in any single subject
+    const maxExamsInAnySubject = Array.from(subjectCounts.values()).length > 0 
+      ? Math.max(...Array.from(subjectCounts.values()))
+      : 0
 
     // Calculate streak days (consecutive days with at least 1 exam)
     let currentStreak = 0
@@ -138,7 +144,7 @@ export class BadgeEvaluator {
       totalExams,
       perfectScores,
       totalXP,
-      subjectMasteryCount,
+      maxExamsInAnySubject,
       maxStreakDays: maxStreak,
       hasCompletedFirstExam: totalExams > 0
     }
@@ -162,7 +168,7 @@ export class BadgeEvaluator {
         return stats.totalXP >= badge.condition_value
 
       case 'subject_mastery':
-        return stats.subjectMasteryCount >= badge.condition_value
+        return stats.maxExamsInAnySubject >= badge.condition_value
 
       default:
         console.warn(`Unknown badge condition type: ${badge.condition_type}`)
@@ -222,7 +228,7 @@ export class BadgeEvaluator {
         totalExams: stats.totalExams,
         perfectScores: stats.perfectScores,
         totalXP: stats.totalXP,
-        subjectMasteryCount: stats.subjectMasteryCount,
+        maxExamsInAnySubject: stats.maxExamsInAnySubject,
         maxStreakDays: stats.maxStreakDays,
         hasCompletedFirstExam: stats.hasCompletedFirstExam
       })
