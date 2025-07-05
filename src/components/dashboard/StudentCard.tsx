@@ -42,7 +42,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
 
   return (
     <>
-      <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-white/80 group overflow-hidden">
+      <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border-2 border-indigo-200 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] hover:border-indigo-300 hover:ring-4 hover:ring-indigo-100 group overflow-hidden">
         {/* Background gradient orb */}
         <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-2xl opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>
         
@@ -57,12 +57,12 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
         {/* Header with student info and edit button */}
         <div className="flex items-start justify-between mb-4 relative z-10">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mr-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110">
+            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mr-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 ring-2 ring-indigo-200">
               <User className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-800 mb-1">{student.name}</h3>
-              <p className="text-sm text-slate-600">{getAgeDisplay(student.date_of_birth)}</p>
+              <h3 className="text-lg font-bold text-slate-800 mb-1 group-hover:text-indigo-700 transition-colors">{student.name}</h3>
+              <p className="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors">{getAgeDisplay(student.date_of_birth)}</p>
             </div>
           </div>
           
@@ -121,7 +121,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
             <Button 
               variant="gradient-primary"
               size="sm" 
-              className="flex-1 text-sm py-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="flex-1 text-sm py-3 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 ring-2 ring-indigo-200 hover:ring-indigo-300"
               onClick={() => onOpenExamModal?.(student)}
               icon={<Zap className="w-4 h-4" />}
             >
@@ -130,7 +130,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex-1 text-sm py-3 border-2 border-indigo-300 text-indigo-600 hover:bg-indigo-50 hover:border-indigo-400 hover:scale-105 transition-all duration-300 bg-white/80 backdrop-blur-sm"
+              className="flex-1 text-sm py-3 border-2 border-indigo-300 text-indigo-600 hover:bg-indigo-50 hover:border-indigo-500 hover:scale-105 transition-all duration-300 bg-white/90 backdrop-blur-sm shadow-md hover:shadow-lg"
               onClick={() => onOpenProgressModal?.(student)}
               icon={<Trophy className="w-4 h-4" />}
             >

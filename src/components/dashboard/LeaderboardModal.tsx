@@ -345,7 +345,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                               : entry.rank === 3
                               ? 'bg-gradient-to-r from-orange-100 to-orange-200 border-orange-400'
                               : isUserStudent 
-                              ? 'bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-600 border-4 shadow-lg ring-2 ring-indigo-300 ring-offset-2'
+                              ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-1 sm:ring-2 ring-indigo-200'
                               : 'bg-white border-gray-200 hover:border-gray-300'
                           }`}
                         >
