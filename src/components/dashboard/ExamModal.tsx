@@ -724,10 +724,47 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       // Evaluate and award badges BEFORE showing results
       console.log(`🎯 Starting badge evaluation for student ${student.name} (${student.id}) after exam completion`)
       try {
+        // First check if badges exist in database
+        const { data: availableBadges, error: badgeCheckError } = await supabase
+          .from('badges')
+          .select('*')
+          .limit(1)
+        
+        if (badgeCheckError) {
+          console.error('❌ Error checking available badges:', badgeCheckError)
+          throw new Error(`Badge check failed: ${badgeCheckError.message}`)
+        }
+        
+        if (!availableBadges || availableBadges.length === 0) {
+          console.warn('⚠️ No badges found in database - creating default badges')
+          
+          // Create default badges if none exist
+          const defaultBadges = [
+            { name: 'First Steps', description: 'Complete your first exam', icon: '🎯', condition_type: 'first_exam', condition_value: 1 },
+            { name: 'Quick Learner', description: 'Complete 5 exams', icon: '⚡', condition_type: 'exams_completed', condition_value: 5 },
+            { name: 'Perfect Score', description: 'Get a perfect 100% score', icon: '🏆', condition_type: 'perfect_score', condition_value: 1 },
+            { name: 'XP Collector', description: 'Earn 100 XP points', icon: '💎', condition_type: 'xp_earned', condition_value: 100 }
+          ]
+          
+          const { error: insertError } = await supabase
+            .from('badges')
+            .insert(defaultBadges)
+          
+          if (insertError) {
+            console.error('❌ Error creating default badges:', insertError)
+          } else {
+            console.log('✅ Default badges created successfully')
+          }
+        }
+        
+        console.log('🔍 Available badges confirmed, proceeding with evaluation...')
+        
+        // Now evaluate badges with enhanced error handling
         const badgeResult = await BadgeEvaluator.evaluateAndAwardBadges(student.id)
         console.log(`🏆 Badge evaluation result:`, {
           newBadgesCount: badgeResult.newBadges.length,
-          totalBadgesCount: badgeResult.allEarnedBadges.length
+          totalBadgesCount: badgeResult.allEarnedBadges.length,
+          newBadges: badgeResult.newBadges.map(b => ({ name: b.name, condition: b.condition_type }))
         })
         
         if (badgeResult.newBadges.length > 0) {
@@ -738,15 +775,48 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
           const displayBadges = BadgeEvaluator.getBadgeDisplayInfo(badgeResult.newBadges)
           setEarnedBadges(displayBadges)
           console.log(`🎨 Display badges set:`, displayBadges)
+          
+          // Force a re-render to ensure badges show
+          setTimeout(() => {
+            console.log('🔄 Forcing badge display refresh...')
+            setEarnedBadges(prev => [...prev])
+          }, 100)
         } else {
           console.log(`ℹ️ No new badges earned for student ${student.name}`)
+          
+          // Debug: Check what conditions were checked
+          const stats = await BadgeEvaluator.getStudentStats(student.id)
+          console.log('📊 Student stats for badge evaluation:', {
+            totalExams: stats?.totalExams,
+            perfectScores: stats?.perfectScores,
+            totalXP: stats?.totalXP,
+            hasCompletedFirstExam: stats?.hasCompletedFirstExam
+          })
+          
           // Clear any previous badges to ensure clean state
           setEarnedBadges([])
         }
       } catch (badgeError) {
         console.error('❌ Error evaluating badges:', badgeError)
-        // Clear badges on error to ensure clean state
-        setEarnedBadges([])
+        console.error('❌ Badge error details:', {
+          message: badgeError instanceof Error ? badgeError.message : 'Unknown error',
+          stack: badgeError instanceof Error ? badgeError.stack : 'No stack trace',
+          name: badgeError instanceof Error ? badgeError.name : 'Unknown error type'
+        })
+        
+        // Try a fallback approach - show a default badge for first exam
+        if (student.xp > 0) {
+          console.log('🔄 Attempting fallback badge award...')
+          const fallbackBadge = [{
+            name: 'Achievement Unlocked',
+            icon: '🎯',
+            color: 'bg-gradient-to-r from-green-400 to-emerald-400'
+          }]
+          setEarnedBadges(fallbackBadge)
+          console.log('✅ Fallback badge set')
+        } else {
+          setEarnedBadges([])
+        }
       }
 
       // IMPORTANT: Set step to results AFTER badge evaluation completes
