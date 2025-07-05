@@ -196,7 +196,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                  </div>
                  <div>
                    <h2 className="text-xl font-bold text-slate-800">Global Leaderboard</h2>
-                   <p className="text-sm text-slate-600">See how you rank among students worldwide</p>
+                   <p className="text-sm text-slate-600 hidden sm:block">See how you rank among students worldwide</p>
                  </div>
                </div>
               
@@ -338,14 +338,14 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                         <div
                           key={entry.student_id}
                           className={`p-2 sm:p-3 rounded-lg sm:rounded-xl border-2 transition-all duration-300 transform hover:scale-[1.01] sm:hover:scale-102 hover:shadow-md sm:hover:shadow-lg ${
-                            isUserStudent 
-                              ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-1 sm:ring-2 ring-indigo-200' 
-                              : entry.rank === 1
+                            entry.rank === 1
                               ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 border-yellow-400'
                               : entry.rank === 2
                               ? 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-400'
                               : entry.rank === 3
                               ? 'bg-gradient-to-r from-orange-100 to-orange-200 border-orange-400'
+                              : isUserStudent 
+                              ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-1 sm:ring-2 ring-indigo-200'
                               : 'bg-white border-gray-200 hover:border-gray-300'
                           }`}
                         >
@@ -358,7 +358,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                   ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white'
                                   : entry.rank === 3
                                   ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white'
-                                  : 'bg-gray-100 text-gray-600'
+                                  : 'bg-slate-100 text-slate-600'
                               }`}>
                                 {/* Inner pulsing effect for top 3 */}
                                 {entry.rank <= 3 && (
@@ -373,37 +373,62 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                 </span>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className={`font-bold text-xs sm:text-sm flex items-center ${isUserStudent ? 'text-indigo-700' : 'text-gray-800'}`}>
+                                <div className={`font-bold text-xs sm:text-sm flex items-center ${
+                                  entry.rank === 1 ? 'text-yellow-700' :
+                                  entry.rank === 2 ? 'text-gray-700' :
+                                  entry.rank === 3 ? 'text-orange-700' :
+                                  isUserStudent ? 'text-indigo-700' : 'text-gray-800'
+                                }`}>
                                   <span className="truncate">{entry.student_name}</span>
                                   {isUserStudent && <span className="ml-1 sm:ml-2 text-indigo-500 flex-shrink-0 text-xs">(Your Kid)</span>}
                                 </div>
-                                <div className={`text-[10px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-600'} truncate`}>
+                                <div className={`text-[10px] sm:text-xs ${
+                                  entry.rank === 1 ? 'text-yellow-600' :
+                                  entry.rank === 2 ? 'text-gray-600' :
+                                  entry.rank === 3 ? 'text-orange-600' :
+                                  isUserStudent ? 'text-indigo-600' : 'text-gray-600'
+                                } truncate`}>
                                   {entry.student_level} • {entry.student_school}
                                 </div>
                               </div>
                             </div>
                             <div className="text-right flex-shrink-0">
                               <div className={`text-xs sm:text-sm font-bold ${
-                                isUserStudent ? 'text-indigo-700' : 
                                 entry.rank === 1 ? 'text-yellow-700' : 
                                 entry.rank === 2 ? 'text-gray-700' : 
                                 entry.rank === 3 ? 'text-orange-700' : 
+                                isUserStudent ? 'text-indigo-700' : 
                                 'text-gray-800'
                               }`}>
                                 {getTypeValue(entry, activeType)}
                               </div>
                               {activeType === 'xp' && entry.total_exams > 0 && (
-                                <div className={`text-[9px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'} hidden sm:block`}>
+                                <div className={`text-[9px] sm:text-xs ${
+                                  entry.rank === 1 ? 'text-yellow-600' :
+                                  entry.rank === 2 ? 'text-gray-600' :
+                                  entry.rank === 3 ? 'text-orange-600' :
+                                  isUserStudent ? 'text-indigo-600' : 'text-gray-500'
+                                } hidden sm:block`}>
                                   {entry.total_exams} exams • {entry.average_score}% avg
                                 </div>
                               )}
                               {activeType === 'exams' && entry.total_xp > 0 && (
-                                <div className={`text-[9px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'} hidden sm:block`}>
+                                <div className={`text-[9px] sm:text-xs ${
+                                  entry.rank === 1 ? 'text-yellow-600' :
+                                  entry.rank === 2 ? 'text-gray-600' :
+                                  entry.rank === 3 ? 'text-orange-600' :
+                                  isUserStudent ? 'text-indigo-600' : 'text-gray-500'
+                                } hidden sm:block`}>
                                   {entry.total_xp} XP • {entry.average_score}% avg
                                 </div>
                               )}
                               {activeType === 'scores' && entry.total_exams > 0 && (
-                                <div className={`text-[9px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'} hidden sm:block`}>
+                                <div className={`text-[9px] sm:text-xs ${
+                                  entry.rank === 1 ? 'text-yellow-600' :
+                                  entry.rank === 2 ? 'text-gray-600' :
+                                  entry.rank === 3 ? 'text-orange-600' :
+                                  isUserStudent ? 'text-indigo-600' : 'text-gray-500'
+                                } hidden sm:block`}>
                                   {entry.total_exams} exams • {entry.total_xp} XP
                                 </div>
                               )}
