@@ -676,9 +676,6 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     setExamScore(score);
     setTotalQuestions(questions.length);
     
-    // IMPORTANT: Set step to results FIRST before any async operations
-    setStep('results');
-    
     try {
       // Save exam to database
       const { data: examData, error: examError } = await supabase
@@ -724,7 +721,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
       if (xpError) throw xpError
 
-      // Evaluate and award badges
+      // Evaluate and award badges BEFORE showing results
       console.log(`🎯 Starting badge evaluation for student ${student.name} (${student.id}) after exam completion`)
       try {
         const badgeResult = await BadgeEvaluator.evaluateAndAwardBadges(student.id)
@@ -743,11 +740,17 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
           console.log(`🎨 Display badges set:`, displayBadges)
         } else {
           console.log(`ℹ️ No new badges earned for student ${student.name}`)
+          // Clear any previous badges to ensure clean state
+          setEarnedBadges([])
         }
       } catch (badgeError) {
         console.error('❌ Error evaluating badges:', badgeError)
-        // Don't fail the exam completion if badge evaluation fails
+        // Clear badges on error to ensure clean state
+        setEarnedBadges([])
       }
+
+      // IMPORTANT: Set step to results AFTER badge evaluation completes
+      setStep('results')
 
       console.log('Exam completed successfully:', {
         score,
@@ -904,8 +907,16 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
         // Trigger star animation after score animation
         setTimeout(() => setShowStars(true), 200)
         
-        // Trigger badges after stars
-        setTimeout(() => setShowBadges(true), 1000)
+        // Trigger badges after stars (only if there are badges to show)
+        setTimeout(() => {
+          console.log(`🎭 Attempting to show badges. earnedBadges.length:`, earnedBadges.length)
+          if (earnedBadges.length > 0) {
+            setShowBadges(true)
+            console.log(`✨ Badges should now be visible!`)
+          } else {
+            console.log(`ℹ️ No badges to show`)
+          }
+        }, 1000)
         
         // Trigger celebration for high scores
         if (targetScore >= 80) {
@@ -917,9 +928,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   }
 
   const startResultsAnimation = () => {
+    console.log(`🎬 Starting results animation. Earned badges:`, earnedBadges)
     // Start score animation
     setTimeout(() => animateScore(examScore), 500)
-    // Note: earnedBadges are now set in finishExam after badge evaluation
   }
 
   const hasUserAnswer = () => {
