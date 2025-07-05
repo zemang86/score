@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
-import { LogOut, User, Crown, BarChart3, Home, Globe } from 'lucide-react'
+import { LogOut, User, Crown, BarChart3, Home } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { EdventureLogo } from '../ui/EdventureLogo'
 import { useTranslation } from 'react-i18next'
@@ -60,7 +60,6 @@ export function Header() {
           <div className="flex items-center space-x-2 sm:space-x-3">
             {/* Language Switcher - Landing Page Consistent */}
             <div className="flex items-center space-x-1 mr-2">
-              <Globe className="w-4 h-4 text-slate-500" />
               <button 
                 onClick={() => changeLanguage('en')} 
                 className={`px-2 py-1 text-xs font-medium rounded-md ${
