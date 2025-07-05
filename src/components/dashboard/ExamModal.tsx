@@ -853,32 +853,8 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     return '🚀 KEEP GOING! 🚀'
   }
 
-  const calculateAchievements = (score: number, correctAnswers: number, totalQuestions: number): Array<{name: string, icon: string, color: string}> => {
-    const badges = []
-    
-    if (score === 100) {
-      badges.push({ name: 'Perfect Score', icon: '🎯', color: 'bg-gradient-to-r from-yellow-400 to-orange-400' })
-    }
-    
-    if (score >= 90) {
-      badges.push({ name: 'Top Performer', icon: '🏆', color: 'bg-gradient-to-r from-purple-400 to-pink-400' })
-    }
-    
-    if (correctAnswers >= 8) {
-      badges.push({ name: 'Answer Master', icon: '🧠', color: 'bg-gradient-to-r from-blue-400 to-cyan-400' })
-    }
-    
-    if (score >= 80) {
-      badges.push({ name: 'Smart Cookie', icon: '🍪', color: 'bg-gradient-to-r from-green-400 to-emerald-400' })
-    }
-    
-    // Check for improvement (this could be compared with previous attempts)
-    if (score >= 70) {
-      badges.push({ name: 'Rising Star', icon: '⭐', color: 'bg-gradient-to-r from-indigo-400 to-purple-400' })
-    }
-    
-    return badges
-  }
+  // This function has been removed as it created fake badges that don't exist in the database
+  // Real badges are now handled by the BadgeEvaluator system and shown via earnedBadges state
 
   const getXPGained = (correctAnswers: number, score: number): number => {
     let xp = correctAnswers * 10 // Base XP per correct answer

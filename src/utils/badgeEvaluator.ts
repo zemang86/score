@@ -102,6 +102,7 @@ export class BadgeEvaluator {
     const totalExams = exams?.length || 0
     const perfectScores = exams?.filter((e: any) => e.score === 100).length || 0
     const totalXP = student.xp || 0
+    const bestScore = exams && exams.length > 0 ? Math.max(...exams.map((e: any) => e.score || 0)) : 0
     
     // Calculate subject mastery - check if student has completed required exams in ANY subject
     const subjectCounts = new Map<string, number>()
@@ -146,6 +147,7 @@ export class BadgeEvaluator {
       totalExams,
       perfectScores,
       totalXP,
+      bestScore,
       maxExamsInAnySubject,
       maxStreakDays: maxStreak,
       hasCompletedFirstExam: totalExams > 0
@@ -172,6 +174,10 @@ export class BadgeEvaluator {
       case 'subject_mastery':
         console.log(`🔍 Subject mastery check: student has ${stats.maxExamsInAnySubject} max exams in any subject, badge requires ${badge.condition_value}`)
         return stats.maxExamsInAnySubject >= badge.condition_value
+
+      case 'score_range':
+        console.log(`🔍 Score range check: student's best score is ${stats.bestScore}%, badge requires ${badge.condition_value}%+`)
+        return stats.bestScore >= badge.condition_value
 
       default:
         console.warn(`Unknown badge condition type: ${badge.condition_type}`)
@@ -230,6 +236,7 @@ export class BadgeEvaluator {
       console.log(`📊 Student stats:`, {
         totalExams: stats.totalExams,
         perfectScores: stats.perfectScores,
+        bestScore: stats.bestScore,
         totalXP: stats.totalXP,
         maxExamsInAnySubject: stats.maxExamsInAnySubject,
         maxStreakDays: stats.maxStreakDays,
@@ -295,6 +302,8 @@ export class BadgeEvaluator {
         return 'bg-gradient-to-r from-green-400 to-emerald-400'
       case 'perfect_score':
         return 'bg-gradient-to-r from-yellow-400 to-orange-400'
+      case 'score_range':
+        return 'bg-gradient-to-r from-purple-400 to-pink-400'
       case 'exams_completed':
         return 'bg-gradient-to-r from-blue-400 to-cyan-400'
       case 'streak_days':
@@ -362,4 +371,118 @@ window.debugBadgeEvaluationForStudent = async (studentId: string) => {
   }
 }
 
-console.log('🔧 Debug function loaded. Call debugBadgeEvaluationForStudent("student_id") from console')
+// Complete debug function to check badge database and evaluation
+// @ts-ignore
+window.debugBadgeIssue = async () => {
+  console.log('� Starting badge debug...')
+  
+  // 1. Check if badges exist in database
+  const { data: badges, error: badgeError } = await supabase
+    .from('badges')
+    .select('*')
+    .eq('is_active', true)
+    .order('condition_type, condition_value')
+  
+  if (badgeError) {
+    console.error('❌ Error fetching badges:', badgeError)
+    return
+  }
+  
+  console.log(`📋 Found ${badges?.length || 0} badges in database:`)
+  badges?.forEach((badge: any) => {
+    console.log(`  - ${badge.name}: ${badge.condition_type} >= ${badge.condition_value}`)
+  })
+  
+  if (!badges || badges.length === 0) {
+    console.log('❌ NO BADGES FOUND! You need to run the sample_badges.sql script first!')
+    return
+  }
+  
+  // 2. Get current student ID
+  const studentId = localStorage.getItem('student_id') || sessionStorage.getItem('student_id')
+  if (!studentId) {
+    console.log('❌ No student ID found. Make sure you are logged in as a student.')
+    return
+  }
+  
+  console.log(`\n👤 Checking student: ${studentId}`)
+  
+  // 3. Check current student badges
+  const { data: currentBadges, error: currentBadgeError } = await supabase
+    .from('student_badges')
+    .select(`
+      id,
+      earned_at,
+      badges (
+        name,
+        description,
+        icon,
+        condition_type,
+        condition_value
+      )
+    `)
+    .eq('student_id', studentId)
+  
+  if (currentBadgeError) {
+    console.error('❌ Error fetching current badges:', currentBadgeError)
+    return
+  }
+  
+  console.log(`\n🏅 Student currently has ${currentBadges?.length || 0} badges:`)
+  currentBadges?.forEach((sb: any) => {
+    console.log(`  - ${sb.badges.name} (${sb.badges.condition_type})`)
+  })
+  
+  // 4. Get student stats
+  const stats = await BadgeEvaluator.getStudentStats(studentId)
+  console.log(`\n📊 Student stats:`, stats)
+  
+  // 5. Check which badges SHOULD be earned
+  console.log(`\n🎯 Badges that SHOULD be earned:`)
+  badges?.forEach((badge: any) => {
+    let shouldEarn = false
+    let reason = ''
+    
+    switch (badge.condition_type) {
+      case 'first_exam':
+        shouldEarn = stats?.hasCompletedFirstExam || false
+        reason = `Has completed first exam: ${stats?.hasCompletedFirstExam}`
+        break
+      case 'exams_completed':
+        shouldEarn = (stats?.totalExams || 0) >= badge.condition_value
+        reason = `Has ${stats?.totalExams || 0} exams (needs ${badge.condition_value})`
+        break
+      case 'perfect_score':
+        shouldEarn = (stats?.perfectScores || 0) >= badge.condition_value
+        reason = `Has ${stats?.perfectScores || 0} perfect scores (needs ${badge.condition_value})`
+        break
+      case 'xp_earned':
+        shouldEarn = (stats?.totalXP || 0) >= badge.condition_value
+        reason = `Has ${stats?.totalXP || 0} XP (needs ${badge.condition_value})`
+        break
+      case 'subject_mastery':
+        shouldEarn = (stats?.maxExamsInAnySubject || 0) >= badge.condition_value
+        reason = `Max in subject: ${stats?.maxExamsInAnySubject || 0} (needs ${badge.condition_value})`
+        break
+      case 'score_range':
+        shouldEarn = (stats?.bestScore || 0) >= badge.condition_value
+        reason = `Best score: ${stats?.bestScore || 0}% (needs ${badge.condition_value}%+)`
+        break
+    }
+    
+    const hasEarned = currentBadges?.some((sb: any) => sb.badges.name === badge.name)
+    const status = hasEarned ? '✅ EARNED' : shouldEarn ? '⚠️ MISSING' : '❌ NOT QUALIFIED'
+    
+    console.log(`  ${status} ${badge.name}: ${reason}`)
+  })
+  
+  // 6. Suggest actions
+  console.log(`\n🔧 Suggested actions:`)
+  console.log(`1. If badges are missing, run: BadgeEvaluator.evaluateAndAwardBadges("${studentId}")`)
+  console.log(`2. Check console logs during badge evaluation for errors`)
+  console.log(`3. If no badges exist, run the sample_badges.sql script`)
+}
+
+console.log('🔧 Debug functions loaded:')
+console.log('  - debugBadgeIssue() - Complete badge system analysis')
+console.log('  - debugBadgeEvaluationForStudent("student_id") - Detailed evaluation trace')
