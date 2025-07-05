@@ -72,6 +72,7 @@ export class BadgeEvaluator {
         )
       `)
       .eq('student_id', studentId)
+      .order('earned_at', { ascending: false })
 
     if (error) {
       console.error('Error fetching student badges:', error)

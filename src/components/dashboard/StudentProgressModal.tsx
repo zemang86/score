@@ -673,7 +673,7 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                     <div className="flex items-center justify-between">
                       <h3 className="text-base font-bold text-blue-700">Achievement Badges</h3>
                       {badges.length > 12 && (
-                        <span className="text-xs text-gray-500">Showing latest 12 badges</span>
+                        <span className="text-xs text-gray-500">Showing newest 12 badges</span>
                       )}
                     </div>
                     {badges.length > 0 ? (
