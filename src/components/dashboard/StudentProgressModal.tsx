@@ -345,30 +345,34 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white rounded-lg sm:rounded-xl shadow-xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col">
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col border border-white/50">
         
-        {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-          <div className="p-3 sm:p-4 bg-gradient-to-r from-green-100 to-blue-100">
-            <div className="flex items-center justify-between">
+        {/* Enhanced Sticky Header */}
+        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-white/30">
+          <div className="p-4 sm:p-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 relative overflow-hidden">
+            {/* Background decorative elements */}
+            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-2xl animate-pulse-soft"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-3xl animate-float"></div>
+            
+            <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center">
                 {reviewingExam ? (
                   <button
                     onClick={handleBackToProgress}
-                    className="bg-green-500 rounded-lg p-2 mr-3 shadow-md hover:bg-green-600 transition-colors text-white"
+                    className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 mr-4 shadow-lg hover:bg-white/30 transition-all duration-300 text-white border border-white/30 hover:scale-110"
                   >
-                    <ArrowLeft className="w-5 h-5" />
+                    <ArrowLeft className="w-6 h-6" />
                   </button>
                 ) : (
-                  <div className="bg-green-500 rounded-lg p-2 mr-3 shadow-md">
-                    <TrendingUp className="w-5 h-5 text-white" />
+                  <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 mr-4 shadow-lg border border-white/30">
+                    <TrendingUp className="w-7 h-7 text-white" />
                   </div>
                 )}
                 <div>
-                  <h2 className="text-lg font-bold text-green-700">
-                    {reviewingExam ? 'Exam Review' : `${student.name}'s Progress`}
+                  <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-1">
+                    {reviewingExam ? '📊 Exam Review' : `📈 ${student.name}'s Progress`}
                   </h2>
-                  <p className="text-xs text-blue-600">
+                  <p className="text-sm text-blue-100 drop-shadow font-medium">
                     {reviewingExam 
                       ? `${reviewingExam.subject} - ${reviewingExam.mode} Mode - ${formatDate(reviewingExam.date)}`
                       : `${student.level} • ${student.school}`
@@ -378,38 +382,41 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
               </div>
               <button
                 onClick={onClose}
-                className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
+                className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-300 rounded-2xl p-3 shadow-lg border border-white/30 hover:scale-110 touch-target"
                 title="Close"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Tab Navigation (only show when not reviewing an exam) */}
+        {/* Enhanced Tab Navigation (only show when not reviewing an exam) */}
         {!reviewingExam && (
-          <div className="border-b border-gray-200 bg-gray-50">
+          <div className="border-b border-white/30 bg-gradient-to-r from-indigo-50 to-purple-50">
             <div className="flex">
               {[
-                { id: 'overview', label: 'Overview', icon: BarChart3 },
-                { id: 'exams', label: 'Exams', icon: BookOpen },
-                { id: 'subjects', label: 'Subjects', icon: Target },
-                { id: 'badges', label: 'Badges', icon: Trophy }
+                { id: 'overview', label: 'Overview', icon: BarChart3, emoji: '📊' },
+                { id: 'exams', label: 'Exams', icon: BookOpen, emoji: '📝' },
+                { id: 'subjects', label: 'Subjects', icon: Target, emoji: '🎯' },
+                { id: 'badges', label: 'Badges', icon: Trophy, emoji: '🏆' }
               ].map((tab) => {
                 const Icon = tab.icon
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex-1 px-2 py-2 font-medium transition-all duration-300 text-xs ${
+                    className={`flex-1 px-3 py-3 font-semibold transition-all duration-300 text-sm relative overflow-hidden ${
                       activeTab === tab.id
-                        ? 'bg-green-500 text-white border-b-2 border-green-700'
-                        : 'text-green-600 hover:bg-green-100'
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg transform scale-105'
+                        : 'text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700'
                     }`}
                   >
-                    <Icon className="w-4 h-4 inline mr-1" />
-                    {tab.label}
+                    <div className="relative z-10 flex items-center justify-center">
+                      <span className="mr-1 text-base">{tab.emoji}</span>
+                      <Icon className="w-4 h-4 inline mr-1" />
+                      {tab.label}
+                    </div>
                   </button>
                 )
               })}
