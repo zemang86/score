@@ -344,7 +344,7 @@ export function OptimizedParentDashboard() {
                   <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-1 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                     Welcome, {profile?.full_name || 'Parent'}!
                   </h1>
-                  <p className="text-sm sm:text-lg text-slate-600 font-medium">Ready to level up your kids' learning adventure? ✨</p>
+                  <p className="text-sm sm:text-lg text-slate-600 font-medium">Ready to level up your kids' learning adventure?</p>
                 </div>
               </div>
               <div className="hidden lg:block">
@@ -355,7 +355,7 @@ export function OptimizedParentDashboard() {
                   icon={<Trophy className="w-5 h-5" />}
                   className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                 >
-                  🏆 Leaderboard
+                  Leaderboard
                 </Button>
               </div>
             </div>

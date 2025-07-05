@@ -347,82 +347,77 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col border border-white/50">
         
-        {/* Enhanced Sticky Header */}
-        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-white/30">
-          <div className="p-4 sm:p-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 relative overflow-hidden">
-            {/* Background decorative elements */}
-            <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-2xl animate-pulse-soft"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-3xl animate-float"></div>
-            
-            <div className="flex items-center justify-between relative z-10">
-              <div className="flex items-center">
-                {reviewingExam ? (
-                  <button
-                    onClick={handleBackToProgress}
-                    className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 mr-4 shadow-lg hover:bg-white/30 transition-all duration-300 text-white border border-white/30 hover:scale-110"
-                  >
-                    <ArrowLeft className="w-6 h-6" />
-                  </button>
-                ) : (
-                  <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 mr-4 shadow-lg border border-white/30">
-                    <TrendingUp className="w-7 h-7 text-white" />
-                  </div>
-                )}
-                <div>
-                  <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-1">
-                    {reviewingExam ? '📊 Exam Review' : `📈 ${student.name}'s Progress`}
-                  </h2>
-                  <p className="text-sm text-blue-100 drop-shadow font-medium">
-                    {reviewingExam 
-                      ? `${reviewingExam.subject} - ${reviewingExam.mode} Mode - ${formatDate(reviewingExam.date)}`
-                      : `${student.level} • ${student.school}`
-                    }
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-300 rounded-2xl p-3 shadow-lg border border-white/30 hover:scale-110 touch-target"
-                title="Close"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
+                 {/* Clean Professional Header */}
+         <div className="sticky top-0 z-10 bg-white border-b border-slate-200">
+           <div className="p-4 sm:p-6 bg-slate-50">
+             <div className="flex items-center justify-between">
+               <div className="flex items-center">
+                 {reviewingExam ? (
+                   <button
+                     onClick={handleBackToProgress}
+                     className="bg-slate-500 hover:bg-slate-600 rounded-xl p-3 mr-4 shadow-sm transition-colors text-white"
+                   >
+                     <ArrowLeft className="w-5 h-5" />
+                   </button>
+                 ) : (
+                   <div className="bg-green-500 rounded-xl p-3 mr-4 shadow-sm">
+                     <TrendingUp className="w-6 h-6 text-white" />
+                   </div>
+                 )}
+                 <div>
+                   <h2 className="text-xl font-bold text-slate-800">
+                     {reviewingExam ? 'Exam Review' : `${student.name}'s Progress`}
+                   </h2>
+                   <p className="text-sm text-slate-600">
+                     {reviewingExam 
+                       ? `${reviewingExam.subject} - ${reviewingExam.mode} Mode - ${formatDate(reviewingExam.date)}`
+                       : `${student.level} • ${student.school}`
+                     }
+                   </p>
+                 </div>
+               </div>
+               <button
+                 onClick={onClose}
+                 className="text-slate-400 hover:text-slate-600 transition-colors rounded-lg p-2 hover:bg-slate-100"
+                 title="Close"
+               >
+                 <X className="w-5 h-5" />
+               </button>
+             </div>
+           </div>
+         </div>
 
-        {/* Enhanced Tab Navigation (only show when not reviewing an exam) */}
-        {!reviewingExam && (
-          <div className="border-b border-white/30 bg-gradient-to-r from-indigo-50 to-purple-50">
-            <div className="flex">
-              {[
-                { id: 'overview', label: 'Overview', icon: BarChart3, emoji: '📊' },
-                { id: 'exams', label: 'Exams', icon: BookOpen, emoji: '📝' },
-                { id: 'subjects', label: 'Subjects', icon: Target, emoji: '🎯' },
-                { id: 'badges', label: 'Badges', icon: Trophy, emoji: '🏆' }
-              ].map((tab) => {
-                const Icon = tab.icon
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex-1 px-3 py-3 font-semibold transition-all duration-300 text-sm relative overflow-hidden ${
-                      activeTab === tab.id
-                        ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg transform scale-105'
-                        : 'text-indigo-600 hover:bg-indigo-100 hover:text-indigo-700'
-                    }`}
-                  >
-                    <div className="relative z-10 flex items-center justify-center">
-                      <span className="mr-1 text-base">{tab.emoji}</span>
-                      <Icon className="w-4 h-4 inline mr-1" />
-                      {tab.label}
-                    </div>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
+                 {/* Clean Tab Navigation (only show when not reviewing an exam) */}
+         {!reviewingExam && (
+           <div className="border-b border-slate-200 bg-slate-50">
+             <div className="flex">
+               {[
+                 { id: 'overview', label: 'Overview', icon: BarChart3 },
+                 { id: 'exams', label: 'Exams', icon: BookOpen },
+                 { id: 'subjects', label: 'Subjects', icon: Target },
+                 { id: 'badges', label: 'Badges', icon: Trophy }
+               ].map((tab) => {
+                 const Icon = tab.icon
+                 return (
+                   <button
+                     key={tab.id}
+                     onClick={() => setActiveTab(tab.id as any)}
+                     className={`flex-1 px-3 py-3 font-medium transition-all duration-200 text-sm ${
+                       activeTab === tab.id
+                         ? 'bg-green-500 text-white border-b-2 border-green-600'
+                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-700'
+                     }`}
+                   >
+                     <div className="flex items-center justify-center">
+                       <Icon className="w-4 h-4 mr-2" />
+                       {tab.label}
+                     </div>
+                   </button>
+                 )
+               })}
+             </div>
+           </div>
+         )}
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto">

@@ -186,23 +186,19 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl max-w-2xl w-full max-h-[95vh] overflow-hidden flex flex-col border border-white/50">
-        {/* Enhanced Header with Landing Page Consistent Styling */}
-        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-white/30">
-          <div className="p-4 sm:p-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 relative overflow-hidden">
-            {/* Background decorative elements */}
-            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl animate-pulse-soft"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-3xl animate-float"></div>
-            
-            <div className="flex items-center justify-between relative z-10">
-              <div className="flex items-center">
-                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 mr-4 shadow-lg border border-white/30">
-                  <Trophy className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-1">🏆 Global Leaderboard 🏆</h2>
-                  <p className="text-sm text-blue-100 drop-shadow font-medium">See how you rank among students worldwide!</p>
-                </div>
-              </div>
+                 {/* Clean Professional Header */}
+         <div className="sticky top-0 z-10 bg-white border-b border-slate-200">
+           <div className="p-4 sm:p-6 bg-slate-50">
+             <div className="flex items-center justify-between">
+               <div className="flex items-center">
+                 <div className="bg-amber-500 rounded-xl p-3 mr-4 shadow-sm">
+                   <Trophy className="w-6 h-6 text-white" />
+                 </div>
+                 <div>
+                   <h2 className="text-xl font-bold text-slate-800">Global Leaderboard</h2>
+                   <p className="text-sm text-slate-600">See how you rank among students worldwide</p>
+                 </div>
+               </div>
               
               {/* Level Filter Dropdown */}
               <div className="flex items-center space-x-3">
@@ -229,7 +225,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                 
                 <button
                   onClick={onClose}
-                  className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-200 rounded-lg p-2 shadow-lg border border-white/30"
+                  className="text-slate-400 hover:text-slate-600 transition-colors rounded-lg p-2 hover:bg-slate-100"
                   title="Close"
                 >
                   <X className="w-5 h-5" />

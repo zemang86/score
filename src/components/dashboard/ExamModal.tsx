@@ -1069,25 +1069,21 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col border border-white/50">
         
-        {/* Enhanced Gaming Header with Brand Consistency */}
-        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-white/30">
-          <div className="p-4 sm:p-6 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 relative overflow-hidden">
-            {/* Background decorative elements */}
-            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl animate-pulse-soft"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-3xl animate-float"></div>
-            
-            <div className="flex items-center justify-between relative z-10">
+        {/* Clean Gaming Header */}
+        <div className="sticky top-0 z-10 bg-white border-b border-slate-200">
+          <div className="p-4 sm:p-6 bg-gradient-to-r from-indigo-500 to-purple-600">
+            <div className="flex items-center justify-between">
               <div className="flex items-center min-w-0 flex-1">
-                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 mr-4 shadow-lg border border-white/30 flex-shrink-0">
-                  <BookOpen className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 mr-4 shadow-sm flex-shrink-0">
+                  <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-lg sm:text-xl font-bold text-white drop-shadow-lg truncate">
-                    {step === 'setup' && '🎮 Start New Exam'}
-                    {step === 'exam' && `🎯 Question ${currentQuestionIndex + 1} of ${questions.length}`}
-                    {step === 'results' && '🎉 Exam Complete!'}
+                  <h2 className="text-lg sm:text-xl font-bold text-white truncate">
+                    {step === 'setup' && 'Start New Exam'}
+                    {step === 'exam' && `Question ${currentQuestionIndex + 1} of ${questions.length}`}
+                    {step === 'results' && 'Exam Complete!'}
                   </h2>
-                  <p className="text-sm text-blue-100 drop-shadow font-medium truncate">
+                  <p className="text-sm text-indigo-100 font-medium truncate">
                     {step === 'setup' && `For ${student.name} - ${student.level}`}
                     {step === 'exam' && `${selectedSubject} - ${selectedMode} Mode`}
                     {step === 'results' && `${student.name}'s Results`}
@@ -1095,21 +1091,21 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                 </div>
               </div>
               
-              {/* Enhanced Timer for exam step */}
+              {/* Timer for exam step */}
               {step === 'exam' && (
-                <div className="bg-white/20 backdrop-blur-sm text-white rounded-2xl px-4 py-2 shadow-lg border border-white/30 mx-3 flex-shrink-0 hover:scale-105 transition-all duration-300">
-                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" />
-                  <span className="font-bold text-sm sm:text-lg">{formatTime(timeLeft)}</span>
+                <div className="bg-white/20 backdrop-blur-sm text-white rounded-xl px-3 py-2 shadow-sm mx-3 flex-shrink-0">
+                  <Clock className="w-4 h-4 inline mr-2" />
+                  <span className="font-bold text-sm">{formatTime(timeLeft)}</span>
                 </div>
               )}
               
-              {/* Enhanced Close Button */}
+              {/* Close Button */}
               <button
                 onClick={handleModalClose}
-                className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-300 rounded-2xl p-3 shadow-lg border border-white/30 flex-shrink-0 hover:scale-110 touch-target"
+                className="text-white/80 hover:text-white transition-colors rounded-lg p-2 hover:bg-white/20"
                 title="Close exam"
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -1338,7 +1334,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                     loading={loading}
                     icon={!loading ? <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> : undefined}
                   >
-                    {loading ? '🚀 Loading...' : '🚀 Start Exam!'}
+                    {loading ? 'Loading...' : 'Start Exam!'}
                   </Button>
                 </div>
               </div>
