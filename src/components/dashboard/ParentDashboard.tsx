@@ -12,7 +12,6 @@ import { StudentProgressModal } from './StudentProgressModal'
 import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } from '../ui/SkeletonLoader'
-import { QuestionBankStats } from './QuestionBankStats'
 
 export function ParentDashboard() {
   const { user, profile, subscriptionPlan, maxStudents, dailyExamLimit } = useAuth()
@@ -595,8 +594,6 @@ export function ParentDashboard() {
           </div>
         </div>
 
-        {/* Question Bank Statistics */}
-        <QuestionBankStats />
       </main>
 
       {/* Modals */}

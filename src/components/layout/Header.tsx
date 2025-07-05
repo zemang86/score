@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
-import { LogOut, User, Crown, BarChart3, Home, Globe } from 'lucide-react'
+import { LogOut, User, Crown, BarChart3, Home } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { EdventureLogo } from '../ui/EdventureLogo'
 import { useTranslation } from 'react-i18next'
@@ -52,15 +52,14 @@ export function Header() {
   return (
     <header className="bg-white/90 backdrop-blur-lg border-b border-slate-200/50 sticky top-0 z-40 shadow-sm">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14">
-          <button onClick={handleLogoClick} className="hover:opacity-80 transition-opacity">
+        <div className="flex justify-between items-center h-16 sm:h-14">
+          <button onClick={handleLogoClick} className="hover:opacity-80 transition-opacity touch-target">
             <EdventureLogo size="sm" className="sm:scale-110" />
           </button>
 
-          <div className="flex items-center space-x-2">
-            {/* Language Switcher */}
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Language Switcher - Landing Page Consistent */}
             <div className="flex items-center space-x-1 mr-2">
-              <Globe className="w-4 h-4 text-slate-500" />
               <button 
                 onClick={() => changeLanguage('en')} 
                 className={`px-2 py-1 text-xs font-medium rounded-md ${
@@ -83,19 +82,19 @@ export function Header() {
               </button>
             </div>
 
-            {/* User Info */}
-            <div className="hidden sm:flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-slate-200/50 shadow-sm">
-              <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-1.5">
-                <User className="w-3.5 h-3.5 text-white" />
+            {/* User Info - Enhanced */}
+            <div className="hidden sm:flex items-center space-x-2 bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 border border-slate-200/50 shadow-md hover:shadow-lg transition-all duration-300">
+              <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl p-2 shadow-sm">
+                <User className="w-4 h-4 text-white" />
               </div>
               <div>
-                <span className="font-medium text-slate-700 text-sm flex items-center">
+                <span className="font-semibold text-slate-700 text-sm flex items-center">
                   {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
-                  {isPremium && <Crown className="w-3.5 h-3.5 text-amber-500 ml-1.5" />}
+                  {isPremium && <Crown className="w-4 h-4 text-amber-500 ml-2" />}
                 </span>
                 {isAdmin && (
-                  <div className="flex items-center mt-0.5">
-                    <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold text-[10px]">
+                  <div className="flex items-center mt-1">
+                    <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
                       ADMIN
                     </span>
                   </div>
@@ -103,36 +102,36 @@ export function Header() {
               </div>
             </div>
 
-            {/* Mobile User Info */}
-            <div className="sm:hidden flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg w-7 h-7 relative">
-              <span className="text-white text-xs font-bold">{getUserInitials()}</span>
+            {/* Mobile User Info - Enhanced Touch Target */}
+            <div className="sm:hidden flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl w-10 h-10 relative shadow-md touch-target">
+              <span className="text-white text-sm font-bold">{getUserInitials()}</span>
               {isPremium && (
-                <Crown className="w-3 h-3 text-amber-400 absolute -top-1 -right-1" />
+                <Crown className="w-3.5 h-3.5 text-amber-400 absolute -top-1 -right-1 drop-shadow-sm" />
               )}
             </div>
 
-            {/* Navigation Buttons */}
-            {user && !isAdminPage && (
+            {/* Navigation Buttons - Admin Only */}
+            {user && !isAdminPage && isAdmin && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleDashboardClick}
                 icon={<BarChart3 className="w-4 h-4" />}
-                className="text-slate-600 hover:text-indigo-600 px-2 py-1.5"
+                className="text-slate-600 hover:text-indigo-600 px-3 py-2 touch-target rounded-xl hover:bg-indigo-50 transition-all duration-300"
               >
                 <span className="hidden sm:inline">Dashboard</span>
               </Button>
             )}
             
-            {/* Sign Out Button */}
+            {/* Sign Out Button - Square Icon Only */}
             <Button
               variant="error"
               size="sm"
               onClick={handleSignOut}
               icon={<LogOut className="w-4 h-4" />}
-              className="bg-red-500 hover:bg-red-600 text-white px-2 py-1.5"
+              className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+              title="Sign Out"
             >
-              <span className="hidden sm:inline">Sign Out</span>
             </Button>
           </div>
         </div>

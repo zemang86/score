@@ -117,6 +117,14 @@
     min-width: 44px;
   }
 
+  /* Mobile-specific optimizations */
+  @media (max-width: 640px) {
+    .touch-target {
+      min-height: 48px;
+      min-width: 48px;
+    }
+  }
+
   /* Professional card styles */
   .card-fun {
     background: white;

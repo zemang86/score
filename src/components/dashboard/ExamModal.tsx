@@ -1067,23 +1067,23 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white rounded-lg sm:rounded-2xl shadow-xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col">
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col border border-white/50">
         
-        {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-          <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-indigo-50">
+        {/* Clean Gaming Header */}
+        <div className="sticky top-0 z-10 bg-white border-b border-slate-200">
+          <div className="p-4 sm:p-6 bg-gradient-to-r from-indigo-500 to-purple-600">
             <div className="flex items-center justify-between">
               <div className="flex items-center min-w-0 flex-1">
-                <div className="bg-blue-500 rounded-lg p-2 mr-3 shadow-md flex-shrink-0">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 mr-4 shadow-sm flex-shrink-0">
                   <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-base sm:text-lg font-bold text-blue-600 truncate">
+                  <h2 className="text-lg sm:text-xl font-bold text-white truncate">
                     {step === 'setup' && 'Start New Exam'}
                     {step === 'exam' && `Question ${currentQuestionIndex + 1} of ${questions.length}`}
                     {step === 'results' && 'Exam Complete!'}
                   </h2>
-                  <p className="text-xs sm:text-sm text-gray-600 truncate">
+                  <p className="text-sm text-indigo-100 font-medium truncate">
                     {step === 'setup' && `For ${student.name} - ${student.level}`}
                     {step === 'exam' && `${selectedSubject} - ${selectedMode} Mode`}
                     {step === 'results' && `${student.name}'s Results`}
@@ -1093,19 +1093,19 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
               
               {/* Timer for exam step */}
               {step === 'exam' && (
-                <div className="bg-red-500 text-white rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 shadow-md mx-3 flex-shrink-0">
-                  <Clock className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" />
-                  <span className="font-bold text-xs sm:text-sm">{formatTime(timeLeft)}</span>
+                <div className="bg-white/20 backdrop-blur-sm text-white rounded-xl px-3 py-2 shadow-sm mx-3 flex-shrink-0">
+                  <Clock className="w-4 h-4 inline mr-2" />
+                  <span className="font-bold text-sm">{formatTime(timeLeft)}</span>
                 </div>
               )}
               
-              {/* Close Button - More Visible */}
+              {/* Close Button */}
               <button
                 onClick={handleModalClose}
-                className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md flex-shrink-0"
+                className="text-white/80 hover:text-white transition-colors rounded-lg p-2 hover:bg-white/20"
                 title="Close exam"
               >
-                <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                <X className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -1334,7 +1334,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                     loading={loading}
                     icon={!loading ? <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> : undefined}
                   >
-                    {loading ? '🚀 Loading...' : '🚀 Start Exam!'}
+                    {loading ? 'Loading...' : 'Start Exam!'}
                   </Button>
                 </div>
               </div>

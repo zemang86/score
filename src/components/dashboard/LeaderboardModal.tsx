@@ -185,20 +185,20 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white rounded-lg sm:rounded-xl shadow-xl max-w-2xl w-full max-h-[95vh] overflow-hidden flex flex-col">
-        {/* Enhanced Header with App-Consistent Styling */}
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-          <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-500 to-indigo-600 relative overflow-hidden">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-2.5 mr-3 shadow-lg">
-                  <Trophy className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-white drop-shadow-lg">🏆 Global Leaderboard 🏆</h2>
-                  <p className="text-sm text-blue-100 drop-shadow">See how you rank among students worldwide!</p>
-                </div>
-              </div>
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl max-w-2xl w-full max-h-[95vh] overflow-hidden flex flex-col border border-white/50">
+                 {/* Clean Professional Header */}
+         <div className="sticky top-0 z-10 bg-white border-b border-slate-200">
+           <div className="p-4 sm:p-6 bg-slate-50">
+             <div className="flex items-center justify-between">
+               <div className="flex items-center">
+                 <div className="bg-amber-500 rounded-xl p-3 mr-4 shadow-sm">
+                   <Trophy className="w-6 h-6 text-white" />
+                 </div>
+                 <div>
+                   <h2 className="text-xl font-bold text-slate-800">Global Leaderboard</h2>
+                   <p className="text-sm text-slate-600 hidden sm:block">See how you rank among students worldwide</p>
+                 </div>
+               </div>
               
               {/* Level Filter Dropdown */}
               <div className="flex items-center space-x-3">
@@ -225,7 +225,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                 
                 <button
                   onClick={onClose}
-                  className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-all duration-200 rounded-lg p-2 shadow-lg border border-white/30"
+                  className="text-slate-400 hover:text-slate-600 transition-colors rounded-lg p-2 hover:bg-slate-100"
                   title="Close"
                 >
                   <X className="w-5 h-5" />
@@ -235,29 +235,27 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           </div>
         </div>
 
-        {/* Enhanced Tab Selection with App-Consistent Styling */}
-        <div className="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50">
+        {/* Clean Tab Navigation */}
+        <div className="border-b border-slate-200 bg-slate-50">
           <div className="flex">
             {[
-              { id: 'xp', label: 'XP Points', icon: Star, emoji: '⚡' },
-              { id: 'exams', label: 'Exams', icon: Target, emoji: '🎯' },
-              { id: 'scores', label: 'Scores', icon: TrendingUp, emoji: '📈' }
+              { id: 'xp', label: 'XP Points', icon: Star },
+              { id: 'exams', label: 'Exams', icon: Target },
+              { id: 'scores', label: 'Scores', icon: TrendingUp }
             ].map((type) => {
               const Icon = type.icon
               return (
                 <button
                   key={type.id}
                   onClick={() => setActiveType(type.id as LeaderboardType)}
-                  className={`flex-1 px-3 py-3 font-bold transition-all duration-300 text-sm relative overflow-hidden ${
+                  className={`flex-1 px-3 py-3 font-medium transition-all duration-200 text-sm ${
                     activeType === type.id
-                      ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg transform scale-105'
-                      : 'text-blue-600 hover:bg-blue-100 hover:text-blue-700'
+                      ? 'bg-amber-500 text-white border-b-2 border-amber-600'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-700'
                   }`}
                 >
-
-                  <div className="relative z-10 flex items-center justify-center">
-                    <span className="mr-1 text-lg">{type.emoji}</span>
-                    <Icon className="w-4 h-4 inline mr-1" />
+                  <div className="flex items-center justify-center">
+                    <Icon className="w-4 h-4 mr-2" />
                     {type.label}
                   </div>
                 </button>
@@ -307,7 +305,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                 entry.rank === 3 ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white' :
                                 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
                               }`}>
-                                {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
+                                {entry.rank}
                               </div>
                               <div className="font-bold text-[10px] sm:text-xs text-indigo-800 truncate leading-tight" title={entry.student_name}>
                                 {entry.student_name.length > 8 ? `${entry.student_name.substring(0, 8)}...` : entry.student_name}
@@ -340,14 +338,14 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                         <div
                           key={entry.student_id}
                           className={`p-2 sm:p-3 rounded-lg sm:rounded-xl border-2 transition-all duration-300 transform hover:scale-[1.01] sm:hover:scale-102 hover:shadow-md sm:hover:shadow-lg ${
-                            isUserStudent 
-                              ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-1 sm:ring-2 ring-indigo-200' 
-                              : entry.rank === 1
+                            entry.rank === 1
                               ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 border-yellow-400'
                               : entry.rank === 2
                               ? 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-400'
                               : entry.rank === 3
                               ? 'bg-gradient-to-r from-orange-100 to-orange-200 border-orange-400'
+                              : isUserStudent 
+                              ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-1 sm:ring-2 ring-indigo-200'
                               : 'bg-white border-gray-200 hover:border-gray-300'
                           }`}
                         >
@@ -360,7 +358,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                   ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white'
                                   : entry.rank === 3
                                   ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white'
-                                  : 'bg-gray-100 text-gray-600'
+                                  : 'bg-slate-100 text-slate-600'
                               }`}>
                                 {/* Inner pulsing effect for top 3 */}
                                 {entry.rank <= 3 && (
@@ -370,43 +368,67 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                     'bg-orange-300/50'
                                   }`}></div>
                                 )}
-                                <span className="relative z-10 text-xs sm:text-sm">
-                                  {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
+                                <span className="relative z-10 text-xs sm:text-sm font-bold">
+                                  {entry.rank}
                                 </span>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className={`font-bold text-xs sm:text-sm flex items-center ${isUserStudent ? 'text-indigo-700' : 'text-gray-800'}`}>
+                                <div className={`font-bold text-xs sm:text-sm flex items-center ${
+                                  entry.rank === 1 ? 'text-yellow-700' :
+                                  entry.rank === 2 ? 'text-gray-700' :
+                                  entry.rank === 3 ? 'text-orange-700' :
+                                  isUserStudent ? 'text-indigo-700' : 'text-gray-800'
+                                }`}>
                                   <span className="truncate">{entry.student_name}</span>
-                                  {isUserStudent && <span className="ml-1 sm:ml-2 text-indigo-500 flex-shrink-0">👨‍👩‍👧‍👦</span>}
-                                  {entry.rank <= 5 && !isUserStudent && <span className="ml-1 sm:ml-2 flex-shrink-0">🔥</span>}
+                                  {isUserStudent && <span className="ml-1 sm:ml-2 text-indigo-500 flex-shrink-0 text-xs">(Your Kid)</span>}
                                 </div>
-                                <div className={`text-[10px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-600'} truncate`}>
+                                <div className={`text-[10px] sm:text-xs ${
+                                  entry.rank === 1 ? 'text-yellow-600' :
+                                  entry.rank === 2 ? 'text-gray-600' :
+                                  entry.rank === 3 ? 'text-orange-600' :
+                                  isUserStudent ? 'text-indigo-600' : 'text-gray-600'
+                                } truncate`}>
                                   {entry.student_level} • {entry.student_school}
                                 </div>
                               </div>
                             </div>
                             <div className="text-right flex-shrink-0">
                               <div className={`text-xs sm:text-sm font-bold ${
-                                isUserStudent ? 'text-indigo-700' : 
                                 entry.rank === 1 ? 'text-yellow-700' : 
                                 entry.rank === 2 ? 'text-gray-700' : 
                                 entry.rank === 3 ? 'text-orange-700' : 
+                                isUserStudent ? 'text-indigo-700' : 
                                 'text-gray-800'
                               }`}>
                                 {getTypeValue(entry, activeType)}
                               </div>
                               {activeType === 'xp' && entry.total_exams > 0 && (
-                                <div className={`text-[9px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'} hidden sm:block`}>
+                                <div className={`text-[9px] sm:text-xs ${
+                                  entry.rank === 1 ? 'text-yellow-600' :
+                                  entry.rank === 2 ? 'text-gray-600' :
+                                  entry.rank === 3 ? 'text-orange-600' :
+                                  isUserStudent ? 'text-indigo-600' : 'text-gray-500'
+                                } hidden sm:block`}>
                                   {entry.total_exams} exams • {entry.average_score}% avg
                                 </div>
                               )}
                               {activeType === 'exams' && entry.total_xp > 0 && (
-                                <div className={`text-[9px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'} hidden sm:block`}>
+                                <div className={`text-[9px] sm:text-xs ${
+                                  entry.rank === 1 ? 'text-yellow-600' :
+                                  entry.rank === 2 ? 'text-gray-600' :
+                                  entry.rank === 3 ? 'text-orange-600' :
+                                  isUserStudent ? 'text-indigo-600' : 'text-gray-500'
+                                } hidden sm:block`}>
                                   {entry.total_xp} XP • {entry.average_score}% avg
                                 </div>
                               )}
                               {activeType === 'scores' && entry.total_exams > 0 && (
-                                <div className={`text-[9px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-500'} hidden sm:block`}>
+                                <div className={`text-[9px] sm:text-xs ${
+                                  entry.rank === 1 ? 'text-yellow-600' :
+                                  entry.rank === 2 ? 'text-gray-600' :
+                                  entry.rank === 3 ? 'text-orange-600' :
+                                  isUserStudent ? 'text-indigo-600' : 'text-gray-500'
+                                } hidden sm:block`}>
                                   {entry.total_exams} exams • {entry.total_xp} XP
                                 </div>
                               )}
@@ -430,14 +452,13 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           </div>
         </div>
 
-        {/* Enhanced Footer */}
-        <div className="border-t border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50 p-3 sm:p-4">
+        {/* Clean Footer */}
+        <div className="border-t border-slate-200 bg-slate-50 p-3 sm:p-4">
           <Button
             onClick={onClose}
-            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-sm py-3 font-bold shadow-lg transform hover:scale-105 transition-all duration-200"
-            icon={<Trophy className="w-5 h-5" />}
+            className="w-full bg-amber-600 hover:bg-amber-700 text-white text-sm py-3 font-medium transition-colors"
           >
-            🚀 Continue Learning! 🚀
+            Close Leaderboard
           </Button>
         </div>
       </div>

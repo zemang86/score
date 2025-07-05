@@ -345,77 +345,79 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white rounded-lg sm:rounded-xl shadow-xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col">
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col border border-white/50">
         
-        {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
-          <div className="p-3 sm:p-4 bg-gradient-to-r from-green-100 to-blue-100">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                {reviewingExam ? (
-                  <button
-                    onClick={handleBackToProgress}
-                    className="bg-green-500 rounded-lg p-2 mr-3 shadow-md hover:bg-green-600 transition-colors text-white"
-                  >
-                    <ArrowLeft className="w-5 h-5" />
-                  </button>
-                ) : (
-                  <div className="bg-green-500 rounded-lg p-2 mr-3 shadow-md">
-                    <TrendingUp className="w-5 h-5 text-white" />
-                  </div>
-                )}
-                <div>
-                  <h2 className="text-lg font-bold text-green-700">
-                    {reviewingExam ? 'Exam Review' : `${student.name}'s Progress`}
-                  </h2>
-                  <p className="text-xs text-blue-600">
-                    {reviewingExam 
-                      ? `${reviewingExam.subject} - ${reviewingExam.mode} Mode - ${formatDate(reviewingExam.date)}`
-                      : `${student.level} • ${student.school}`
-                    }
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
-                title="Close"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
+                 {/* Clean Professional Header */}
+         <div className="sticky top-0 z-10 bg-white border-b border-slate-200">
+           <div className="p-4 sm:p-6 bg-slate-50">
+             <div className="flex items-center justify-between">
+               <div className="flex items-center">
+                 {reviewingExam ? (
+                   <button
+                     onClick={handleBackToProgress}
+                     className="bg-slate-500 hover:bg-slate-600 rounded-xl p-3 mr-4 shadow-sm transition-colors text-white"
+                   >
+                     <ArrowLeft className="w-5 h-5" />
+                   </button>
+                 ) : (
+                   <div className="bg-green-500 rounded-xl p-3 mr-4 shadow-sm">
+                     <TrendingUp className="w-6 h-6 text-white" />
+                   </div>
+                 )}
+                 <div>
+                   <h2 className="text-xl font-bold text-slate-800">
+                     {reviewingExam ? 'Exam Review' : `${student.name}'s Progress`}
+                   </h2>
+                   <p className="text-sm text-slate-600">
+                     {reviewingExam 
+                       ? `${reviewingExam.subject} - ${reviewingExam.mode} Mode - ${formatDate(reviewingExam.date)}`
+                       : `${student.level} • ${student.school}`
+                     }
+                   </p>
+                 </div>
+               </div>
+               <button
+                 onClick={onClose}
+                 className="text-slate-400 hover:text-slate-600 transition-colors rounded-lg p-2 hover:bg-slate-100"
+                 title="Close"
+               >
+                 <X className="w-5 h-5" />
+               </button>
+             </div>
+           </div>
+         </div>
 
-        {/* Tab Navigation (only show when not reviewing an exam) */}
-        {!reviewingExam && (
-          <div className="border-b border-gray-200 bg-gray-50">
-            <div className="flex">
-              {[
-                { id: 'overview', label: 'Overview', icon: BarChart3 },
-                { id: 'exams', label: 'Exams', icon: BookOpen },
-                { id: 'subjects', label: 'Subjects', icon: Target },
-                { id: 'badges', label: 'Badges', icon: Trophy }
-              ].map((tab) => {
-                const Icon = tab.icon
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex-1 px-2 py-2 font-medium transition-all duration-300 text-xs ${
-                      activeTab === tab.id
-                        ? 'bg-green-500 text-white border-b-2 border-green-700'
-                        : 'text-green-600 hover:bg-green-100'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4 inline mr-1" />
-                    {tab.label}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
+                 {/* Clean Tab Navigation (only show when not reviewing an exam) */}
+         {!reviewingExam && (
+           <div className="border-b border-slate-200 bg-slate-50">
+             <div className="flex">
+               {[
+                 { id: 'overview', label: 'Overview', icon: BarChart3 },
+                 { id: 'exams', label: 'Exams', icon: BookOpen },
+                 { id: 'subjects', label: 'Subjects', icon: Target },
+                 { id: 'badges', label: 'Badges', icon: Trophy }
+               ].map((tab) => {
+                 const Icon = tab.icon
+                 return (
+                   <button
+                     key={tab.id}
+                     onClick={() => setActiveTab(tab.id as any)}
+                     className={`flex-1 px-3 py-3 font-medium transition-all duration-200 text-sm ${
+                       activeTab === tab.id
+                         ? 'bg-green-500 text-white border-b-2 border-green-600'
+                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-700'
+                     }`}
+                   >
+                     <div className="flex items-center justify-center">
+                       <Icon className="w-4 h-4 mr-2" />
+                       {tab.label}
+                     </div>
+                   </button>
+                 )
+               })}
+             </div>
+           </div>
+         )}
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto">
