@@ -725,18 +725,27 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       if (xpError) throw xpError
 
       // Evaluate and award badges
+      console.log(`🎯 Starting badge evaluation for student ${student.name} (${student.id}) after exam completion`)
       try {
         const badgeResult = await BadgeEvaluator.evaluateAndAwardBadges(student.id)
+        console.log(`🏆 Badge evaluation result:`, {
+          newBadgesCount: badgeResult.newBadges.length,
+          totalBadgesCount: badgeResult.allEarnedBadges.length
+        })
+        
         if (badgeResult.newBadges.length > 0) {
-          console.log(`Student ${student.name} earned ${badgeResult.newBadges.length} new badges:`, 
+          console.log(`🎉 Student ${student.name} earned ${badgeResult.newBadges.length} new badges:`, 
             badgeResult.newBadges.map(b => b.name))
           
           // Update the earnedBadges state with the actual badges for display
           const displayBadges = BadgeEvaluator.getBadgeDisplayInfo(badgeResult.newBadges)
           setEarnedBadges(displayBadges)
+          console.log(`🎨 Display badges set:`, displayBadges)
+        } else {
+          console.log(`ℹ️ No new badges earned for student ${student.name}`)
         }
       } catch (badgeError) {
-        console.error('Error evaluating badges:', badgeError)
+        console.error('❌ Error evaluating badges:', badgeError)
         // Don't fail the exam completion if badge evaluation fails
       }
 

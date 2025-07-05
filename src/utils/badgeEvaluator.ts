@@ -200,18 +200,32 @@ export class BadgeEvaluator {
 
   public static async evaluateAndAwardBadges(studentId: string): Promise<BadgeEvaluationResult> {
     try {
+      console.log(`🎯 Starting badge evaluation for student: ${studentId}`)
+      
       // Get all available badges
       const allBadges = await this.getAllBadges()
+      console.log(`📋 Found ${allBadges.length} available badges:`, allBadges.map(b => `${b.name} (${b.condition_type}: ${b.condition_value})`))
       
       // Get student's current badges
       const currentBadges = await this.getStudentBadges(studentId)
       const earnedBadgeIds = new Set(currentBadges.map(sb => sb.badge_id))
+      console.log(`🏆 Student already has ${currentBadges.length} badges:`, currentBadges.map(b => b.badge.name))
       
       // Get student statistics
       const stats = await this.getStudentStats(studentId)
       if (!stats) {
+        console.log(`❌ Could not get student stats for ${studentId}`)
         return { newBadges: [], allEarnedBadges: currentBadges }
       }
+
+      console.log(`📊 Student stats:`, {
+        totalExams: stats.totalExams,
+        perfectScores: stats.perfectScores,
+        totalXP: stats.totalXP,
+        subjectMasteryCount: stats.subjectMasteryCount,
+        maxStreakDays: stats.maxStreakDays,
+        hasCompletedFirstExam: stats.hasCompletedFirstExam
+      })
 
       // Check each badge condition
       const newBadges: Badge[] = []
@@ -219,19 +233,27 @@ export class BadgeEvaluator {
       for (const badge of allBadges) {
         // Skip if already earned
         if (earnedBadgeIds.has(badge.id)) {
+          console.log(`⏭️ Skipping "${badge.name}" - already earned`)
           continue
         }
 
         // Check if condition is met
-        if (this.checkBadgeCondition(badge, stats)) {
+        const conditionMet = this.checkBadgeCondition(badge, stats)
+        console.log(`🔍 Checking "${badge.name}" (${badge.condition_type}: ${badge.condition_value}) - ${conditionMet ? '✅ QUALIFIED' : '❌ Not qualified'}`)
+        
+        if (conditionMet) {
           // Award the badge
           const awarded = await this.awardBadge(studentId, badge.id)
           if (awarded) {
             newBadges.push(badge)
-            console.log(`Awarded badge "${badge.name}" to student ${studentId}`)
+            console.log(`🎉 AWARDED badge "${badge.name}" to student ${studentId}`)
+          } else {
+            console.log(`⚠️ Failed to award "${badge.name}" - may already exist`)
           }
         }
       }
+
+      console.log(`🏁 Badge evaluation complete. Awarded ${newBadges.length} new badges:`, newBadges.map(b => b.name))
 
       // Get updated student badges if new badges were awarded
       const updatedBadges = newBadges.length > 0 
@@ -244,7 +266,7 @@ export class BadgeEvaluator {
       }
 
     } catch (error) {
-      console.error('Error evaluating badges:', error)
+      console.error('❌ Error evaluating badges:', error)
       return { newBadges: [], allEarnedBadges: [] }
     }
   }
