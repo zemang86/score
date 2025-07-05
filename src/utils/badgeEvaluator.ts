@@ -24,7 +24,14 @@ export interface BadgeEvaluationResult {
 }
 
 export class BadgeEvaluator {
+  private static badgeCache: { badges: Badge[], timestamp: number } | null = null
+  private static readonly CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+
   private static async getAllBadges(): Promise<Badge[]> {
+    // Use cache if available and not expired
+    if (this.badgeCache && Date.now() - this.badgeCache.timestamp < this.CACHE_DURATION) {
+      return this.badgeCache.badges
+    }
     const { data: badges, error } = await supabase
       .from('badges')
       .select('*')
@@ -35,7 +42,15 @@ export class BadgeEvaluator {
       return []
     }
 
-    return badges || []
+    const badgeList = badges || []
+    
+    // Update cache
+    this.badgeCache = {
+      badges: badgeList,
+      timestamp: Date.now()
+    }
+
+    return badgeList
   }
 
   private static async getStudentBadges(studentId: string): Promise<StudentBadge[]> {
@@ -111,14 +126,10 @@ export class BadgeEvaluator {
       subjectCounts.set(exam.subject, count + 1)
     })
     
-    console.log(`📚 Subject breakdown for student:`, Object.fromEntries(subjectCounts))
-    
     // Get the highest count of exams in any single subject
     const maxExamsInAnySubject = Array.from(subjectCounts.values()).length > 0 
       ? Math.max(...Array.from(subjectCounts.values()))
       : 0
-    
-    console.log(`🎯 Max exams in any subject: ${maxExamsInAnySubject} (calculated from ${Array.from(subjectCounts.values()).join(', ')})`)
 
     // Calculate streak days (consecutive days with at least 1 exam)
     let currentStreak = 0
@@ -172,11 +183,9 @@ export class BadgeEvaluator {
         return stats.totalXP >= badge.condition_value
 
       case 'subject_mastery':
-        console.log(`🔍 Subject mastery check: student has ${stats.maxExamsInAnySubject} max exams in any subject, badge requires ${badge.condition_value}`)
         return stats.maxExamsInAnySubject >= badge.condition_value
 
       case 'score_range':
-        console.log(`🔍 Score range check: student's best score is ${stats.bestScore}%, badge requires ${badge.condition_value}%+`)
         return stats.bestScore >= badge.condition_value
 
       default:
@@ -215,33 +224,19 @@ export class BadgeEvaluator {
 
   public static async evaluateAndAwardBadges(studentId: string): Promise<BadgeEvaluationResult> {
     try {
-      console.log(`🎯 Starting badge evaluation for student: ${studentId}`)
-      
-      // Get all available badges
+      // Get all available badges (cache this in production)
       const allBadges = await this.getAllBadges()
-      console.log(`📋 Found ${allBadges.length} available badges:`, allBadges.map(b => `${b.name} (${b.condition_type}: ${b.condition_value})`))
       
       // Get student's current badges
       const currentBadges = await this.getStudentBadges(studentId)
       const earnedBadgeIds = new Set(currentBadges.map(sb => sb.badge_id))
-      console.log(`🏆 Student already has ${currentBadges.length} badges:`, currentBadges.map(b => b.badge.name))
       
       // Get student statistics
       const stats = await this.getStudentStats(studentId)
       if (!stats) {
-        console.log(`❌ Could not get student stats for ${studentId}`)
+        console.error(`Could not get student stats for ${studentId}`)
         return { newBadges: [], allEarnedBadges: currentBadges }
       }
-
-      console.log(`📊 Student stats:`, {
-        totalExams: stats.totalExams,
-        perfectScores: stats.perfectScores,
-        bestScore: stats.bestScore,
-        totalXP: stats.totalXP,
-        maxExamsInAnySubject: stats.maxExamsInAnySubject,
-        maxStreakDays: stats.maxStreakDays,
-        hasCompletedFirstExam: stats.hasCompletedFirstExam
-      })
 
       // Check each badge condition
       const newBadges: Badge[] = []
@@ -249,31 +244,23 @@ export class BadgeEvaluator {
       for (const badge of allBadges) {
         // Skip if already earned
         if (earnedBadgeIds.has(badge.id)) {
-          console.log(`⏭️ Skipping "${badge.name}" - already earned`)
           continue
         }
 
         // Check if condition is met
         const conditionMet = this.checkBadgeCondition(badge, stats)
-        console.log(`🔍 Checking "${badge.name}" (${badge.condition_type}: ${badge.condition_value}) - ${conditionMet ? '✅ QUALIFIED' : '❌ Not qualified'}`)
         
         if (conditionMet) {
           // Award the badge
           const awarded = await this.awardBadge(studentId, badge.id)
           if (awarded) {
             newBadges.push(badge)
-            console.log(`🎉 AWARDED badge "${badge.name}" to student ${studentId}`)
-          } else {
-            console.log(`⚠️ Failed to award "${badge.name}" - may already exist`)
           }
         }
       }
 
-      console.log(`🏁 Badge evaluation complete. Awarded ${newBadges.length} new badges:`, newBadges.map(b => b.name))
-
-      // ALWAYS get fresh badge data to ensure components have the latest information
+      // Get fresh badge data to ensure consistency
       const updatedBadges = await this.getStudentBadges(studentId)
-      console.log(`🔄 Fetched fresh badge data: ${updatedBadges.length} total badges for student`)
 
       return {
         newBadges,
@@ -318,230 +305,15 @@ export class BadgeEvaluator {
 
 }
 
-// Debug function to trace badge evaluation
-// @ts-ignore
-window.debugBadgeEvaluationForStudent = async (studentId: string) => {
-  console.log(`🔍 Debug: Evaluating badges for student ${studentId}`)
-  
-  // Get all badges
-  const { data: badges } = await supabase
-    .from('badges')
-    .select('*')
-    .eq('is_active', true)
-  
-  if (!badges) {
-    console.log('❌ No badges found')
-    return
-  }
-  
-  console.log(`📋 Found ${badges.length} active badges:`)
-  badges.forEach((badge: any) => {
-    console.log(`  - ${badge.name}: ${badge.condition_type} >= ${badge.condition_value}`)
-  })
-  
-  // Get student stats
-  const stats = await BadgeEvaluator.getStudentStats(studentId)
-  console.log(`📊 Student stats:`, stats)
-  
-  // Check each badge
-  for (const badge of badges) {
-    console.log(`\n🔍 Checking badge: ${badge.name}`)
-    
-    // Check if already earned
-    const { data: existingAward } = await supabase
-      .from('student_badges')
-      .select('*')
-      .eq('student_id', studentId)
-      .eq('badge_id', badge.id)
-      .single()
-    
-    if (existingAward) {
-      console.log(`  ✅ Already earned on ${existingAward.earned_date}`)
-      continue
-    }
-    
-    // Check if qualifies
-    const qualifies = BadgeEvaluator.checkBadgeCondition(badge, stats)
-    console.log(`  ${qualifies ? '✅ QUALIFIES' : '❌ does not qualify'}`)
-    
-    if (qualifies) {
-      console.log(`  🎉 Should award badge: ${badge.name}`)
-    }
-  }
-}
-
-// Complete debug function to check badge database and evaluation
+// Minimal debug function for troubleshooting (production)
 // @ts-ignore
 window.debugBadgeIssue = async () => {
-  console.log('� Starting badge debug...')
-  
-  // 1. Check if badges exist in database
-  const { data: badges, error: badgeError } = await supabase
-    .from('badges')
-    .select('*')
-    .eq('is_active', true)
-    .order('condition_type, condition_value')
-  
-  if (badgeError) {
-    console.error('❌ Error fetching badges:', badgeError)
-    return
-  }
-  
-  console.log(`📋 Found ${badges?.length || 0} badges in database:`)
-  badges?.forEach((badge: any) => {
-    console.log(`  - ${badge.name}: ${badge.condition_type} >= ${badge.condition_value}`)
-  })
-  
-  if (!badges || badges.length === 0) {
-    console.log('❌ NO BADGES FOUND! You need to run the sample_badges.sql script first!')
-    return
-  }
-  
-  // 2. Get current student ID
   const studentId = localStorage.getItem('student_id') || sessionStorage.getItem('student_id')
-  if (!studentId) {
-    console.log('❌ No student ID found. Make sure you are logged in as a student.')
-    return
+  if (!studentId) return console.log('No student ID found')
+  
+  const result = await BadgeEvaluator.evaluateAndAwardBadges(studentId)
+  console.log(`Badge check: ${result.newBadges.length} new, ${result.allEarnedBadges.length} total`)
+  if (result.allEarnedBadges.length > 0) {
+    console.log('Current badges:', result.allEarnedBadges.map(b => b.badge.name))
   }
-  
-  console.log(`\n👤 Checking student: ${studentId}`)
-  
-  // 3. Check current student badges
-  const { data: currentBadges, error: currentBadgeError } = await supabase
-    .from('student_badges')
-    .select(`
-      id,
-      earned_at,
-      badges (
-        name,
-        description,
-        icon,
-        condition_type,
-        condition_value
-      )
-    `)
-    .eq('student_id', studentId)
-  
-  if (currentBadgeError) {
-    console.error('❌ Error fetching current badges:', currentBadgeError)
-    return
-  }
-  
-  console.log(`\n🏅 Student currently has ${currentBadges?.length || 0} badges:`)
-  currentBadges?.forEach((sb: any) => {
-    console.log(`  - ${sb.badges.name} (${sb.badges.condition_type})`)
-  })
-  
-  // 4. Get student stats
-  const stats = await BadgeEvaluator.getStudentStats(studentId)
-  console.log(`\n📊 Student stats:`, stats)
-  
-  // 5. Check which badges SHOULD be earned
-  console.log(`\n🎯 Badges that SHOULD be earned:`)
-  badges?.forEach((badge: any) => {
-    let shouldEarn = false
-    let reason = ''
-    
-    switch (badge.condition_type) {
-      case 'first_exam':
-        shouldEarn = stats?.hasCompletedFirstExam || false
-        reason = `Has completed first exam: ${stats?.hasCompletedFirstExam}`
-        break
-      case 'exams_completed':
-        shouldEarn = (stats?.totalExams || 0) >= badge.condition_value
-        reason = `Has ${stats?.totalExams || 0} exams (needs ${badge.condition_value})`
-        break
-      case 'perfect_score':
-        shouldEarn = (stats?.perfectScores || 0) >= badge.condition_value
-        reason = `Has ${stats?.perfectScores || 0} perfect scores (needs ${badge.condition_value})`
-        break
-      case 'xp_earned':
-        shouldEarn = (stats?.totalXP || 0) >= badge.condition_value
-        reason = `Has ${stats?.totalXP || 0} XP (needs ${badge.condition_value})`
-        break
-      case 'subject_mastery':
-        shouldEarn = (stats?.maxExamsInAnySubject || 0) >= badge.condition_value
-        reason = `Max in subject: ${stats?.maxExamsInAnySubject || 0} (needs ${badge.condition_value})`
-        break
-      case 'score_range':
-        shouldEarn = (stats?.bestScore || 0) >= badge.condition_value
-        reason = `Best score: ${stats?.bestScore || 0}% (needs ${badge.condition_value}%+)`
-        break
-    }
-    
-    const hasEarned = currentBadges?.some((sb: any) => sb.badges.name === badge.name)
-    const status = hasEarned ? '✅ EARNED' : shouldEarn ? '⚠️ MISSING' : '❌ NOT QUALIFIED'
-    
-    console.log(`  ${status} ${badge.name}: ${reason}`)
-  })
-  
-  // 6. Suggest actions
-  console.log(`\n🔧 Suggested actions:`)
-  console.log(`1. If badges are missing, run: BadgeEvaluator.evaluateAndAwardBadges("${studentId}")`)
-  console.log(`2. Check console logs during badge evaluation for errors`)
-  console.log(`3. If no badges exist, run the sample_badges.sql script`)
 }
-
-// Force refresh all badge data for a student
-// @ts-ignore
-window.forceRefreshBadges = async (studentId?: string) => {
-  const actualStudentId = studentId || localStorage.getItem('student_id') || sessionStorage.getItem('student_id')
-  if (!actualStudentId) {
-    console.log('❌ No student ID provided or found')
-    return
-  }
-  
-  console.log(`� Force refreshing badge data for student: ${actualStudentId}`)
-  
-  // 1. Check what's actually in the database
-  const { data: dbBadges, error } = await supabase
-    .from('student_badges')
-    .select(`
-      id,
-      earned_at,
-      badges (
-        name,
-        description,
-        icon,
-        condition_type,
-        condition_value
-      )
-    `)
-    .eq('student_id', actualStudentId)
-    .order('earned_at', { ascending: false })
-  
-  if (error) {
-    console.error('❌ Error fetching badges from database:', error)
-    return
-  }
-  
-  console.log(`📊 DATABASE BADGES (${dbBadges?.length || 0} found):`)
-  dbBadges?.forEach((sb: any, index: number) => {
-    console.log(`  ${index + 1}. ${sb.badges.name} - ${sb.badges.condition_type} (earned: ${sb.earned_at})`)
-  })
-  
-  // 2. Force badge evaluation
-  console.log(`\n🎯 Running badge evaluation...`)
-  const result = await BadgeEvaluator.evaluateAndAwardBadges(actualStudentId)
-  console.log(`✅ Badge evaluation result: ${result.newBadges.length} new, ${result.allEarnedBadges.length} total`)
-  
-  // 3. Show what evaluator returned
-  console.log(`📋 EVALUATOR RETURNED (${result.allEarnedBadges.length} badges):`)
-  result.allEarnedBadges.forEach((sb, index: number) => {
-    console.log(`  ${index + 1}. ${sb.badge.name} - ${sb.badge.condition_type}`)
-  })
-  
-  // 4. Refresh dashboard if in parent view
-  if (window.location.pathname.includes('dashboard')) {
-    console.log(`🔄 Triggering dashboard refresh...`)
-    // Force trigger the dashboard refresh
-    window.dispatchEvent(new CustomEvent('refreshDashboard'))
-  }
-  
-  console.log(`\n✅ Force refresh complete. Check progress modal to see if badges are now updated.`)
-}
-
-console.log('�� Debug functions loaded:')
-console.log('  - debugBadgeIssue() - Complete badge system analysis')
-console.log('  - debugBadgeEvaluationForStudent("student_id") - Detailed evaluation trace')
-console.log('  - forceRefreshBadges() - Force refresh badge data and check database vs display')
