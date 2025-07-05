@@ -235,29 +235,27 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           </div>
         </div>
 
-        {/* Enhanced Tab Selection with App-Consistent Styling */}
-        <div className="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50">
+        {/* Clean Tab Navigation */}
+        <div className="border-b border-slate-200 bg-slate-50">
           <div className="flex">
             {[
-              { id: 'xp', label: 'XP Points', icon: Star, emoji: '⚡' },
-              { id: 'exams', label: 'Exams', icon: Target, emoji: '🎯' },
-              { id: 'scores', label: 'Scores', icon: TrendingUp, emoji: '📈' }
+              { id: 'xp', label: 'XP Points', icon: Star },
+              { id: 'exams', label: 'Exams', icon: Target },
+              { id: 'scores', label: 'Scores', icon: TrendingUp }
             ].map((type) => {
               const Icon = type.icon
               return (
                 <button
                   key={type.id}
                   onClick={() => setActiveType(type.id as LeaderboardType)}
-                  className={`flex-1 px-3 py-3 font-bold transition-all duration-300 text-sm relative overflow-hidden ${
+                  className={`flex-1 px-3 py-3 font-medium transition-all duration-200 text-sm ${
                     activeType === type.id
-                      ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg transform scale-105'
-                      : 'text-blue-600 hover:bg-blue-100 hover:text-blue-700'
+                      ? 'bg-amber-500 text-white border-b-2 border-amber-600'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-700'
                   }`}
                 >
-
-                  <div className="relative z-10 flex items-center justify-center">
-                    <span className="mr-1 text-lg">{type.emoji}</span>
-                    <Icon className="w-4 h-4 inline mr-1" />
+                  <div className="flex items-center justify-center">
+                    <Icon className="w-4 h-4 mr-2" />
                     {type.label}
                   </div>
                 </button>
@@ -307,7 +305,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                 entry.rank === 3 ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white' :
                                 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
                               }`}>
-                                {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
+                                {entry.rank}
                               </div>
                               <div className="font-bold text-[10px] sm:text-xs text-indigo-800 truncate leading-tight" title={entry.student_name}>
                                 {entry.student_name.length > 8 ? `${entry.student_name.substring(0, 8)}...` : entry.student_name}
@@ -370,15 +368,14 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                     'bg-orange-300/50'
                                   }`}></div>
                                 )}
-                                <span className="relative z-10 text-xs sm:text-sm">
-                                  {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : entry.rank}
+                                <span className="relative z-10 text-xs sm:text-sm font-bold">
+                                  {entry.rank}
                                 </span>
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className={`font-bold text-xs sm:text-sm flex items-center ${isUserStudent ? 'text-indigo-700' : 'text-gray-800'}`}>
                                   <span className="truncate">{entry.student_name}</span>
-                                  {isUserStudent && <span className="ml-1 sm:ml-2 text-indigo-500 flex-shrink-0">👨‍👩‍👧‍👦</span>}
-                                  {entry.rank <= 5 && !isUserStudent && <span className="ml-1 sm:ml-2 flex-shrink-0">🔥</span>}
+                                  {isUserStudent && <span className="ml-1 sm:ml-2 text-indigo-500 flex-shrink-0 text-xs">(Your Kid)</span>}
                                 </div>
                                 <div className={`text-[10px] sm:text-xs ${isUserStudent ? 'text-indigo-600' : 'text-gray-600'} truncate`}>
                                   {entry.student_level} • {entry.student_school}
@@ -430,14 +427,13 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           </div>
         </div>
 
-        {/* Enhanced Footer */}
-        <div className="border-t border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50 p-3 sm:p-4">
+        {/* Clean Footer */}
+        <div className="border-t border-slate-200 bg-slate-50 p-3 sm:p-4">
           <Button
             onClick={onClose}
-            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-sm py-3 font-bold shadow-lg transform hover:scale-105 transition-all duration-200"
-            icon={<Trophy className="w-5 h-5" />}
+            className="w-full bg-amber-600 hover:bg-amber-700 text-white text-sm py-3 font-medium transition-colors"
           >
-            🚀 Continue Learning! 🚀
+            Close Leaderboard
           </Button>
         </div>
       </div>
