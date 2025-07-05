@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase'
 import { Student } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { X, TrendingUp, Trophy, Calendar, BookOpen, Target, Star, Award, BarChart3, ArrowLeft, Eye, CheckCircle, XCircle, Clock, Edit3, ArrowUpDown, BookOpenCheck } from 'lucide-react'
+import { BadgeEvaluator, type StudentBadge } from '../../utils/badgeEvaluator'
 
 interface StudentProgressModalProps {
   isOpen: boolean
@@ -47,18 +48,12 @@ interface SubjectStats {
   lastExamDate: string
 }
 
-interface Badge {
-  id: string
-  name: string
-  description: string
-  icon: string
-  earned_at: string
-}
+// Using StudentBadge from badgeEvaluator instead of local interface
 
 export function StudentProgressModal({ isOpen, onClose, student }: StudentProgressModalProps) {
   const [examResults, setExamResults] = useState<ExamResult[]>([])
   const [subjectStats, setSubjectStats] = useState<SubjectStats[]>([])
-  const [badges, setBadges] = useState<Badge[]>([])
+  const [badges, setBadges] = useState<StudentBadge[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'overview' | 'exams' | 'subjects' | 'badges'>('overview')
   const [reviewingExam, setReviewingExam] = useState<ExamResult | null>(null)
@@ -84,31 +79,11 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
 
       if (examsError) throw examsError
 
-      // Fetch student badges
-      const { data: studentBadges, error: badgesError } = await supabase
-        .from('student_badges')
-        .select(`
-          earned_at,
-          badges (
-            id,
-            name,
-            description,
-            icon
-          )
-        `)
-        .eq('student_id', student.id)
-        .order('earned_at', { ascending: false })
-
-      if (badgesError) throw badgesError
+      // Fetch student badges using the badge evaluator
+      const badgeResult = await BadgeEvaluator.evaluateAndAwardBadges(student.id)
 
       setExamResults(exams || [])
-      setBadges(studentBadges?.map(sb => ({
-        id: sb.badges.id,
-        name: sb.badges.name,
-        description: sb.badges.description,
-        icon: sb.badges.icon,
-        earned_at: sb.earned_at
-      })) || [])
+      setBadges(badgeResult.allEarnedBadges || [])
 
       // Calculate subject statistics
       if (exams && exams.length > 0) {
@@ -663,13 +638,13 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                     <h3 className="text-base font-bold text-blue-700">Achievement Badges</h3>
                     {badges.length > 0 ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-96 overflow-y-auto">
-                        {badges.map((badge) => (
-                          <div key={badge.id} className="bg-gradient-to-r from-accent-100 to-warning-100 border border-accent-300 rounded-lg p-3 text-center shadow-sm">
-                            <div className="text-xl mb-1">{badge.icon}</div>
-                            <h4 className="font-bold text-accent-700 mb-0.5 text-sm">{badge.name}</h4>
-                            <p className="text-xs text-warning-600 mb-1">{badge.description}</p>
+                        {badges.map((studentBadge) => (
+                          <div key={studentBadge.id} className="bg-gradient-to-r from-accent-100 to-warning-100 border border-accent-300 rounded-lg p-3 text-center shadow-sm">
+                            <div className="text-xl mb-1">{studentBadge.badge.icon}</div>
+                            <h4 className="font-bold text-accent-700 mb-0.5 text-sm">{studentBadge.badge.name}</h4>
+                            <p className="text-xs text-warning-600 mb-1">{studentBadge.badge.description}</p>
                             <div className="text-xs text-accent-600">
-                              Earned: {formatDate(badge.earned_at)}
+                              Earned: {formatDate(studentBadge.earned_at)}
                             </div>
                           </div>
                         ))}

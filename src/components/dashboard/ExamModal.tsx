@@ -4,6 +4,7 @@ import { Student, Question } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3, Lock, BookOpenCheck, XCircle, MapPin } from 'lucide-react'
 import { checkShortAnswer } from '../../utils/answerChecker'
+import { BadgeEvaluator } from '../../utils/badgeEvaluator'
 
 interface ExamModalProps {
   isOpen: boolean
@@ -723,6 +724,22 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
       if (xpError) throw xpError
 
+      // Evaluate and award badges
+      try {
+        const badgeResult = await BadgeEvaluator.evaluateAndAwardBadges(student.id)
+        if (badgeResult.newBadges.length > 0) {
+          console.log(`Student ${student.name} earned ${badgeResult.newBadges.length} new badges:`, 
+            badgeResult.newBadges.map(b => b.name))
+          
+          // Update the earnedBadges state with the actual badges for display
+          const displayBadges = BadgeEvaluator.getBadgeDisplayInfo(badgeResult.newBadges)
+          setEarnedBadges(displayBadges)
+        }
+      } catch (badgeError) {
+        console.error('Error evaluating badges:', badgeError)
+        // Don't fail the exam completion if badge evaluation fails
+      }
+
       console.log('Exam completed successfully:', {
         score,
         totalQuestions: questions.length,
@@ -891,12 +908,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   }
 
   const startResultsAnimation = () => {
-    const correctAnswers = questions.filter(q => q.isCorrect).length
-    const badges = calculateAchievements(examScore, correctAnswers, questions.length)
-    setEarnedBadges(badges)
-    
     // Start score animation
     setTimeout(() => animateScore(examScore), 500)
+    // Note: earnedBadges are now set in finishExam after badge evaluation
   }
 
   const hasUserAnswer = () => {
