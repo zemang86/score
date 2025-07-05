@@ -196,6 +196,7 @@ export function ParentDashboard() {
       }
 
       // Fetch badge statistics
+      console.log(`🏅 Dashboard: Fetching badges for students:`, studentIds)
       const { data: badges, error: badgesError } = await supabase
         .from('student_badges')
         .select('id')
@@ -205,6 +206,8 @@ export function ParentDashboard() {
         console.error('❌ Error fetching badges:', badgesError)
         throw badgesError
       }
+
+      console.log(`🏅 Dashboard: Found ${badges?.length || 0} total badges across all students`)
 
       // Fetch total question count
       await fetchTotalQuestionsCount()
@@ -241,10 +244,11 @@ export function ParentDashboard() {
   }
 
   const handleExamComplete = () => {
-    // ✅ Delay refresh to allow modal to close naturally and prevent tab switching issues
+    // ✅ Delay refresh to allow badge data to be committed and modal to close
     setTimeout(() => {
-      fetchStudents() // Refresh to update XP and stats
-    }, 1000) // 1 second delay
+      console.log('🔄 Refreshing dashboard data after exam completion')
+      fetchStudents() // Refresh to update XP and stats including badges
+    }, 2000) // 2 second delay to ensure badge data is committed
   }
 
   const handleStudentUpdated = () => {

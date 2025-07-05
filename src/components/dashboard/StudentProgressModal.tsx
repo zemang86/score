@@ -94,7 +94,10 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
       if (examsError) throw examsError
 
       // Fetch student badges using the badge evaluator
+      console.log(`🏅 StudentProgressModal: Fetching badges for student ${student.id}`)
       const badgeResult = await BadgeEvaluator.evaluateAndAwardBadges(student.id)
+      console.log(`🏅 StudentProgressModal: Received ${badgeResult.allEarnedBadges?.length || 0} badges:`, 
+        badgeResult.allEarnedBadges?.map(b => b.badge.name))
 
       setExamResults(exams || [])
       setBadges(badgeResult.allEarnedBadges || [])

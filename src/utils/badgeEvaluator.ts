@@ -271,10 +271,9 @@ export class BadgeEvaluator {
 
       console.log(`🏁 Badge evaluation complete. Awarded ${newBadges.length} new badges:`, newBadges.map(b => b.name))
 
-      // Get updated student badges if new badges were awarded
-      const updatedBadges = newBadges.length > 0 
-        ? await this.getStudentBadges(studentId)
-        : currentBadges
+      // ALWAYS get fresh badge data to ensure components have the latest information
+      const updatedBadges = await this.getStudentBadges(studentId)
+      console.log(`🔄 Fetched fresh badge data: ${updatedBadges.length} total badges for student`)
 
       return {
         newBadges,
@@ -483,6 +482,66 @@ window.debugBadgeIssue = async () => {
   console.log(`3. If no badges exist, run the sample_badges.sql script`)
 }
 
-console.log('🔧 Debug functions loaded:')
+// Force refresh all badge data for a student
+// @ts-ignore
+window.forceRefreshBadges = async (studentId?: string) => {
+  const actualStudentId = studentId || localStorage.getItem('student_id') || sessionStorage.getItem('student_id')
+  if (!actualStudentId) {
+    console.log('❌ No student ID provided or found')
+    return
+  }
+  
+  console.log(`� Force refreshing badge data for student: ${actualStudentId}`)
+  
+  // 1. Check what's actually in the database
+  const { data: dbBadges, error } = await supabase
+    .from('student_badges')
+    .select(`
+      id,
+      earned_at,
+      badges (
+        name,
+        description,
+        icon,
+        condition_type,
+        condition_value
+      )
+    `)
+    .eq('student_id', actualStudentId)
+    .order('earned_at', { ascending: false })
+  
+  if (error) {
+    console.error('❌ Error fetching badges from database:', error)
+    return
+  }
+  
+  console.log(`📊 DATABASE BADGES (${dbBadges?.length || 0} found):`)
+  dbBadges?.forEach((sb: any, index: number) => {
+    console.log(`  ${index + 1}. ${sb.badges.name} - ${sb.badges.condition_type} (earned: ${sb.earned_at})`)
+  })
+  
+  // 2. Force badge evaluation
+  console.log(`\n🎯 Running badge evaluation...`)
+  const result = await BadgeEvaluator.evaluateAndAwardBadges(actualStudentId)
+  console.log(`✅ Badge evaluation result: ${result.newBadges.length} new, ${result.allEarnedBadges.length} total`)
+  
+  // 3. Show what evaluator returned
+  console.log(`📋 EVALUATOR RETURNED (${result.allEarnedBadges.length} badges):`)
+  result.allEarnedBadges.forEach((sb, index: number) => {
+    console.log(`  ${index + 1}. ${sb.badge.name} - ${sb.badge.condition_type}`)
+  })
+  
+  // 4. Refresh dashboard if in parent view
+  if (window.location.pathname.includes('dashboard')) {
+    console.log(`🔄 Triggering dashboard refresh...`)
+    // Force trigger the dashboard refresh
+    window.dispatchEvent(new CustomEvent('refreshDashboard'))
+  }
+  
+  console.log(`\n✅ Force refresh complete. Check progress modal to see if badges are now updated.`)
+}
+
+console.log('�� Debug functions loaded:')
 console.log('  - debugBadgeIssue() - Complete badge system analysis')
 console.log('  - debugBadgeEvaluationForStudent("student_id") - Detailed evaluation trace')
+console.log('  - forceRefreshBadges() - Force refresh badge data and check database vs display')
