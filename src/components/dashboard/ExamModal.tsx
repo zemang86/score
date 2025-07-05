@@ -738,12 +738,41 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
         if (!availableBadges || availableBadges.length === 0) {
           console.warn('⚠️ No badges found in database - creating default badges')
           
-          // Create default badges if none exist
+          // Create progressive tiered badges if none exist
           const defaultBadges = [
+            // First exam milestone (one-time only)
             { name: 'First Steps', description: 'Complete your first exam', icon: '🎯', condition_type: 'first_exam', condition_value: 1 },
-            { name: 'Quick Learner', description: 'Complete 5 exams', icon: '⚡', condition_type: 'exams_completed', condition_value: 5 },
-            { name: 'Perfect Score', description: 'Get a perfect 100% score', icon: '🏆', condition_type: 'perfect_score', condition_value: 1 },
-            { name: 'XP Collector', description: 'Earn 100 XP points', icon: '💎', condition_type: 'xp_earned', condition_value: 100 }
+            
+            // Progressive exam completion badges
+            { name: 'Quick Learner I', description: 'Complete 3 exams', icon: '⚡', condition_type: 'exams_completed', condition_value: 3 },
+            { name: 'Quick Learner II', description: 'Complete 5 exams', icon: '⚡⚡', condition_type: 'exams_completed', condition_value: 5 },
+            { name: 'Quick Learner III', description: 'Complete 10 exams', icon: '⚡⚡⚡', condition_type: 'exams_completed', condition_value: 10 },
+            { name: 'Dedicated Student', description: 'Complete 25 exams', icon: '💪', condition_type: 'exams_completed', condition_value: 25 },
+            { name: 'Academic Champion', description: 'Complete 50 exams', icon: '🏆', condition_type: 'exams_completed', condition_value: 50 },
+            
+            // Progressive perfect score badges
+            { name: 'Perfect Score I', description: 'Get 1 perfect 100% score', icon: '🌟', condition_type: 'perfect_score', condition_value: 1 },
+            { name: 'Perfect Score II', description: 'Get 3 perfect 100% scores', icon: '🌟🌟', condition_type: 'perfect_score', condition_value: 3 },
+            { name: 'Perfect Score III', description: 'Get 5 perfect 100% scores', icon: '�🌟🌟', condition_type: 'perfect_score', condition_value: 5 },
+            { name: 'Perfectionist', description: 'Get 10 perfect 100% scores', icon: '👑', condition_type: 'perfect_score', condition_value: 10 },
+            
+            // Progressive XP badges
+            { name: 'XP Collector I', description: 'Earn 100 XP points', icon: '💎', condition_type: 'xp_earned', condition_value: 100 },
+            { name: 'XP Collector II', description: 'Earn 300 XP points', icon: '💎💎', condition_type: 'xp_earned', condition_value: 300 },
+            { name: 'XP Collector III', description: 'Earn 500 XP points', icon: '💎💎💎', condition_type: 'xp_earned', condition_value: 500 },
+            { name: 'XP Master', description: 'Earn 1000 XP points', icon: '💰', condition_type: 'xp_earned', condition_value: 1000 },
+            { name: 'XP Legend', description: 'Earn 2000 XP points', icon: '👑', condition_type: 'xp_earned', condition_value: 2000 },
+            
+            // Subject mastery badges
+            { name: 'Subject Explorer', description: 'Complete 3 exams in any subject', icon: '🧭', condition_type: 'subject_mastery', condition_value: 3 },
+            { name: 'Subject Specialist', description: 'Complete 5 exams in any subject', icon: '🎓', condition_type: 'subject_mastery', condition_value: 5 },
+            { name: 'Subject Master', description: 'Complete 10 exams in any subject', icon: '🏆', condition_type: 'subject_mastery', condition_value: 10 },
+            
+            // Learning streak badges
+            { name: 'Learning Streak I', description: 'Study for 3 consecutive days', icon: '🔥', condition_type: 'streak_days', condition_value: 3 },
+            { name: 'Learning Streak II', description: 'Study for 5 consecutive days', icon: '🔥🔥', condition_type: 'streak_days', condition_value: 5 },
+            { name: 'Learning Streak III', description: 'Study for 7 consecutive days', icon: '🔥🔥🔥', condition_type: 'streak_days', condition_value: 7 },
+            { name: 'Unstoppable Force', description: 'Study for 14 consecutive days', icon: '🚀', condition_type: 'streak_days', condition_value: 14 }
           ]
           
           const { error: insertError } = await supabase
