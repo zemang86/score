@@ -19,7 +19,8 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
 
   // Calculate total price
   const basePrice = isAnnual ? 280 : 28
-  const additionalKidsPrice = isAnnual ? additionalKids * 100 : additionalKids * 10 // 10 per month per kid
+  // For annual plan, we don't include additional kids in the checkout
+  const additionalKidsPrice = isAnnual ? 0 : additionalKids * 10 // 10 per month per kid
   const totalPrice = basePrice + additionalKidsPrice
   const totalKids = 1 + additionalKids // 1 included + additional
 
@@ -45,7 +46,7 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
         body: JSON.stringify({
           price_id: isAnnual ? PRODUCTS.premium.annual.priceId : PRODUCTS.premium.monthly.priceId,
           billing_cycle: isAnnual ? 'annual' : 'monthly',
-          additional_kids: additionalKids,
+          additional_kids: isAnnual ? 0 : additionalKids, // Don't include additional kids for annual plan
           success_url: CHECKOUT_CONFIG.successUrl,
           cancel_url: CHECKOUT_CONFIG.cancelUrl,
           mode: PRODUCTS.premium.monthly.mode
@@ -170,7 +171,7 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
           <div className="mb-8">
             <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
               <h3 className="text-lg font-bold text-blue-800 mb-4 flex items-center">
-                <Users className="w-5 h-5 mr-2 text-blue-600" />
+                <Users className="w-5 h-5 mr-2 text-blue-600" /> 
                 How Many Children?
               </h3>
               
@@ -178,6 +179,17 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
                 <p className="text-blue-700 text-sm">
                   Your Premium subscription includes <strong>1 child</strong>. Add more children for RM10/month each.
                 </p>
+                
+                {isAnnual && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3">
+                    <div className="flex items-center">
+                      <AlertCircle className="w-4 h-4 text-amber-600 mr-2 flex-shrink-0" />
+                      <p className="text-amber-700 text-sm">
+                        <strong>Note:</strong> For annual plans, please complete your subscription first, then add additional children as separate monthly subscriptions.
+                      </p>
+                    </div>
+                  </div>
+                )}
                 
                 <Slider
                   value={[additionalKids]}
@@ -187,6 +199,7 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
                   step={1}
                   label="Additional Children"
                   valueDisplay={`+${additionalKids} additional (${totalKids} total)`}
+                  disabled={isAnnual}
                 />
                 
                 <div className="bg-white rounded-lg p-3 border border-blue-200">
@@ -198,7 +211,7 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
                     <div>
                       <span className="text-blue-800 font-medium">Additional Cost:</span>
                       <span className="ml-2 text-blue-700">
-                        {additionalKids > 0 
+                        {additionalKids > 0 && !isAnnual
                           ? isAnnual 
                             ? `+RM${additionalKids * 100}/year` 
                             : `+RM${additionalKids * 10}/month`
@@ -228,13 +241,25 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
                 </div>
                 
                 {additionalKids > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">
-                      Additional Children ({additionalKids})
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 flex items-center">
+                      {isAnnual ? (
+                        <>
+                          <AlertCircle className="w-4 h-4 text-amber-500 mr-1" />
+                          Additional Children ({additionalKids})
+                        </>
+                      ) : (
+                        <>Additional Children ({additionalKids})</>
+                      )}
                     </span>
-                    <span className="font-medium text-gray-800">
-                      RM{isAnnual ? additionalKids * 100 : additionalKids * 10}{isAnnual ? '/year' : '/month'}
-                    </span>
+                    {!isAnnual && (
+                      <span className="font-medium text-gray-800">
+                        RM{additionalKids * 10}/month
+                      </span>
+                    )}
+                    {isAnnual && (
+                      <span className="text-xs text-amber-600">Add after checkout</span>
+                    )}
                   </div>
                 )}
                 
