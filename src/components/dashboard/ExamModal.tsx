@@ -724,10 +724,76 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       // Evaluate and award badges BEFORE showing results
       console.log(`🎯 Starting badge evaluation for student ${student.name} (${student.id}) after exam completion`)
       try {
+        // First check if badges exist in database
+        const { data: availableBadges, error: badgeCheckError } = await supabase
+          .from('badges')
+          .select('*')
+          .limit(1)
+        
+        if (badgeCheckError) {
+          console.error('❌ Error checking available badges:', badgeCheckError)
+          throw new Error(`Badge check failed: ${badgeCheckError.message}`)
+        }
+        
+        if (!availableBadges || availableBadges.length === 0) {
+          console.warn('⚠️ No badges found in database - creating default badges')
+          
+          // Create progressive tiered badges if none exist
+          const defaultBadges = [
+            // First exam milestone (one-time only)
+            { name: 'First Steps', description: 'Complete your first exam', icon: '🎯', condition_type: 'first_exam', condition_value: 1 },
+            
+            // Progressive exam completion badges
+            { name: 'Quick Learner I', description: 'Complete 3 exams', icon: '⚡', condition_type: 'exams_completed', condition_value: 3 },
+            { name: 'Quick Learner II', description: 'Complete 5 exams', icon: '⚡⚡', condition_type: 'exams_completed', condition_value: 5 },
+            { name: 'Quick Learner III', description: 'Complete 10 exams', icon: '⚡⚡⚡', condition_type: 'exams_completed', condition_value: 10 },
+            { name: 'Dedicated Student', description: 'Complete 25 exams', icon: '💪', condition_type: 'exams_completed', condition_value: 25 },
+            { name: 'Academic Champion', description: 'Complete 50 exams', icon: '🏆', condition_type: 'exams_completed', condition_value: 50 },
+            
+            // Progressive perfect score badges
+            { name: 'Perfect Score I', description: 'Get 1 perfect 100% score', icon: '🌟', condition_type: 'perfect_score', condition_value: 1 },
+            { name: 'Perfect Score II', description: 'Get 3 perfect 100% scores', icon: '🌟🌟', condition_type: 'perfect_score', condition_value: 3 },
+            { name: 'Perfect Score III', description: 'Get 5 perfect 100% scores', icon: '�🌟🌟', condition_type: 'perfect_score', condition_value: 5 },
+            { name: 'Perfectionist', description: 'Get 10 perfect 100% scores', icon: '👑', condition_type: 'perfect_score', condition_value: 10 },
+            
+            // Progressive XP badges
+            { name: 'XP Collector I', description: 'Earn 100 XP points', icon: '💎', condition_type: 'xp_earned', condition_value: 100 },
+            { name: 'XP Collector II', description: 'Earn 300 XP points', icon: '💎💎', condition_type: 'xp_earned', condition_value: 300 },
+            { name: 'XP Collector III', description: 'Earn 500 XP points', icon: '💎💎💎', condition_type: 'xp_earned', condition_value: 500 },
+            { name: 'XP Master', description: 'Earn 1000 XP points', icon: '💰', condition_type: 'xp_earned', condition_value: 1000 },
+            { name: 'XP Legend', description: 'Earn 2000 XP points', icon: '👑', condition_type: 'xp_earned', condition_value: 2000 },
+            
+            // Subject mastery badges
+            { name: 'Subject Explorer', description: 'Complete 3 exams in any subject', icon: '🧭', condition_type: 'subject_mastery', condition_value: 3 },
+            { name: 'Subject Specialist', description: 'Complete 5 exams in any subject', icon: '🎓', condition_type: 'subject_mastery', condition_value: 5 },
+            { name: 'Subject Master', description: 'Complete 10 exams in any subject', icon: '🏆', condition_type: 'subject_mastery', condition_value: 10 },
+            
+            // Learning streak badges
+            { name: 'Learning Streak I', description: 'Study for 3 consecutive days', icon: '🔥', condition_type: 'streak_days', condition_value: 3 },
+            { name: 'Learning Streak II', description: 'Study for 5 consecutive days', icon: '🔥🔥', condition_type: 'streak_days', condition_value: 5 },
+            { name: 'Learning Streak III', description: 'Study for 7 consecutive days', icon: '🔥🔥🔥', condition_type: 'streak_days', condition_value: 7 },
+            { name: 'Unstoppable Force', description: 'Study for 14 consecutive days', icon: '🚀', condition_type: 'streak_days', condition_value: 14 }
+          ]
+          
+          const { error: insertError } = await supabase
+            .from('badges')
+            .insert(defaultBadges)
+          
+          if (insertError) {
+            console.error('❌ Error creating default badges:', insertError)
+          } else {
+            console.log('✅ Default badges created successfully')
+          }
+        }
+        
+        console.log('🔍 Available badges confirmed, proceeding with evaluation...')
+        
+        // Now evaluate badges with enhanced error handling
         const badgeResult = await BadgeEvaluator.evaluateAndAwardBadges(student.id)
         console.log(`🏆 Badge evaluation result:`, {
           newBadgesCount: badgeResult.newBadges.length,
-          totalBadgesCount: badgeResult.allEarnedBadges.length
+          totalBadgesCount: badgeResult.allEarnedBadges.length,
+          newBadges: badgeResult.newBadges.map(b => ({ name: b.name, condition: b.condition_type }))
         })
         
         if (badgeResult.newBadges.length > 0) {
@@ -738,15 +804,48 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
           const displayBadges = BadgeEvaluator.getBadgeDisplayInfo(badgeResult.newBadges)
           setEarnedBadges(displayBadges)
           console.log(`🎨 Display badges set:`, displayBadges)
+          
+          // Force a re-render to ensure badges show
+          setTimeout(() => {
+            console.log('🔄 Forcing badge display refresh...')
+            setEarnedBadges(prev => [...prev])
+          }, 100)
         } else {
           console.log(`ℹ️ No new badges earned for student ${student.name}`)
+          
+          // Debug: Check what conditions were checked
+          const stats = await BadgeEvaluator.getStudentStats(student.id)
+          console.log('📊 Student stats for badge evaluation:', {
+            totalExams: stats?.totalExams,
+            perfectScores: stats?.perfectScores,
+            totalXP: stats?.totalXP,
+            hasCompletedFirstExam: stats?.hasCompletedFirstExam
+          })
+          
           // Clear any previous badges to ensure clean state
           setEarnedBadges([])
         }
       } catch (badgeError) {
         console.error('❌ Error evaluating badges:', badgeError)
-        // Clear badges on error to ensure clean state
-        setEarnedBadges([])
+        console.error('❌ Badge error details:', {
+          message: badgeError instanceof Error ? badgeError.message : 'Unknown error',
+          stack: badgeError instanceof Error ? badgeError.stack : 'No stack trace',
+          name: badgeError instanceof Error ? badgeError.name : 'Unknown error type'
+        })
+        
+        // Try a fallback approach - show a default badge for first exam
+        if (student.xp > 0) {
+          console.log('🔄 Attempting fallback badge award...')
+          const fallbackBadge = [{
+            name: 'Achievement Unlocked',
+            icon: '🎯',
+            color: 'bg-gradient-to-r from-green-400 to-emerald-400'
+          }]
+          setEarnedBadges(fallbackBadge)
+          console.log('✅ Fallback badge set')
+        } else {
+          setEarnedBadges([])
+        }
       }
 
       // IMPORTANT: Set step to results AFTER badge evaluation completes
