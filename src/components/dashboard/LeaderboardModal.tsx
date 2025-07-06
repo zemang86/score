@@ -64,12 +64,10 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
     try {
       console.log('Fetching leaderboard data from view...')
       
-      // Fetch data from the leaderboard_data view with optional level filter
       let query = supabase
         .from('leaderboard_data')
         .select('*')
       
-      // Apply level filter if not Global
       if (levelFilter !== 'Global') {
         query = query.eq('student_level', levelFilter)
       }
@@ -89,7 +87,6 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         return
       }
 
-      // Process the data and sort based on active type
       let processedData: LeaderboardEntry[] = leaderboardData.map(entry => ({
         student_id: entry.student_id,
         student_name: entry.student_name,
@@ -100,10 +97,9 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         average_score: entry.average_score || 0,
         best_score: entry.best_score || 0,
         last_exam_date: entry.last_exam_date,
-        rank: 0 // Will be set after sorting
+        rank: 0
       }))
 
-      // Sort based on active type - handle null/zero values properly
       switch (activeType) {
         case 'xp':
           processedData.sort((a, b) => b.total_xp - a.total_xp)
@@ -112,13 +108,11 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           processedData.sort((a, b) => b.total_exams - a.total_exams)
           break
         case 'scores':
-          // For scores, only consider students with exams completed
           processedData = processedData.filter(entry => entry.total_exams > 0 && entry.average_score > 0)
           processedData.sort((a, b) => b.average_score - a.average_score)
           break
       }
 
-      // Assign ranks after sorting
       processedData = processedData.map((entry, index) => ({
         ...entry,
         rank: index + 1
@@ -187,22 +181,20 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl max-w-2xl w-full max-h-[95vh] overflow-hidden flex flex-col border border-white/50">
-                 {/* Clean Professional Header */}
-         <div className="sticky top-0 z-10 bg-white border-b border-slate-200">
-           <div className="p-4 sm:p-6 bg-slate-50">
-             <div className="flex items-center justify-between">
-               <div className="flex items-center">
-                 <div className="bg-amber-500 rounded-xl p-3 mr-4 shadow-sm">
-                   <Trophy className="w-6 h-6 text-white" />
-                 </div>
-                 <div>
-                   <h2 className="text-xl font-bold text-slate-800">Global Leaderboard</h2>
-                   <p className="text-sm text-slate-600 hidden sm:block">See how you rank among students worldwide</p>
-                 </div>
-               </div>
+        <div className="sticky top-0 z-10 bg-white border-b border-slate-200">
+          <div className="p-4 sm:p-6 bg-slate-50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="bg-amber-500 rounded-xl p-3 mr-4 shadow-sm">
+                  <Trophy className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-slate-800">Global Leaderboard</h2>
+                  <p className="text-sm text-slate-600 hidden sm:block">See how you rank among students worldwide</p>
+                </div>
+              </div>
               
               <div className="flex items-center space-x-2">
-                {/* Level Filter Dropdown */}
                 <div className="relative">
                   {isPremium ? (
                     <select
@@ -219,7 +211,6 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                       <option value="Darjah 6" className="bg-blue-600 text-white">Darjah 6</option>
                     </select>
                   ) : (
-                    // Premium feature prompt for non-premium users
                     <div className="text-center py-8 bg-amber-50 border-2 border-amber-200 rounded-lg">
                       <div className="bg-amber-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                         <Lock className="w-8 h-8 text-amber-600" />
@@ -261,7 +252,6 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           </div>
         </div>
 
-        {/* Clean Tab Navigation */}
         <div className="border-b border-slate-200 bg-slate-50">
           <div className="flex">
             {[
@@ -304,7 +294,6 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           </div>
         </div>
 
-        {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-3 sm:p-4 overflow-visible">
             {loading ? (
@@ -325,86 +314,89 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
               </div>
             ) : (
               <>
-                {/* Compact Sticky Section: Your Students - Mobile Optimized */}
-                              ))}
-                          </div>
-                        </div>
-                      )}
+                <div className="mb-3">
+                  <h3 className="text-base font-bold text-center bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
+                    Top Students by {getTypeLabel(activeType)}
+                  </h3>
+                  <p className="text-xs text-blue-600 text-center mt-1">
+                    {leaderboard.length} students competing {levelFilter === 'Global' ? 'worldwide' : `in ${levelFilter}`}
+                  </p>
+                </div>
 
-                      <div className="mb-3">
-                        <h3 className="text-base font-bold text-center bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
-                          Top Students by {getTypeLabel(activeType)}
-                        </h3>
-                        <p className="text-xs text-blue-600 text-center mt-1">
-                          {leaderboard.length} students competing {levelFilter === 'Global' ? 'worldwide' : `in ${levelFilter}`}
-                        </p>
-                      </div>
-
-                      {leaderboard.length > 0 ? (
-                        <div className="space-y-1.5 sm:space-y-2 max-h-72 overflow-y-auto">
-                          {leaderboard.slice(0, 50).map((entry) => {
-                            const isUserStudent = userStudents.includes(entry.student_id)
-                            
-                            return (
-                              <div
-                                key={entry.student_id}
-                                className={`p-2 sm:p-3 rounded-lg sm:rounded-xl border-2 transition-all duration-300 transform hover:scale-[1.01] sm:hover:scale-102 hover:shadow-md sm:hover:shadow-lg ${
-                                  entry.rank === 1
-                                    ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 border-yellow-400'
-                                    : entry.rank === 2
-                                    ? 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-400'
-                                    : entry.rank === 3
-                                    ? 'bg-gradient-to-r from-orange-100 to-orange-200 border-orange-400'
-                                    : isUserStudent 
-                                    ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-1 sm:ring-2 ring-indigo-200'
-                                    : 'bg-white border-gray-200 hover:border-gray-300'
-                                }`}
-                              >
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center">
-                                    <div className={`mr-2 sm:mr-3 flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full font-bold relative overflow-hidden ${
-                                      entry.rank === 1 
-                                        ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' 
-                                        : entry.rank === 2
-                                        ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white'
-                                        : entry.rank === 3
-                                        ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white'
-                                        : 'bg-slate-100 text-slate-600'
-                                    }`}>
-                                      {/* Inner pulsing effect for top 3 */}
-                                      {entry.rank <= 3 && (
-                                        <div className={`absolute inset-0 rounded-full animate-inner-pulse ${
-                                          entry.rank === 1 ? 'bg-yellow-300/50' :
-                                          entry.rank === 2 ? 'bg-gray-300/50' :
-                                          'bg-orange-300/50'
-                                        }`}></div>
-                                      )}
-                                      <span className="relative z-10 text-xs sm:text-sm font-bold">
-                                        {entry.rank}
-                                      </span>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <div className={`font-bold text-xs sm:text-sm flex items-center ${
-                                        entry.rank === 1 ? 'text-yellow-700' :
-                                        entry.rank === 2 ? 'text-gray-700' :
-                                        entry.rank === 3 ? 'text-orange-700' :
-                                        isUserStudent ? 'text-indigo-700' : 'text-gray-800'
-                                      }`}>
-                                        <span className="truncate">{entry.student_name}</span>
-                                        {isUserStudent && <span className="ml-1 sm:ml-2 text-indigo-500 flex-shrink-0 text-xs">(Your Kid)</span>}
-                                      </div>
-                                      <div className={`text-[10px] sm:text-xs ${
-                                        entry.rank === 1 ? 'text-yellow-600' :
-                                        entry.rank === 2 ? 'text-gray-600' :
-                                        entry.rank === 3 ? 'text-orange-600' :
-                                        isUserStudent ? 'text-indigo-600' : 'text-gray-600'
-                                      } truncate`}>
-                                        {entry.student_level} • {entry.student_school}
-                                      </div>
-                                    </div>
+                {leaderboard.length > 0 ? (
+                  <div className="space-y-1.5 sm:space-y-2 max-h-72 overflow-y-auto">
+                    {leaderboard.slice(0, 50).map((entry) => {
+                      const isUserStudent = userStudents.includes(entry.student_id)
+                      
+                      return (
+                        <div
+                          key={entry.student_id}
+                          className={`p-2 sm:p-3 rounded-lg sm:rounded-xl border-2 transition-all duration-300 transform hover:scale-[1.01] sm:hover:scale-102 hover:shadow-md sm:hover:shadow-lg ${
+                            entry.rank === 1
+                              ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 border-yellow-400'
+                              : entry.rank === 2
+                              ? 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-400'
+                              : entry.rank === 3
+                              ? 'bg-gradient-to-r from-orange-100 to-orange-200 border-orange-400'
+                              : isUserStudent 
+                              ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-1 sm:ring-2 ring-indigo-200'
+                              : 'bg-white border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className={`mr-2 sm:mr-3 flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full font-bold relative overflow-hidden ${
+                                entry.rank === 1 
+                                  ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' 
+                                  : entry.rank === 2
+                                  ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white'
+                                  : entry.rank === 3
+                                  ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white'
+                                  : 'bg-slate-100 text-slate-600'
                               }`}>
+                                {entry.rank <= 3 && (
+                                  <div className={`absolute inset-0 rounded-full animate-inner-pulse ${
+                                    entry.rank === 1 ? 'bg-yellow-300/50' :
+                                    entry.rank === 2 ? 'bg-gray-300/50' :
+                                    'bg-orange-300/50'
+                                  }`}></div>
+                                )}
+                                <span className="relative z-10 text-xs sm:text-sm font-bold">
+                                  {entry.rank}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className={`font-bold text-xs sm:text-sm flex items-center ${
+                                  entry.rank === 1 ? 'text-yellow-700' :
+                                  entry.rank === 2 ? 'text-gray-700' :
+                                  entry.rank === 3 ? 'text-orange-700' :
+                                  isUserStudent ? 'text-indigo-700' : 'text-gray-800'
+                                }`}>
+                                  <span className="truncate">{entry.student_name}</span>
+                                  {isUserStudent && <span className="ml-1 sm:ml-2 text-indigo-500 flex-shrink-0 text-xs">(Your Kid)</span>}
+                                </div>
+                                <div className={`text-[10px] sm:text-xs ${
+                                  entry.rank === 1 ? 'text-yellow-600' :
+                                  entry.rank === 2 ? 'text-gray-600' :
+                                  entry.rank === 3 ? 'text-orange-600' :
+                                  isUserStudent ? 'text-indigo-600' : 'text-gray-600'
+                                } truncate`}>
+                                  {entry.student_level} • {entry.student_school}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right flex-shrink-0">
+                              <div className={`text-xs sm:text-sm font-bold ${
+                                entry.rank === 1 ? 'text-yellow-700' : 
+                                entry.rank === 2 ? 'text-gray-700' : 
+                                entry.rank === 3 ? 'text-orange-700' : 
+                                isUserStudent ? 'text-indigo-700' : 
+                                'text-gray-800'
+                              }`}>
+                                {getTypeValue(entry, activeType)}
+                              </div>
                               {activeType === 'xp' && entry.total_exams > 0 && (
-                                <div className={\`text-[9px] sm:text-xs ${
+                                <div className={`text-[9px] sm:text-xs ${
                                   entry.rank === 1 ? 'text-yellow-600' :
                                   entry.rank === 2 ? 'text-gray-600' :
                                   entry.rank === 3 ? 'text-orange-600' :
@@ -413,68 +405,17 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                   {entry.total_exams} exams • {entry.average_score}% avg
                                 </div>
                               )}
-                              {activeType === 'exams' && entry.total_xp > 0 && (
-                                <div className={\`text-[9px] sm:text-xs ${
-                                  entry.rank === 1 ? 'text-yellow-600' :
-                                  entry.rank === 2 ? 'text-gray-600' :
-                                  entry.rank === 3 ? 'text-orange-600' :
-                                  isUserStudent ? 'text-indigo-600' : 'text-gray-500'
-                                } hidden sm:block`}>
-                                  {entry.total_xp} XP • {entry.average_score}% avg
-                                </div>
-                              )}
-                              {activeType === 'scores' && entry.total_exams > 0 && (
-                                <div className={\`text-[9px] sm:text-xs ${
-                                  entry.rank === 1 ? 'text-yellow-600' :
-                                  entry.rank === 2 ? 'text-gray-600' :
-                                  entry.rank === 3 ? 'text-orange-600' :
-                                  isUserStudent ? 'text-indigo-600' : 'text-gray-500'
-                                } hidden sm:block`}>
-                                  {entry.total_exams} exams • {entry.total_xp} XP
-                                </div>
-                              )}
                             </div>
                           </div>
                         </div>
                       )
                     })}
                   </div>
-                                  <div className="text-right flex-shrink-0">
-                                    <div className={\`text-xs sm:text-sm font-bold ${
-                                      entry.rank === 1 ? 'text-yellow-700' : 
-                                      entry.rank === 2 ? 'text-gray-700' : 
-                                      entry.rank === 3 ? 'text-orange-700' : 
-                                      isUserStudent ? 'text-indigo-700' : 
-                                      'text-gray-800'
-                                    }`}>
-                                      {getTypeValue(entry, activeType)}
-                                    </div>
-                                    {activeType === 'xp' && entry.total_exams > 0 && (
-                                      <div className={\`text-[9px] sm:text-xs ${
-                                        entry.rank === 1 ? 'text-yellow-600' :
-                                        entry.rank === 2 ? 'text-gray-600' :
-                                        entry.rank === 3 ? 'text-orange-600' :
-                                        isUserStudent ? 'text-indigo-600' : 'text-gray-500'
-                                      } hidden sm:block`}>
-                                        {entry.total_exams} exams • {entry.average_score}% avg
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      ) : (
-                        <div className="text-center py-6">
-                          <div className="bg-amber-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
-                            <Trophy className="w-6 h-6 text-amber-600" />
-                          </div>
-                          <p className="text-amber-600 text-base">No data available yet!</p>
-                          <p className="text-amber-500 text-xs">Students need to complete exams to appear on the leaderboard!</p>
-                        </div>
-                      )}
-                    </>
+                ) : (
+                  <div className="text-center py-6">
+                    <div className="bg-amber-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                      <Trophy className="w-6 h-6 text-amber-600" />
+                    </div>
                     <p className="text-amber-600 text-base">No data available yet!</p>
                     <p className="text-amber-500 text-xs">Students need to complete exams to appear on the leaderboard!</p>
                   </div>
@@ -484,7 +425,6 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           </div>
         </div>
 
-        {/* Clean Footer */}
         <div className="border-t border-slate-200 bg-slate-50 p-3 sm:p-4">
           <Button
             onClick={onClose}
