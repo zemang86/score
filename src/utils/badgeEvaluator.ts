@@ -30,19 +30,23 @@ export class BadgeEvaluator {
   private static async getAllBadges(): Promise<Badge[]> {
     // Use cache if available and not expired
     if (this.badgeCache && Date.now() - this.badgeCache.timestamp < this.CACHE_DURATION) {
+      console.log('🔄 Using cached badges:', this.badgeCache.badges.length)
       return this.badgeCache.badges
     }
+    
+    console.log('🔍 Fetching badges from database...')
     const { data: badges, error } = await supabase
       .from('badges')
       .select('*')
       .order('created_at', { ascending: true })
 
     if (error) {
-      console.error('Error fetching badges:', error)
+      console.error('❌ Error fetching badges:', error)
       return []
     }
 
     const badgeList = badges || []
+    console.log(`📊 Found ${badgeList.length} badges in database`)
     
     // Update cache
     this.badgeCache = {
@@ -225,19 +229,36 @@ export class BadgeEvaluator {
 
   public static async evaluateAndAwardBadges(studentId: string): Promise<BadgeEvaluationResult> {
     try {
+      console.log(`🏆 Starting badge evaluation for student: ${studentId}`)
+      
       // Get all available badges (cache this in production)
       const allBadges = await this.getAllBadges()
+      console.log(`📋 Available badges: ${allBadges.length}`)
+      
+      if (allBadges.length === 0) {
+        console.warn('⚠️ No badges available in database')
+        return { newBadges: [], allEarnedBadges: [] }
+      }
       
       // Get student's current badges
       const currentBadges = await this.getStudentBadges(studentId)
       const earnedBadgeIds = new Set(currentBadges.map(sb => sb.badge_id))
+      console.log(`🎯 Student has ${currentBadges.length} existing badges`)
       
       // Get student statistics
       const stats = await this.getStudentStats(studentId)
       if (!stats) {
-        console.error(`Could not get student stats for ${studentId}`)
+        console.error(`❌ Could not get student stats for ${studentId}`)
         return { newBadges: [], allEarnedBadges: currentBadges }
       }
+      
+      console.log(`📊 Student stats:`, {
+        totalExams: stats.totalExams,
+        perfectScores: stats.perfectScores,
+        totalXP: stats.totalXP,
+        hasCompletedFirstExam: stats.hasCompletedFirstExam,
+        maxExamsInAnySubject: stats.maxExamsInAnySubject
+      })
 
       // Check each badge condition
       const newBadges: Badge[] = []
@@ -245,20 +266,27 @@ export class BadgeEvaluator {
       for (const badge of allBadges) {
         // Skip if already earned
         if (earnedBadgeIds.has(badge.id)) {
+          console.log(`⏭️ Badge "${badge.name}" already earned, skipping`)
           continue
         }
 
         // Check if condition is met
         const conditionMet = this.checkBadgeCondition(badge, stats)
+        console.log(`🔍 Badge "${badge.name}" (${badge.condition_type}: ${badge.condition_value}): ${conditionMet ? '✅ ELIGIBLE' : '❌ NOT ELIGIBLE'}`)
         
         if (conditionMet) {
           // Award the badge
           const awarded = await this.awardBadge(studentId, badge.id)
           if (awarded) {
             newBadges.push(badge)
+            console.log(`🎉 Successfully awarded badge: "${badge.name}"`)
+          } else {
+            console.warn(`⚠️ Failed to award badge: "${badge.name}"`)
           }
         }
       }
+
+      console.log(`🏅 Badge evaluation complete: ${newBadges.length} new badges awarded`)
 
       // Get fresh badge data to ensure consistency
       const updatedBadges = await this.getStudentBadges(studentId)
@@ -270,6 +298,11 @@ export class BadgeEvaluator {
 
     } catch (error) {
       console.error('❌ Error evaluating badges:', error)
+      console.error('❌ Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : 'No stack trace',
+        name: error instanceof Error ? error.name : 'Unknown error type'
+      })
       return { newBadges: [], allEarnedBadges: [] }
     }
   }
@@ -302,6 +335,12 @@ export class BadgeEvaluator {
       default:
         return 'bg-gradient-to-r from-gray-400 to-gray-500'
     }
+  }
+
+  // Method to clear badge cache
+  public static clearCache(): void {
+    console.log('🗑️ Clearing badge cache to force fresh data')
+    this.badgeCache = null
   }
 
 }
