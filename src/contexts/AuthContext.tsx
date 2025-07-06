@@ -1,4 +1,3 @@
-import React, { createContext, useContext, useEffect, useState, useRef } from 'react'
 import React, { createContext, useContext, useEffect, useState, useRef, useMemo } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase, fetchUserProfile, testDatabaseConnection } from '../lib/supabase'
