@@ -1,10 +1,10 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import Stripe from 'npm:stripe@17.7.0';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
-import { PRODUCTS } from '../../src/stripe-config.ts';
 
 const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '');
 const stripeSecret = Deno.env.get('STRIPE_SECRET_KEY')!;
+const additionalKidPriceId = Deno.env.get('STRIPE_ADDITIONAL_KID_PRICE_ID')!;
 const stripe = new Stripe(stripeSecret, {
   appInfo: {
     name: 'Bolt Integration',
@@ -194,7 +194,6 @@ Deno.serve(async (req) => {
     
     // Add additional kids if any
     if (additional_kids > 0) {
-      const additionalKidPriceId = PRODUCTS.premium.additionalKid.priceId;
       lineItems.push({
         price: additionalKidPriceId,
         quantity: additional_kids,
