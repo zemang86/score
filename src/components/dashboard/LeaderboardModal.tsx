@@ -402,7 +402,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                     </div>
                               }`}>
                               {activeType === 'xp' && entry.total_exams > 0 && (
-                                <div className={`text-[9px] sm:text-xs ${
+                                <div className={\`text-[9px] sm:text-xs ${
                                   entry.rank === 1 ? 'text-yellow-600' :
                                   entry.rank === 2 ? 'text-gray-600' :
                                   entry.rank === 3 ? 'text-orange-600' :
@@ -412,7 +412,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                 </div>
                               )}
                               {activeType === 'exams' && entry.total_xp > 0 && (
-                                <div className={`text-[9px] sm:text-xs ${
+                                <div className={\`text-[9px] sm:text-xs ${
                                   entry.rank === 1 ? 'text-yellow-600' :
                                   entry.rank === 2 ? 'text-gray-600' :
                                   entry.rank === 3 ? 'text-orange-600' :
@@ -422,7 +422,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                 </div>
                               )}
                               {activeType === 'scores' && entry.total_exams > 0 && (
-                                <div className={`text-[9px] sm:text-xs ${
+                                <div className={\`text-[9px] sm:text-xs ${
                                   entry.rank === 1 ? 'text-yellow-600' :
                                   entry.rank === 2 ? 'text-gray-600' :
                                   entry.rank === 3 ? 'text-orange-600' :
@@ -438,7 +438,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                     })}
                   </div>
                                   <div className="text-right flex-shrink-0">
-                                    <div className={`text-xs sm:text-sm font-bold ${
+                                    <div className={\`text-xs sm:text-sm font-bold ${
                                       entry.rank === 1 ? 'text-yellow-700' : 
                                       entry.rank === 2 ? 'text-gray-700' : 
                                       entry.rank === 3 ? 'text-orange-700' : 
@@ -448,7 +448,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                       {getTypeValue(entry, activeType)}
                                     </div>
                                     {activeType === 'xp' && entry.total_exams > 0 && (
-                                      <div className={`text-[9px] sm:text-xs ${
+                                      <div className={\`text-[9px] sm:text-xs ${
                                         entry.rank === 1 ? 'text-yellow-600' :
                                         entry.rank === 2 ? 'text-gray-600' :
                                         entry.rank === 3 ? 'text-orange-600' :
