@@ -5,7 +5,6 @@ import { Button } from '../ui/Button'
 import { RevealOnScroll } from '../animations/RevealOnScroll'
 import { EdventureLogo } from '../ui/EdventureLogo'
 import { supabase } from '../../lib/supabase'
-import { PRODUCTS } from '../../stripe-config'
 import { useTranslation } from 'react-i18next'
 
 export function LandingPage() {
