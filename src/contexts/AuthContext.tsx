@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react'
+import React, { createContext, useContext, useEffect, useState, useRef, useMemo } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase, fetchUserProfile, testDatabaseConnection } from '../lib/supabase'
 import type { UserWithAdminStatus } from '../lib/supabase'
@@ -352,7 +353,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error }
   }
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     session,
     profile,
@@ -367,7 +368,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     resetPassword,
     refreshUserProfile,
-  }
+  }), [
+    user,
+    session,
+    profile,
+    subscriptionPlan,
+    maxStudents,
+    dailyExamLimit,
+    isAdmin,
+    loading,
+    profileLoading,
+    signUp,
+    signIn,
+    signOut,
+    resetPassword,
+    refreshUserProfile,
+  ])
 
   console.log('🔍 AuthContext: Current state:', {
     hasUser: !!user,
