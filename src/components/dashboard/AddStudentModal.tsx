@@ -58,7 +58,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
         throw countError
       }
 
-      if (existingStudents && existingStudents.length >= maxStudents) {
+      if (existingStudents && existingStudents.length >= maxStudents && subscriptionPlan !== 'premium') {
         if (subscriptionPlan === 'premium') {
           setError(`You've reached your limit of ${maxStudents} ${maxStudents === 1 ? 'child' : 'children'}. Additional children cost RM10/month each. Please contact support to add more.`)
         } else {
@@ -192,11 +192,17 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
             <div className="bg-gradient-to-r from-indigo-100 to-purple-100 border border-indigo-300 rounded-lg p-2.5">
               <div className="flex items-center mb-1">
                 <Sparkles className="w-4 h-4 text-indigo-600 mr-1.5" />
-                <p className="text-indigo-800 font-medium text-xs">Plan Limit Info</p>
+                <p className="text-indigo-800 font-medium text-xs">Your Plan Info</p>
               </div>
-              <p className="text-indigo-700 text-xs">
-                You can add up to <strong>{maxStudents}</strong> {maxStudents === 1 ? 'kid' : 'kids'} with your current plan!
-              </p>
+              {subscriptionPlan === 'free' ? (
+                <p className="text-indigo-700 text-xs">
+                  Free plan: Limited to <strong>1 kid</strong> and <strong>3 exams/day</strong>. <span className="font-semibold">Upgrade to Premium for more!</span>
+                </p>
+              ) : (
+                <p className="text-indigo-700 text-xs">
+                  Premium plan: <strong>{maxStudents}</strong> {maxStudents === 1 ? 'kid' : 'kids'} included. Additional kids cost <strong>RM10/month</strong> each.
+                </p>
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-2">

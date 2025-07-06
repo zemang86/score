@@ -868,73 +868,103 @@ export function StudentProgressModal({ isOpen, onClose, student, isPremium = fal
                 {/* Badges Tab */}
                 {activeTab === 'badges' && (
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-base font-bold text-blue-700">Achievement Badges</h3>
-                      {badges.length > 12 && (
-                        <span className="text-xs text-gray-500">Showing newest 12 badges</span>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-base font-bold text-blue-700">Achievement Badges</h3>
+                        {!isPremium && badges.length > 3 && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                            <Lock className="w-3 h-3 mr-1" />
+                            Limited View
+                          </span>
+                        )}
+                      </div>
+                      
+                      {badges.length > 0 ? (
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                          {/* Show all badges for premium users, but only 3 for free users */}
+                          {(isPremium ? badges : badges.slice(0, 3)).map((studentBadge) => (
+                            <div 
+                              key={studentBadge.id} 
+                              className={`${getBadgeColor(studentBadge.badge.condition_type)} border-2 rounded-lg p-2 text-center shadow-sm hover:shadow-md transition-all duration-200 text-white relative group cursor-pointer`}
+                              title={`${studentBadge.badge.name}: ${studentBadge.badge.description}`}
+                            >
+                              <div className="text-lg mb-1">{studentBadge.badge.icon}</div>
+                              <h4 className="font-bold text-xs leading-tight mb-1 text-white drop-shadow-sm">
+                                {studentBadge.badge.name}
+                              </h4>
+                              <div className="text-xs opacity-90 text-white">
+                                {formatDate(studentBadge.earned_at)}
+                              </div>
+                              
+                              {/* Hover tooltip */}
+                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 bg-gray-800 text-white text-xs rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                                <div className="font-semibold mb-1">{studentBadge.badge.name}</div>
+                                <div className="text-gray-300">{studentBadge.badge.description}</div>
+                                <div className="text-gray-400 mt-1">Earned: {formatDate(studentBadge.earned_at)}</div>
+                                {/* Arrow */}
+                                <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8">
+                          <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                            <Award className="w-6 h-6 text-blue-600" />
+                          </div>
+                          <p className="text-blue-600 text-sm font-medium">No badges earned yet!</p>
+                          <p className="text-blue-500 text-xs mt-1">Complete exams to start earning awesome badges!</p>
+                        </div>
+                      )}
+                      
+                      {/* Premium upgrade prompt for free users with more than 3 badges */}
+                      {!isPremium && badges.length > 3 && (
+                        <div className="text-center py-4 bg-amber-50 border-2 border-amber-200 rounded-lg mt-3">
+                          <div className="bg-amber-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-3">
+                            <Lock className="w-5 h-5 text-amber-600" />
+                          </div>
+                          <p className="text-amber-700 text-sm font-medium mb-1">
+                            {badges.length - 3} more badges hidden
+                          </p>
+                          <p className="text-amber-600 text-xs mb-3">
+                            Upgrade to Premium to see all earned badges and detailed information!
+                          </p>
+                          <Button
+                            variant="warning"
+                            size="sm"
+                            icon={<Crown className="w-4 h-4" />}
+                            className="bg-gradient-to-r from-amber-500 to-orange-500"
+                          >
+                            Upgrade to Premium
+                          </Button>
+                        </div>
+                      )}
+                      
+                      {/* Badge Categories Legend */}
+                      {badges.length > 0 && (
+                        <div className="mt-4 p-3 bg-gray-50 rounded-lg border">
+                          <h4 className="text-xs font-semibold text-gray-700 mb-2">Badge Categories</h4>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                            <div className="flex items-center">
+                              <div className="w-3 h-3 bg-gradient-to-br from-green-400 to-emerald-500 rounded mr-2"></div>
+                              <span className="text-gray-600">First Steps</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-3 h-3 bg-gradient-to-br from-blue-400 to-cyan-500 rounded mr-2"></div>
+                              <span className="text-gray-600">Progress</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-3 h-3 bg-gradient-to-br from-purple-400 to-pink-500 rounded mr-2"></div>
+                              <span className="text-gray-600">Performance</span>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-3 h-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded mr-2"></div>
+                              <span className="text-gray-600">Perfect Scores</span>
+                            </div>
+                          </div>
+                        </div>
                       )}
                     </div>
-                    {badges.length > 0 ? (
-                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                        {badges.slice(0, 12).map((studentBadge) => (
-                          <div 
-                            key={studentBadge.id} 
-                            className={`${getBadgeColor(studentBadge.badge.condition_type)} border-2 rounded-lg p-2 text-center shadow-sm hover:shadow-md transition-all duration-200 text-white relative group cursor-pointer`}
-                            title={`${studentBadge.badge.name}: ${studentBadge.badge.description}`}
-                          >
-                            <div className="text-lg mb-1">{studentBadge.badge.icon}</div>
-                            <h4 className="font-bold text-xs leading-tight mb-1 text-white drop-shadow-sm">
-                              {studentBadge.badge.name}
-                            </h4>
-                            <div className="text-xs opacity-90 text-white">
-                              {formatDate(studentBadge.earned_at)}
-                            </div>
-                            
-                            {/* Hover tooltip */}
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 bg-gray-800 text-white text-xs rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                              <div className="font-semibold mb-1">{studentBadge.badge.name}</div>
-                              <div className="text-gray-300">{studentBadge.badge.description}</div>
-                              <div className="text-gray-400 mt-1">Earned: {formatDate(studentBadge.earned_at)}</div>
-                              {/* Arrow */}
-                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8">
-                        <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
-                          <Award className="w-6 h-6 text-blue-600" />
-                        </div>
-                        <p className="text-blue-600 text-sm font-medium">No badges earned yet!</p>
-                        <p className="text-blue-500 text-xs mt-1">Complete exams to start earning awesome badges!</p>
-                      </div>
-                    )}
-                    
-                    {/* Badge Categories Legend */}
-                    {badges.length > 0 && (
-                      <div className="mt-4 p-3 bg-gray-50 rounded-lg border">
-                        <h4 className="text-xs font-semibold text-gray-700 mb-2">Badge Categories</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                          <div className="flex items-center">
-                            <div className="w-3 h-3 bg-gradient-to-br from-green-400 to-emerald-500 rounded mr-2"></div>
-                            <span className="text-gray-600">First Steps</span>
-                          </div>
-                          <div className="flex items-center">
-                            <div className="w-3 h-3 bg-gradient-to-br from-blue-400 to-cyan-500 rounded mr-2"></div>
-                            <span className="text-gray-600">Progress</span>
-                          </div>
-                          <div className="flex items-center">
-                            <div className="w-3 h-3 bg-gradient-to-br from-purple-400 to-pink-500 rounded mr-2"></div>
-                            <span className="text-gray-600">Performance</span>
-                          </div>
-                          <div className="flex items-center">
-                            <div className="w-3 h-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded mr-2"></div>
-                            <span className="text-gray-600">Perfect Scores</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
               </>

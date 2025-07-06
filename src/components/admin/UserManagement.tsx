@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { User, Search, Filter, MoreHorizontal, UserPlus, Calendar, Mail, Edit, Crown, Zap } from 'lucide-react'
+import { User, Search, Filter, MoreHorizontal, UserPlus, Calendar, Mail, Edit, Crown, Zap, Users } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { EditUserModal } from './EditUserModal'
+import { ManageStudentsModal } from './ManageStudentsModal'
 
 interface UserData {
   id: string
@@ -22,7 +23,11 @@ export function UserManagement() {
   const [users, setUsers] = useState<UserData[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
+  const [selectedUserName, setSelectedUserName] = useState<string>('')
+  const [selectedUserMaxStudents, setSelectedUserMaxStudents] = useState<number>(1)
+  const [selectedUserIsPremium, setSelectedUserIsPremium] = useState<boolean>(false)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [showManageStudentsModal, setShowManageStudentsModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [error, setError] = useState('')
 
@@ -63,7 +68,24 @@ export function UserManagement() {
 
   const handleEditUser = (userId: string) => {
     setSelectedUserId(userId)
+    const user = users.find(u => u.id === userId)
+    if (user) {
+      setSelectedUserName(user.full_name)
+      setSelectedUserMaxStudents(user.max_students)
+      setSelectedUserIsPremium(user.subscription_plan === 'premium')
+    }
     setShowEditModal(true)
+  }
+
+  const handleManageStudents = (userId: string) => {
+    setSelectedUserId(userId)
+    const user = users.find(u => u.id === userId)
+    if (user) {
+      setSelectedUserName(user.full_name)
+      setSelectedUserMaxStudents(user.max_students)
+      setSelectedUserIsPremium(user.subscription_plan === 'premium')
+    }
+    setShowManageStudentsModal(true)
   }
 
   const handleUserUpdated = () => {
@@ -216,6 +238,19 @@ export function UserManagement() {
           onUserUpdated={handleUserUpdated}
         />
       )}
+      
+      {/* Manage Students Modal */}
+      {selectedUserId && (
+        <ManageStudentsModal
+          isOpen={showManageStudentsModal}
+          onClose={() => setShowManageStudentsModal(false)}
+          userId={selectedUserId}
+          userName={selectedUserName}
+          maxStudents={selectedUserMaxStudents}
+          isPremium={selectedUserIsPremium}
+          onStudentsUpdated={handleUserUpdated}
+        />
+      )}
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-neutral-50">
@@ -281,14 +316,24 @@ export function UserManagement() {
                     {formatDate(user.updated_at)}
                   </td>
                   <td className="px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      icon={<Edit className="w-3 h-3 sm:w-4 sm:h-4" />} 
-                      onClick={() => handleEditUser(user.id)}
-                      title="Edit user access"
-                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                    />
+                    <div className="flex space-x-1 justify-end">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        icon={<Edit className="w-3 h-3 sm:w-4 sm:h-4" />} 
+                        onClick={() => handleEditUser(user.id)}
+                        title="Edit user access"
+                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                      />
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        icon={<Users className="w-3 h-3 sm:w-4 sm:h-4" />} 
+                        onClick={() => handleManageStudents(user.id)}
+                        title="Manage students"
+                        className="text-green-600 hover:text-green-800 hover:bg-green-50"
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}
