@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Student } from '../../lib/supabase'
 import { Button } from '../ui/Button'
-import { X, TrendingUp, Trophy, Calendar, BookOpen, Target, Star, Award, BarChart3, ArrowLeft, Eye, CheckCircle, XCircle, Clock, Edit3, ArrowUpDown, BookOpenCheck } from 'lucide-react'
+import { X, TrendingUp, Trophy, Calendar, BookOpen, Target, Star, Award, BarChart3, ArrowLeft, Eye, CheckCircle, XCircle, Clock, Edit3, ArrowUpDown, BookOpenCheck, Lock, Crown } from 'lucide-react'
 import { BadgeEvaluator, type StudentBadge } from '../../utils/badgeEvaluator'
 
 interface StudentProgressModalProps {
   isOpen: boolean
   onClose: () => void
   student: Student
+  isPremium?: boolean
 }
 
 interface ExamResult {
@@ -50,7 +51,7 @@ interface SubjectStats {
 
 // Using StudentBadge from badgeEvaluator instead of local interface
 
-export function StudentProgressModal({ isOpen, onClose, student }: StudentProgressModalProps) {
+export function StudentProgressModal({ isOpen, onClose, student, isPremium = false }: StudentProgressModalProps) {
   const [examResults, setExamResults] = useState<ExamResult[]>([])
   const [subjectStats, setSubjectStats] = useState<SubjectStats[]>([])
   const [badges, setBadges] = useState<StudentBadge[]>([])
@@ -713,8 +714,16 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                 {/* Exams Tab */}
                 {activeTab === 'exams' && (
                   <div className="space-y-3">
-                    <h3 className="text-base font-bold text-blue-700">All Exam Results</h3>
-                    {examResults.length > 0 ? (
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base font-bold text-blue-700">All Exam Results</h3>
+                      {!isPremium && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                          <Lock className="w-3 h-3 mr-1" />
+                          Limited View
+                        </span>
+                      )}
+                    </div>
+                    {examResults.length > 0 ? isPremium ? (
                       <div className="space-y-2 max-h-96 overflow-y-auto">
                         {examResults.map((exam) => (
                           <div key={exam.id} className={`p-3 rounded-lg border shadow-sm ${getScoreBgColor(exam.score || 0)}`}>
@@ -744,6 +753,49 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                         ))}
                       </div>
                     ) : (
+                      <div className="space-y-2 max-h-96 overflow-y-auto">
+                        {/* Show only the 3 most recent exams for free users */}
+                        {examResults.slice(0, 3).map((exam) => (
+                          <div key={exam.id} className={`p-3 rounded-lg border shadow-sm ${getScoreBgColor(exam.score || 0)}`}>
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <div className="font-bold text-sm">{exam.subject}</div>
+                                <div className="text-xs opacity-80">
+                                  {exam.mode} Mode • {exam.total_questions} questions • {formatDate(exam.date)}
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <div className={`text-lg font-bold ${getScoreColor(exam.score || 0)}`}>
+                                  {exam.score || 0}%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        
+                        {examResults.length > 3 && (
+                          <div className="text-center py-4 bg-amber-50 border-2 border-amber-200 rounded-lg">
+                            <div className="bg-amber-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-3">
+                              <Lock className="w-5 h-5 text-amber-600" />
+                            </div>
+                            <p className="text-amber-700 text-sm font-medium mb-1">
+                              {examResults.length - 3} more exam results hidden
+                            </p>
+                            <p className="text-amber-600 text-xs mb-3">
+                              Upgrade to Premium to see all exam history and detailed reviews!
+                            </p>
+                            <Button
+                              variant="warning"
+                              size="sm"
+                              icon={<Crown className="w-4 h-4" />}
+                              className="bg-gradient-to-r from-amber-500 to-orange-500"
+                            >
+                              Upgrade to Premium
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
                       <div className="text-center py-6">
                         <div className="bg-blue-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-3">
                           <BookOpen className="w-5 h-5 text-blue-600" />
@@ -757,8 +809,34 @@ export function StudentProgressModal({ isOpen, onClose, student }: StudentProgre
                 {/* Subjects Tab */}
                 {activeTab === 'subjects' && (
                   <div className="space-y-3">
-                    <h3 className="text-base font-bold text-blue-700">Subject Performance</h3>
-                    {subjectStats.length > 0 ? (
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base font-bold text-blue-700">Subject Performance</h3>
+                      {!isPremium && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                          <Lock className="w-3 h-3 mr-1" />
+                          Premium Feature
+                        </span>
+                      )}
+                    </div>
+                    {!isPremium ? (
+                      <div className="text-center py-6 bg-amber-50 border-2 border-amber-200 rounded-lg">
+                        <div className="bg-amber-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                          <Lock className="w-6 h-6 text-amber-600" />
+                        </div>
+                        <h4 className="text-lg font-bold text-amber-700 mb-2">Premium Feature</h4>
+                        <p className="text-amber-600 text-sm mb-4">
+                          Upgrade to Premium to unlock detailed subject performance analytics!
+                        </p>
+                        <Button
+                          variant="warning"
+                          size="sm"
+                          icon={<Crown className="w-4 h-4" />}
+                          className="bg-gradient-to-r from-amber-500 to-orange-500"
+                        >
+                          Upgrade to Premium
+                        </Button>
+                      </div>
+                    ) : subjectStats.length > 0 ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-96 overflow-y-auto">
                         {subjectStats.map((stat) => (
                           <div key={stat.subject} className={`p-3 rounded-lg border shadow-sm ${getScoreBgColor(stat.averageScore)}`}>
