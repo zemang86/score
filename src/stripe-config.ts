@@ -16,7 +16,7 @@ export const PRODUCTS = {
       price: 'RM280.00/year'
     },
     additionalKid: {
-      priceId: 'price_1Rhw3SFmiwnPC9Y0rBg2BHtD', // Replace with your additional kid price ID
+      priceId: 'price_1Rhw6DFmiwnPC9Y0PN9dP2mF', // Replace with your additional kid price ID
       name: 'Additional Child',
       description: 'Add another child to your Premium subscription',
       mode: 'subscription' as const,
