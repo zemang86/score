@@ -491,7 +491,7 @@ export function ParentDashboard() {
                       <Users className="w-5 h-5 sm:w-6 text-white" />
                     </div>
                     <h2 className="text-base sm:text-lg font-bold text-slate-800">
-                      Your Amazing Kids ({students.length})
+                      Your Amazing Kids ({students.length}{subscriptionPlan === 'premium' ? '' : ` / ${maxStudents}`})
                     </h2>
                   </div>
                   <Button 
@@ -508,7 +508,9 @@ export function ParentDashboard() {
                 {!canAddMoreStudents && (
                   <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
                     <p className="text-amber-700 font-medium text-center text-xs">
-                      You've reached your plan limit of {maxStudents} {maxStudents === 1 ? 'kid' : 'kids'}!
+                      {subscriptionPlan === 'premium' 
+                        ? `You've reached your limit of ${maxStudents} ${maxStudents === 1 ? 'kid' : 'kids'}. Additional children cost RM10/month each.` 
+                        : `Free plan is limited to ${maxStudents} ${maxStudents === 1 ? 'kid' : 'kids'}. Upgrade to Premium for more!`}
                     </p>
                   </div>
                 )}
