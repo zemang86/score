@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
+import { PremiumUpgradeModal } from '../dashboard/PremiumUpgradeModal'
 import { Input } from '../ui/Input'
 import { Mail, Lock, User, Eye, EyeOff, Sparkles, Star, Crown, Zap } from 'lucide-react'
 
@@ -17,6 +18,7 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [success, setSuccess] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,17 +59,34 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
           <h2 className="text-3xl font-bold text-green-700 mb-4">Account Created!</h2>
           <p className="text-green-600 text-lg mb-6">
             Welcome to Edventure+! You're now part of our learning family. 
-            Time to add your kids and start the adventure!
+            You're on the Free plan with limited features.
           </p>
-          <Button 
-            onClick={onToggleMode} 
-            size="lg"
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
-            icon={<Crown className="w-5 h-5" />}
-          >
-            Let's Start Learning!
-          </Button>
+          <div className="space-y-3">
+            <Button 
+              onClick={onToggleMode} 
+              size="lg"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
+              icon={<Zap className="w-5 h-5" />}
+            >
+              Start with Free Plan
+            </Button>
+            
+            <Button 
+              onClick={() => setShowUpgradeModal(true)} 
+              size="lg"
+              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+              icon={<Crown className="w-5 h-5" />}
+            >
+              Upgrade to Premium
+            </Button>
+          </div>
         </div>
+        
+        {/* Upgrade Modal */}
+        <PremiumUpgradeModal
+          isOpen={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+        />
       </div>
     )
   }

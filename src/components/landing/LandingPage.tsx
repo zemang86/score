@@ -5,6 +5,7 @@ import { Button } from '../ui/Button'
 import { RevealOnScroll } from '../animations/RevealOnScroll'
 import { EdventureLogo } from '../ui/EdventureLogo'
 import { supabase } from '../../lib/supabase'
+import { PRODUCTS } from '../../stripe-config'
 import { useTranslation } from 'react-i18next'
 
 export function LandingPage() {
@@ -196,19 +197,20 @@ export function LandingPage() {
                     {t('hero.subtitle')}
                   </p>
                 </div>
-              </RevealOnScroll>
+                    <Crown className="w-16 h-16 text-amber-500 animate-bounce-gentle" />
               
-              {/* Action Buttons - Reduced delay */}
+                  <h2 className="text-3xl font-bold text-green-700 mb-4">Premium Plan</h2>
               <RevealOnScroll animationType="slide-up" delay={100}>
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start items-center mb-10 sm:mb-12">
+                    {PRODUCTS.premium.description}
                   <Button 
+                  <div className="text-3xl font-bold text-green-700 mb-4">{PRODUCTS.premium.price}</div>
                     size="lg" 
-                    onClick={handleGetStarted}
+                    onClick={handleGetStarted} 
                     variant="gradient-primary"
                     icon={<Rocket className="w-5 h-5 sm:w-6 sm:h-6" />}
                   >
                     <span className="flex items-center">
-                      {t('hero.startButton')}
+                      Start Your Premium Journey!
                       <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 ml-2 sm:ml-3" />
                     </span>
                   </Button>

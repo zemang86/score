@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
-import { X, Trophy, Crown, Star, Medal, Target, TrendingUp } from 'lucide-react'
+import { X, Trophy, Crown, Star, Medal, Target, TrendingUp, Lock } from 'lucide-react'
 
 interface LeaderboardModalProps {
   isOpen: boolean
@@ -25,7 +25,8 @@ interface LeaderboardEntry {
 type LeaderboardType = 'xp' | 'exams' | 'scores'
 
 export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
-  const { user } = useAuth()
+  const { user, subscriptionPlan } = useAuth()
+  const isPremium = subscriptionPlan === 'premium'
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [activeType, setActiveType] = useState<LeaderboardType>('xp')
@@ -200,28 +201,51 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                  </div>
                </div>
               
-              {/* Level Filter Dropdown */}
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
+                {/* Level Filter Dropdown */}
                 <div className="relative">
-                  <select
-                    value={levelFilter}
-                    onChange={(e) => setLevelFilter(e.target.value)}
-                    className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-3 py-2 text-sm font-medium hover:bg-white/30 transition-all duration-200 appearance-none pr-8"
-                  >
-                    <option value="Global" className="bg-blue-600 text-white">Global</option>
-                    <option value="Darjah 1" className="bg-blue-600 text-white">Darjah 1</option>
-                    <option value="Darjah 2" className="bg-blue-600 text-white">Darjah 2</option>
-                    <option value="Darjah 3" className="bg-blue-600 text-white">Darjah 3</option>
-                    <option value="Darjah 4" className="bg-blue-600 text-white">Darjah 4</option>
-                    <option value="Darjah 5" className="bg-blue-600 text-white">Darjah 5</option>
-                    <option value="Darjah 6" className="bg-blue-600 text-white">Darjah 6</option>
-                  </select>
-                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                  {isPremium ? (
+                    <select
+                      value={levelFilter}
+                      onChange={(e) => setLevelFilter(e.target.value)}
+                      className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-3 py-2 text-sm font-medium hover:bg-white/30 transition-all duration-200 appearance-none pr-8"
+                    >
+                      <option value="Global" className="bg-blue-600 text-white">Global</option>
+                      <option value="Darjah 1" className="bg-blue-600 text-white">Darjah 1</option>
+                      <option value="Darjah 2" className="bg-blue-600 text-white">Darjah 2</option>
+                      <option value="Darjah 3" className="bg-blue-600 text-white">Darjah 3</option>
+                      <option value="Darjah 4" className="bg-blue-600 text-white">Darjah 4</option>
+                      <option value="Darjah 5" className="bg-blue-600 text-white">Darjah 5</option>
+                      <option value="Darjah 6" className="bg-blue-600 text-white">Darjah 6</option>
+                    </select>
+                  ) : (
+                    // Premium feature prompt for non-premium users
+                    <div className="text-center py-8 bg-amber-50 border-2 border-amber-200 rounded-lg">
+                      <div className="bg-amber-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <Lock className="w-8 h-8 text-amber-600" />
+                    </div>
+                      <h3 className="text-xl font-bold text-amber-800 mb-2">Premium Feature</h3>
+                      <p className="text-amber-700 text-base mb-2">
+                        Upgrade to Premium to access advanced leaderboard features!
+                      </p>
+                      <p className="text-amber-600 text-sm mb-6">
+                        View rankings by exams completed, scores, and filter by education level.
+                      </p>
+                      <Button
+                        variant="warning"
+                        className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                        icon={<Crown className="w-5 h-5" />}
+                      >
+                        Upgrade to Premium
+                      </Button>
+                  {isPremium && (
+                    <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  )}
                   </div>
-                </div>
                 
                 <button
                   onClick={onClose}
@@ -239,24 +263,38 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         <div className="border-b border-slate-200 bg-slate-50">
           <div className="flex">
             {[
-              { id: 'xp', label: 'XP Points', icon: Star },
-              { id: 'exams', label: 'Exams', icon: Target },
-              { id: 'scores', label: 'Scores', icon: TrendingUp }
+              { id: 'xp', label: 'XP Points', icon: Star, premium: false },
+              { id: 'exams', label: 'Exams', icon: Target, premium: true },
+              { id: 'scores', label: 'Scores', icon: TrendingUp, premium: true }
             ].map((type) => {
               const Icon = type.icon
+              const isLocked = type.premium && !isPremium
+              
               return (
                 <button
                   key={type.id}
-                  onClick={() => setActiveType(type.id as LeaderboardType)}
+                  onClick={() => !isLocked && setActiveType(type.id as LeaderboardType)}
                   className={`flex-1 px-3 py-3 font-medium transition-all duration-200 text-sm ${
                     activeType === type.id
                       ? 'bg-amber-500 text-white border-b-2 border-amber-600'
+                      : isLocked
+                      ? 'text-slate-400 cursor-not-allowed'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-700'
                   }`}
                 >
                   <div className="flex items-center justify-center">
-                    <Icon className="w-4 h-4 mr-2" />
-                    {type.label}
+                    {isLocked ? (
+                      <>
+                        <Lock className="w-3 h-3 mr-1" />
+                        <span>{type.label}</span>
+                        <Crown className="w-3 h-3 ml-1 text-amber-500" />
+                      </>
+                    ) : (
+                      <>
+                        <Icon className="w-4 h-4 mr-2" />
+                        {type.label}
+                      </>
+                    )}
                   </div>
                 </button>
               )
@@ -286,122 +324,83 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
             ) : (
               <>
                 {/* Compact Sticky Section: Your Students - Mobile Optimized */}
-                {userStudents.length > 0 && (
-                  <div className="mb-3 bg-gradient-to-r from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-lg p-2 sm:p-3 shadow-md sticky top-0 z-10">
-                    <h3 className="text-xs sm:text-sm font-bold text-indigo-800 mb-2 text-center">📍 Your Students</h3>
-                    <div className="grid grid-cols-3 gap-1 sm:gap-2">
-                      {leaderboard
-                        .filter(entry => userStudents.includes(entry.student_id))
-                        .slice(0, 3)
-                        .map((entry, index) => (
-                          <div
-                            key={entry.student_id}
-                            className="bg-white rounded-md p-1.5 sm:p-2 shadow-sm border border-indigo-200 min-h-[60px] sm:min-h-[70px]"
-                          >
-                            <div className="text-center h-full flex flex-col justify-center">
-                              <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full mx-auto mb-1 flex items-center justify-center text-[10px] sm:text-xs font-bold ${
-                                entry.rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' :
-                                entry.rank === 2 ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white' :
-                                entry.rank === 3 ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white' :
-                                'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
-                              }`}>
-                                {entry.rank}
-                              </div>
-                              <div className="font-bold text-[10px] sm:text-xs text-indigo-800 truncate leading-tight" title={entry.student_name}>
-                                {entry.student_name.length > 8 ? `${entry.student_name.substring(0, 8)}...` : entry.student_name}
-                              </div>
-                              <div className="text-[9px] sm:text-xs text-indigo-600 leading-tight">
-                                {getTypeValue(entry, activeType)}
-                              </div>
-                            </div>
+                              ))}
                           </div>
-                        ))}
-                    </div>
-                  </div>
-                )}
+                        </div>
+                      )}
 
-                <div className="mb-3">
-                  <h3 className="text-base font-bold text-center bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
-                    Top Students by {getTypeLabel(activeType)}
-                  </h3>
-                  <p className="text-xs text-blue-600 text-center mt-1">
-                    {leaderboard.length} students competing {levelFilter === 'Global' ? 'worldwide' : `in ${levelFilter}`}
-                  </p>
-                </div>
+                      <div className="mb-3">
+                        <h3 className="text-base font-bold text-center bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
+                          Top Students by {getTypeLabel(activeType)}
+                        </h3>
+                        <p className="text-xs text-blue-600 text-center mt-1">
+                          {leaderboard.length} students competing {levelFilter === 'Global' ? 'worldwide' : `in ${levelFilter}`}
+                        </p>
+                      </div>
 
-                {leaderboard.length > 0 ? (
-                  <div className="space-y-1.5 sm:space-y-2 max-h-72 overflow-y-auto">
-                    {leaderboard.slice(0, 50).map((entry) => {
-                      const isUserStudent = userStudents.includes(entry.student_id)
-                      
-                      return (
-                        <div
-                          key={entry.student_id}
-                          className={`p-2 sm:p-3 rounded-lg sm:rounded-xl border-2 transition-all duration-300 transform hover:scale-[1.01] sm:hover:scale-102 hover:shadow-md sm:hover:shadow-lg ${
-                            entry.rank === 1
-                              ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 border-yellow-400'
-                              : entry.rank === 2
-                              ? 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-400'
-                              : entry.rank === 3
-                              ? 'bg-gradient-to-r from-orange-100 to-orange-200 border-orange-400'
-                              : isUserStudent 
-                              ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-1 sm:ring-2 ring-indigo-200'
-                              : 'bg-white border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                              <div className={`mr-2 sm:mr-3 flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full font-bold relative overflow-hidden ${
-                                entry.rank === 1 
-                                  ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' 
-                                  : entry.rank === 2
-                                  ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white'
-                                  : entry.rank === 3
-                                  ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white'
-                                  : 'bg-slate-100 text-slate-600'
+                      {leaderboard.length > 0 ? (
+                        <div className="space-y-1.5 sm:space-y-2 max-h-72 overflow-y-auto">
+                          {leaderboard.slice(0, 50).map((entry) => {
+                            const isUserStudent = userStudents.includes(entry.student_id)
+                            
+                            return (
+                              <div
+                                key={entry.student_id}
+                                className={`p-2 sm:p-3 rounded-lg sm:rounded-xl border-2 transition-all duration-300 transform hover:scale-[1.01] sm:hover:scale-102 hover:shadow-md sm:hover:shadow-lg ${
+                                  entry.rank === 1
+                                    ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 border-yellow-400'
+                                    : entry.rank === 2
+                                    ? 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-400'
+                                    : entry.rank === 3
+                                    ? 'bg-gradient-to-r from-orange-100 to-orange-200 border-orange-400'
+                                    : isUserStudent 
+                                    ? 'bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-400 ring-1 sm:ring-2 ring-indigo-200'
+                                    : 'bg-white border-gray-200 hover:border-gray-300'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center">
+                                    <div className={`mr-2 sm:mr-3 flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full font-bold relative overflow-hidden ${
+                                      entry.rank === 1 
+                                        ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' 
+                                        : entry.rank === 2
+                                        ? 'bg-gradient-to-r from-gray-400 to-gray-500 text-white'
+                                        : entry.rank === 3
+                                        ? 'bg-gradient-to-r from-orange-400 to-red-500 text-white'
+                                        : 'bg-slate-100 text-slate-600'
+                                    }`}>
+                                      {/* Inner pulsing effect for top 3 */}
+                                      {entry.rank <= 3 && (
+                                        <div className={`absolute inset-0 rounded-full animate-inner-pulse ${
+                                          entry.rank === 1 ? 'bg-yellow-300/50' :
+                                          entry.rank === 2 ? 'bg-gray-300/50' :
+                                          'bg-orange-300/50'
+                                        }`}></div>
+                                      )}
+                                      <span className="relative z-10 text-xs sm:text-sm font-bold">
+                                        {entry.rank}
+                                      </span>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className={`font-bold text-xs sm:text-sm flex items-center ${
+                                        entry.rank === 1 ? 'text-yellow-700' :
+                                        entry.rank === 2 ? 'text-gray-700' :
+                                        entry.rank === 3 ? 'text-orange-700' :
+                                        isUserStudent ? 'text-indigo-700' : 'text-gray-800'
+                                      }`}>
+                                        <span className="truncate">{entry.student_name}</span>
+                                        {isUserStudent && <span className="ml-1 sm:ml-2 text-indigo-500 flex-shrink-0 text-xs">(Your Kid)</span>}
+                                      </div>
+                                      <div className={`text-[10px] sm:text-xs ${
+                                        entry.rank === 1 ? 'text-yellow-600' :
+                                        entry.rank === 2 ? 'text-gray-600' :
+                                        entry.rank === 3 ? 'text-orange-600' :
+                                        isUserStudent ? 'text-indigo-600' : 'text-gray-600'
+                                      } truncate`}>
+                                        {entry.student_level} • {entry.student_school}
+                                      </div>
+                                    </div>
                               }`}>
-                                {/* Inner pulsing effect for top 3 */}
-                                {entry.rank <= 3 && (
-                                  <div className={`absolute inset-0 rounded-full animate-inner-pulse ${
-                                    entry.rank === 1 ? 'bg-yellow-300/50' :
-                                    entry.rank === 2 ? 'bg-gray-300/50' :
-                                    'bg-orange-300/50'
-                                  }`}></div>
-                                )}
-                                <span className="relative z-10 text-xs sm:text-sm font-bold">
-                                  {entry.rank}
-                                </span>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className={`font-bold text-xs sm:text-sm flex items-center ${
-                                  entry.rank === 1 ? 'text-yellow-700' :
-                                  entry.rank === 2 ? 'text-gray-700' :
-                                  entry.rank === 3 ? 'text-orange-700' :
-                                  isUserStudent ? 'text-indigo-700' : 'text-gray-800'
-                                }`}>
-                                  <span className="truncate">{entry.student_name}</span>
-                                  {isUserStudent && <span className="ml-1 sm:ml-2 text-indigo-500 flex-shrink-0 text-xs">(Your Kid)</span>}
-                                </div>
-                                <div className={`text-[10px] sm:text-xs ${
-                                  entry.rank === 1 ? 'text-yellow-600' :
-                                  entry.rank === 2 ? 'text-gray-600' :
-                                  entry.rank === 3 ? 'text-orange-600' :
-                                  isUserStudent ? 'text-indigo-600' : 'text-gray-600'
-                                } truncate`}>
-                                  {entry.student_level} • {entry.student_school}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="text-right flex-shrink-0">
-                              <div className={`text-xs sm:text-sm font-bold ${
-                                entry.rank === 1 ? 'text-yellow-700' : 
-                                entry.rank === 2 ? 'text-gray-700' : 
-                                entry.rank === 3 ? 'text-orange-700' : 
-                                isUserStudent ? 'text-indigo-700' : 
-                                'text-gray-800'
-                              }`}>
-                                {getTypeValue(entry, activeType)}
-                              </div>
                               {activeType === 'xp' && entry.total_exams > 0 && (
                                 <div className={`text-[9px] sm:text-xs ${
                                   entry.rank === 1 ? 'text-yellow-600' :
@@ -438,11 +437,42 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                       )
                     })}
                   </div>
-                ) : (
-                  <div className="text-center py-6">
-                    <div className="bg-amber-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
-                      <Trophy className="w-6 h-6 text-amber-600" />
-                    </div>
+                                  <div className="text-right flex-shrink-0">
+                                    <div className={`text-xs sm:text-sm font-bold ${
+                                      entry.rank === 1 ? 'text-yellow-700' : 
+                                      entry.rank === 2 ? 'text-gray-700' : 
+                                      entry.rank === 3 ? 'text-orange-700' : 
+                                      isUserStudent ? 'text-indigo-700' : 
+                                      'text-gray-800'
+                                    }`}>
+                                      {getTypeValue(entry, activeType)}
+                                    </div>
+                                    {activeType === 'xp' && entry.total_exams > 0 && (
+                                      <div className={`text-[9px] sm:text-xs ${
+                                        entry.rank === 1 ? 'text-yellow-600' :
+                                        entry.rank === 2 ? 'text-gray-600' :
+                                        entry.rank === 3 ? 'text-orange-600' :
+                                        isUserStudent ? 'text-indigo-600' : 'text-gray-500'
+                                      } hidden sm:block`}>
+                                        {entry.total_exams} exams • {entry.average_score}% avg
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      ) : (
+                        <div className="text-center py-6">
+                          <div className="bg-amber-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                            <Trophy className="w-6 h-6 text-amber-600" />
+                          </div>
+                          <p className="text-amber-600 text-base">No data available yet!</p>
+                          <p className="text-amber-500 text-xs">Students need to complete exams to appear on the leaderboard!</p>
+                        </div>
+                      )}
+                    </>
                     <p className="text-amber-600 text-base">No data available yet!</p>
                     <p className="text-amber-500 text-xs">Students need to complete exams to appear on the leaderboard!</p>
                   </div>

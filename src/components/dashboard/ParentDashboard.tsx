@@ -7,7 +7,11 @@ import { StudentCard } from './StudentCard'
 import { LeaderboardModal } from './LeaderboardModal'
 import { FamilyReportsModal } from './FamilyReportsModal'
 import { ExamModal } from './ExamModal'
+import { PremiumUpgradeModal } from './PremiumUpgradeModal'
+import { SubscriptionBanner } from './SubscriptionBanner'
 import { EditStudentModal } from './EditStudentModal'
+import { CheckoutSuccessModal } from './CheckoutSuccessModal'
+import { SubscriptionManagementModal } from './SubscriptionManagementModal'
 import { StudentProgressModal } from './StudentProgressModal'
 import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
 import { Button } from '../ui/Button'
@@ -23,6 +27,9 @@ export function ParentDashboard() {
   const [showExamModal, setShowExamModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showProgressModal, setShowProgressModal] = useState(false)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false)
+  const [showCheckoutSuccessModal, setShowCheckoutSuccessModal] = useState(false)
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
   const [error, setError] = useState('')
   const [connectionError, setConnectionError] = useState(false)
@@ -42,6 +49,20 @@ export function ParentDashboard() {
       fetchStudents()
     }
   }, [user])
+
+  // Check for checkout success query parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const checkoutStatus = urlParams.get('checkout')
+    
+    if (checkoutStatus === 'success') {
+      setShowCheckoutSuccessModal(true)
+      
+      // Remove the query parameter from the URL
+      const newUrl = window.location.pathname
+      window.history.replaceState({}, document.title, newUrl)
+    }
+  }, [])
 
   // Check for any active exam sessions on mount
   useEffect(() => {
@@ -288,7 +309,10 @@ export function ParentDashboard() {
   const handleStudentUpdatedFromModal = () => {
     setShowEditModal(false)
     setSelectedStudent(null)
-    fetchStudents() // Refresh the students list after edit
+    // Delay refresh to allow modal to close naturally
+    setTimeout(() => {
+      fetchStudents() // Refresh the students list after edit
+    }, 1000)
   }
 
   const handleRetry = () => {
@@ -340,16 +364,16 @@ export function ParentDashboard() {
                 <div className="text-center sm:text-left">
                   <h1 className="text-xl sm:text-2xl font-bold text-slate-800 mb-0.5">
                     Welcome, {profile?.full_name || 'Parent'}!
+                    {subscriptionPlan === 'premium' && (
+                      <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                        <Crown className="w-3 h-3 mr-1" />
+                        <span className="cursor-pointer" onClick={() => setShowSubscriptionModal(true)}>Premium</span>
+                      </span>
+                    )}
                   </h1>
                   <p className="text-sm sm:text-base text-slate-600 mb-1">
                     Ready to level up your kids' learning adventure?
                   </p>
-                  <div className="flex items-center justify-center sm:justify-start">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
-                      <Crown className="w-3 h-3 mr-1" />
-                      {getPlanDisplayName(subscriptionPlan)}
-                    </span>
-                  </div>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -370,10 +394,24 @@ export function ParentDashboard() {
                 >
                   Reports
                 </Button>
+                {subscriptionPlan !== 'premium' && (
+                  <Button
+                    onClick={() => setShowUpgradeModal(true)}
+                    variant="warning"
+                    size="sm"
+                    icon={<Crown className="w-4 h-4" />}
+                    className="bg-gradient-to-r from-amber-500 to-orange-500"
+                  >
+                    Upgrade
+                  </Button>
+                )}
               </div>
             </div>
           </div>
         </div>
+        
+        {/* Subscription Banner */}
+        <SubscriptionBanner className="mb-4 sm:mb-6" />
 
 
 
@@ -641,6 +679,25 @@ export function ParentDashboard() {
           isPremium={subscriptionPlan === 'premium'}
         />
       )}
+      
+      {/* Upgrade Modal */}
+      <PremiumUpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        />
+      )}
+      
+      {/* Checkout Success Modal */}
+      <CheckoutSuccessModal
+        isOpen={showCheckoutSuccessModal}
+        onClose={() => setShowCheckoutSuccessModal(false)}
+      />
+      
+      {/* Subscription Management Modal */}
+      <SubscriptionManagementModal
+        isOpen={showSubscriptionModal}
+        onClose={() => setShowSubscriptionModal(false)}
+      />
     </div>
   )
 }
