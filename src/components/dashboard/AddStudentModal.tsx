@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { supabase } from '../../lib/supabase'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/AuthContext' 
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { X, User, School, Calendar, GraduationCap, Sparkles, Star, Zap } from 'lucide-react'
@@ -13,7 +13,7 @@ interface AddStudentModalProps {
 }
 
 export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentModalProps) {
-  const { user, maxStudents } = useAuth()
+  const { user, maxStudents, subscriptionPlan } = useAuth()
   const [formData, setFormData] = useState({
     name: '',
     school: '',

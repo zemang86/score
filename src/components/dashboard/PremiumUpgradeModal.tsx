@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { Switch } from '../ui/Switch'
 import { Slider } from '../ui/Slider'
-import { X, Crown, Check, Zap, Users, BookOpen, Trophy, BarChart3, Calendar, Shield, Clock, CreditCard, Percent } from 'lucide-react'
+import { X, Crown, Check, Zap, Users, BookOpen, Trophy, BarChart3, Calendar, Shield, Clock, CreditCard, Percent, AlertCircle } from 'lucide-react'
 import { PRODUCTS, CHECKOUT_CONFIG } from '../../stripe-config'
 
 interface PremiumUpgradeModalProps {
