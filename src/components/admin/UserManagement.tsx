@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { User, Search, Filter, MoreHorizontal, UserPlus, Calendar, Mail } from 'lucide-react'
+import { User, Search, Filter, MoreHorizontal, UserPlus, Calendar, Mail, Edit, Crown, Zap } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
+import { EditUserModal } from './EditUserModal'
 
 interface UserData {
   id: string
   email: string
   full_name: string
+  subscription_plan: 'free' | 'premium'
+  max_students: number
+  daily_exam_limit: number
   created_at: string
   updated_at: string
   student_count?: number
@@ -17,6 +21,8 @@ interface UserData {
 export function UserManagement() {
   const [users, setUsers] = useState<UserData[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
+  const [showEditModal, setShowEditModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [error, setError] = useState('')
 
@@ -32,11 +38,7 @@ export function UserManagement() {
       const { data: usersData, error: usersError } = await supabase
         .from('users')
         .select(`
-          id,
-          email,
-          full_name,
-          created_at,
-          updated_at,
+          *,
           students (count)
         `)
         .order('created_at', { ascending: false })
@@ -48,6 +50,7 @@ export function UserManagement() {
         ...user,
         student_count: user.students?.[0]?.count || 0
       })) || []
+      console.log('Fetched users:', transformedUsers)
 
       setUsers(transformedUsers)
     } catch (err: any) {
@@ -56,6 +59,17 @@ export function UserManagement() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleEditUser = (userId: string) => {
+    setSelectedUserId(userId)
+    setShowEditModal(true)
+  }
+
+  const handleUserUpdated = () => {
+    // Refresh the users list
+    fetchUsers()
+    // Close the modal after a short delay to show success state
   }
 
   const filteredUsers = users.filter(user =>
@@ -69,6 +83,14 @@ export function UserManagement() {
       month: 'short',
       day: 'numeric'
     })
+  }
+
+  const getPlanBadge = (plan: string) => {
+    if (plan === 'premium') {
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200"><Crown className="w-3 h-3 mr-1" />Premium</span>
+    } else {
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200"><User className="w-3 h-3 mr-1" />Free</span>
+    }
   }
 
   if (loading) {
@@ -184,6 +206,16 @@ export function UserManagement() {
           </div>
         )}
 
+
+      {/* Edit User Modal */}
+      {selectedUserId && (
+        <EditUserModal
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          userId={selectedUserId}
+          onUserUpdated={handleUserUpdated}
+        />
+      )}
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-neutral-50">
@@ -227,6 +259,12 @@ export function UserManagement() {
                         </div>
                       </div>
                     </div>
+                    <div className="mt-1">
+                      {getPlanBadge(user.subscription_plan)}
+                    </div>
+                    <div className="text-xs text-neutral-500 mt-1">
+                      {user.max_students} kids • {user.daily_exam_limit === 999 ? '∞' : user.daily_exam_limit} exams/day
+                    </div>
                   </td>
                   <td className="px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap">
                     <div className="text-xs sm:text-sm text-neutral-800">{user.email}</div>
@@ -243,7 +281,14 @@ export function UserManagement() {
                     {formatDate(user.updated_at)}
                   </td>
                   <td className="px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
-                    <Button variant="ghost" size="sm" icon={<MoreHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />} />
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      icon={<Edit className="w-3 h-3 sm:w-4 sm:h-4" />} 
+                      onClick={() => handleEditUser(user.id)}
+                      title="Edit user access"
+                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                    />
                   </td>
                 </tr>
               ))}

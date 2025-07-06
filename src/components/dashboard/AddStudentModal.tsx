@@ -59,7 +59,11 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
       }
 
       if (existingStudents && existingStudents.length >= maxStudents) {
-        setError(`You can only add up to ${maxStudents} ${maxStudents === 1 ? 'child' : 'children'} with your current plan`)
+        if (subscriptionPlan === 'premium') {
+          setError(`You've reached your limit of ${maxStudents} ${maxStudents === 1 ? 'child' : 'children'}. Additional children cost RM10/month each. Please contact support to add more.`)
+        } else {
+          setError(`Free plan is limited to 1 child. Upgrade to Premium for more children.`)
+        }
         setLoading(false)
         return
       }
@@ -118,9 +122,15 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
                 className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
                 title="Close"
               >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+            {subscriptionPlan === 'free' ? (
+              <p className="text-indigo-700 text-xs">
+                Free plan: Limited to <strong>1 kid</strong> and <strong>3 exams/day</strong>. <span className="font-semibold">Upgrade to Premium for more!</span>
+              </p>
+            ) : (
+              <p className="text-indigo-700 text-xs">
+                Premium plan: <strong>1 kid</strong> included. Additional kids cost <strong>RM10/month</strong> each.
+              </p>
+            )}
           </div>
         </div>
 

@@ -34,9 +34,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<UserWithAdminStatus | null>(null)
-  const [subscriptionPlan, setSubscriptionPlan] = useState<'free' | 'premium' | null>('premium') // Default to premium
-  const [maxStudents, setMaxStudents] = useState<number>(3) // Default to premium limits
-  const [dailyExamLimit, setDailyExamLimit] = useState<number>(999) // Default to premium limits
+  const [subscriptionPlan, setSubscriptionPlan] = useState<'free' | 'premium' | null>('free') // Default to free
+  const [maxStudents, setMaxStudents] = useState<number>(1) // Default to free limits
+  const [dailyExamLimit, setDailyExamLimit] = useState<number>(3) // Default to free limits
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
   const [loading, setLoading] = useState(true) // Auth loading
   const [profileLoading, setProfileLoading] = useState(false) // Separate profile loading state
@@ -92,12 +92,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         console.log('⚠️ AuthContext: No profile found, keeping defaults')
         setProfile(null)
-        // Keep existing premium defaults
+        // Keep existing free defaults
       }
     } catch (error) {
       console.error('❌ AuthContext: Error in getUserProfile:', error)
-      // Keep defaults on error - don't change existing state
-      console.log('✅ AuthContext: Keeping default premium values due to profile fetch error')
+      // Keep free defaults on error - don't change existing state
+      console.log('✅ AuthContext: Keeping default free values due to profile fetch error')
     } finally {
       setProfileLoading(false)
     }
@@ -111,9 +111,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       console.log('🔄 AuthContext: No user, clearing profile')
       setProfile(null)
-      setSubscriptionPlan('premium') // Keep premium as default
-      setMaxStudents(3)
-      setDailyExamLimit(999)
+      setSubscriptionPlan('free') // Keep free as default
+      setMaxStudents(1)
+      setDailyExamLimit(3)
       setIsAdmin(false)
     }
   }
@@ -159,9 +159,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setSession(null)
           setUser(null)
           setProfile(null)
-          setSubscriptionPlan('premium') // Keep premium as default for new users
-          setMaxStudents(3)
-          setDailyExamLimit(999)
+          setSubscriptionPlan('free') // Keep free as default for new users
+          setMaxStudents(1)
+          setDailyExamLimit(3)
           setIsAdmin(false)
         }
       } catch (error) {
@@ -217,9 +217,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           setUser(null)
           setProfile(null)
-          setSubscriptionPlan('premium') // Keep premium as default
-          setMaxStudents(3)
-          setDailyExamLimit(999)
+          setSubscriptionPlan('free') // Keep free as default
+          setMaxStudents(1)
+          setDailyExamLimit(3)
           setIsAdmin(false)
         }
       } catch (error) {
@@ -265,9 +265,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             id: data.user.id,
             email: data.user.email,
             full_name: fullName,
-            subscription_plan: 'premium',
-            max_students: 3,
-            daily_exam_limit: 999,
+            subscription_plan: 'free',
+            max_students: 1,
+            daily_exam_limit: 3,
           },
         ])
 
@@ -275,9 +275,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('❌ AuthContext: Error creating user profile:', profileError)
       } else {
         console.log('✅ AuthContext: User profile created successfully')
-        setSubscriptionPlan('premium')
-        setMaxStudents(3)
-        setDailyExamLimit(999)
+        setSubscriptionPlan('free')
+        setMaxStudents(1)
+        setDailyExamLimit(3)
         setIsAdmin(false)
       }
     } else if (error) {
@@ -330,9 +330,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Always clear local state
     setProfile(null)
-    setSubscriptionPlan('premium') // Keep premium as default
-    setMaxStudents(3)
-    setDailyExamLimit(999)
+    setSubscriptionPlan('free') // Keep free as default
+    setMaxStudents(1)
+    setDailyExamLimit(3)
     setIsAdmin(false)
     setLoading(false)
     setProfileLoading(false)
