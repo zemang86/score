@@ -1,6 +1,7 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import Stripe from 'npm:stripe@17.7.0';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
+import { PRODUCTS } from '../../src/stripe-config.ts';
 
 const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '');
 const stripeSecret = Deno.env.get('STRIPE_SECRET_KEY')!;
@@ -39,24 +40,29 @@ Deno.serve(async (req) => {
       return corsResponse({}, 204);
     }
 
-    if (req.method !== 'POST') {
-      return corsResponse({ error: 'Method not allowed' }, 405);
-    }
+    const { 
+      price_id, 
+      success_url, 
+      cancel_url, 
+      mode, 
+      billing_cycle = 'monthly',
+      additional_kids = 0 
+    } = await req.json();
 
-    const { price_id, success_url, cancel_url, mode } = await req.json();
-
-    const error = validateParameters(
-      { price_id, success_url, cancel_url, mode },
+    // Validate required parameters
+    const validationError = validateParameters(
+      { price_id, success_url, cancel_url, mode, billing_cycle },
       {
         cancel_url: 'string',
         price_id: 'string',
         success_url: 'string',
         mode: { values: ['payment', 'subscription'] },
+        billing_cycle: { values: ['monthly', 'annual'] },
       },
     );
 
-    if (error) {
-      return corsResponse({ error }, 400);
+    if (validationError) {
+      return corsResponse({ error: validationError }, 400);
     }
 
     const authHeader = req.headers.get('Authorization')!;
@@ -177,19 +183,38 @@ Deno.serve(async (req) => {
       }
     }
 
-    // create Checkout Session
+    // Prepare line items
+    const lineItems = [];
+    
+    // Add base subscription
+    lineItems.push({
+      price: price_id,
+      quantity: 1,
+    });
+    
+    // Add additional kids if any
+    if (additional_kids > 0) {
+      const additionalKidPriceId = PRODUCTS.premium.additionalKid.priceId;
+      lineItems.push({
+        price: additionalKidPriceId,
+        quantity: additional_kids,
+      });
+    }
+
+    // Create Checkout Session with multiple line items
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price: price_id,
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       mode,
       success_url,
       cancel_url,
+      // Add metadata for additional processing
+      metadata: {
+        billing_cycle,
+        additional_kids: additional_kids.toString(),
+        user_id: user.id,
+      },
     });
 
     console.log(`Created checkout session ${session.id} for customer ${customerId}`);

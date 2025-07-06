@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Button } from '../ui/Button'
-import { X, Crown, Check, Zap, Users, BookOpen, Trophy, BarChart3, Calendar, Shield } from 'lucide-react'
+import { Switch } from '../ui/Switch'
+import { Slider } from '../ui/Slider'
+import { X, Crown, Check, Zap, Users, BookOpen, Trophy, BarChart3, Calendar, Shield, Clock, CreditCard, Percent } from 'lucide-react'
 import { PRODUCTS, CHECKOUT_CONFIG } from '../../stripe-config'
 
 interface PremiumUpgradeModalProps {
@@ -12,6 +14,14 @@ interface PremiumUpgradeModalProps {
 export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isAnnual, setIsAnnual] = useState(false)
+  const [additionalKids, setAdditionalKids] = useState(0) 
+
+  // Calculate total price
+  const basePrice = isAnnual ? 280 : 28
+  const additionalKidsPrice = isAnnual ? additionalKids * 100 : additionalKids * 10 // 10 per month per kid
+  const totalPrice = basePrice + additionalKidsPrice
+  const totalKids = 1 + additionalKids // 1 included + additional
 
   const handleUpgrade = async () => {
     setLoading(true)
@@ -33,10 +43,12 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
           'Authorization': `Bearer ${session.access_token}`
         },
         body: JSON.stringify({
-          price_id: PRODUCTS.premium.priceId,
+          price_id: isAnnual ? PRODUCTS.premium.annual.priceId : PRODUCTS.premium.monthly.priceId,
+          billing_cycle: isAnnual ? 'annual' : 'monthly',
+          additional_kids: additionalKids,
           success_url: CHECKOUT_CONFIG.successUrl,
           cancel_url: CHECKOUT_CONFIG.cancelUrl,
-          mode: PRODUCTS.premium.mode
+          mode: PRODUCTS.premium.monthly.mode
         })
       })
 
@@ -93,108 +105,154 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Free Plan */}
-            <div className="bg-white rounded-xl border-2 border-slate-200 p-6 shadow-sm">
-              <div className="flex items-center mb-4">
-                <div className="bg-slate-100 rounded-lg p-2 mr-3">
-                  <Users className="w-6 h-6 text-slate-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-800">Free Plan</h3>
-                  <p className="text-slate-500 text-sm">Your current plan</p>
-                </div>
-              </div>
+          {/* Billing Cycle Toggle */}
+          <div className="mb-8">
+            <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
+              <h3 className="text-lg font-bold text-indigo-800 mb-4 flex items-center">
+                <Clock className="w-5 h-5 mr-2 text-indigo-600" />
+                Choose Your Billing Cycle
+              </h3>
               
-              <div className="mb-6">
-                <div className="text-2xl font-bold text-slate-800 mb-1">RM0</div>
-                <p className="text-slate-500 text-sm">Limited features</p>
-              </div>
-              
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-start">
-                  <div className="bg-slate-100 rounded-full p-1 mr-2 mt-0.5">
-                    <Check className="w-3 h-3 text-slate-600" />
-                  </div>
-                  <span className="text-slate-700 text-sm">1 child only</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="bg-slate-100 rounded-full p-1 mr-2 mt-0.5">
-                    <Check className="w-3 h-3 text-slate-600" />
-                  </div>
-                  <span className="text-slate-700 text-sm">3 exams per day</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="bg-slate-100 rounded-full p-1 mr-2 mt-0.5">
-                    <Check className="w-3 h-3 text-slate-600" />
-                  </div>
-                  <span className="text-slate-700 text-sm">Basic reports</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="bg-slate-100 rounded-full p-1 mr-2 mt-0.5">
-                    <Check className="w-3 h-3 text-slate-600" />
-                  </div>
-                  <span className="text-slate-700 text-sm">Limited exam history</span>
-                </li>
-              </ul>
-              
-              <Button
-                variant="outline"
-                className="w-full border-slate-300 text-slate-700"
-                disabled
-              >
-                Current Plan
-              </Button>
-            </div>
-            
-            {/* Premium Plan */}
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border-2 border-amber-300 p-6 shadow-lg relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-amber-400 text-white px-4 py-1 text-xs font-bold transform translate-x-8 translate-y-4 rotate-45">
-                BEST VALUE
-              </div>
-              
-              <div className="flex items-center mb-4">
-                <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg p-2 mr-3 shadow-md">
-                  <Crown className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-amber-800">Premium Plan</h3>
-                  <p className="text-amber-700 text-sm">Recommended</p>
-                </div>
-              </div>
-              
-              <div className="mb-6">
-                <div className="text-2xl font-bold text-amber-800 mb-1">RM28<span className="text-base font-normal text-amber-700">/month</span></div>
-                <p className="text-amber-700 text-sm">Unlimited access</p>
-              </div>
-              
-              <ul className="space-y-3 mb-6">
-                {PRODUCTS.premium.features.map((feature, index) => (
-                  <li key={index} className="flex items-start">
-                    <div className="bg-amber-200 rounded-full p-1 mr-2 mt-0.5">
-                      <Check className="w-3 h-3 text-amber-700" />
+              <div className="flex flex-col space-y-4">
+                <Switch
+                  checked={isAnnual}
+                  onCheckedChange={setIsAnnual}
+                  id="billing-cycle"
+                  label="Annual Billing"
+                  description={isAnnual ? "Save 16% compared to monthly" : "Switch to annual for savings"}
+                />
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className={`rounded-lg p-4 border-2 transition-all ${
+                    !isAnnual 
+                      ? 'border-indigo-500 bg-indigo-50 shadow-md' 
+                      : 'border-gray-200 bg-white'
+                  }`}>
+                    <div className="flex items-center mb-2">
+                      <CreditCard className={`w-5 h-5 mr-2 ${!isAnnual ? 'text-indigo-600' : 'text-gray-500'}`} />
+                      <h4 className={`font-bold ${!isAnnual ? 'text-indigo-800' : 'text-gray-700'}`}>Monthly</h4>
                     </div>
-                    <span className="text-amber-800 text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
+                    <div className={`text-xl font-bold mb-1 ${!isAnnual ? 'text-indigo-800' : 'text-gray-700'}`}>
+                      RM28<span className="text-sm font-normal">/month</span>
+                    </div>
+                    <p className={`text-xs ${!isAnnual ? 'text-indigo-600' : 'text-gray-500'}`}>
+                      Billed monthly
+                    </p>
+                  </div>
+                  
+                  <div className={`rounded-lg p-4 border-2 transition-all relative overflow-hidden ${
+                    isAnnual 
+                      ? 'border-amber-500 bg-amber-50 shadow-md' 
+                      : 'border-gray-200 bg-white'
+                  }`}>
+                    {isAnnual && (
+                      <div className="absolute top-0 right-0 bg-amber-500 text-white px-2 py-0.5 text-xs font-bold transform translate-x-2 -translate-y-0 rotate-0">
+                        SAVE 16%
+                      </div>
+                    )}
+                    <div className="flex items-center mb-2">
+                      <Calendar className={`w-5 h-5 mr-2 ${isAnnual ? 'text-amber-600' : 'text-gray-500'}`} />
+                      <h4 className={`font-bold ${isAnnual ? 'text-amber-800' : 'text-gray-700'}`}>Annual</h4>
+                    </div>
+                    <div className={`text-xl font-bold mb-1 ${isAnnual ? 'text-amber-800' : 'text-gray-700'}`}>
+                      RM280<span className="text-sm font-normal">/year</span>
+                    </div>
+                    <p className={`text-xs ${isAnnual ? 'text-amber-600' : 'text-gray-500'}`}>
+                      Billed annually (RM23.33/month)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Kids Slider */}
+          <div className="mb-8">
+            <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+              <h3 className="text-lg font-bold text-blue-800 mb-4 flex items-center">
+                <Users className="w-5 h-5 mr-2 text-blue-600" />
+                How Many Children?
+              </h3>
               
-              <Button
-                onClick={handleUpgrade}
-                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-md"
-                loading={loading}
-                icon={!loading ? <Crown className="w-5 h-5" /> : undefined}
-              >
-                {loading ? 'Processing...' : 'Upgrade Now'}
-              </Button>
+              <div className="space-y-4">
+                <p className="text-blue-700 text-sm">
+                  Your Premium subscription includes <strong>1 child</strong>. Add more children for RM10/month each.
+                </p>
+                
+                <Slider
+                  value={[additionalKids]}
+                  onValueChange={(value) => setAdditionalKids(value[0])}
+                  min={0}
+                  max={5}
+                  step={1}
+                  label="Additional Children"
+                  valueDisplay={`+${additionalKids} additional (${totalKids} total)`}
+                />
+                
+                <div className="bg-white rounded-lg p-3 border border-blue-200">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <span className="text-blue-800 font-medium">Total Children:</span>
+                      <span className="ml-2 text-blue-700">{totalKids}</span>
+                    </div>
+                    <div>
+                      <span className="text-blue-800 font-medium">Additional Cost:</span>
+                      <span className="ml-2 text-blue-700">
+                        {additionalKids > 0 
+                          ? isAnnual 
+                            ? `+RM${additionalKids * 100}/year` 
+                            : `+RM${additionalKids * 10}/month`
+                          : 'No extra cost'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Order Summary */}
+          <div className="mb-8">
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <CreditCard className="w-5 h-5 mr-2 text-gray-700" />
+                Order Summary
+              </h3>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Premium Plan ({isAnnual ? 'Annual' : 'Monthly'})</span>
+                  <span className="font-medium text-gray-800">
+                    RM{isAnnual ? '280.00' : '28.00'}{isAnnual ? '/year' : '/month'}
+                  </span>
+                </div>
+                
+                {additionalKids > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">
+                      Additional Children ({additionalKids})
+                    </span>
+                    <span className="font-medium text-gray-800">
+                      RM{isAnnual ? additionalKids * 100 : additionalKids * 10}{isAnnual ? '/year' : '/month'}
+                    </span>
+                  </div>
+                )}
+                
+                <div className="border-t border-gray-200 pt-3 flex justify-between">
+                  <span className="font-bold text-gray-800">Total</span>
+                  <span className="font-bold text-gray-800">
+                    RM{totalPrice.toFixed(2)}{isAnnual ? '/year' : '/month'}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Premium Benefits */}
-          <div className="bg-indigo-50 rounded-xl p-6 border border-indigo-200">
+          <div className="bg-indigo-50 rounded-xl p-6 border border-indigo-200 mb-6">
             <h3 className="text-lg font-bold text-indigo-800 mb-4 flex items-center">
               <Zap className="w-5 h-5 mr-2 text-indigo-600" />
-              Why Upgrade to Premium?
+              Premium Benefits
             </h3>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -221,46 +279,22 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
                 </div>
                 <p className="text-indigo-700 text-sm">Detailed analytics and performance tracking</p>
               </div>
-              
-              <div className="bg-white rounded-lg p-4 shadow-sm border border-indigo-100">
-                <div className="flex items-center mb-2">
-                  <Trophy className="w-5 h-5 text-indigo-600 mr-2" />
-                  <h4 className="font-bold text-indigo-800">Full Badge System</h4>
-                </div>
-                <p className="text-indigo-700 text-sm">Unlock all achievement badges and rewards</p>
-              </div>
-              
-              <div className="bg-white rounded-lg p-4 shadow-sm border border-indigo-100">
-                <div className="flex items-center mb-2">
-                  <Calendar className="w-5 h-5 text-indigo-600 mr-2" />
-                  <h4 className="font-bold text-indigo-800">Complete History</h4>
-                </div>
-                <p className="text-indigo-700 text-sm">Access full exam history and reviews</p>
-              </div>
-              
-              <div className="bg-white rounded-lg p-4 shadow-sm border border-indigo-100">
-                <div className="flex items-center mb-2">
-                  <Shield className="w-5 h-5 text-indigo-600 mr-2" />
-                  <h4 className="font-bold text-indigo-800">Priority Support</h4>
-                </div>
-                <p className="text-indigo-700 text-sm">Get help faster when you need it</p>
-              </div>
             </div>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="border-t border-gray-200 p-4 bg-gray-50">
-          <div className="flex justify-between items-center">
-            <p className="text-gray-500 text-sm">Secure payment processing by Stripe</p>
-            <Button
-              onClick={onClose}
-              variant="outline"
-              className="border-gray-300 text-gray-700"
-            >
-              Maybe Later
-            </Button>
-          </div>
+          {/* Checkout Button */}
+          <Button
+            onClick={handleUpgrade}
+            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-md py-3 text-lg"
+            loading={loading}
+            icon={!loading ? <Crown className="w-6 h-6" /> : undefined}
+          >
+            {loading ? 'Processing...' : `Upgrade Now • RM${totalPrice.toFixed(2)}${isAnnual ? '/year' : '/month'}`}
+          </Button>
+          
+          <p className="text-center text-gray-500 text-xs mt-3">
+            Secure payment processing by Stripe. Cancel anytime.
+          </p>
         </div>
       </div>
     </div>

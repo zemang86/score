@@ -82,6 +82,49 @@ async function handleEvent(event: Stripe.Event) {
       isSubscription = mode === 'subscription';
 
       console.info(`Processing ${isSubscription ? 'subscription' : 'one-time payment'} checkout session`);
+      
+      // Extract metadata for additional processing
+      const { metadata } = stripeData as Stripe.Checkout.Session;
+      const additionalKids = metadata?.additional_kids ? parseInt(metadata.additional_kids, 10) : 0;
+      const billingCycle = metadata?.billing_cycle || 'monthly';
+      const userId = metadata?.user_id;
+      
+      // Update user's max_students if additional kids were purchased
+      if (userId && additionalKids > 0) {
+        try {
+          // Get current max_students value
+          const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('max_students')
+            .eq('id', userId)
+            .single();
+            
+          if (userError) {
+            console.error('Error fetching user data:', userError);
+          } else if (userData) {
+            // Calculate new max_students (base 1 + additional)
+            const newMaxStudents = 1 + additionalKids;
+            
+            // Update user's max_students
+            const { error: updateError } = await supabase
+              .from('users')
+              .update({ 
+                max_students: newMaxStudents,
+                subscription_plan: 'premium',
+                daily_exam_limit: 999
+              })
+              .eq('id', userId);
+              
+            if (updateError) {
+              console.error('Error updating user max_students:', updateError);
+            } else {
+              console.info(`Updated user ${userId} max_students to ${newMaxStudents}`);
+            }
+          }
+        } catch (error) {
+          console.error('Error processing additional kids update:', error);
+        }
+      }
     }
 
     const { mode, payment_status } = stripeData as Stripe.Checkout.Session;
