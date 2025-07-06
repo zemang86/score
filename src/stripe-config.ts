@@ -9,7 +9,7 @@ export const PRODUCTS = {
       price: 'RM28.00/month'
     },
     annual: {
-      priceId: 'price_1Rhw3SFmiwnPC9Y0rBg2BHtD', // Replace with your annual price ID
+      priceId: 'price_1Rhw5PFmiwnPC9Y0uo5jKG0L', // Replace with your annual price ID
       name: 'Edventure+ Annual Subscription',
       description: 'Premium Plan for Edventure+ for unlimited past year papers (save 16%)',
       mode: 'subscription' as const,
