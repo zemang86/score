@@ -122,6 +122,9 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
                 className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
                 title="Close"
               >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
             {subscriptionPlan === 'free' ? (
               <p className="text-indigo-700 text-xs">
                 Free plan: Limited to <strong>1 kid</strong> and <strong>3 exams/day</strong>. <span className="font-semibold">Upgrade to Premium for more!</span>
