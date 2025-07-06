@@ -735,10 +735,15 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
           throw new Error(`Badge check failed: ${badgeCheckError.message}`)
         }
         
-        if (!availableBadges || availableBadges.length === 0) {
-          console.warn('⚠️ No badges found in database - creating default badges')
+        // Check if we have progressive badges, if not create them
+        const hasProgressiveBadges = availableBadges && availableBadges.some(
+          (badge: any) => badge.name.includes('Quick Learner I') || badge.name.includes('Perfect Score I')
+        )
+        
+        if (!availableBadges || availableBadges.length === 0 || !hasProgressiveBadges) {
+          console.warn('⚠️ Progressive badges missing - creating/updating badge system')
           
-          // Create progressive tiered badges if none exist
+          // Create progressive tiered badges
           const defaultBadges = [
             // First exam milestone (one-time only)
             { name: 'First Steps', description: 'Complete your first exam', icon: '🎯', condition_type: 'first_exam', condition_value: 1 },
@@ -775,15 +780,33 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
             { name: 'Unstoppable Force', description: 'Study for 14 consecutive days', icon: '🚀', condition_type: 'streak_days', condition_value: 14 }
           ]
           
-          const { error: insertError } = await supabase
-            .from('badges')
-            .insert(defaultBadges)
+          // Insert badges one by one to handle conflicts gracefully
+          let successCount = 0
+          let skipCount = 0
           
-          if (insertError) {
-            console.error('❌ Error creating default badges:', insertError)
-          } else {
-            console.log('✅ Default badges created successfully')
+          for (const badge of defaultBadges) {
+            const { error: insertError } = await supabase
+              .from('badges')
+              .insert([badge])
+            
+            if (insertError) {
+              if (insertError.code === '23505') {
+                // Badge already exists, skip
+                skipCount++
+                console.log(`⏭️ Badge "${badge.name}" already exists, skipping`)
+              } else {
+                console.error('❌ Error creating badge:', badge.name, insertError)
+              }
+            } else {
+              successCount++
+              console.log(`✅ Created badge: "${badge.name}"`)
+            }
           }
+          
+          console.log(`🏆 Badge creation complete: ${successCount} created, ${skipCount} skipped`)
+          
+          // Clear badge cache so fresh badges are fetched
+          BadgeEvaluator.clearCache()
         }
         
         console.log('🔍 Available badges confirmed, proceeding with evaluation...')

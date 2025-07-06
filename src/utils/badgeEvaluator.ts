@@ -337,6 +337,12 @@ export class BadgeEvaluator {
     }
   }
 
+  // Method to clear badge cache
+  public static clearCache(): void {
+    console.log('🗑️ Clearing badge cache to force fresh data')
+    this.badgeCache = null
+  }
+
 }
 
 // Minimal debug function for troubleshooting (production)
