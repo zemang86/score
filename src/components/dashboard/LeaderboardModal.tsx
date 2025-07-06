@@ -223,7 +223,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                     <div className="text-center py-8 bg-amber-50 border-2 border-amber-200 rounded-lg">
                       <div className="bg-amber-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                         <Lock className="w-8 h-8 text-amber-600" />
-                    </div>
+                      </div>
                       <h3 className="text-xl font-bold text-amber-800 mb-2">Premium Feature</h3>
                       <p className="text-amber-700 text-base mb-2">
                         Upgrade to Premium to access advanced leaderboard features!
@@ -238,6 +238,8 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                       >
                         Upgrade to Premium
                       </Button>
+                    </div>
+                  )}
                   {isPremium && (
                     <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,7 +247,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                       </svg>
                     </div>
                   )}
-                  </div>
+                </div>
                 
                 <button
                   onClick={onClose}

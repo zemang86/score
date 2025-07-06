@@ -200,17 +200,19 @@ export function LandingPage() {
                     <Crown className="w-16 h-16 text-amber-500 animate-bounce-gentle" />
               
                   <h2 className="text-3xl font-bold text-green-700 mb-4">Premium Plan</h2>
-              <RevealOnScroll animationType="slide-up" delay={100}>
                     {PRODUCTS.premium.description}
-                  <Button 
                   <div className="text-3xl font-bold text-green-700 mb-4">{PRODUCTS.premium.price}</div>
+              
+              <RevealOnScroll animationType="slide-up" delay={100}>
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start">
+                  <Button 
                     size="lg" 
                     onClick={handleGetStarted} 
                     variant="gradient-primary"
                     icon={<Rocket className="w-5 h-5 sm:w-6 sm:h-6" />}
                   >
                     <span className="flex items-center">
-                      Start Your Premium Journey!
+                      {t('hero.getStarted')}
                       <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 ml-2 sm:ml-3" />
                     </span>
                   </Button>

@@ -684,8 +684,7 @@ export function ParentDashboard() {
       <PremiumUpgradeModal
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
-        />
-      )}
+      />
       
       {/* Checkout Success Modal */}
       <CheckoutSuccessModal
