@@ -135,6 +135,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
               </p>
             )}
           </div>
+          </div>
         </div>
 
         {/* Scrollable Content */}
