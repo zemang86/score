@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase, Student } from '../../lib/supabase'
 import { Header } from '../layout/Header'
@@ -9,7 +9,7 @@ import { FamilyReportsModal } from './FamilyReportsModal'
 import { ExamModal } from './ExamModal'
 import { EditStudentModal } from './EditStudentModal'
 import { StudentProgressModal } from './StudentProgressModal'
-import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
+import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle, User } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } from '../ui/SkeletonLoader'
 
@@ -35,7 +35,32 @@ export function ParentDashboard() {
   const [totalQuestions, setTotalQuestions] = useState<number>(0)
 
   // Define isPremium based on subscriptionPlan
-  const isPremium = subscriptionPlan === 'premium'
+  const isPremium = useMemo(() => subscriptionPlan === 'premium', [subscriptionPlan])
+  const canAddMoreStudents = useMemo(() => students.length < maxStudents, [students.length, maxStudents])
+
+  // Function to check if a student has reached their daily exam limit
+  const hasReachedDailyExamLimit = useCallback(async (studentId: string) => {
+    if (dailyExamLimit === 999) return false // Unlimited exams
+    
+    try {
+      // Count today's completed exams for this student
+      const today = new Date().toISOString().split('T')[0]
+      const { data, error } = await supabase
+        .from('exams')
+        .select('id')
+        .eq('student_id', studentId)
+        .eq('completed', true)
+        .gte('created_at', `${today}T00:00:00`)
+        .lt('created_at', `${today}T23:59:59`)
+
+      if (error) throw error
+      
+      return (data?.length || 0) >= dailyExamLimit
+    } catch (error) {
+      console.error('Error checking daily exam limit:', error)
+      return false // Default to allowing exams if check fails
+    }
+  }, [dailyExamLimit])
 
   useEffect(() => {
     if (user) {
@@ -252,8 +277,20 @@ export function ParentDashboard() {
   }
 
   const handleOpenExamModal = (student: Student) => {
-    setSelectedStudent(student)
-    setShowExamModal(true)
+    // Check if student has reached daily exam limit
+    hasReachedDailyExamLimit(student.id).then(hasReached => {
+      if (hasReached) {
+        // Show error message - could be enhanced with a proper modal
+        alert(`Daily exam limit reached (${dailyExamLimit} exams). ${
+          subscriptionPlan === 'free' 
+            ? 'Upgrade to Premium for unlimited exams!'
+            : 'Please try again tomorrow.'
+        }`)
+      } else {
+        setSelectedStudent(student)
+        setShowExamModal(true)
+      }
+    })
   }
 
   const handleCloseExamModal = () => {
@@ -311,8 +348,6 @@ export function ParentDashboard() {
     }
   }
 
-  const canAddMoreStudents = students.length < maxStudents
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
@@ -340,15 +375,28 @@ export function ParentDashboard() {
                 <div className="text-center sm:text-left">
                   <h1 className="text-xl sm:text-2xl font-bold text-slate-800 mb-0.5">
                     Welcome, {profile?.full_name || 'Parent'}!
+                    {isPremium && <span className="ml-2 text-amber-500">✨</span>}
                   </h1>
                   <p className="text-sm sm:text-base text-slate-600 mb-1">
                     Ready to level up your kids' learning adventure?
                   </p>
                   <div className="flex items-center justify-center sm:justify-start">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
-                      <Crown className="w-3 h-3 mr-1" />
-                      {getPlanDisplayName(subscriptionPlan)}
-                    </span>
+                    {isPremium ? (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                        <Crown className="w-3 h-3 mr-1" />
+                        Premium Plan
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                        <User className="w-3 h-3 mr-1" />
+                        Free Plan
+                      </span>
+                    )}
+                    {!isPremium && (
+                      <button className="ml-2 text-xs text-indigo-600 hover:text-indigo-800 hover:underline">
+                        Upgrade
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -375,7 +423,62 @@ export function ParentDashboard() {
           </div>
         </div>
 
-
+        {/* Plan Information Card */}
+        <div className="mb-4 sm:mb-6">
+          <div className={`rounded-xl p-3 sm:p-4 border shadow-md ${getPlanColor(subscriptionPlan)}`}>
+            <div className="text-center sm:text-left">
+              <p className="text-xs font-semibold text-slate-700 mb-1">Your Current Plan</p>
+              <p className="text-xl sm:text-2xl font-bold text-slate-800">{getPlanDisplayName(subscriptionPlan)}</p>
+              {!isPremium && (
+                <p className="text-xs text-indigo-600 mt-1">
+                  <button className="hover:underline">Upgrade to Premium</button>
+                </p>
+              )}
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-3">
+            <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200 text-center">
+              <div className="flex items-center justify-center text-blue-600 mb-1">
+                <Users className="w-4 h-4 mr-1" />
+                <span className="font-semibold text-xs">Kids Limit</span>
+                {!isPremium && maxStudents === 1 && (
+                  <span className="ml-1 text-xs text-red-500">⚠️</span>
+                )}
+              </div>
+              <p className="text-xl font-bold text-slate-800">{maxStudents}</p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200 text-center">
+              <div className="flex items-center justify-center text-indigo-600 mb-1">
+                <BookOpen className="w-4 h-4 mr-1" />
+                <span className="font-semibold text-xs">Daily Exams</span>
+                {!isPremium && (
+                  <span className="ml-1 text-xs text-red-500">⚠️</span>
+                )}
+              </div>
+              <p className="text-xl font-bold text-slate-800">
+                {dailyExamLimit === 999 ? '∞' : dailyExamLimit}
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        {isPremium ? (
+          <div className="mt-4 p-3 bg-gradient-to-r from-green-100 to-emerald-100 border border-green-300 rounded-xl text-sm shadow-sm">
+            <div className="flex items-center text-green-800 font-semibold">
+              <Crown className="w-4 h-4 mr-2" />
+              <span>Premium benefits: Unlimited exams, full reports, and more!</span>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4 p-3 bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 rounded-xl text-sm shadow-sm">
+            <div className="flex items-center text-amber-800 font-semibold">
+              <Zap className="w-4 h-4 mr-2" />
+              <span>Upgrade to Premium for RM28/month: Unlimited exams, full reports, and more!</span>
+            </div>
+          </div>
+        )}
 
         {/* Enhanced Stats Grid - 6 Cards */}
         {loading ? (

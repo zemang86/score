@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
-import { Button } from '../ui/Button'
-import { X, BarChart3, Users, BookOpen, Trophy, TrendingUp, Calendar, Target, Star, Award, Crown, Zap } from 'lucide-react'
+import { Button } from '../ui/Button' 
+import { X, BarChart3, Users, BookOpen, Trophy, TrendingUp, Calendar, Target, Star, Award, Crown, Zap, Lock } from 'lucide-react'
 
 interface FamilyReportsModalProps {
   isOpen: boolean
@@ -46,7 +46,8 @@ interface StudentComparison {
 }
 
 export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps) {
-  const { user } = useAuth()
+  const { user, subscriptionPlan } = useAuth()
+  const isPremium = subscriptionPlan === 'premium'
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState<'overview' | 'subjects' | 'modes' | 'students'>('overview')
@@ -466,8 +467,34 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
                 {/* Subjects Tab */}
                 {activeTab === 'subjects' && (
                   <div className="space-y-3">
-                    <h3 className="text-base font-bold text-indigo-700">Performance by Subject</h3>
-                    {subjectBreakdown.length > 0 ? (
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base font-bold text-indigo-700">Performance by Subject</h3>
+                      {!isPremium && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                          <Lock className="w-3 h-3 mr-1" />
+                          Premium Feature
+                        </span>
+                      )}
+                    </div>
+                    {!isPremium ? (
+                      <div className="text-center py-6 bg-amber-50 border-2 border-amber-200 rounded-lg">
+                        <div className="bg-amber-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                          <Lock className="w-6 h-6 text-amber-600" />
+                        </div>
+                        <h4 className="text-lg font-bold text-amber-700 mb-2">Premium Feature</h4>
+                        <p className="text-amber-600 text-sm mb-4">
+                          Upgrade to Premium to unlock detailed subject performance analytics!
+                        </p>
+                        <Button
+                          variant="warning"
+                          size="sm"
+                          icon={<Crown className="w-4 h-4" />}
+                          className="bg-gradient-to-r from-amber-500 to-orange-500"
+                        >
+                          Upgrade to Premium
+                        </Button>
+                      </div>
+                    ) : subjectBreakdown.length > 0 ? (
                       <div className="space-y-2 max-h-96 overflow-y-auto">
                         {subjectBreakdown.map((subject, index) => (
                           <div key={subject.subject} className={`p-3 rounded-lg border shadow-sm ${getScoreBgColor(subject.averageScore)}`}>
@@ -521,8 +548,34 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
                 {/* Modes Tab */}
                 {activeTab === 'modes' && (
                   <div className="space-y-3">
-                    <h3 className="text-base font-bold text-indigo-700">Performance by Difficulty Level</h3>
-                    {modeBreakdown.length > 0 ? (
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base font-bold text-indigo-700">Performance by Difficulty Level</h3>
+                      {!isPremium && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                          <Lock className="w-3 h-3 mr-1" />
+                          Premium Feature
+                        </span>
+                      )}
+                    </div>
+                    {!isPremium ? (
+                      <div className="text-center py-6 bg-amber-50 border-2 border-amber-200 rounded-lg">
+                        <div className="bg-amber-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                          <Lock className="w-6 h-6 text-amber-600" />
+                        </div>
+                        <h4 className="text-lg font-bold text-amber-700 mb-2">Premium Feature</h4>
+                        <p className="text-amber-600 text-sm mb-4">
+                          Upgrade to Premium to unlock detailed difficulty level analytics!
+                        </p>
+                        <Button
+                          variant="warning"
+                          size="sm"
+                          icon={<Crown className="w-4 h-4" />}
+                          className="bg-gradient-to-r from-amber-500 to-orange-500"
+                        >
+                          Upgrade to Premium
+                        </Button>
+                      </div>
+                    ) : modeBreakdown.length > 0 ? (
                       <div className="space-y-2 max-h-96 overflow-y-auto">
                         {modeBreakdown.map((mode) => (
                           <div key={mode.mode} className={`p-3 rounded-lg border shadow-sm ${getScoreBgColor(mode.averageScore)}`}>
@@ -579,8 +632,34 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
                 {/* Students Tab */}
                 {activeTab === 'students' && (
                   <div className="space-y-3">
-                    <h3 className="text-base font-bold text-indigo-700">Student Comparison</h3>
-                    {studentComparison.length > 0 ? (
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base font-bold text-indigo-700">Student Comparison</h3>
+                      {!isPremium && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                          <Lock className="w-3 h-3 mr-1" />
+                          Premium Feature
+                        </span>
+                      )}
+                    </div>
+                    {!isPremium ? (
+                      <div className="text-center py-6 bg-amber-50 border-2 border-amber-200 rounded-lg">
+                        <div className="bg-amber-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                          <Lock className="w-6 h-6 text-amber-600" />
+                        </div>
+                        <h4 className="text-lg font-bold text-amber-700 mb-2">Premium Feature</h4>
+                        <p className="text-amber-600 text-sm mb-4">
+                          Upgrade to Premium to unlock detailed student comparison analytics!
+                        </p>
+                        <Button
+                          variant="warning"
+                          size="sm"
+                          icon={<Crown className="w-4 h-4" />}
+                          className="bg-gradient-to-r from-amber-500 to-orange-500"
+                        >
+                          Upgrade to Premium
+                        </Button>
+                      </div>
+                    ) : studentComparison.length > 0 ? (
                       <div className="space-y-2 max-h-96 overflow-y-auto">
                         {studentComparison.map((student) => (
                           <div key={student.id} className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300">
