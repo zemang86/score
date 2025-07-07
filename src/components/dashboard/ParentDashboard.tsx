@@ -335,7 +335,7 @@ export function ParentDashboard() {
     }
   }
 
-  const canAddMoreStudents = students.length < maxStudents
+  const canAddMoreStudents = subscriptionPlan === 'premium' || students.length < 1
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -428,8 +428,10 @@ export function ParentDashboard() {
                 <div>
                   <p className="text-xs font-medium text-slate-600">Kids</p>
                   <div className="flex items-baseline">
-                    <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{students.length}</p>
-                    <p className="text-xs text-slate-500">of {maxStudents}</p>
+                    <p className="text-lg sm:text-xl font-bold text-slate-800">{students.length}</p>
+                    {subscriptionPlan === 'free' && (
+                      <p className="text-xs text-slate-500 ml-1">max 1</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -529,7 +531,7 @@ export function ParentDashboard() {
                       <Users className="w-5 h-5 sm:w-6 text-white" />
                     </div>
                     <h2 className="text-base sm:text-lg font-bold text-slate-800">
-                      Your Amazing Kids ({students.length}{subscriptionPlan === 'premium' ? '' : ` / ${maxStudents}`})
+                      Your Amazing Kids ({students.length}{subscriptionPlan === 'free' ? ' / 1' : ''})
                     </h2>
                   </div>
                   <Button 
@@ -546,9 +548,7 @@ export function ParentDashboard() {
                 {!canAddMoreStudents && (
                   <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
                     <p className="text-amber-700 font-medium text-center text-xs">
-                      {subscriptionPlan === 'premium' 
-                        ? `You've reached your limit of ${maxStudents} ${maxStudents === 1 ? 'kid' : 'kids'}. Additional children cost RM10/month each.` 
-                        : `Free plan is limited to ${maxStudents} ${maxStudents === 1 ? 'kid' : 'kids'}. Upgrade to Premium for more!`}
+                      You've reached your free plan limit of 1 kid! Upgrade to Premium for unlimited kids.
                     </p>
                   </div>
                 )}
@@ -602,7 +602,9 @@ export function ParentDashboard() {
                       Start by adding your first kid to begin their epic learning adventure!
                     </p>
                     <p className="text-indigo-500 mb-3 text-xs">
-                      You can add up to {maxStudents} {maxStudents === 1 ? 'kid' : 'kids'} with your current plan!
+                      {subscriptionPlan === 'free' 
+                        ? 'You can add 1 kid with your free plan!' 
+                        : 'You can add unlimited kids with your premium plan!'}
                     </p>
                     <Button 
                       onClick={() => setShowAddModal(true)}

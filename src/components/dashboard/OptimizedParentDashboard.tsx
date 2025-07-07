@@ -143,7 +143,7 @@ export function OptimizedParentDashboard() {
 
   // Memoized computed values
   const isPremium = useMemo(() => subscriptionPlan === 'premium', [subscriptionPlan])
-  const canAddMoreStudents = useMemo(() => students.length < maxStudents, [students.length, maxStudents])
+  const canAddMoreStudents = subscriptionPlan === 'premium' || students.length < 1
 
   // Optimized fetch function with parallel queries
   const fetchDashboardData = useCallback(async () => {
@@ -280,7 +280,7 @@ export function OptimizedParentDashboard() {
       icon: Users,
       title: 'Kids',
       value: students.length.toString(),
-      subtitle: `of ${maxStudents}`,
+      subtitle: subscriptionPlan === 'free' ? 'max 1' : 'unlimited',
       gradient: 'bg-gradient-to-br from-indigo-500 to-purple-500'
     },
     {
@@ -404,13 +404,13 @@ export function OptimizedParentDashboard() {
                     Add Kid
                   </Button>
                 </div>
-                {!canAddMoreStudents && (
-                  <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
-                    <p className="text-amber-700 font-medium text-center text-xs">
-                      You've reached your plan limit of {maxStudents} {maxStudents === 1 ? 'kid' : 'kids'}!
-                    </p>
-                  </div>
-                )}
+                                  {subscriptionPlan === 'free' && students.length >= 1 && (
+                    <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
+                      <p className="text-amber-700 font-medium text-center text-xs">
+                        You've reached your free plan limit of 1 kid! Upgrade to Premium for unlimited kids.
+                      </p>
+                    </div>
+                  )}
               </div>
               
               <div className="p-3 sm:p-4">
@@ -447,10 +447,10 @@ export function OptimizedParentDashboard() {
                     <div className="bg-indigo-100 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-3">
                       <Users className="w-8 h-8 text-indigo-500" />
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-indigo-600 mb-2">No kids added yet!</h3>
-                    <p className="text-slate-600 text-sm mb-3">
-                      Start by adding your first kid to begin their epic learning adventure!
-                    </p>
+                                          <h3 className="text-lg sm:text-xl font-bold text-indigo-600 mb-2">No kids added yet!</h3>
+                      <p className="text-slate-600 text-sm mb-3">
+                        Start by adding your first kid to begin their epic learning adventure!
+                      </p>
                     <Button 
                       onClick={handleAddModalOpen}
                       variant="gradient-primary"

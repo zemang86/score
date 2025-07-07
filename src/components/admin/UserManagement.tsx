@@ -298,7 +298,7 @@ export function UserManagement() {
                       {getPlanBadge(user.subscription_plan)}
                     </div>
                     <div className="text-xs text-neutral-500 mt-1">
-                      {user.max_students} kids • {user.daily_exam_limit === 999 ? '∞' : user.daily_exam_limit} exams/day
+                      {user.subscription_plan === 'free' ? '1 kid max' : 'Unlimited kids'} • {user.daily_exam_limit === 999 ? '∞' : user.daily_exam_limit} exams/day
                     </div>
                   </td>
                   <td className="px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap">

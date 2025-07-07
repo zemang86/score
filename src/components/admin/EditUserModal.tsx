@@ -15,8 +15,6 @@ interface UserFormData {
   full_name: string
   email: string
   subscription_plan: 'free' | 'premium'
-  max_students: number
-  daily_exam_limit: number
 }
 
 export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUserModalProps) {
@@ -24,8 +22,6 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
     full_name: '',
     email: '',
     subscription_plan: 'free',
-    max_students: 1,
-    daily_exam_limit: 3
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -66,8 +62,6 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
         full_name: userData.full_name || '',
         email: userData.email || '',
         subscription_plan: userData.subscription_plan || 'free',
-        max_students: userData.max_students || 1,
-        daily_exam_limit: userData.daily_exam_limit || 3
       })
     } catch (err: any) {
       setError(err.message || 'Failed to fetch user data')
@@ -78,27 +72,6 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
 
   const handleInputChange = (field: keyof UserFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
-    
-    // Auto-adjust max_students and daily_exam_limit based on subscription plan
-    if (field === 'subscription_plan') {
-      if (value === 'free') {
-        setFormData(prev => ({
-          ...prev,
-          [field]: value,
-          max_students: 1,
-          daily_exam_limit: 3
-        }))
-      } else if (value === 'premium') {
-        // For premium, keep max_students as is (or set to 1 if it was 0)
-        // and set daily_exam_limit to unlimited (999)
-        setFormData(prev => ({
-          ...prev,
-          [field]: value,
-          max_students: prev.max_students < 1 ? 1 : prev.max_students,
-          daily_exam_limit: 999
-        }))
-      }
-    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,14 +81,9 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
     setSuccess(false)
 
     try {
-      // Validate form data
-      if (formData.max_students < 1) {
-        throw new Error('Maximum students must be at least 1')
-      }
-
-      if (formData.daily_exam_limit < 1) {
-        throw new Error('Daily exam limit must be at least 1')
-      }
+      // Determine limits based on subscription plan
+      const max_students = formData.subscription_plan === 'free' ? 1 : 99
+      const daily_exam_limit = formData.subscription_plan === 'free' ? 3 : 999
 
       // Update user in database
       const { error: updateError } = await supabase
@@ -123,8 +91,8 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
         .update({
           full_name: formData.full_name,
           subscription_plan: formData.subscription_plan,
-          max_students: formData.max_students,
-          daily_exam_limit: formData.daily_exam_limit
+          max_students,
+          daily_exam_limit
         })
         .eq('id', userId)
 
@@ -234,55 +202,9 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
               </div>
               <p className="text-xs text-gray-500 mt-1">
                 {formData.subscription_plan === 'free' 
-                  ? 'Free plan: 1 kid, 3 exams/day, limited reports'
-                  : 'Premium plan: Unlimited exams, full reports, RM28/month'}
+                  ? 'Free plan: 1 kid, 3 exams/day'
+                  : 'Premium plan: Unlimited kids, unlimited exams'}
               </p>
-            </div>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <div className="flex items-center mb-2">
-                <Users className="w-4 h-4 text-blue-600 mr-2" />
-                <h3 className="font-medium text-blue-700">Student Limits</h3>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-blue-700 mb-1">
-                    Max Students
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={formData.max_students}
-                    onChange={(e) => handleInputChange('max_students', parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-blue-700 mb-1">
-                    Daily Exam Limit
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={formData.daily_exam_limit}
-                    onChange={(e) => handleInputChange('daily_exam_limit', parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="mt-2 text-xs text-blue-600">
-                <div className="flex items-center">
-                  <Zap className="w-3 h-3 mr-1" />
-                  <span>Current student count: <strong>{currentStudentCount}</strong></span>
-                </div>
-                {formData.subscription_plan === 'premium' && (
-                  <p className="mt-1">
-                    Premium plan includes 1 kid. Each additional kid costs RM10/month.
-                  </p>
-                )}
-              </div>
             </div>
 
             <div className="flex space-x-3 pt-2">

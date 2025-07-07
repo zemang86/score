@@ -13,7 +13,7 @@ interface AddStudentModalProps {
 }
 
 export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentModalProps) {
-  const { user, maxStudents, subscriptionPlan } = useAuth()
+  const { user, subscriptionPlan } = useAuth()
   const [formData, setFormData] = useState({
     name: '',
     school: '',
@@ -58,12 +58,9 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
         throw countError
       }
 
-      if (existingStudents && existingStudents.length >= maxStudents && subscriptionPlan !== 'premium') {
-        if (subscriptionPlan === 'premium') {
-          setError(`You've reached your limit of ${maxStudents} ${maxStudents === 1 ? 'child' : 'children'}. Additional children cost RM10/month each. Please contact support to add more.`)
-        } else {
-          setError(`Free plan is limited to 1 child. Upgrade to Premium for more children.`)
-        }
+      // Check subscription limits
+      if (subscriptionPlan === 'free' && existingStudents && existingStudents.length >= 1) {
+        setError(`Free plan is limited to 1 child. Upgrade to Premium for more children.`)
         setLoading(false)
         return
       }
@@ -131,7 +128,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
               </p>
             ) : (
               <p className="text-indigo-700 text-xs">
-                Premium plan: <strong>1 kid</strong> included. Additional kids cost <strong>RM10/month</strong> each.
+                Premium plan: <strong>Unlimited kids</strong> and <strong>unlimited exams</strong>. Full access to all features.
               </p>
             )}
           </div>
@@ -200,7 +197,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
                 </p>
               ) : (
                 <p className="text-indigo-700 text-xs">
-                  Premium plan: <strong>{maxStudents}</strong> {maxStudents === 1 ? 'kid' : 'kids'} included. Additional kids cost <strong>RM10/month</strong> each.
+                  Premium plan: <strong>Unlimited kids</strong> and <strong>unlimited exams</strong>. Full access to all features.
                 </p>
               )}
             </div>
