@@ -146,7 +146,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
         throw new Error('You must be logged in to purchase additional kids')
       }
 
-      // Create a checkout session for additional kid
+      // Create a checkout session for additional kid only (existing premium users)
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
         method: 'POST',
         headers: {
@@ -154,9 +154,9 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
           'Authorization': `Bearer ${session.access_token}`
         },
         body: JSON.stringify({
-          price_id: PRODUCTS.premium.monthly.priceId,
+          price_id: PRODUCTS.premium.additionalKid.priceId, // Only charge for additional kid
           billing_cycle: 'monthly',
-          additional_kids: 1, // Purchase 1 additional kid
+          additional_kids: 0, // Don't double-count since we're using the additional kid price ID directly
           success_url: CHECKOUT_CONFIG.successUrl,
           cancel_url: CHECKOUT_CONFIG.cancelUrl,
           mode: 'subscription'
