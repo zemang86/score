@@ -143,7 +143,7 @@ export function OptimizedParentDashboard() {
 
   // Memoized computed values
   const isPremium = useMemo(() => subscriptionPlan === 'premium', [subscriptionPlan])
-  const canAddMoreStudents = subscriptionPlan === 'premium' || students.length < 1
+  const canAddMoreStudents = students.length < maxStudents
 
   // Optimized fetch function with parallel queries
   const fetchDashboardData = useCallback(async () => {
@@ -280,7 +280,7 @@ export function OptimizedParentDashboard() {
       icon: Users,
       title: 'Kids',
       value: students.length.toString(),
-      subtitle: subscriptionPlan === 'free' ? 'max 1' : 'unlimited',
+      subtitle: `of ${maxStudents}`,
       gradient: 'bg-gradient-to-br from-indigo-500 to-purple-500'
     },
     {
@@ -404,10 +404,12 @@ export function OptimizedParentDashboard() {
                     Add Kid
                   </Button>
                 </div>
-                                  {subscriptionPlan === 'free' && students.length >= 1 && (
+                                  {!canAddMoreStudents && (
                     <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
                       <p className="text-amber-700 font-medium text-center text-xs">
-                        You've reached your free plan limit of 1 kid! Upgrade to Premium for unlimited kids.
+                        {subscriptionPlan === 'free' 
+                          ? `Free plan is limited to ${maxStudents} ${maxStudents === 1 ? 'kid' : 'kids'}. Upgrade to Premium to add more children.`
+                          : `You've reached your limit of ${maxStudents} ${maxStudents === 1 ? 'kid' : 'kids'}. ${maxStudents === 1 ? 'Add more kids by upgrading your subscription.' : 'Purchase additional kids for RM10/month each.'}`}
                       </p>
                     </div>
                   )}
