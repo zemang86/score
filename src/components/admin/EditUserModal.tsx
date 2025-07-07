@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
-import { X, Save, User, Crown, Zap, Users } from 'lucide-react'
+import { X, Save, User, Crown, Zap, Users, AlertTriangle } from 'lucide-react'
 
 interface EditUserModalProps {
   isOpen: boolean
@@ -241,7 +241,13 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <div className="flex items-center mb-2">
                 <Users className="w-4 h-4 text-blue-600 mr-2" />
-                <h3 className="font-medium text-blue-700">Current Subscription Limits</h3>
+                <h3 className="font-medium text-blue-700">Database Values (Reference Only)</h3>
+              </div>
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-2 mb-3">
+                <p className="text-amber-700 text-xs">
+                  <strong>Note:</strong> Student limits are now managed by subscription plans. 
+                  These values are for billing reference only.
+                </p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -288,6 +294,8 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
                 )}
               </div>
             </div>
+
+
 
             <div className="flex space-x-3 pt-2">
               <Button

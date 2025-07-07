@@ -14,7 +14,7 @@ interface AddStudentModalProps {
 }
 
 export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentModalProps) {
-  const { user, maxStudents, subscriptionPlan } = useAuth()
+  const { user, subscriptionPlan } = useAuth()
   const [formData, setFormData] = useState({
     name: '',
     school: '',
@@ -58,7 +58,8 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
     }
   }
 
-  const needsToPurchaseSlot = subscriptionPlan === 'premium' && currentStudentCount >= maxStudents
+  // Premium: 1 kid included, then pay for each additional
+  const needsToPurchaseSlot = subscriptionPlan === 'premium' && currentStudentCount >= 1
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -90,16 +91,14 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
         throw countError
       }
 
-      if (existingStudents && existingStudents.length >= maxStudents) {
-        if (subscriptionPlan === 'free') {
-          setError(`Free plan is limited to ${maxStudents} ${maxStudents === 1 ? 'child' : 'children'}. Upgrade to Premium to add more children.`)
-          setLoading(false)
-          return
-        } else {
-          // For premium users, we'll show the purchase option in the UI instead of blocking
-          // Don't return here, let them continue to the form
-        }
+      // Check subscription limits
+      if (subscriptionPlan === 'free' && existingStudents && existingStudents.length >= 1) {
+        setError(`Free plan is limited to 1 child. Upgrade to Premium to add more children.`)
+        setLoading(false)
+        return
       }
+      
+      // For premium users, allow adding kids - payment requirement will be handled in UI
 
       // Insert new student
       const { error: insertError } = await supabase
@@ -205,11 +204,11 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
             </div>
             {subscriptionPlan === 'free' ? (
               <p className="text-indigo-700 text-xs">
-                Free plan: Limited to <strong>{maxStudents} {maxStudents === 1 ? 'kid' : 'kids'}</strong> and <strong>3 exams/day</strong>. <span className="font-semibold">Upgrade to Premium for more!</span>
+                Free plan: Limited to <strong>1 child</strong> and <strong>3 exams/day</strong>. <span className="font-semibold">Upgrade to Premium for more!</span>
               </p>
             ) : (
               <p className="text-indigo-700 text-xs">
-                Premium plan: <strong>{maxStudents} {maxStudents === 1 ? 'kid' : 'kids'}</strong> included. Additional kids cost <strong>RM10/month</strong> each.
+                Premium plan: <strong>1 child included</strong>. Additional kids cost <strong>RM10/month</strong> each.
               </p>
             )}
           </div>
@@ -268,19 +267,19 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
             />
 
             <div className="bg-gradient-to-r from-indigo-100 to-purple-100 border border-indigo-300 rounded-lg p-2.5">
-                              <div className="flex items-center mb-1">
-                  <Sparkles className="w-4 h-4 text-indigo-600 mr-1.5" />
-                  <p className="text-indigo-800 font-medium text-xs">Your Plan Info</p>
-                </div>
-                {subscriptionPlan === 'free' ? (
-                  <p className="text-indigo-700 text-xs">
-                    Free plan: Limited to <strong>{maxStudents} {maxStudents === 1 ? 'kid' : 'kids'}</strong> and <strong>3 exams/day</strong>. <span className="font-semibold">Upgrade to Premium for more!</span>
-                  </p>
-                ) : (
-                  <p className="text-indigo-700 text-xs">
-                    Premium plan: <strong>{maxStudents} {maxStudents === 1 ? 'kid' : 'kids'}</strong> included. Additional kids cost <strong>RM10/month</strong> each.
-                  </p>
-                )}
+              <div className="flex items-center mb-1">
+                <Sparkles className="w-4 h-4 text-indigo-600 mr-1.5" />
+                <p className="text-indigo-800 font-medium text-xs">Your Plan Info</p>
+              </div>
+              {subscriptionPlan === 'free' ? (
+                <p className="text-indigo-700 text-xs">
+                  Free plan: Limited to <strong>1 child</strong> and <strong>3 exams/day</strong>. <span className="font-semibold">Upgrade to Premium for more!</span>
+                </p>
+              ) : (
+                <p className="text-indigo-700 text-xs">
+                  Premium plan: <strong>1 child included</strong>. Additional kids cost <strong>RM10/month</strong> each.
+                </p>
+              )}
             </div>
 
             {/* Purchase Additional Kid Section for Premium Users */}
@@ -291,8 +290,8 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
                   <p className="text-amber-800 font-medium text-sm">Additional Kid Slot Required</p>
                 </div>
                 <p className="text-amber-700 text-xs mb-3">
-                  You currently have <strong>{currentStudentCount} of {maxStudents}</strong> kid slots. 
-                  To add another child, purchase an additional slot for <strong>RM10/month</strong>.
+                  You currently have <strong>{currentStudentCount}</strong> {currentStudentCount === 1 ? 'child' : 'children'}. 
+                  Premium includes <strong>1 child</strong>. To add another child, purchase an additional slot for <strong>RM10/month</strong>.
                 </p>
                 <Button
                   type="button"
