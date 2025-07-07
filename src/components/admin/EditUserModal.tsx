@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
-import { X, Save, User, Crown, Zap, Users } from 'lucide-react'
+import { X, Save, User, Crown, Zap, Users, AlertTriangle } from 'lucide-react'
 
 interface EditUserModalProps {
   isOpen: boolean
@@ -24,8 +24,8 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
     full_name: '',
     email: '',
     subscription_plan: 'free',
-    max_students: 1,
-    daily_exam_limit: 3
+    max_students: 0,
+    daily_exam_limit: 0,
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -66,8 +66,8 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
         full_name: userData.full_name || '',
         email: userData.email || '',
         subscription_plan: userData.subscription_plan || 'free',
-        max_students: userData.max_students || 1,
-        daily_exam_limit: userData.daily_exam_limit || 3
+        max_students: userData.max_students || 0,
+        daily_exam_limit: userData.daily_exam_limit || 0,
       })
     } catch (err: any) {
       setError(err.message || 'Failed to fetch user data')
@@ -79,7 +79,7 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
   const handleInputChange = (field: keyof UserFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     
-    // Auto-adjust max_students and daily_exam_limit based on subscription plan
+    // Auto-adjust limits based on subscription plan
     if (field === 'subscription_plan') {
       if (value === 'free') {
         setFormData(prev => ({
@@ -89,13 +89,12 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
           daily_exam_limit: 3
         }))
       } else if (value === 'premium') {
-        // For premium, keep max_students as is (or set to 1 if it was 0)
-        // and set daily_exam_limit to unlimited (999)
+        // For premium, keep existing values or set defaults
         setFormData(prev => ({
           ...prev,
           [field]: value,
           max_students: prev.max_students < 1 ? 1 : prev.max_students,
-          daily_exam_limit: 999
+          daily_exam_limit: prev.daily_exam_limit < 1 ? 999 : prev.daily_exam_limit
         }))
       }
     }
@@ -234,15 +233,21 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
               </div>
               <p className="text-xs text-gray-500 mt-1">
                 {formData.subscription_plan === 'free' 
-                  ? 'Free plan: 1 kid, 3 exams/day, limited reports'
-                  : 'Premium plan: Unlimited exams, full reports, RM28/month'}
+                  ? 'Free plan: 1 kid, 3 exams/day'
+                  : 'Premium plan: 1 kid included + paid additional kids, unlimited exams'}
               </p>
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <div className="flex items-center mb-2">
                 <Users className="w-4 h-4 text-blue-600 mr-2" />
-                <h3 className="font-medium text-blue-700">Student Limits</h3>
+                <h3 className="font-medium text-blue-700">Database Values (Reference Only)</h3>
+              </div>
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-2 mb-3">
+                <p className="text-amber-700 text-xs">
+                  <strong>Note:</strong> Student limits are now managed by subscription plans. 
+                  These values are for billing reference only.
+                </p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -279,11 +284,18 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
                 </div>
                 {formData.subscription_plan === 'premium' && (
                   <p className="mt-1">
-                    Premium plan includes 1 kid. Each additional kid costs RM10/month.
+                    Premium: 1 kid included. Each additional kid costs RM10/month.
+                  </p>
+                )}
+                {formData.subscription_plan === 'free' && (
+                  <p className="mt-1">
+                    Free: Limited to 1 kid. Upgrade to Premium for more.
                   </p>
                 )}
               </div>
             </div>
+
+
 
             <div className="flex space-x-3 pt-2">
               <Button

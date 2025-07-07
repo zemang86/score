@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { User, Search, Filter, MoreHorizontal, UserPlus, Calendar, Mail, Edit, Crown, Zap, Users } from 'lucide-react'
+import { User, Search, Filter, MoreHorizontal, UserPlus, Calendar, Mail, Edit, Crown, Zap, Users, BookOpen } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { EditUserModal } from './EditUserModal'
@@ -17,6 +17,7 @@ interface UserData {
   updated_at: string
   student_count?: number
   last_login?: string
+  current_student_count?: number
 }
 
 export function UserManagement() {
@@ -297,8 +298,23 @@ export function UserManagement() {
                     <div className="mt-1">
                       {getPlanBadge(user.subscription_plan)}
                     </div>
-                    <div className="text-xs text-neutral-500 mt-1">
-                      {user.max_students} kids • {user.daily_exam_limit === 999 ? '∞' : user.daily_exam_limit} exams/day
+                    <div className="text-xs text-gray-600">
+                      <div className="flex items-center">
+                        <Users className="w-3 h-3 mr-1" />
+                        <span>
+                          {user.subscription_plan === 'free' 
+                            ? `${user.current_student_count || 0} of 1 kids` 
+                            : `${user.current_student_count || 0} kids (${user.max_students || 1} purchased)`}
+                        </span>
+                      </div>
+                      <div className="flex items-center mt-1">
+                        <BookOpen className="w-3 h-3 mr-1" />
+                        <span>
+                          {user.subscription_plan === 'free' 
+                            ? '3 exams/day' 
+                            : `${user.daily_exam_limit === 999 ? '∞' : user.daily_exam_limit} exams/day`}
+                        </span>
+                      </div>
                     </div>
                   </td>
                   <td className="px-3 py-3 sm:px-6 sm:py-4 whitespace-nowrap">

@@ -18,7 +18,7 @@ import { Button } from '../ui/Button'
 import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } from '../ui/SkeletonLoader'
 
 export function ParentDashboard() {
-  const { user, profile, subscriptionPlan, maxStudents, dailyExamLimit } = useAuth()
+  const { user, profile, subscriptionPlan, dailyExamLimit } = useAuth()
   const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
@@ -335,7 +335,8 @@ export function ParentDashboard() {
     }
   }
 
-  const canAddMoreStudents = students.length < maxStudents
+  // Subscription-based logic: Free = 1 kid max, Premium = unlimited (show as can always add)
+  const canAddMoreStudents = subscriptionPlan === 'free' ? students.length < 1 : true
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -422,16 +423,20 @@ export function ParentDashboard() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-slate-200 hover-lift">
               <div className="flex items-center">
-                <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
-                  <Users className="w-4 h-4 sm:w-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-slate-600">Kids</p>
-                  <div className="flex items-baseline">
-                    <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{students.length}</p>
-                    <p className="text-xs text-slate-500">of {maxStudents}</p>
+                                                    <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-1.5 sm:p-2 mr-2 shadow-sm">
+                    <Users className="w-4 h-4 sm:w-5 text-white" />
                   </div>
-                </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-600">Kids</p>
+                    <div className="flex items-baseline">
+                      <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{students.length}</p>
+                      {subscriptionPlan === 'free' ? (
+                        <p className="text-xs text-slate-500">of 1</p>
+                      ) : (
+                        <p className="text-xs text-slate-500">∞</p>
+                      )}
+                    </div>
+                  </div>
               </div>
             </div>
 
@@ -528,9 +533,9 @@ export function ParentDashboard() {
                     <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-1.5 sm:p-2 mr-2 sm:mr-3 shadow-sm">
                       <Users className="w-5 h-5 sm:w-6 text-white" />
                     </div>
-                    <h2 className="text-base sm:text-lg font-bold text-slate-800">
-                      Your Amazing Kids ({students.length}{subscriptionPlan === 'premium' ? '' : ` / ${maxStudents}`})
-                    </h2>
+                                          <h2 className="text-base sm:text-lg font-bold text-slate-800">
+                        Your Amazing Kids ({students.length}{subscriptionPlan === 'free' ? ' of 1' : ''})
+                      </h2>
                   </div>
                   <Button 
                     variant="gradient-primary"
@@ -543,15 +548,13 @@ export function ParentDashboard() {
                     Add Kid
                   </Button>
                 </div>
-                {!canAddMoreStudents && (
-                  <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
-                    <p className="text-amber-700 font-medium text-center text-xs">
-                      {subscriptionPlan === 'premium' 
-                        ? `You've reached your limit of ${maxStudents} ${maxStudents === 1 ? 'kid' : 'kids'}. Additional children cost RM10/month each.` 
-                        : `Free plan is limited to ${maxStudents} ${maxStudents === 1 ? 'kid' : 'kids'}. Upgrade to Premium for more!`}
-                    </p>
-                  </div>
-                )}
+                                  {!canAddMoreStudents && (
+                    <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
+                      <p className="text-amber-700 font-medium text-center text-xs">
+                        Free plan is limited to 1 child. Upgrade to Premium to add more children.
+                      </p>
+                    </div>
+                  )}
               </div>
               
               <div className="p-3 sm:p-4">
@@ -601,9 +604,11 @@ export function ParentDashboard() {
                     <p className="text-slate-600 text-sm mb-3">
                       Start by adding your first kid to begin their epic learning adventure!
                     </p>
-                    <p className="text-indigo-500 mb-3 text-xs">
-                      You can add up to {maxStudents} {maxStudents === 1 ? 'kid' : 'kids'} with your current plan!
-                    </p>
+                                          <p className="text-indigo-500 mb-3 text-xs">
+                        {subscriptionPlan === 'free' 
+                          ? 'You can add 1 child with your free plan!' 
+                          : 'You can add unlimited children with your premium plan!'}
+                      </p>
                     <Button 
                       onClick={() => setShowAddModal(true)}
                       variant="gradient-primary"

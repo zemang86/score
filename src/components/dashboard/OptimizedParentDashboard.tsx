@@ -126,7 +126,7 @@ const PlanCard = React.memo(({
 PlanCard.displayName = 'PlanCard'
 
 export function OptimizedParentDashboard() {
-  const { user, profile, subscriptionPlan, maxStudents, dailyExamLimit } = useAuth()
+  const { user, profile, subscriptionPlan, dailyExamLimit } = useAuth()
   const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
@@ -143,7 +143,7 @@ export function OptimizedParentDashboard() {
 
   // Memoized computed values
   const isPremium = useMemo(() => subscriptionPlan === 'premium', [subscriptionPlan])
-  const canAddMoreStudents = useMemo(() => students.length < maxStudents, [students.length, maxStudents])
+  const canAddMoreStudents = subscriptionPlan === 'free' ? students.length < 1 : true
 
   // Optimized fetch function with parallel queries
   const fetchDashboardData = useCallback(async () => {
@@ -280,7 +280,7 @@ export function OptimizedParentDashboard() {
       icon: Users,
       title: 'Kids',
       value: students.length.toString(),
-      subtitle: `of ${maxStudents}`,
+      subtitle: subscriptionPlan === 'free' ? 'of 1' : '∞',
       gradient: 'bg-gradient-to-br from-indigo-500 to-purple-500'
     },
     {
@@ -304,7 +304,7 @@ export function OptimizedParentDashboard() {
       subtitle: isPremium ? 'Detailed' : 'Basic',
       gradient: 'bg-gradient-to-br from-red-500 to-pink-500'
     }
-  ], [students.length, maxStudents, dashboardStats, dailyExamLimit, isPremium])
+  ], [students.length, dailyExamLimit, isPremium, dashboardStats])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
@@ -363,13 +363,13 @@ export function OptimizedParentDashboard() {
         </div>
 
         {/* Plan Details Section */}
-        <div className="mb-4 sm:mb-6">
-          <PlanCard 
-            subscriptionPlan={subscriptionPlan}
-            maxStudents={maxStudents}
-            dailyExamLimit={dailyExamLimit}
-          />
-        </div>
+                  <div className="mb-4 sm:mb-6">
+            <PlanCard 
+              subscriptionPlan={subscriptionPlan}
+              maxStudents={subscriptionPlan === 'free' ? 1 : 999}
+              dailyExamLimit={dailyExamLimit}
+            />
+          </div>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -393,24 +393,24 @@ export function OptimizedParentDashboard() {
                       Your Amazing Kids ({students.length})
                     </h2>
                   </div>
-                  <Button 
-                    variant="gradient-primary"
-                    size="sm" 
-                    onClick={handleAddModalOpen}
-                    disabled={!canAddMoreStudents}
-                    icon={<Plus className="w-3.5 h-3.5" />}
-                    className={`w-full sm:w-auto text-xs ${!canAddMoreStudents ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    Add Kid
-                  </Button>
-                </div>
-                {!canAddMoreStudents && (
-                  <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
-                    <p className="text-amber-700 font-medium text-center text-xs">
-                      You've reached your plan limit of {maxStudents} {maxStudents === 1 ? 'kid' : 'kids'}!
-                    </p>
+                                      <Button 
+                      variant="gradient-primary"
+                      size="sm" 
+                      onClick={handleAddModalOpen}
+                      disabled={!canAddMoreStudents}
+                      icon={<Plus className="w-3.5 h-3.5" />}
+                      className={`w-full sm:w-auto text-xs ${!canAddMoreStudents ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      Add Kid
+                    </Button>
                   </div>
-                )}
+                  {!canAddMoreStudents && (
+                    <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
+                      <p className="text-amber-700 font-medium text-center text-xs">
+                        Free plan is limited to 1 child. Upgrade to Premium to add more children.
+                      </p>
+                    </div>
+                  )}
               </div>
               
               <div className="p-3 sm:p-4">
