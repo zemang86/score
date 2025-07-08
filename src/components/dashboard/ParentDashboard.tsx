@@ -19,7 +19,7 @@ import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } fro
 import { canAddStudent } from '../../utils/accessControl'
 
 export function ParentDashboard() {
-  const { user, profile, subscriptionPlan, dailyExamLimit, isBetaTester, effectiveAccess } = useAuth()
+  const { user, profile, subscriptionPlan, maxStudents, dailyExamLimit, isBetaTester, effectiveAccess } = useAuth()
   const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)

@@ -127,7 +127,7 @@ const PlanCard = React.memo(({
 PlanCard.displayName = 'PlanCard'
 
 export function OptimizedParentDashboard() {
-  const { user, profile, subscriptionPlan, dailyExamLimit, isBetaTester, effectiveAccess } = useAuth()
+  const { user, profile, subscriptionPlan, maxStudents, dailyExamLimit, isBetaTester, effectiveAccess } = useAuth()
   const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
