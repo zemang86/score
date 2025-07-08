@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
-import { Button } from '../ui/Button' 
+import { Button } from '../ui/Button'
+import { PremiumUpgradeModal } from './PremiumUpgradeModal'
 import { X, BarChart3, Users, BookOpen, Trophy, TrendingUp, Calendar, Target, Star, Award, Crown, Zap, Lock } from 'lucide-react'
 
 interface FamilyReportsModalProps {
@@ -51,6 +52,7 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState<'overview' | 'subjects' | 'modes' | 'students'>('overview')
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   
   // Data states
   const [familyStats, setFamilyStats] = useState<FamilyStats>({
@@ -490,6 +492,7 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
                           size="sm"
                           icon={<Crown className="w-4 h-4" />}
                           className="bg-gradient-to-r from-amber-500 to-orange-500"
+                          onClick={() => setShowUpgradeModal(true)}
                         >
                           Upgrade to Premium
                         </Button>
@@ -571,6 +574,7 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
                           size="sm"
                           icon={<Crown className="w-4 h-4" />}
                           className="bg-gradient-to-r from-amber-500 to-orange-500"
+                          onClick={() => setShowUpgradeModal(true)}
                         >
                           Upgrade to Premium
                         </Button>
@@ -655,6 +659,7 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
                           size="sm"
                           icon={<Crown className="w-4 h-4" />}
                           className="bg-gradient-to-r from-amber-500 to-orange-500"
+                          onClick={() => setShowUpgradeModal(true)}
                         >
                           Upgrade to Premium
                         </Button>
@@ -724,6 +729,12 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
           </Button>
         </div>
       </div>
+      
+      {/* Premium Upgrade Modal */}
+      <PremiumUpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+      />
     </div>
   )
 }

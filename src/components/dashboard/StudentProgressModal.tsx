@@ -4,6 +4,8 @@ import { Student } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { X, TrendingUp, Trophy, Calendar, BookOpen, Target, Star, Award, BarChart3, ArrowLeft, Eye, CheckCircle, XCircle, Clock, Edit3, ArrowUpDown, BookOpenCheck, Lock, Crown } from 'lucide-react'
 import { BadgeEvaluator, type StudentBadge } from '../../utils/badgeEvaluator'
+import { useAuth } from '../../contexts/AuthContext'
+import { PremiumUpgradeModal } from './PremiumUpgradeModal'
 
 interface StudentProgressModalProps {
   isOpen: boolean
@@ -52,6 +54,7 @@ interface SubjectStats {
 // Using StudentBadge from badgeEvaluator instead of local interface
 
 export function StudentProgressModal({ isOpen, onClose, student, isPremium = false }: StudentProgressModalProps) {
+  const { user } = useAuth()
   const [examResults, setExamResults] = useState<ExamResult[]>([])
   const [subjectStats, setSubjectStats] = useState<SubjectStats[]>([])
   const [badges, setBadges] = useState<StudentBadge[]>([])
@@ -60,6 +63,7 @@ export function StudentProgressModal({ isOpen, onClose, student, isPremium = fal
   const [reviewingExam, setReviewingExam] = useState<ExamResult | null>(null)
   const [reviewLoading, setReviewLoading] = useState(false)
   const [currentStudent, setCurrentStudent] = useState<Student>(student)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   useEffect(() => {
     if (isOpen && student) {
@@ -789,6 +793,7 @@ export function StudentProgressModal({ isOpen, onClose, student, isPremium = fal
                               size="sm"
                               icon={<Crown className="w-4 h-4" />}
                               className="bg-gradient-to-r from-amber-500 to-orange-500"
+                              onClick={() => setShowUpgradeModal(true)}
                             >
                               Upgrade to Premium
                             </Button>
@@ -832,6 +837,7 @@ export function StudentProgressModal({ isOpen, onClose, student, isPremium = fal
                           size="sm"
                           icon={<Crown className="w-4 h-4" />}
                           className="bg-gradient-to-r from-amber-500 to-orange-500"
+                          onClick={() => setShowUpgradeModal(true)}
                         >
                           Upgrade to Premium
                         </Button>
@@ -934,6 +940,7 @@ export function StudentProgressModal({ isOpen, onClose, student, isPremium = fal
                             size="sm"
                             icon={<Crown className="w-4 h-4" />}
                             className="bg-gradient-to-r from-amber-500 to-orange-500"
+                            onClick={() => setShowUpgradeModal(true)}
                           >
                             Upgrade to Premium
                           </Button>
@@ -983,6 +990,12 @@ export function StudentProgressModal({ isOpen, onClose, student, isPremium = fal
           </Button>
         </div>
       </div>
+      
+      {/* Premium Upgrade Modal */}
+      <PremiumUpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+      />
     </div>
   )
 }

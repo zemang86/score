@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
+import { PremiumUpgradeModal } from './PremiumUpgradeModal'
 import { X, Trophy, Crown, Star, Medal, Target, TrendingUp, Lock } from 'lucide-react'
 
 interface LeaderboardModalProps {
@@ -33,6 +34,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   const [userStudents, setUserStudents] = useState<string[]>([])
   const [error, setError] = useState('')
   const [levelFilter, setLevelFilter] = useState<string>('Global')
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   useEffect(() => {
     if (isOpen && user) {
@@ -226,6 +228,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                         variant="warning"
                         className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
                         icon={<Crown className="w-5 h-5" />}
+                        onClick={() => setShowUpgradeModal(true)}
                       >
                         Upgrade to Premium
                       </Button>
@@ -434,6 +437,12 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
           </Button>
         </div>
       </div>
+      
+      {/* Premium Upgrade Modal */}
+      <PremiumUpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+      />
     </div>
   )
 }
