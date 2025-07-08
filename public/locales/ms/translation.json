@@ -46,6 +46,62 @@
     "copyright": "© 2025 Edventure+. Hak cipta terpelihara.",
     "tagline": "Di Mana Pembelajaran Menjadi Petualangan"
   },
+  "auth": {
+    "backToHome": "Kembali ke Laman Utama",
+    "branding": {
+      "tagline": "Di Mana Pembelajaran Menjadi Petualangan!",
+      "description": "Ubah latihan peperiksaan menjadi petualangan pembelajaran yang menarik untuk pelajar Malaysia.",
+      "gamifiedTitle": "Pembelajaran Bergames",
+      "gamifiedDesc": "Dapatkan mata XP, buka kunci lencana, dan tingkatkan perjalanan pembelajaran anda!",
+      "trackTitle": "Jejaki Kemajuan", 
+      "trackDesc": "Saksikan kemahiran anda berkembang dan raikan setiap pencapaian!",
+      "familyTitle": "Papan Pemuka Keluarga",
+      "familyDesc": "Ibu bapa dan anak-anak belajar bersama sebagai satu pasukan!",
+      "freeAccess": "Akses Premium PERCUMA semasa tempoh pelancaran!"
+    },
+    "login": {
+      "title": "Selamat Kembali!",
+      "subtitle": "Bersedia untuk petualangan pembelajaran yang lain?",
+      "emailPlaceholder": "Masukkan alamat e-mel anda",
+      "passwordPlaceholder": "Masukkan kata laluan anda",
+      "submitButton": "Jom Pergi!",
+      "submitLoading": "Sedang Log Masuk...",
+      "forgotPassword": "Terlupa kata laluan anda?",
+      "noAccount": "Baru ke Edventure+?",
+      "signUpLink": "Sertai petualangan di sini!"
+    },
+    "signup": {
+      "title": "Sertai Edventure+!",
+      "subtitle": "Cipta akaun petualangan pembelajaran keluarga anda",
+      "fullNamePlaceholder": "Masukkan nama penuh anda",
+      "emailPlaceholder": "Masukkan alamat e-mel anda", 
+      "passwordPlaceholder": "Cipta kata laluan yang kuat",
+      "confirmPasswordPlaceholder": "Sahkan kata laluan anda",
+      "submitButton": "Cipta Akaun Saya!",
+      "submitLoading": "Sedang Mencipta Akaun...",
+      "haveAccount": "Sudah mempunyai akaun?",
+      "signInLink": "Log masuk di sini!",
+      "success": {
+        "title": "Akaun Dicipta!",
+        "message": "Selamat datang ke Edventure+! Anda kini adalah sebahagian daripada keluarga pembelajaran kami. Anda berada dalam pelan Percuma dengan ciri terhad.",
+        "startFree": "Mulakan dengan Pelan Percuma",
+        "upgrade": "Naik Taraf ke Premium"
+      },
+      "errors": {
+        "passwordMismatch": "Kata laluan tidak sepadan",
+        "passwordLength": "Kata laluan mestilah sekurang-kurangnya 6 aksara"
+      }
+    },
+    "forgot": {
+      "title": "Set Semula Kata Laluan",
+      "subtitle": "Masukkan e-mel anda untuk menerima arahan set semula",
+      "emailPlaceholder": "Masukkan alamat e-mel anda",
+      "submitButton": "Hantar Pautan Set Semula",
+      "submitLoading": "Sedang Menghantar...",
+      "backToLogin": "Kembali ke Log Masuk",
+      "success": "Pautan set semula kata laluan telah dihantar ke e-mel anda!"
+    }
+  },
   "dashboard": {
     "welcome": "Selamat datang, {{name}}!",
     "welcomeDefault": "Selamat datang, Ibu Bapa!",
@@ -102,6 +158,42 @@
       "retry": "Cuba Lagi"
     }
   },
+  "modals": {
+    "addStudent": {
+      "title": "Tambah Pelajar Baharu",
+      "subtitle": "Tambah anak ke petualangan pembelajaran keluarga anda",
+      "form": {
+        "name": "Nama Pelajar",
+        "namePlaceholder": "Masukkan nama penuh pelajar",
+        "dateOfBirth": "Tarikh Lahir",
+        "school": "Nama Sekolah",
+        "schoolPlaceholder": "Masukkan nama sekolah",
+        "level": "Tahap Pendidikan",
+        "levelPlaceholder": "Pilih tahap pendidikan"
+      },
+      "buttons": {
+        "submit": "Tambah Pelajar",
+        "submitting": "Sedang Menambah Pelajar...",
+        "cancel": "Batal"
+      },
+      "success": "Pelajar berjaya ditambah!",
+      "errors": {
+        "nameRequired": "Nama pelajar diperlukan",
+        "schoolRequired": "Nama sekolah diperlukan",
+        "levelRequired": "Tahap pendidikan diperlukan"
+      }
+    },
+    "editStudent": {
+      "title": "Edit Pelajar",
+      "subtitle": "Kemaskini maklumat pelajar",
+      "buttons": {
+        "submit": "Simpan Perubahan",
+        "submitting": "Sedang Menyimpan...",
+        "cancel": "Batal"
+      },
+      "success": "Pelajar berjaya dikemaskini!"
+    }
+  },
   "levels": {
     "darjah1": "Darjah 1",
     "darjah2": "Darjah 2", 
@@ -132,6 +224,14 @@
     "back": "Kembali",
     "next": "Seterusnya",
     "previous": "Sebelumnya",
-    "finish": "Selesai"
+    "finish": "Selesai",
+    "submit": "Hantar",
+    "retry": "Cuba Lagi",
+    "name": "Nama",
+    "email": "E-mel",
+    "password": "Kata Laluan",
+    "confirmPassword": "Sahkan Kata Laluan",
+    "required": "Diperlukan",
+    "optional": "Pilihan"
   }
 }

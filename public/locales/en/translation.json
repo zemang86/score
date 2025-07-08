@@ -46,6 +46,62 @@
     "copyright": "© 2025 Edventure+. All rights reserved.",
     "tagline": "Where Learning Becomes Adventure"
   },
+  "auth": {
+    "backToHome": "Back to Home",
+    "branding": {
+      "tagline": "Where Learning Becomes Adventure!",
+      "description": "Transform exam practice into an engaging learning adventure for Malaysian students.",
+      "gamifiedTitle": "Gamified Learning",
+      "gamifiedDesc": "Earn XP, unlock badges, and level up your learning journey!",
+      "trackTitle": "Track Progress", 
+      "trackDesc": "Watch your skills grow and celebrate every achievement!",
+      "familyTitle": "Family Dashboard",
+      "familyDesc": "Parents and kids learning together as a team!",
+      "freeAccess": "FREE Premium Access during launch period!"
+    },
+    "login": {
+      "title": "Welcome Back!",
+      "subtitle": "Ready for another learning adventure?",
+      "emailPlaceholder": "Enter your email address",
+      "passwordPlaceholder": "Enter your password",
+      "submitButton": "Let's Go!",
+      "submitLoading": "Signing In...",
+      "forgotPassword": "Forgot your password?",
+      "noAccount": "New to Edventure+?",
+      "signUpLink": "Join the adventure here!"
+    },
+    "signup": {
+      "title": "Join Edventure+!",
+      "subtitle": "Create your family's learning adventure account",
+      "fullNamePlaceholder": "Enter your full name",
+      "emailPlaceholder": "Enter your email address", 
+      "passwordPlaceholder": "Create a strong password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "submitButton": "Create My Account!",
+      "submitLoading": "Creating Account...",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in here!",
+      "success": {
+        "title": "Account Created!",
+        "message": "Welcome to Edventure+! You're now part of our learning family. You're on the Free plan with limited features.",
+        "startFree": "Start with Free Plan",
+        "upgrade": "Upgrade to Premium"
+      },
+      "errors": {
+        "passwordMismatch": "Passwords do not match",
+        "passwordLength": "Password must be at least 6 characters long"
+      }
+    },
+    "forgot": {
+      "title": "Reset Password",
+      "subtitle": "Enter your email to receive reset instructions",
+      "emailPlaceholder": "Enter your email address",
+      "submitButton": "Send Reset Link",
+      "submitLoading": "Sending...",
+      "backToLogin": "Back to Login",
+      "success": "Password reset link sent to your email!"
+    }
+  },
   "dashboard": {
     "welcome": "Welcome, {{name}}!",
     "welcomeDefault": "Welcome, Parent!",
@@ -102,6 +158,42 @@
       "retry": "Retry"
     }
   },
+  "modals": {
+    "addStudent": {
+      "title": "Add New Student",
+      "subtitle": "Add a child to your family learning adventure",
+      "form": {
+        "name": "Student Name",
+        "namePlaceholder": "Enter student's full name",
+        "dateOfBirth": "Date of Birth",
+        "school": "School Name",
+        "schoolPlaceholder": "Enter school name",
+        "level": "Education Level",
+        "levelPlaceholder": "Select education level"
+      },
+      "buttons": {
+        "submit": "Add Student",
+        "submitting": "Adding Student...",
+        "cancel": "Cancel"
+      },
+      "success": "Student added successfully!",
+      "errors": {
+        "nameRequired": "Student name is required",
+        "schoolRequired": "School name is required",
+        "levelRequired": "Education level is required"
+      }
+    },
+    "editStudent": {
+      "title": "Edit Student",
+      "subtitle": "Update student information",
+      "buttons": {
+        "submit": "Save Changes",
+        "submitting": "Saving...",
+        "cancel": "Cancel"
+      },
+      "success": "Student updated successfully!"
+    }
+  },
   "levels": {
     "darjah1": "Darjah 1",
     "darjah2": "Darjah 2", 
@@ -132,6 +224,14 @@
     "back": "Back",
     "next": "Next",
     "previous": "Previous",
-    "finish": "Finish"
+    "finish": "Finish",
+    "submit": "Submit",
+    "retry": "Retry",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "required": "Required",
+    "optional": "Optional"
   }
 }

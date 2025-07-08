@@ -6,12 +6,14 @@ import { Star, Trophy, Users, Sparkles, Heart, Zap, Rocket, Brain, Globe, ArrowL
 import { EdventureLogo } from '../ui/EdventureLogo'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/Button'
+import { useTranslation } from 'react-i18next'
 
 type AuthMode = 'login' | 'signup' | 'forgot'
 
 export function AuthPage() {
   const [mode, setMode] = useState<AuthMode>('login')
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const handleBackToHome = () => {
     console.log('🏠 Navigating back to home...')
@@ -70,9 +72,9 @@ export function AuthPage() {
                 <EdventureLogo size="xl" className="text-white" />
               </div>
               <div className="bg-white/5 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
-                <p className="text-3xl font-bold mb-3 text-indigo-200">Where Learning Becomes Adventure!</p>
+                <p className="text-3xl font-bold mb-3 text-indigo-200">{t('auth.branding.tagline')}</p>
                 <p className="text-indigo-100 text-xl leading-relaxed">
-                  Transform exam practice into an engaging learning adventure for Malaysian students.
+                  {t('auth.branding.description')}
                 </p>
               </div>
             </div>
@@ -83,8 +85,8 @@ export function AuthPage() {
                   <Star className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xl text-indigo-200">Gamified Learning</h3>
-                  <p className="text-indigo-100">Earn XP, unlock badges, and level up your learning journey!</p>
+                  <h3 className="font-bold text-xl text-indigo-200">{t('auth.branding.gamifiedTitle')}</h3>
+                  <p className="text-indigo-100">{t('auth.branding.gamifiedDesc')}</p>
                 </div>
               </div>
 
@@ -93,8 +95,8 @@ export function AuthPage() {
                   <Trophy className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xl text-indigo-200">Track Progress</h3>
-                  <p className="text-indigo-100">Watch your skills grow and celebrate every achievement!</p>
+                  <h3 className="font-bold text-xl text-indigo-200">{t('auth.branding.trackTitle')}</h3>
+                  <p className="text-indigo-100">{t('auth.branding.trackDesc')}</p>
                 </div>
               </div>
 
@@ -103,15 +105,15 @@ export function AuthPage() {
                   <Users className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xl text-indigo-200">Family Dashboard</h3>
-                  <p className="text-indigo-100">Parents and kids learning together as a team!</p>
+                  <h3 className="font-bold text-xl text-indigo-200">{t('auth.branding.familyTitle')}</h3>
+                  <p className="text-indigo-100">{t('auth.branding.familyDesc')}</p>
                 </div>
               </div>
             </div>
 
             <div className="mt-8 p-4 bg-emerald-500/20 border-2 border-emerald-400/30 rounded-2xl backdrop-blur-lg">
               <p className="text-emerald-200 text-center font-medium">
-                <strong>FREE Premium Access</strong> during launch period!
+                {t('auth.branding.freeAccess')}
               </p>
             </div>
           </div>
@@ -135,7 +137,7 @@ export function AuthPage() {
                 icon={<ArrowLeft className="w-4 h-4" />}
                 className="w-full mb-6 border-indigo-300 text-indigo-600 hover:bg-indigo-50"
               >
-                Back to Home
+                {t('auth.backToHome')}
               </Button>
 
               {renderForm()}
