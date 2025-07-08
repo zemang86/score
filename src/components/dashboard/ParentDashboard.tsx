@@ -19,7 +19,7 @@ import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } fro
 import { canAddStudent } from '../../utils/accessControl'
 
 export function ParentDashboard() {
-  const { user, profile, subscriptionPlan, dailyExamLimit, isBetaTester } = useAuth()
+  const { user, profile, subscriptionPlan, dailyExamLimit, isBetaTester, effectiveAccess } = useAuth()
   const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
@@ -42,8 +42,8 @@ export function ParentDashboard() {
   })
   const [totalQuestions, setTotalQuestions] = useState<number>(0)
 
-  // Define isPremium based on subscriptionPlan
-  const isPremium = subscriptionPlan === 'premium'
+  // Define isPremium based on effective access (includes beta testers)
+  const isPremium = effectiveAccess?.hasUnlimitedAccess || subscriptionPlan === 'premium'
 
   useEffect(() => {
     if (user) {
@@ -366,12 +366,17 @@ export function ParentDashboard() {
                 <div className="text-center sm:text-left">
                   <h1 className="text-xl sm:text-2xl font-bold text-slate-800 mb-0.5">
                     Welcome, {profile?.full_name || 'Parent'}!
-                    {subscriptionPlan === 'premium' && (
+                    {isBetaTester ? (
+                      <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
+                        <Zap className="w-3 h-3 mr-1" />
+                        <span>Beta Tester</span>
+                      </span>
+                    ) : subscriptionPlan === 'premium' ? (
                       <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
                         <Crown className="w-3 h-3 mr-1" />
                         <span className="cursor-pointer" onClick={() => setShowSubscriptionModal(true)}>Premium</span>
                       </span>
-                    )}
+                    ) : null}
                   </h1>
                   <p className="text-sm sm:text-base text-slate-600 mb-1">
                     Ready to level up your kids' learning adventure?
@@ -396,7 +401,7 @@ export function ParentDashboard() {
                 >
                   Reports
                 </Button>
-                {subscriptionPlan !== 'premium' && (
+                {!isPremium && (
                   <Button
                     onClick={() => setShowUpgradeModal(true)}
                     variant="warning"
@@ -414,6 +419,25 @@ export function ParentDashboard() {
         
         {/* Subscription Banner */}
         <SubscriptionBanner className="mb-4 sm:mb-6" />
+
+        {/* Temporary Debug Panel for Beta Tester */}
+        {isBetaTester && (
+          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
+            <h3 className="text-purple-800 font-semibold mb-2">🧪 Beta Tester Debug Info</h3>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div>📋 Plan: <strong>{subscriptionPlan}</strong></div>
+                <div>👥 Max Students: <strong>{maxStudents}</strong></div>
+                <div>📚 Daily Limit: <strong>{dailyExamLimit}</strong></div>
+              </div>
+              <div>
+                <div>🧪 Beta Tester: <strong>{isBetaTester ? 'YES' : 'NO'}</strong></div>
+                <div>♾️ Unlimited Access: <strong>{effectiveAccess?.hasUnlimitedAccess ? 'YES' : 'NO'}</strong></div>
+                <div>🎯 Premium UI: <strong>{isPremium ? 'YES' : 'NO'}</strong></div>
+              </div>
+            </div>
+          </div>
+        )}
 
 
 
@@ -684,7 +708,7 @@ export function ParentDashboard() {
           isOpen={showProgressModal}
           onClose={handleCloseProgressModal}
           student={selectedStudent}
-          isPremium={subscriptionPlan === 'premium'}
+                        isPremium={isPremium}
         />
       )}
       

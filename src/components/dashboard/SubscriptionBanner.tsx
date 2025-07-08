@@ -9,13 +9,13 @@ interface SubscriptionBannerProps {
 }
 
 export function SubscriptionBanner({ className = '' }: SubscriptionBannerProps) {
-  const { subscriptionPlan, maxStudents, dailyExamLimit } = useAuth()
+  const { subscriptionPlan, maxStudents, dailyExamLimit, isBetaTester, effectiveAccess } = useAuth()
   const [dismissed, setDismissed] = useState(false)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   
-  const isPremium = subscriptionPlan === 'premium'
+  const isPremium = effectiveAccess?.hasUnlimitedAccess || subscriptionPlan === 'premium'
 
-  if (dismissed || isPremium) return null
+  if (dismissed || isPremium || isBetaTester) return null
 
   return (
     <>

@@ -95,14 +95,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('📝 AuthContext: Setting profile state')
         setProfile(userProfile)
         setSubscriptionPlan(userProfile.subscription_plan)
-        setMaxStudents(userProfile.max_students)
-        setDailyExamLimit(userProfile.daily_exam_limit)
         setIsAdmin(userProfile.isAdmin)
         setIsBetaTester(userProfile.beta_tester || false)
         
-        // Calculate effective access
+        // Calculate effective access first
         const access = getEffectiveAccess(userProfile)
         setEffectiveAccess(access)
+        
+        // Use effective access values instead of raw database values
+        setMaxStudents(access.maxStudents)
+        setDailyExamLimit(access.dailyExamLimit)
       } else {
         console.log('⚠️ AuthContext: No profile found, keeping defaults')
         setProfile(null)

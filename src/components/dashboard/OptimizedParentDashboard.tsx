@@ -127,7 +127,7 @@ const PlanCard = React.memo(({
 PlanCard.displayName = 'PlanCard'
 
 export function OptimizedParentDashboard() {
-  const { user, profile, subscriptionPlan, dailyExamLimit, isBetaTester } = useAuth()
+  const { user, profile, subscriptionPlan, dailyExamLimit, isBetaTester, effectiveAccess } = useAuth()
   const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
@@ -143,7 +143,7 @@ export function OptimizedParentDashboard() {
   })
 
   // Memoized computed values
-  const isPremium = useMemo(() => subscriptionPlan === 'premium', [subscriptionPlan])
+  const isPremium = useMemo(() => effectiveAccess?.hasUnlimitedAccess || subscriptionPlan === 'premium', [effectiveAccess, subscriptionPlan])
   const canAddMoreStudents = useMemo(() => 
     profile ? canAddStudent(profile, students.length) : false, 
     [profile, students.length]
