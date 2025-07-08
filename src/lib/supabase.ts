@@ -116,12 +116,23 @@ export interface User {
   subscription_plan: 'free' | 'premium'
   max_students: number
   daily_exam_limit: number
+  beta_tester: boolean
   created_at: string
   updated_at: string
 }
 
 export interface UserWithAdminStatus extends User {
   isAdmin: boolean
+}
+
+// Add new types for access levels
+export type AccessLevel = 'free' | 'premium' | 'beta_tester' | 'admin'
+
+export interface EffectiveAccess {
+  level: AccessLevel
+  maxStudents: number
+  dailyExamLimit: number
+  hasUnlimitedAccess: boolean
 }
 
 export interface Student {
@@ -421,6 +432,84 @@ export const handleSupabaseError = (error: any, operation: string) => {
   }
   
   return error.message || `${operation} failed. Please try again.`
+}
+
+// Add helper functions for access control
+export const getUserAccessLevel = (user: UserWithAdminStatus): AccessLevel => {
+  if (user.isAdmin) return 'admin'
+  if (user.beta_tester) return 'beta_tester'
+  return user.subscription_plan
+}
+
+export const getEffectiveAccess = (user: UserWithAdminStatus): EffectiveAccess => {
+  if (user.beta_tester) {
+    return {
+      level: 'beta_tester',
+      maxStudents: 999999,
+      dailyExamLimit: 999,
+      hasUnlimitedAccess: true
+    }
+  }
+  
+  return {
+    level: user.subscription_plan,
+    maxStudents: user.max_students,
+    dailyExamLimit: user.daily_exam_limit,
+    hasUnlimitedAccess: user.subscription_plan === 'premium'
+  }
+}
+
+// Add beta tester management functions
+export const makeBetaTester = async (userId: string): Promise<{success: boolean, error?: string}> => {
+  console.log('🧪 makeBetaTester: Making user beta tester:', userId)
+  
+  if (!userId) {
+    return { success: false, error: 'No userId provided' }
+  }
+  
+  try {
+    const { error } = await supabase
+      .from('users')
+      .update({ beta_tester: true })
+      .eq('id', userId)
+    
+    if (error) {
+      console.error('❌ makeBetaTester: Error:', error)
+      return { success: false, error: error.message }
+    }
+    
+    console.log('✅ makeBetaTester: User successfully made beta tester')
+    return { success: true }
+  } catch (error: any) {
+    console.error('❌ makeBetaTester: Unexpected error:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+export const removeBetaTester = async (userId: string): Promise<{success: boolean, error?: string}> => {
+  console.log('🧪 removeBetaTester: Removing beta tester status from user:', userId)
+  
+  if (!userId) {
+    return { success: false, error: 'No userId provided' }
+  }
+  
+  try {
+    const { error } = await supabase
+      .from('users')
+      .update({ beta_tester: false })
+      .eq('id', userId)
+    
+    if (error) {
+      console.error('❌ removeBetaTester: Error:', error)
+      return { success: false, error: error.message }
+    }
+    
+    console.log('✅ removeBetaTester: Beta tester status successfully removed')
+    return { success: true }
+  } catch (error: any) {
+    console.error('❌ removeBetaTester: Unexpected error:', error)
+    return { success: false, error: error.message }
+  }
 }
 
 // Initialize connection test

@@ -17,6 +17,7 @@ interface UserFormData {
   subscription_plan: 'free' | 'premium'
   max_students: number
   daily_exam_limit: number
+  beta_tester: boolean
 }
 
 export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUserModalProps) {
@@ -26,6 +27,7 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
     subscription_plan: 'free',
     max_students: 0,
     daily_exam_limit: 0,
+    beta_tester: false,
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -68,6 +70,7 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
         subscription_plan: userData.subscription_plan || 'free',
         max_students: userData.max_students || 0,
         daily_exam_limit: userData.daily_exam_limit || 0,
+        beta_tester: userData.beta_tester || false,
       })
     } catch (err: any) {
       setError(err.message || 'Failed to fetch user data')
@@ -123,7 +126,8 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
           full_name: formData.full_name,
           subscription_plan: formData.subscription_plan,
           max_students: formData.max_students,
-          daily_exam_limit: formData.daily_exam_limit
+          daily_exam_limit: formData.daily_exam_limit,
+          beta_tester: formData.beta_tester
         })
         .eq('id', userId)
 
@@ -235,6 +239,47 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
                 {formData.subscription_plan === 'free' 
                   ? 'Free plan: 1 kid, 3 exams/day'
                   : 'Premium plan: 1 kid included + paid additional kids, unlimited exams'}
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Beta Tester Access
+              </label>
+              <div className="flex items-center space-x-3">
+                <button
+                  type="button"
+                  onClick={() => handleInputChange('beta_tester', !formData.beta_tester)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    formData.beta_tester ? 'bg-purple-600' : 'bg-gray-200'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      formData.beta_tester ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+                <span className={`text-sm font-medium ${formData.beta_tester ? 'text-purple-700' : 'text-gray-700'}`}>
+                  {formData.beta_tester ? 'Beta Tester Enabled' : 'Regular User'}
+                </span>
+              </div>
+              {formData.beta_tester && (
+                <div className="mt-2 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                  <div className="flex items-center">
+                    <Zap className="w-4 h-4 text-purple-600 mr-2" />
+                    <span className="text-sm font-medium text-purple-700">Beta Tester Benefits</span>
+                  </div>
+                  <ul className="mt-1 text-xs text-purple-600 space-y-1">
+                    <li>• Unlimited students</li>
+                    <li>• Unlimited daily exams</li>
+                    <li>• Access to all premium features</li>
+                    <li>• Early access to new features</li>
+                  </ul>
+                </div>
+              )}
+              <p className="text-xs text-gray-500 mt-1">
+                Beta testers get unlimited access to all features regardless of subscription plan.
               </p>
             </div>
 
