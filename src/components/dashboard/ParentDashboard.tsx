@@ -17,9 +17,11 @@ import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart
 import { Button } from '../ui/Button'
 import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } from '../ui/SkeletonLoader'
 import { canAddStudent } from '../../utils/accessControl'
+import { useTranslation } from 'react-i18next'
 
 export function ParentDashboard() {
   const { user, profile, subscriptionPlan, maxStudents, dailyExamLimit, isBetaTester, effectiveAccess } = useAuth()
+  const { t } = useTranslation()
   const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
@@ -168,13 +170,13 @@ export function ParentDashboard() {
       // Check if it's a network error
       if (err.message === 'Failed to fetch' || err.name === 'TypeError') {
         setConnectionError(true)
-        setError('Network connection failed. Please check your internet connection and ensure Supabase is accessible.')
+        setError(t('dashboard.errors.connectionFailed'))
       } else if (err.code === 'PGRST301') {
-        setError('Database connection issue. Please try refreshing the page.')
+        setError(t('dashboard.errors.databaseConnection'))
       } else if (err.code === 'PGRST116') {
-        setError('No data found. This might be a permissions issue.')
+        setError(t('dashboard.errors.noDataFound'))
       } else {
-        setError(err.message || 'Failed to load students. Please try again.')
+        setError(err.message || t('dashboard.errors.loadFailed'))
       }
     } finally {
       setLoading(false)
@@ -322,9 +324,9 @@ export function ParentDashboard() {
 
   const getPlanDisplayName = (plan: string | null) => {
     switch (plan) {
-      case 'free': return 'Free Plan'
-      case 'premium': return 'Premium Plan'
-      default: return 'Unknown Plan'
+      case 'free': return t('dashboard.subscription.freePlan')
+      case 'premium': return t('dashboard.subscription.premiumPlan')
+      default: return t('dashboard.subscription.freePlan')
     }
   }
 
@@ -365,21 +367,21 @@ export function ParentDashboard() {
                 </div>
                 <div className="text-center sm:text-left">
                   <h1 className="text-xl sm:text-2xl font-bold text-slate-800 mb-0.5">
-                    Welcome, {profile?.full_name || 'Parent'}!
+                    {t('dashboard.welcome', { name: profile?.full_name || t('dashboard.welcomeDefault') })}
                     {isBetaTester ? (
                       <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
                         <Zap className="w-3 h-3 mr-1" />
-                        <span>Beta Tester</span>
+                        <span>{t('dashboard.subscription.betaTester')}</span>
                       </span>
                     ) : subscriptionPlan === 'premium' ? (
                       <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
                         <Crown className="w-3 h-3 mr-1" />
-                        <span className="cursor-pointer" onClick={() => setShowSubscriptionModal(true)}>Premium</span>
+                        <span className="cursor-pointer" onClick={() => setShowSubscriptionModal(true)}>{t('dashboard.subscription.premium')}</span>
                       </span>
                     ) : null}
                   </h1>
                   <p className="text-sm sm:text-base text-slate-600 mb-1">
-                    Ready to level up your kids' learning adventure?
+                    {t('dashboard.subtitle')}
                   </p>
                 </div>
               </div>
@@ -390,7 +392,7 @@ export function ParentDashboard() {
                   size="sm"
                   icon={<Trophy className="w-4 h-4" />}
                 >
-                  Leaderboard
+                  {t('dashboard.buttons.leaderboard')}
                 </Button>
                 <Button
                   onClick={() => setShowFamilyReports(true)}
@@ -399,7 +401,7 @@ export function ParentDashboard() {
                   icon={<TrendingUp className="w-4 h-4" />}
                   className="border-blue-300 text-blue-700 hover:bg-blue-50"
                 >
-                  Reports
+                  {t('dashboard.buttons.reports')}
                 </Button>
                 {!isPremium && (
                   <Button
@@ -409,7 +411,7 @@ export function ParentDashboard() {
                     icon={<Crown className="w-4 h-4" />}
                     className="bg-gradient-to-r from-amber-500 to-orange-500"
                   >
-                    Upgrade
+                    {t('dashboard.buttons.upgrade')}
                   </Button>
                 )}
               </div>
@@ -435,15 +437,15 @@ export function ParentDashboard() {
                     <Users className="w-4 h-4 sm:w-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-slate-600">Kids</p>
+                    <p className="text-xs font-medium text-slate-600">{t('dashboard.stats.kids')}</p>
                     <div className="flex items-baseline">
                       <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{students.length}</p>
                       {isBetaTester ? (
-                        <p className="text-xs text-purple-500">∞ beta</p>
+                        <p className="text-xs text-purple-500">{t('dashboard.stats.beta')}</p>
                       ) : subscriptionPlan === 'free' ? (
-                        <p className="text-xs text-slate-500">of 1</p>
+                        <p className="text-xs text-slate-500">{t('dashboard.stats.of')} 1</p>
                       ) : (
-                        <p className="text-xs text-slate-500">∞</p>
+                        <p className="text-xs text-slate-500">{t('dashboard.stats.unlimited')}</p>
                       )}
                     </div>
                   </div>
@@ -456,11 +458,11 @@ export function ParentDashboard() {
                   <BookOpen className="w-4 h-4 sm:w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-slate-600">Exams Done</p>
+                  <p className="text-xs font-medium text-slate-600">{t('dashboard.stats.examsDone')}</p>
                   <div className="flex items-baseline">
                     <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{dashboardStats.totalExams}</p>
                     <p className="text-xs text-slate-500">
-                      {dailyExamLimit === 999 ? '∞/day' : `${dailyExamLimit}/day`}
+                      {dailyExamLimit === 999 ? `${t('dashboard.stats.unlimited')}${t('dashboard.stats.perDay')}` : `${dailyExamLimit}${t('dashboard.stats.perDay')}`}
                     </p>
                   </div>
                 </div>
@@ -473,10 +475,10 @@ export function ParentDashboard() {
                   <Trophy className="w-4 h-4 sm:w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-slate-600">Badges</p>
+                  <p className="text-xs font-medium text-slate-600">{t('dashboard.stats.badges')}</p>
                   <div className="flex items-baseline">
                     <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{dashboardStats.totalBadges}</p>
-                    <p className="text-xs text-slate-500">earned</p>
+                    <p className="text-xs text-slate-500">{t('dashboard.stats.earned')}</p>
                   </div>
                 </div>
               </div>
@@ -488,12 +490,12 @@ export function ParentDashboard() {
                   <TrendingUp className="w-4 h-4 sm:w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-slate-600">Avg Score</p>
+                  <p className="text-xs font-medium text-slate-600">{t('dashboard.stats.avgScore')}</p>
                   <div className="flex items-baseline">
                     <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">
                       {dashboardStats.averageScore > 0 ? `${dashboardStats.averageScore}%` : '-'}
                     </p>
-                    <p className="text-xs text-slate-500">family</p>
+                    <p className="text-xs text-slate-500">{t('dashboard.stats.family')}</p>
                   </div>
                 </div>
               </div>

@@ -45,5 +45,93 @@
   "footer": {
     "copyright": "© 2025 Edventure+. All rights reserved.",
     "tagline": "Where Learning Becomes Adventure"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}!",
+    "welcomeDefault": "Welcome, Parent!",
+    "subtitle": "Ready to level up your kids' learning adventure?",
+    "stats": {
+      "kids": "Kids",
+      "examsDone": "Exams Done",
+      "badges": "Badges",
+      "avgScore": "Avg Score",
+      "totalXP": "Total XP",
+      "questions": "Questions",
+      "earned": "earned",
+      "family": "family",
+      "unlimited": "∞",
+      "beta": "∞ beta",
+      "perDay": "/day",
+      "of": "of"
+    },
+    "buttons": {
+      "leaderboard": "Leaderboard",
+      "reports": "Reports",
+      "upgrade": "Upgrade",
+      "startExam": "Start Exam",
+      "progress": "Progress",
+      "edit": "Edit",
+      "addStudent": "Add Student"
+    },
+    "student": {
+      "level": "Level",
+      "rookie": "Rookie Explorer",
+      "explorer": "Learning Explorer", 
+      "adventurer": "Knowledge Adventurer",
+      "scholar": "Brilliant Scholar",
+      "master": "Learning Master",
+      "legend": "Legend",
+      "next": "Next",
+      "totalXP": "XP"
+    },
+    "subscription": {
+      "freePlan": "Free Plan",
+      "premiumPlan": "Premium Plan",
+      "betaTester": "Beta Tester",
+      "premium": "Premium"
+    },
+    "loading": {
+      "students": "Loading students...",
+      "dashboard": "Loading dashboard..."
+    },
+    "errors": {
+      "connectionFailed": "Network connection failed. Please check your internet connection and ensure Supabase is accessible.",
+      "databaseConnection": "Database connection issue. Please try refreshing the page.",
+      "noDataFound": "No data found. This might be a permissions issue.",
+      "loadFailed": "Failed to load students. Please try again.",
+      "retry": "Retry"
+    }
+  },
+  "levels": {
+    "darjah1": "Darjah 1",
+    "darjah2": "Darjah 2", 
+    "darjah3": "Darjah 3",
+    "darjah4": "Darjah 4",
+    "darjah5": "Darjah 5",
+    "darjah6": "Darjah 6",
+    "tingkatan1": "Tingkatan 1",
+    "tingkatan2": "Tingkatan 2",
+    "tingkatan3": "Tingkatan 3", 
+    "tingkatan4": "Tingkatan 4",
+    "tingkatan5": "Tingkatan 5"
+  },
+  "common": {
+    "signOut": "Sign Out",
+    "dashboard": "Dashboard",
+    "admin": "Admin",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish"
   }
 }

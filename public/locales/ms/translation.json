@@ -45,5 +45,93 @@
   "footer": {
     "copyright": "© 2025 Edventure+. Hak cipta terpelihara.",
     "tagline": "Di Mana Pembelajaran Menjadi Petualangan"
+  },
+  "dashboard": {
+    "welcome": "Selamat datang, {{name}}!",
+    "welcomeDefault": "Selamat datang, Ibu Bapa!",
+    "subtitle": "Bersedia untuk meningkatkan petualangan pembelajaran anak-anak?",
+    "stats": {
+      "kids": "Anak-anak",
+      "examsDone": "Peperiksaan Selesai",
+      "badges": "Lencana",
+      "avgScore": "Purata Markah",
+      "totalXP": "Jumlah XP",
+      "questions": "Soalan",
+      "earned": "diperoleh",
+      "family": "keluarga",
+      "unlimited": "∞",
+      "beta": "∞ beta",
+      "perDay": "/hari",
+      "of": "daripada"
+    },
+    "buttons": {
+      "leaderboard": "Papan Pendahulu",
+      "reports": "Laporan",
+      "upgrade": "Naik Taraf",
+      "startExam": "Mula Peperiksaan",
+      "progress": "Kemajuan",
+      "edit": "Edit",
+      "addStudent": "Tambah Pelajar"
+    },
+    "student": {
+      "level": "Tahap",
+      "rookie": "Peneroka Baru",
+      "explorer": "Peneroka Pembelajaran", 
+      "adventurer": "Pengembara Ilmu",
+      "scholar": "Sarjana Bijak",
+      "master": "Guru Pembelajaran",
+      "legend": "Legenda",
+      "next": "Seterusnya",
+      "totalXP": "XP"
+    },
+    "subscription": {
+      "freePlan": "Pelan Percuma",
+      "premiumPlan": "Pelan Premium",
+      "betaTester": "Penguji Beta",
+      "premium": "Premium"
+    },
+    "loading": {
+      "students": "Memuatkan pelajar...",
+      "dashboard": "Memuatkan papan pemuka..."
+    },
+    "errors": {
+      "connectionFailed": "Sambungan rangkaian gagal. Sila semak sambungan internet anda dan pastikan Supabase boleh diakses.",
+      "databaseConnection": "Masalah sambungan pangkalan data. Sila cuba muat semula halaman.",
+      "noDataFound": "Tiada data ditemui. Ini mungkin masalah kebenaran.",
+      "loadFailed": "Gagal memuatkan pelajar. Sila cuba lagi.",
+      "retry": "Cuba Lagi"
+    }
+  },
+  "levels": {
+    "darjah1": "Darjah 1",
+    "darjah2": "Darjah 2", 
+    "darjah3": "Darjah 3",
+    "darjah4": "Darjah 4",
+    "darjah5": "Darjah 5",
+    "darjah6": "Darjah 6",
+    "tingkatan1": "Tingkatan 1",
+    "tingkatan2": "Tingkatan 2",
+    "tingkatan3": "Tingkatan 3", 
+    "tingkatan4": "Tingkatan 4",
+    "tingkatan5": "Tingkatan 5"
+  },
+  "common": {
+    "signOut": "Log Keluar",
+    "dashboard": "Papan Pemuka",
+    "admin": "Pentadbir",
+    "close": "Tutup",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete": "Padam",
+    "edit": "Edit",
+    "add": "Tambah",
+    "loading": "Memuatkan...",
+    "error": "Ralat",
+    "success": "Berjaya",
+    "confirm": "Sahkan",
+    "back": "Kembali",
+    "next": "Seterusnya",
+    "previous": "Sebelumnya",
+    "finish": "Selesai"
   }
 }
