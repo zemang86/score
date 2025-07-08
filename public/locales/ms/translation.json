@@ -118,7 +118,9 @@
       "unlimited": "∞",
       "beta": "∞ beta",
       "perDay": "/hari",
-      "of": "daripada"
+      "of": "daripada",
+      "points": "mata",
+      "available": "tersedia"
     },
     "buttons": {
       "leaderboard": "Papan Pendahulu",
@@ -127,7 +129,9 @@
       "startExam": "Mula Peperiksaan",
       "progress": "Kemajuan",
       "edit": "Edit",
-      "addStudent": "Tambah Pelajar"
+      "addStudent": "Tambah Pelajar",
+      "addKid": "Tambah Anak",
+      "retryConnection": "Cuba Sambungan Semula"
     },
     "student": {
       "level": "Tahap",
@@ -144,7 +148,13 @@
       "freePlan": "Pelan Percuma",
       "premiumPlan": "Pelan Premium",
       "betaTester": "Penguji Beta",
-      "premium": "Premium"
+      "premium": "Premium",
+      "upgradeToPremium": "Naik Taraf ke Premium",
+      "upgradeDescription": "Buka kunci peperiksaan tanpa had, anak-anak pelbagai, dan laporan lanjutan",
+      "upgradeNow": "Naik Taraf Sekarang",
+      "upgradeShort": "Naik Taraf",
+      "childOnly": "anak sahaja",
+      "examsPerDay": "peperiksaan/hari"
     },
     "loading": {
       "students": "Memuatkan pelajar...",
@@ -155,7 +165,23 @@
       "databaseConnection": "Masalah sambungan pangkalan data. Sila cuba muat semula halaman.",
       "noDataFound": "Tiada data ditemui. Ini mungkin masalah kebenaran.",
       "loadFailed": "Gagal memuatkan pelajar. Sila cuba lagi.",
-      "retry": "Cuba Lagi"
+      "retry": "Cuba Lagi",
+      "troubleshooting": "Langkah penyelesaian masalah:",
+      "checkInternet": "Semak sambungan internet anda",
+      "verifySupabase": "Sahkan konfigurasi Supabase dalam fail .env",
+      "ensureProject": "Pastikan projek Supabase anda aktif",
+      "tryRefresh": "Cuba muat semula halaman"
+    },
+    "children": {
+      "title": "Anak-anak Hebat Anda",
+      "unlimitedBeta": "tanpa had - beta",
+      "ofOne": "daripada 1",
+      "freeLimitMessage": "Pelan Percuma terhad kepada 1 anak sahaja. Naik taraf ke Premium untuk menambah lebih banyak anak.",
+      "noKidsTitle": "Belum ada anak ditambah!",
+      "noKidsDescription": "Mulakan dengan menambah anak pertama anda untuk memulakan petualangan pembelajaran yang epik!",
+      "freePlanLimit": "Anda boleh menambah 1 anak dengan pelan percuma anda!",
+      "premiumUnlimited": "Anda boleh menambah anak tanpa had dengan pelan premium anda!",
+      "addFirstKid": "Tambah Anak Pertama Anda!"
     }
   },
   "modals": {

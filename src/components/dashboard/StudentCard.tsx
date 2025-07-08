@@ -70,7 +70,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
     const isMilestone = milestones.includes(currentLevel)
     
     return { 
-      text: `Level ${currentLevel} - ${theme.name}`, 
+      text: `${t('dashboard.student.level')} ${currentLevel} - ${theme.name}`, 
       level: currentLevel,
       color: theme.color, 
       emoji: theme.emoji, 

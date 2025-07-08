@@ -118,7 +118,9 @@
       "unlimited": "∞",
       "beta": "∞ beta",
       "perDay": "/day",
-      "of": "of"
+      "of": "of",
+      "points": "points",
+      "available": "available"
     },
     "buttons": {
       "leaderboard": "Leaderboard",
@@ -127,7 +129,9 @@
       "startExam": "Start Exam",
       "progress": "Progress",
       "edit": "Edit",
-      "addStudent": "Add Student"
+      "addStudent": "Add Student",
+      "addKid": "Add Kid",
+      "retryConnection": "Retry Connection"
     },
     "student": {
       "level": "Level",
@@ -144,7 +148,13 @@
       "freePlan": "Free Plan",
       "premiumPlan": "Premium Plan",
       "betaTester": "Beta Tester",
-      "premium": "Premium"
+      "premium": "Premium",
+      "upgradeToPremium": "Upgrade to Premium",
+      "upgradeDescription": "Unlock unlimited exams, multiple children, and advanced reports",
+      "upgradeNow": "Upgrade Now",
+      "upgradeShort": "Upgrade",
+      "childOnly": "child only",
+      "examsPerDay": "exams/day"
     },
     "loading": {
       "students": "Loading students...",
@@ -155,7 +165,23 @@
       "databaseConnection": "Database connection issue. Please try refreshing the page.",
       "noDataFound": "No data found. This might be a permissions issue.",
       "loadFailed": "Failed to load students. Please try again.",
-      "retry": "Retry"
+      "retry": "Retry",
+      "troubleshooting": "Troubleshooting steps:",
+      "checkInternet": "Check your internet connection",
+      "verifySupabase": "Verify Supabase configuration in .env file",
+      "ensureProject": "Ensure your Supabase project is active",
+      "tryRefresh": "Try refreshing the page"
+    },
+    "children": {
+      "title": "Your Amazing Kids",
+      "unlimitedBeta": "unlimited - beta",
+      "ofOne": "of 1",
+      "freeLimitMessage": "Free plan is limited to 1 child. Upgrade to Premium to add more children.",
+      "noKidsTitle": "No kids added yet!",
+      "noKidsDescription": "Start by adding your first kid to begin their epic learning adventure!",
+      "freePlanLimit": "You can add 1 child with your free plan!",
+      "premiumUnlimited": "You can add unlimited children with your premium plan!",
+      "addFirstKid": "Add Your First Kid!"
     }
   },
   "modals": {

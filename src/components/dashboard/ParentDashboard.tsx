@@ -507,10 +507,10 @@ export function ParentDashboard() {
                   <Zap className="w-4 h-4 sm:w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-slate-600">Total XP</p>
+                  <p className="text-xs font-medium text-slate-600">{t('dashboard.stats.totalXP')}</p>
                   <div className="flex items-baseline">
                     <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{dashboardStats.totalXP}</p>
-                    <p className="text-xs text-slate-500">points</p>
+                    <p className="text-xs text-slate-500">{t('dashboard.stats.points')}</p>
                   </div>
                 </div>
               </div>
@@ -522,12 +522,12 @@ export function ParentDashboard() {
                   <BookOpen className="w-4 h-4 sm:w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-slate-600">Questions</p>
+                  <p className="text-xs font-medium text-slate-600">{t('dashboard.stats.questions')}</p>
                   <div className="flex items-baseline">
                     <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">
                       {totalQuestions >= 1000 ? `${Math.floor(totalQuestions / 1000)}k+` : totalQuestions}
                     </p>
-                    <p className="text-xs text-slate-500">available</p>
+                    <p className="text-xs text-slate-500">{t('dashboard.stats.available')}</p>
                   </div>
                 </div>
               </div>
@@ -546,7 +546,7 @@ export function ParentDashboard() {
                       <Users className="w-5 h-5 sm:w-6 text-white" />
                     </div>
                                                               <h2 className="text-base sm:text-lg font-bold text-slate-800">
-                      Your Amazing Kids ({students.length}{isBetaTester ? ' (unlimited - beta)' : subscriptionPlan === 'free' ? ' of 1' : ''})
+                      {t('dashboard.children.title')} ({students.length}{isBetaTester ? ` (${t('dashboard.children.unlimitedBeta')})` : subscriptionPlan === 'free' ? ` ${t('dashboard.children.ofOne')}` : ''})
                     </h2>
                   </div>
                   <Button 
@@ -557,13 +557,13 @@ export function ParentDashboard() {
                     icon={<Plus className="w-3.5 h-3.5" />}
                     className={`w-full sm:w-auto text-xs ${!canAddMoreStudents ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    Add Kid
+                    {t('dashboard.buttons.addKid')}
                   </Button>
                 </div>
                                   {!canAddMoreStudents && (
                     <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
                       <p className="text-amber-700 font-medium text-center text-xs">
-                        Free plan is limited to 1 child. Upgrade to Premium to add more children.
+                        {t('dashboard.children.freeLimitMessage')}
                       </p>
                     </div>
                   )}
@@ -579,13 +579,13 @@ export function ParentDashboard() {
                         {connectionError && (
                           <div className="space-y-2">
                             <p className="text-red-600 text-xs">
-                              Troubleshooting steps:
+                              {t('dashboard.errors.troubleshooting')}
                             </p>
                             <ul className="text-red-600 text-xs space-y-1 ml-4">
-                              <li>• Check your internet connection</li>
-                              <li>• Verify Supabase configuration in .env file</li>
-                              <li>• Ensure your Supabase project is active</li>
-                              <li>• Try refreshing the page</li>
+                              <li>• {t('dashboard.errors.checkInternet')}</li>
+                              <li>• {t('dashboard.errors.verifySupabase')}</li>
+                              <li>• {t('dashboard.errors.ensureProject')}</li>
+                              <li>• {t('dashboard.errors.tryRefresh')}</li>
                             </ul>
                             <Button
                               onClick={handleRetry}
@@ -593,7 +593,7 @@ export function ParentDashboard() {
                               size="sm"
                               className="mt-2 text-xs border-red-300 text-red-700 hover:bg-red-50"
                             >
-                              Retry Connection
+                              {t('dashboard.buttons.retryConnection')}
                             </Button>
                           </div>
                         )}
@@ -612,14 +612,14 @@ export function ParentDashboard() {
                     <div className="bg-indigo-100 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-3">
                       <Users className="w-8 h-8 text-indigo-500" />
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-indigo-600 mb-2">No kids added yet!</h3>
+                    <h3 className="text-lg sm:text-xl font-bold text-indigo-600 mb-2">{t('dashboard.children.noKidsTitle')}</h3>
                     <p className="text-slate-600 text-sm mb-3">
-                      Start by adding your first kid to begin their epic learning adventure!
+                      {t('dashboard.children.noKidsDescription')}
                     </p>
                                           <p className="text-indigo-500 mb-3 text-xs">
                         {subscriptionPlan === 'free' 
-                          ? 'You can add 1 child with your free plan!' 
-                          : 'You can add unlimited children with your premium plan!'}
+                          ? t('dashboard.children.freePlanLimit')
+                          : t('dashboard.children.premiumUnlimited')}
                       </p>
                     <Button 
                       onClick={() => setShowAddModal(true)}
@@ -628,7 +628,7 @@ export function ParentDashboard() {
                       icon={<Plus className="w-4 h-4" />}
                       className="w-full sm:w-auto"
                     >
-                      Add Your First Kid!
+                      {t('dashboard.children.addFirstKid')}
                     </Button>
                   </div>
                 ) : (
