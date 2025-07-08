@@ -7,11 +7,13 @@ import { checkShortAnswer } from '../../utils/answerChecker'
 import { BadgeEvaluator } from '../../utils/badgeEvaluator'
 import { useAuth } from '../../contexts/AuthContext'
 import { canTakeExam } from '../../utils/accessControl'
+import { canStudentTakeExam, getStudentRestrictionReason } from '../../utils/subscriptionEnforcement'
 
 interface ExamModalProps {
   isOpen: boolean
   onClose: () => void
   student: Student
+  allStudents: Student[] // NEW: All students for subscription enforcement
   onExamComplete: (score: number, totalQuestions: number) => void
 }
 
@@ -29,8 +31,8 @@ interface MatchingPair {
 type ExamMode = 'Easy' | 'Medium' | 'Full'
 type Subject = 'Bahasa Melayu' | 'English' | 'Mathematics' | 'Science' | 'History'
 
-export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModalProps) {
-  const { user, dailyExamLimit } = useAuth()
+export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplete }: ExamModalProps) {
+  const { user, dailyExamLimit, subscriptionPlan } = useAuth()
   
   // Initialize state from session storage if available
   const getInitialState = () => {
@@ -117,9 +119,17 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     }
   }
 
-  // Check if user can take another exam
+  // Check if user can take another exam (combines daily limit + subscription restrictions)
   const canUserTakeExam = () => {
     if (!user) return false
+    
+    // First check subscription restrictions (multi-student limits)
+    const isFreePlan = subscriptionPlan === 'free'
+    if (!canStudentTakeExam(student.id, allStudents, isFreePlan)) {
+      return false
+    }
+    
+    // Then check daily exam limits
     return canTakeExam(user, dailyExamCount)
   }
 
@@ -303,6 +313,13 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
     setCheckingLimits(true)
 
     try {
+      // Check subscription restrictions first
+      const isFreePlan = subscriptionPlan === 'free'
+      if (!canStudentTakeExam(student.id, allStudents, isFreePlan)) {
+        const restrictionReason = getStudentRestrictionReason(student.id, allStudents, isFreePlan)
+        throw new Error(restrictionReason || 'This student is not available for exams.')
+      }
+
       // Check daily exam limits before starting
       if (!canUserTakeExam()) {
         const remainingExams = Math.max(0, dailyExamLimit - dailyExamCount)
