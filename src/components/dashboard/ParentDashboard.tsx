@@ -635,6 +635,7 @@ export function ParentDashboard() {
                       <StudentCard
                         key={student.id}
                         student={student}
+                        allStudents={students}
                         onExamComplete={handleExamComplete}
                         onStudentUpdated={handleStudentUpdated}
                         onOpenExamModal={handleOpenExamModal}
@@ -673,6 +674,7 @@ export function ParentDashboard() {
           isOpen={showExamModal}
           onClose={handleCloseExamModal}
           student={selectedStudent}
+          allStudents={students}
           onExamComplete={handleExamComplete}
         />
       )}

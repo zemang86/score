@@ -471,6 +471,7 @@ export function OptimizedParentDashboard() {
                       <StudentCard
                         key={student.id}
                         student={student}
+                        allStudents={students}
                         onExamComplete={handleExamComplete}
                         onStudentUpdated={handleStudentUpdated}
                       />

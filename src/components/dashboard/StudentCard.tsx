@@ -1,11 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Student } from '../../lib/supabase'
-import { User, School, Star, Edit, Zap, Trophy, Sparkles, Heart } from 'lucide-react'
+import { User, School, Star, Edit, Zap, Trophy, Sparkles, Heart, Clock, Lock, Crown, AlertTriangle } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { calculateAgeInYearsAndMonths } from '../../utils/dateUtils'
+import { useAuth } from '../../contexts/AuthContext'
+import { supabase } from '../../lib/supabase'
+import { canTakeExam } from '../../utils/accessControl'
+import { getStudentDisplayStatus, canStudentTakeExam } from '../../utils/subscriptionEnforcement'
 
 interface StudentCardProps {
   student: Student
+  allStudents: Student[] // NEW: All students for subscription enforcement
   onEdit?: (student: Student) => void
   onDelete?: (student: Student) => void
   onExamComplete?: () => void
@@ -15,7 +20,63 @@ interface StudentCardProps {
   onOpenProgressModal?: (student: Student) => void
 }
 
-export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStudentUpdated, onOpenExamModal, onOpenEditModal, onOpenProgressModal }: StudentCardProps) {
+export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComplete, onStudentUpdated, onOpenExamModal, onOpenEditModal, onOpenProgressModal }: StudentCardProps) {
+  const { user, dailyExamLimit, subscriptionPlan } = useAuth()
+  const [dailyExamCount, setDailyExamCount] = useState<number>(0)
+  const [loadingExamCount, setLoadingExamCount] = useState(false)
+
+  // Get subscription enforcement status
+  const isFreePlan = subscriptionPlan === 'free'
+  const studentStatus = getStudentDisplayStatus(student.id, allStudents, isFreePlan)
+
+  // Fetch daily exam count when component mounts
+  useEffect(() => {
+    if (student?.id) {
+      fetchDailyExamCount()
+    }
+  }, [student?.id])
+
+  // Function to fetch today's exam count for this student
+  const fetchDailyExamCount = async () => {
+    setLoadingExamCount(true)
+    try {
+      const { data, error } = await supabase.rpc('get_daily_exam_count', {
+        student_id: student.id
+      })
+      
+      if (error) {
+        console.error('Error fetching daily exam count:', error)
+        setDailyExamCount(0) // Default to 0 if error
+      } else {
+        setDailyExamCount(data || 0)
+      }
+    } catch (err) {
+      console.error('Failed to fetch daily exam count:', err)
+      setDailyExamCount(0)
+    } finally {
+      setLoadingExamCount(false)
+    }
+  }
+
+  // Check if user can take another exam (combines daily limit + subscription restrictions)
+  const canUserTakeExam = () => {
+    if (!user) return false
+    
+    // First check subscription restrictions (multi-student limits)
+    if (!studentStatus.canTakeExams) {
+      return false
+    }
+    
+    // Then check daily exam limits
+    return canTakeExam(user, dailyExamCount)
+  }
+
+  // Handle exam button click with all limit checking
+  const handleStartExam = () => {
+    if (canUserTakeExam()) {
+      onOpenExamModal?.(student)
+    }
+  }
 
   const getAgeDisplay = (dateOfBirth: string) => {
     return calculateAgeInYearsAndMonths(dateOfBirth)
@@ -82,7 +143,31 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
 
   return (
     <>
-      <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-4 border-2 border-indigo-200 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.01] hover:border-indigo-300 hover:ring-2 hover:ring-indigo-100 group overflow-hidden">
+      <div className={`relative bg-white/90 backdrop-blur-xl rounded-2xl p-4 border-2 shadow-xl transition-all duration-500 group overflow-hidden ${
+        studentStatus.isRestricted 
+          ? 'border-gray-300 opacity-75 hover:shadow-lg' 
+          : 'border-indigo-200 hover:shadow-2xl hover:scale-[1.01] hover:border-indigo-300 hover:ring-2 hover:ring-indigo-100'
+      }`}>
+        {/* Restriction overlay for disabled students */}
+        {studentStatus.isRestricted && (
+          <div className="absolute top-2 right-2 z-20">
+            <div className="bg-amber-100 border border-amber-300 rounded-lg px-2 py-1 flex items-center">
+              <Lock className="w-3 h-3 text-amber-600 mr-1" />
+              <span className="text-xs font-medium text-amber-700">Restricted</span>
+            </div>
+          </div>
+        )}
+        
+        {/* First student indicator */}
+        {studentStatus.isFirstStudent && isFreePlan && allStudents.length > 1 && (
+          <div className="absolute top-2 left-2 z-20">
+            <div className="bg-green-100 border border-green-300 rounded-lg px-2 py-1 flex items-center">
+              <Crown className="w-3 h-3 text-green-600 mr-1" />
+              <span className="text-xs font-medium text-green-700">Active</span>
+            </div>
+          </div>
+        )}
+
         {/* Subtle background gradient */}
         <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-indigo-400/10 to-purple-400/10 rounded-full blur-xl opacity-60"></div>
 
@@ -161,16 +246,56 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
           </div>
         </div>
 
+        {/* Subscription Restriction Notice */}
+        {studentStatus.showUpgradePrompt && (
+          <div className="mt-3 px-3 py-2 rounded-lg text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+            <div className="flex items-center">
+              <AlertTriangle className="w-3 h-3 mr-1" />
+              <span>Free plan: First child only</span>
+            </div>
+            <div className="mt-1 text-xs text-amber-600">
+              Upgrade to Premium for all children
+            </div>
+          </div>
+        )}
+
+        {/* Daily Exam Status Bar */}
+        {dailyExamLimit !== 999 && studentStatus.canTakeExams && (
+          <div className={`mt-3 px-3 py-2 rounded-lg text-xs font-medium ${
+            canUserTakeExam() 
+              ? 'bg-green-50 text-green-700 border border-green-200' 
+              : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
+            <div className="flex items-center">
+              <Clock className="w-3 h-3 mr-1" />
+              <span>Daily Exams: {dailyExamCount}/{dailyExamLimit}</span>
+            </div>
+          </div>
+        )}
+
         {/* Compact Action Buttons */}
         <div className="flex space-x-2 mt-3">
           <Button 
-            variant="gradient-primary"
+            variant={canUserTakeExam() ? "gradient-primary" : "outline"}
             size="sm" 
-            className="flex-1 text-sm py-2.5 shadow-md hover:shadow-lg transition-all duration-300"
-            onClick={() => onOpenExamModal?.(student)}
-            icon={<Zap className="w-4 h-4" />}
+            className={`flex-1 text-sm py-2.5 shadow-md transition-all duration-300 ${
+              canUserTakeExam() 
+                ? 'hover:shadow-lg' 
+                : 'opacity-60 cursor-not-allowed bg-gray-100 text-gray-500 border-gray-300'
+            }`}
+            onClick={handleStartExam}
+            disabled={!canUserTakeExam() || loadingExamCount}
+            icon={
+              studentStatus.isRestricted ? <Lock className="w-4 h-4" /> :
+              canUserTakeExam() ? <Zap className="w-4 h-4" /> : <Clock className="w-4 h-4" />
+            }
           >
-            Start Exam
+            {studentStatus.isRestricted 
+              ? 'Upgrade Needed' 
+              : !canUserTakeExam() 
+                ? 'Limit Reached' 
+                : 'Start Exam'
+            }
           </Button>
           <Button 
             variant="outline" 
