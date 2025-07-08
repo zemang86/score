@@ -111,18 +111,7 @@ export function Header() {
               )}
             </div>
 
-            {/* Temporary Refresh Button for Beta Testing */}
-            {user && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={refreshUserProfile}
-                className="text-purple-600 hover:text-purple-700 px-2 py-2 rounded-xl hover:bg-purple-50 transition-all duration-300"
-                title="Refresh Profile (Beta Testing)"
-              >
-                🔄
-              </Button>
-            )}
+
 
             {/* Navigation Buttons - Admin Only */}
             {user && !isAdminPage && isAdmin && (
