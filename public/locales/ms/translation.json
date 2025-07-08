@@ -186,38 +186,125 @@
   },
   "modals": {
     "addStudent": {
-      "title": "Tambah Pelajar Baharu",
+      "title": "Tambah Anak Baharu",
       "subtitle": "Tambah anak ke petualangan pembelajaran keluarga anda",
       "form": {
-        "name": "Nama Pelajar",
-        "namePlaceholder": "Masukkan nama penuh pelajar",
-        "dateOfBirth": "Tarikh Lahir",
-        "school": "Nama Sekolah",
-        "schoolPlaceholder": "Masukkan nama sekolah",
-        "level": "Tahap Pendidikan",
-        "levelPlaceholder": "Pilih tahap pendidikan"
+        "namePlaceholder": "Nama penuh anak",
+        "schoolPlaceholder": "Nama sekolah",
+        "levelPlaceholder": "Pilih tahap pendidikan",
+        "dateOfBirthPlaceholder": "Tarikh lahir",
+        "dateHelper": "Kami akan mengira umur mereka secara automatik"
       },
       "buttons": {
-        "submit": "Tambah Pelajar",
-        "submitting": "Sedang Menambah Pelajar...",
-        "cancel": "Batal"
+        "submit": "Tambah Anak!",
+        "submitting": "Sedang Menambah...",
+        "cancel": "Batal",
+        "purchaseRequired": "Pembelian Diperlukan"
       },
-      "success": "Pelajar berjaya ditambah!",
+      "planInfo": {
+        "title": "Maklumat Pelan Anda",
+        "betaTester": "Penguji Beta: Anak-anak dan peperiksaan tanpa had! 🚀",
+        "freePlan": "Pelan Percuma: Terhad kepada 1 anak dan 3 peperiksaan/hari. Naik taraf ke Premium untuk lebih banyak!",
+        "premiumPlan": "Pelan Premium: 1 anak disertakan. Anak tambahan kos RM10/bulan setiap seorang."
+      },
+      "additionalKid": {
+        "title": "Slot Anak Tambahan Diperlukan",
+        "description": "Anda kini mempunyai {{count}} {{childText}}. Premium termasuk 1 anak. Untuk menambah anak lain, beli slot tambahan untuk RM10/bulan.",
+        "child": "anak",
+        "children": "anak",
+        "button": "Beli Slot Anak Tambahan - RM10/bulan",
+        "processing": "Sedang Memproses..."
+      },
       "errors": {
-        "nameRequired": "Nama pelajar diperlukan",
-        "schoolRequired": "Nama sekolah diperlukan",
-        "levelRequired": "Tahap pendidikan diperlukan"
+        "mustBeLoggedIn": "Anda mesti log masuk untuk menambah pelajar",
+        "invalidDateOfBirth": "Tarikh lahir tidak sah",
+        "freePlanLimit": "Pelan Percuma terhad kepada 1 anak sahaja. Naik taraf ke Premium untuk menambah lebih banyak anak.",
+        "addFailed": "Gagal menambah pelajar",
+        "purchaseFailed": "Gagal memulakan proses pembelian",
+        "checkoutFailed": "Gagal mencipta sesi pembayaran"
       }
     },
     "editStudent": {
       "title": "Edit Pelajar",
       "subtitle": "Kemaskini maklumat pelajar",
+      "updateInfo": "Kemaskini maklumat {{name}}",
+      "editableInfo": {
+        "title": "Maklumat Boleh Diedit",
+        "description": "Anda boleh mengemas kini nama, sekolah, tahap pendidikan, dan tarikh lahir. Ini berguna apabila anak anda maju ke tahap baharu setiap tahun."
+      },
+      "form": {
+        "namePlaceholder": "Nama penuh pelajar",
+        "nameLabel": "Nama Penuh",
+        "nameHelper": "Kemaskini jika terdapat kesilapan ejaan atau pertukaran nama",
+        "schoolPlaceholder": "Nama sekolah",
+        "schoolLabel": "Sekolah",
+        "schoolHelper": "Kemaskini jika anak anda bertukar sekolah",
+        "levelLabel": "Tahap Pendidikan",
+        "levelPlaceholder": "Pilih tahap pendidikan",
+        "levelHelper": "Kemaskini apabila anak anda maju ke tahap seterusnya",
+        "dateOfBirthPlaceholder": "Tarikh lahir",
+        "dateOfBirthLabel": "Tarikh Lahir",
+        "dateOfBirthHelper": "Betulkan jika terdapat ralat dalam entri asal"
+      },
       "buttons": {
         "submit": "Simpan Perubahan",
         "submitting": "Sedang Menyimpan...",
         "cancel": "Batal"
       },
-      "success": "Pelajar berjaya dikemaskini!"
+      "success": "Pelajar berjaya dikemaskini!",
+      "errors": {
+        "invalidDateOfBirth": "Tarikh lahir tidak sah",
+        "updateFailed": "Gagal mengemas kini pelajar"
+      }
+    },
+    "premiumUpgrade": {
+      "title": "Naik Taraf ke Premium",
+      "subtitle": "Buka kunci pengalaman pembelajaran penuh",
+      "pricing": {
+        "save": "Jimat 16% berbanding bulanan",
+        "billedAnnually": "Bil tahunan",
+        "billedMonthly": "Bil bulanan",
+        "annualBilling": "Pengebilan Tahunan",
+        "perYear": "tahun",
+        "perMonth": "bulan"
+      },
+      "benefits": {
+        "title": "Apa Yang Anda Dapat",
+        "unlimitedExams": "Peperiksaan tanpa had (berbanding had 3/hari percuma)",
+        "multipleChildren": "Anak-anak pelbagai (berbanding had 1 anak percuma)",
+        "advancedReports": "Laporan lanjutan & analitik terperinci",
+        "prioritySupport": "Sokongan keutamaan & ciri baharu dahulu"
+      },
+      "children": {
+        "title": "Anak-anak",
+        "total": "{{count}} jumlah",
+        "included": "anak disertakan",
+        "includedWithAnnual": "1 anak disertakan dengan pelan tahunan",
+        "additionalNote": "💡 Tambah lebih banyak anak selepas pembayaran sebagai langganan bulanan berasingan (RM10/bulan setiap seorang)",
+        "monthlyAdditional": "1 anak disertakan + RM10/bulan setiap anak tambahan",
+        "additionalChildren": "Anak-anak Tambahan",
+        "additionalText": "+{{count}} tambahan"
+      },
+      "summary": {
+        "premiumPlan": "Pelan Premium",
+        "annual": "Tahunan",
+        "monthly": "Bulanan",
+        "additionalChildrenText": "+{{count}} anak tambahan",
+        "perYear": "setahun",
+        "perMonth": "sebulan"
+      },
+      "buttons": {
+        "upgradeNow": "👑 Naik Taraf Sekarang • RM{{price}}{{period}}",
+        "processing": "Sedang Memproses..."
+      },
+      "footer": {
+        "securePayment": "🔒 Pembayaran selamat oleh Stripe • Batal bila-bila masa"
+      },
+      "errors": {
+        "mustBeLoggedIn": "Anda mesti log masuk untuk naik taraf",
+        "checkoutFailed": "Gagal mencipta sesi pembayaran",
+        "startCheckoutFailed": "Gagal memulakan proses pembayaran"
+      }
     }
   },
   "levels": {

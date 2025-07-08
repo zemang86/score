@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/Button'
 import { Switch } from '../ui/Switch'
 import { Slider } from '../ui/Slider'
@@ -12,6 +13,7 @@ interface PremiumUpgradeModalProps {
 }
 
 export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProps) {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [isAnnual, setIsAnnual] = useState(false)
@@ -33,7 +35,7 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
       const { data: { session } } = await supabase.auth.getSession()
       
       if (!session) {
-        throw new Error('You must be logged in to upgrade')
+        throw new Error(t('modals.premiumUpgrade.errors.mustBeLoggedIn'))
       }
 
       // Create a checkout session
@@ -55,7 +57,7 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create checkout session')
+        throw new Error(errorData.error || t('modals.premiumUpgrade.errors.checkoutFailed'))
       }
 
       const { url } = await response.json()
@@ -64,7 +66,7 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
       window.location.href = url
     } catch (err: any) {
       console.error('Error creating checkout session:', err)
-      setError(err.message || 'Failed to start checkout process')
+      setError(err.message || t('modals.premiumUpgrade.errors.startCheckoutFailed'))
       setLoading(false)
     }
   }
@@ -81,8 +83,8 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
             <div className="flex items-center">
               <Crown className="w-6 h-6 text-amber-200 mr-3" />
               <div>
-                <h2 className="text-lg sm:text-xl font-bold">Upgrade to Premium</h2>
-                <p className="text-amber-100 text-sm hidden sm:block">Unlock the full learning experience</p>
+                <h2 className="text-lg sm:text-xl font-bold">{t('modals.premiumUpgrade.title')}</h2>
+                <p className="text-amber-100 text-sm hidden sm:block">{t('modals.premiumUpgrade.subtitle')}</p>
               </div>
             </div>
             <button
@@ -109,12 +111,12 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
                 <div className="text-2xl sm:text-3xl font-bold text-indigo-800">
                   RM{isAnnual ? '280' : '28'}
                   <span className="text-base font-normal text-indigo-600">
-                    /{isAnnual ? 'year' : 'month'}
+                    /{isAnnual ? t('modals.premiumUpgrade.pricing.perYear') : t('modals.premiumUpgrade.pricing.perMonth')}
                   </span>
                 </div>
                 {isAnnual && (
                   <div className="text-xs text-green-600 font-medium mt-1">
-                    💡 Save 16% vs monthly
+                    💡 {t('modals.premiumUpgrade.pricing.save')}
                   </div>
                 )}
               </div>
@@ -124,11 +126,11 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
                   checked={isAnnual}
                   onCheckedChange={setIsAnnual}
                   id="billing-toggle"
-                  label="Annual Billing"
+                  label={t('modals.premiumUpgrade.pricing.annualBilling')}
                   className="text-sm"
                 />
                 <div className="text-xs text-indigo-600 text-center">
-                  {isAnnual ? 'Billed annually' : 'Billed monthly'}
+                  {isAnnual ? t('modals.premiumUpgrade.pricing.billedAnnually') : t('modals.premiumUpgrade.pricing.billedMonthly')}
                 </div>
               </div>
             </div>
@@ -138,25 +140,25 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
           <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
             <h3 className="text-base font-bold text-blue-800 mb-3 flex items-center">
               <Zap className="w-4 h-4 mr-2 text-blue-600" />
-              What You Get
+              {t('modals.premiumUpgrade.benefits.title')}
             </h3>
             
             <div className="space-y-2">
               <div className="flex items-center text-sm text-blue-700">
                 <Check className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
-                <span>Unlimited exams (vs 3/day free limit)</span>
+                <span>{t('modals.premiumUpgrade.benefits.unlimitedExams')}</span>
               </div>
               <div className="flex items-center text-sm text-blue-700">
                 <Check className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
-                <span>Multiple children (vs 1 child free limit)</span>
+                <span>{t('modals.premiumUpgrade.benefits.multipleChildren')}</span>
               </div>
               <div className="flex items-center text-sm text-blue-700">
                 <Check className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
-                <span>Advanced reports & detailed analytics</span>
+                <span>{t('modals.premiumUpgrade.benefits.advancedReports')}</span>
               </div>
               <div className="flex items-center text-sm text-blue-700">
                 <Check className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
-                <span>Priority support & new features first</span>
+                <span>{t('modals.premiumUpgrade.benefits.prioritySupport')}</span>
               </div>
             </div>
           </div>
@@ -167,10 +169,10 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-base font-bold text-orange-800 flex items-center">
                   <Users className="w-4 h-4 mr-2 text-orange-600" />
-                  Children
+                  {t('modals.premiumUpgrade.children.title')}
                 </h3>
                 <div className="text-sm text-orange-700">
-                  <span className="font-medium">{totalKids} total</span>
+                  <span className="font-medium">{t('modals.premiumUpgrade.children.total', { count: totalKids })}</span>
                 </div>
               </div>
               
@@ -178,16 +180,16 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
                 <div className="text-sm text-orange-700">
                   <div className="flex items-center mb-2">
                     <AlertCircle className="w-4 h-4 text-orange-600 mr-2" />
-                    <span>1 child included with annual plan</span>
+                    <span>{t('modals.premiumUpgrade.children.includedWithAnnual')}</span>
                   </div>
                   <p className="text-xs text-orange-600 bg-orange-100 rounded p-2">
-                    💡 Add more children after checkout as separate monthly subscriptions (RM10/month each)
+                    {t('modals.premiumUpgrade.children.additionalNote')}
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   <div className="text-sm text-orange-700">
-                    <span className="font-medium">1 child included</span> + RM10/month per additional child
+                    <span className="font-medium">{t('modals.premiumUpgrade.children.monthlyAdditional')}</span>
                   </div>
                   
                   <Slider
@@ -196,8 +198,8 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
                     min={0}
                     max={5}
                     step={1}
-                    label="Additional Children"
-                    valueDisplay={`+${additionalKids} additional`}
+                    label={t('modals.premiumUpgrade.children.additionalChildren')}
+                    valueDisplay={t('modals.premiumUpgrade.children.additionalText', { count: additionalKids })}
                     className="text-sm"
                   />
                 </div>
@@ -209,9 +211,9 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-600">
-                <div>Premium Plan ({isAnnual ? 'Annual' : 'Monthly'})</div>
+                <div>{t('modals.premiumUpgrade.summary.premiumPlan')} ({isAnnual ? t('modals.premiumUpgrade.summary.annual') : t('modals.premiumUpgrade.summary.monthly')})</div>
                 {additionalKids > 0 && !isAnnual && (
-                  <div>+{additionalKids} additional children</div>
+                  <div>{t('modals.premiumUpgrade.summary.additionalChildrenText', { count: additionalKids })}</div>
                 )}
               </div>
               <div className="text-right">
@@ -219,7 +221,7 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
                   RM{totalPrice.toFixed(2)}
                 </div>
                 <div className="text-xs text-gray-600">
-                  {isAnnual ? 'per year' : 'per month'}
+                  {isAnnual ? t('modals.premiumUpgrade.summary.perYear') : t('modals.premiumUpgrade.summary.perMonth')}
                 </div>
               </div>
             </div>
@@ -234,11 +236,14 @@ export function PremiumUpgradeModal({ isOpen, onClose }: PremiumUpgradeModalProp
             loading={loading}
             icon={!loading ? <Crown className="w-5 h-5" /> : undefined}
           >
-            {loading ? 'Processing...' : `👑 Upgrade Now • RM${totalPrice.toFixed(2)}${isAnnual ? '/year' : '/month'}`}
+            {loading ? t('modals.premiumUpgrade.buttons.processing') : t('modals.premiumUpgrade.buttons.upgradeNow', { 
+              price: totalPrice.toFixed(2), 
+              period: isAnnual ? `/${t('modals.premiumUpgrade.pricing.perYear')}` : `/${t('modals.premiumUpgrade.pricing.perMonth')}`
+            })}
           </Button>
           
           <p className="text-center text-gray-500 text-xs mt-2">
-            🔒 Secure payment by Stripe • Cancel anytime
+            {t('modals.premiumUpgrade.footer.securePayment')}
           </p>
         </div>
       </div>

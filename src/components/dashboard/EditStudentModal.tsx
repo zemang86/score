@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Student } from '../../lib/supabase'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { X, User, School, Calendar, GraduationCap, Edit, Save, Sparkles } from 'lucide-react'
@@ -14,6 +15,7 @@ interface EditStudentModalProps {
 }
 
 export function EditStudentModal({ isOpen, onClose, student, onStudentUpdated }: EditStudentModalProps) {
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     name: '',
     school: '',
@@ -24,8 +26,8 @@ export function EditStudentModal({ isOpen, onClose, student, onStudentUpdated }:
   const [error, setError] = useState('')
 
   const levels = [
-    'Darjah 1', 'Darjah 2', 'Darjah 3', 'Darjah 4', 'Darjah 5', 'Darjah 6',
-    'Tingkatan 1', 'Tingkatan 2', 'Tingkatan 3', 'Tingkatan 4', 'Tingkatan 5'
+    t('levels.darjah1'), t('levels.darjah2'), t('levels.darjah3'), t('levels.darjah4'), t('levels.darjah5'), t('levels.darjah6'),
+    t('levels.tingkatan1'), t('levels.tingkatan2'), t('levels.tingkatan3'), t('levels.tingkatan4'), t('levels.tingkatan5')
   ]
 
   // Populate form when student changes
@@ -51,7 +53,7 @@ export function EditStudentModal({ isOpen, onClose, student, onStudentUpdated }:
     // Validate date of birth
     const dateValidation = validateDateOfBirth(formData.dateOfBirth)
     if (!dateValidation.isValid) {
-      setError(dateValidation.error || 'Invalid date of birth')
+      setError(dateValidation.error || t('modals.editStudent.errors.invalidDateOfBirth'))
       setLoading(false)
       return
     }
@@ -77,7 +79,7 @@ export function EditStudentModal({ isOpen, onClose, student, onStudentUpdated }:
       onStudentUpdated()
       onClose()
     } catch (err: any) {
-      setError(err.message || 'Failed to update student')
+      setError(err.message || t('modals.editStudent.errors.updateFailed'))
     } finally {
       setLoading(false)
     }
@@ -107,14 +109,14 @@ export function EditStudentModal({ isOpen, onClose, student, onStudentUpdated }:
                   <Edit className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-green-700">Edit Student</h2>
-                  <p className="text-xs text-green-600">Update {student.name}'s information</p>
+                  <h2 className="text-lg font-bold text-green-700">{t('modals.editStudent.title')}</h2>
+                  <p className="text-xs text-green-600">{t('modals.editStudent.updateInfo', { name: student.name })}</p>
                 </div>
               </div>
               <button
                 onClick={handleClose}
                 className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
-                title="Close"
+                title={t('common.close')}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -134,39 +136,38 @@ export function EditStudentModal({ isOpen, onClose, student, onStudentUpdated }:
             <div className="bg-green-50 border border-green-200 rounded-lg p-2.5">
               <div className="flex items-center mb-1">
                 <Sparkles className="w-4 h-4 text-green-600 mr-1.5" />
-                <p className="text-green-800 font-medium text-xs">Editable Information</p>
+                <p className="text-green-800 font-medium text-xs">{t('modals.editStudent.editableInfo.title')}</p>
               </div>
               <p className="text-green-700 text-xs">
-                You can update the name, school, education level, and date of birth. 
-                This is useful as your child progresses to new levels each year.
+                {t('modals.editStudent.editableInfo.description')}
               </p>
             </div>
 
             <Input
               type="text"
-              placeholder="Student's full name"
+              placeholder={t('modals.editStudent.form.namePlaceholder')}
               value={formData.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
               icon={<User className="w-4 h-4" />}
-              label="Full Name"
-              helper="Update if there was a spelling mistake or name change"
+              label={t('modals.editStudent.form.nameLabel')}
+              helper={t('modals.editStudent.form.nameHelper')}
               required
             />
 
             <Input
               type="text"
-              placeholder="School name"
+              placeholder={t('modals.editStudent.form.schoolPlaceholder')}
               value={formData.school}
               onChange={(e) => handleInputChange('school', e.target.value)}
               icon={<School className="w-4 h-4" />}
-              label="School"
-              helper="Update if your child changed schools"
+              label={t('modals.editStudent.form.schoolLabel')}
+              helper={t('modals.editStudent.form.schoolHelper')}
               required
             />
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Education Level
+                {t('modals.editStudent.form.levelLabel')}
               </label>
               <div className="relative">
                 <GraduationCap className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -176,23 +177,27 @@ export function EditStudentModal({ isOpen, onClose, student, onStudentUpdated }:
                   className="w-full pl-9 pr-3 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-sm"
                   required
                 >
-                  <option value="">Select education level</option>
-                  {levels.map(level => (
-                    <option key={level} value={level}>{level}</option>
-                  ))}
+                  <option value="">{t('modals.editStudent.form.levelPlaceholder')}</option>
+                  {levels.map((level, index) => {
+                    const levelKeys = ['darjah1', 'darjah2', 'darjah3', 'darjah4', 'darjah5', 'darjah6', 'tingkatan1', 'tingkatan2', 'tingkatan3', 'tingkatan4', 'tingkatan5']
+                    const originalLevel = levelKeys[index]
+                    return (
+                      <option key={originalLevel} value={originalLevel}>{level}</option>
+                    )
+                  })}
                 </select>
               </div>
-              <p className="text-xs text-gray-500 mt-1">Update when your child advances to the next level</p>
+              <p className="text-xs text-gray-500 mt-1">{t('modals.editStudent.form.levelHelper')}</p>
             </div>
 
             <Input
               type="date"
-              placeholder="Date of birth"
+              placeholder={t('modals.editStudent.form.dateOfBirthPlaceholder')}
               value={formData.dateOfBirth}
               onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
               icon={<Calendar className="w-4 h-4" />}
-              label="Date of Birth"
-              helper="Correct if there was an error in the original entry"
+              label={t('modals.editStudent.form.dateOfBirthLabel')}
+              helper={t('modals.editStudent.form.dateOfBirthHelper')}
               required
             />
 
@@ -204,7 +209,7 @@ export function EditStudentModal({ isOpen, onClose, student, onStudentUpdated }:
                 className="flex-1 text-sm border border-gray-200"
                 disabled={loading}
               >
-                Cancel
+                {t('modals.editStudent.buttons.cancel')}
               </Button>
               <Button
                 type="submit"
@@ -214,7 +219,7 @@ export function EditStudentModal({ isOpen, onClose, student, onStudentUpdated }:
                 loading={loading}
                 icon={!loading ? <Save className="w-4 h-4" /> : undefined}
               >
-                {loading ? 'Saving...' : 'Save Changes'}
+                {loading ? t('modals.editStudent.buttons.submitting') : t('modals.editStudent.buttons.submit')}
               </Button>
             </div>
           </form>

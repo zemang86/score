@@ -186,38 +186,125 @@
   },
   "modals": {
     "addStudent": {
-      "title": "Add New Student",
+      "title": "Add New Kid",
       "subtitle": "Add a child to your family learning adventure",
       "form": {
-        "name": "Student Name",
-        "namePlaceholder": "Enter student's full name",
-        "dateOfBirth": "Date of Birth",
-        "school": "School Name",
-        "schoolPlaceholder": "Enter school name",
-        "level": "Education Level",
-        "levelPlaceholder": "Select education level"
+        "namePlaceholder": "Kid's full name",
+        "schoolPlaceholder": "School name",
+        "levelPlaceholder": "Select education level",
+        "dateOfBirthPlaceholder": "Date of birth",
+        "dateHelper": "We'll calculate their age automatically"
       },
       "buttons": {
-        "submit": "Add Student",
-        "submitting": "Adding Student...",
-        "cancel": "Cancel"
+        "submit": "Add Kid!",
+        "submitting": "Adding...",
+        "cancel": "Cancel",
+        "purchaseRequired": "Purchase Required"
       },
-      "success": "Student added successfully!",
+      "planInfo": {
+        "title": "Your Plan Info",
+        "betaTester": "Beta Tester: Unlimited children and exams! 🚀",
+        "freePlan": "Free plan: Limited to 1 child and 3 exams/day. Upgrade to Premium for more!",
+        "premiumPlan": "Premium plan: 1 child included. Additional kids cost RM10/month each."
+      },
+      "additionalKid": {
+        "title": "Additional Kid Slot Required",
+        "description": "You currently have {{count}} {{childText}}. Premium includes 1 child. To add another child, purchase an additional slot for RM10/month.",
+        "child": "child",
+        "children": "children",
+        "button": "Purchase Additional Kid Slot - RM10/month",
+        "processing": "Processing..."
+      },
       "errors": {
-        "nameRequired": "Student name is required",
-        "schoolRequired": "School name is required",
-        "levelRequired": "Education level is required"
+        "mustBeLoggedIn": "You must be logged in to add a student",
+        "invalidDateOfBirth": "Invalid date of birth",
+        "freePlanLimit": "Free plan is limited to 1 child. Upgrade to Premium to add more children.",
+        "addFailed": "Failed to add student",
+        "purchaseFailed": "Failed to start purchase process",
+        "checkoutFailed": "Failed to create checkout session"
       }
     },
     "editStudent": {
       "title": "Edit Student",
       "subtitle": "Update student information",
+      "updateInfo": "Update {{name}}'s information",
+      "editableInfo": {
+        "title": "Editable Information",
+        "description": "You can update the name, school, education level, and date of birth. This is useful as your child progresses to new levels each year."
+      },
+      "form": {
+        "namePlaceholder": "Student's full name",
+        "nameLabel": "Full Name",
+        "nameHelper": "Update if there was a spelling mistake or name change",
+        "schoolPlaceholder": "School name",
+        "schoolLabel": "School",
+        "schoolHelper": "Update if your child changed schools",
+        "levelLabel": "Education Level",
+        "levelPlaceholder": "Select education level",
+        "levelHelper": "Update when your child advances to the next level",
+        "dateOfBirthPlaceholder": "Date of birth",
+        "dateOfBirthLabel": "Date of Birth",
+        "dateOfBirthHelper": "Correct if there was an error in the original entry"
+      },
       "buttons": {
         "submit": "Save Changes",
         "submitting": "Saving...",
         "cancel": "Cancel"
       },
-      "success": "Student updated successfully!"
+      "success": "Student updated successfully!",
+      "errors": {
+        "invalidDateOfBirth": "Invalid date of birth",
+        "updateFailed": "Failed to update student"
+      }
+    },
+    "premiumUpgrade": {
+      "title": "Upgrade to Premium",
+      "subtitle": "Unlock the full learning experience",
+      "pricing": {
+        "save": "Save 16% vs monthly",
+        "billedAnnually": "Billed annually",
+        "billedMonthly": "Billed monthly",
+        "annualBilling": "Annual Billing",
+        "perYear": "year",
+        "perMonth": "month"
+      },
+      "benefits": {
+        "title": "What You Get",
+        "unlimitedExams": "Unlimited exams (vs 3/day free limit)",
+        "multipleChildren": "Multiple children (vs 1 child free limit)",
+        "advancedReports": "Advanced reports & detailed analytics",
+        "prioritySupport": "Priority support & new features first"
+      },
+      "children": {
+        "title": "Children",
+        "total": "{{count}} total",
+        "included": "child included",
+        "includedWithAnnual": "1 child included with annual plan",
+        "additionalNote": "💡 Add more children after checkout as separate monthly subscriptions (RM10/month each)",
+        "monthlyAdditional": "1 child included + RM10/month per additional child",
+        "additionalChildren": "Additional Children",
+        "additionalText": "+{{count}} additional"
+      },
+      "summary": {
+        "premiumPlan": "Premium Plan",
+        "annual": "Annual",
+        "monthly": "Monthly",
+        "additionalChildrenText": "+{{count}} additional children",
+        "perYear": "per year",
+        "perMonth": "per month"
+      },
+      "buttons": {
+        "upgradeNow": "👑 Upgrade Now • RM{{price}}{{period}}",
+        "processing": "Processing..."
+      },
+      "footer": {
+        "securePayment": "🔒 Secure payment by Stripe • Cancel anytime"
+      },
+      "errors": {
+        "mustBeLoggedIn": "You must be logged in to upgrade",
+        "checkoutFailed": "Failed to create checkout session",
+        "startCheckoutFailed": "Failed to start checkout process"
+      }
     }
   },
   "levels": {

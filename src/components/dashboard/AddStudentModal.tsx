@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext' 
+import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { X, User, School, Calendar, GraduationCap, Sparkles, Star, Zap, CreditCard } from 'lucide-react'
@@ -15,6 +16,7 @@ interface AddStudentModalProps {
 
 export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentModalProps) {
   const { user, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     name: '',
     school: '',
@@ -28,8 +30,8 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
   const [loadingStudentCount, setLoadingStudentCount] = useState(true)
 
   const levels = [
-    'Darjah 1', 'Darjah 2', 'Darjah 3', 'Darjah 4', 'Darjah 5', 'Darjah 6',
-    'Tingkatan 1', 'Tingkatan 2', 'Tingkatan 3', 'Tingkatan 4', 'Tingkatan 5'
+    t('levels.darjah1'), t('levels.darjah2'), t('levels.darjah3'), t('levels.darjah4'), t('levels.darjah5'), t('levels.darjah6'),
+    t('levels.tingkatan1'), t('levels.tingkatan2'), t('levels.tingkatan3'), t('levels.tingkatan4'), t('levels.tingkatan5')
   ]
 
   // Fetch current student count when modal opens
@@ -67,7 +69,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
     setError('')
 
     if (!user) {
-      setError('You must be logged in to add a student')
+      setError(t('modals.addStudent.errors.mustBeLoggedIn'))
       setLoading(false)
       return
     }
@@ -75,7 +77,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
     // Validate date of birth
     const dateValidation = validateDateOfBirth(formData.dateOfBirth)
     if (!dateValidation.isValid) {
-      setError(dateValidation.error || 'Invalid date of birth')
+      setError(dateValidation.error || t('modals.addStudent.errors.invalidDateOfBirth'))
       setLoading(false)
       return
     }
@@ -93,7 +95,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
 
       // Check subscription limits (beta testers get unlimited access)
       if (!isBetaTester && subscriptionPlan === 'free' && existingStudents && existingStudents.length >= 1) {
-        setError(`Free plan is limited to 1 child. Upgrade to Premium to add more children.`)
+        setError(t('modals.addStudent.errors.freePlanLimit'))
         setLoading(false)
         return
       }
@@ -123,7 +125,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
       onStudentAdded()
       onClose()
     } catch (err: any) {
-      setError(err.message || 'Failed to add student')
+      setError(err.message || t('modals.addStudent.errors.addFailed'))
     } finally {
       setLoading(false)
     }
@@ -143,7 +145,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
       const { data: { session } } = await supabase.auth.getSession()
       
       if (!session) {
-        throw new Error('You must be logged in to purchase additional kids')
+        throw new Error(t('modals.addStudent.errors.mustBeLoggedIn'))
       }
 
       // Create a checkout session for additional kid only (existing premium users)
@@ -165,7 +167,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create checkout session')
+        throw new Error(errorData.error || t('modals.addStudent.errors.checkoutFailed'))
       }
 
       const { url } = await response.json()
@@ -174,7 +176,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
       window.location.href = url
     } catch (err: any) {
       console.error('Error creating checkout session:', err)
-      setError(err.message || 'Failed to start purchase process')
+      setError(err.message || t('modals.addStudent.errors.purchaseFailed'))
       setPurchasingSlot(false)
     }
   }
@@ -192,27 +194,27 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
                 <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-2 mr-3 shadow-md">
                   <Star className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Add New Kid</h2>
+                <h2 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{t('modals.addStudent.title')}</h2>
               </div>
               <button
                 onClick={onClose}
                 className="bg-red-500 text-white hover:bg-red-600 transition-colors rounded-lg p-2 shadow-md"
-                title="Close"
+                title={t('common.close')}
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             {isBetaTester ? (
               <p className="text-purple-700 text-xs">
-                <strong>Beta Tester:</strong> Unlimited children and exams! 🚀
+                {t('modals.addStudent.planInfo.betaTester')}
               </p>
             ) : subscriptionPlan === 'free' ? (
               <p className="text-indigo-700 text-xs">
-                Free plan: Limited to <strong>1 child</strong> and <strong>3 exams/day</strong>. <span className="font-semibold">Upgrade to Premium for more!</span>
+                {t('modals.addStudent.planInfo.freePlan')}
               </p>
             ) : (
               <p className="text-indigo-700 text-xs">
-                Premium plan: <strong>1 child included</strong>. Additional kids cost <strong>RM10/month</strong> each.
+                {t('modals.addStudent.planInfo.premiumPlan')}
               </p>
             )}
           </div>
@@ -229,7 +231,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
 
             <Input
               type="text"
-              placeholder="Kid's full name"
+              placeholder={t('modals.addStudent.form.namePlaceholder')}
               value={formData.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
               icon={<User className="w-4 h-4" />}
@@ -238,7 +240,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
 
             <Input
               type="text"
-              placeholder="School name"
+              placeholder={t('modals.addStudent.form.schoolPlaceholder')}
               value={formData.school}
               onChange={(e) => handleInputChange('school', e.target.value)}
               icon={<School className="w-4 h-4" />}
@@ -253,39 +255,43 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
                 className="w-full pl-9 pr-3 py-2.5 border-2 border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-sm"
                 required
               >
-                <option value="">Select education level</option>
-                {levels.map(level => (
-                  <option key={level} value={level}>{level}</option>
-                ))}
+                <option value="">{t('modals.addStudent.form.levelPlaceholder')}</option>
+                {levels.map((level, index) => {
+                  const levelKeys = ['darjah1', 'darjah2', 'darjah3', 'darjah4', 'darjah5', 'darjah6', 'tingkatan1', 'tingkatan2', 'tingkatan3', 'tingkatan4', 'tingkatan5']
+                  const originalLevel = levelKeys[index]
+                  return (
+                    <option key={originalLevel} value={originalLevel}>{level}</option>
+                  )
+                })}
               </select>
             </div>
 
             <Input
               type="date"
-              placeholder="Date of birth"
+              placeholder={t('modals.addStudent.form.dateOfBirthPlaceholder')}
               value={formData.dateOfBirth}
               onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
               icon={<Calendar className="w-4 h-4" />}
-              helper="We'll calculate their age automatically"
+              helper={t('modals.addStudent.form.dateHelper')}
               required
             />
 
             <div className="bg-gradient-to-r from-indigo-100 to-purple-100 border border-indigo-300 rounded-lg p-2.5">
               <div className="flex items-center mb-1">
                 <Sparkles className="w-4 h-4 text-indigo-600 mr-1.5" />
-                <p className="text-indigo-800 font-medium text-xs">Your Plan Info</p>
+                <p className="text-indigo-800 font-medium text-xs">{t('modals.addStudent.planInfo.title')}</p>
               </div>
               {isBetaTester ? (
                 <p className="text-purple-700 text-xs">
-                  <strong>Beta Tester:</strong> Unlimited children and exams! 🚀
+                  {t('modals.addStudent.planInfo.betaTester')}
                 </p>
               ) : subscriptionPlan === 'free' ? (
                 <p className="text-indigo-700 text-xs">
-                  Free plan: Limited to <strong>1 child</strong> and <strong>3 exams/day</strong>. <span className="font-semibold">Upgrade to Premium for more!</span>
+                  {t('modals.addStudent.planInfo.freePlan')}
                 </p>
               ) : (
                 <p className="text-indigo-700 text-xs">
-                  Premium plan: <strong>1 child included</strong>. Additional kids cost <strong>RM10/month</strong> each.
+                  {t('modals.addStudent.planInfo.premiumPlan')}
                 </p>
               )}
             </div>
@@ -295,11 +301,13 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
               <div className="bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 rounded-lg p-3">
                 <div className="flex items-center mb-2">
                   <CreditCard className="w-4 h-4 text-amber-600 mr-2" />
-                  <p className="text-amber-800 font-medium text-sm">Additional Kid Slot Required</p>
+                  <p className="text-amber-800 font-medium text-sm">{t('modals.addStudent.additionalKid.title')}</p>
                 </div>
                 <p className="text-amber-700 text-xs mb-3">
-                  You currently have <strong>{currentStudentCount}</strong> {currentStudentCount === 1 ? 'child' : 'children'}. 
-                  Premium includes <strong>1 child</strong>. To add another child, purchase an additional slot for <strong>RM10/month</strong>.
+                  {t('modals.addStudent.additionalKid.description', {
+                    count: currentStudentCount,
+                    childText: currentStudentCount === 1 ? t('modals.addStudent.additionalKid.child') : t('modals.addStudent.additionalKid.children')
+                  })}
                 </p>
                 <Button
                   type="button"
@@ -308,7 +316,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
                   loading={purchasingSlot}
                   icon={!purchasingSlot ? <CreditCard className="w-4 h-4" /> : undefined}
                 >
-                  {purchasingSlot ? 'Processing...' : 'Purchase Additional Kid Slot - RM10/month'}
+                  {purchasingSlot ? t('modals.addStudent.additionalKid.processing') : t('modals.addStudent.additionalKid.button')}
                 </Button>
               </div>
             )}
@@ -321,7 +329,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
                 className="flex-1 border border-slate-200 hover:border-slate-300 text-sm"
                 disabled={loading}
               >
-                Cancel
+                {t('modals.addStudent.buttons.cancel')}
               </Button>
               <Button
                 type="submit"
@@ -330,7 +338,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
                 loading={loading}
                 icon={!loading ? <Zap className="w-4 h-4" /> : undefined}
               >
-                {loading ? 'Adding...' : needsToPurchaseSlot ? 'Purchase Required' : 'Add Kid!'}
+                {loading ? t('modals.addStudent.buttons.submitting') : needsToPurchaseSlot ? t('modals.addStudent.buttons.purchaseRequired') : t('modals.addStudent.buttons.submit')}
               </Button>
             </div>
           </form>
