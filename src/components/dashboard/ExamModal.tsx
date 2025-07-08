@@ -5,6 +5,8 @@ import { Button } from '../ui/Button'
 import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3, Lock, BookOpenCheck, XCircle, MapPin } from 'lucide-react'
 import { checkShortAnswer } from '../../utils/answerChecker'
 import { BadgeEvaluator } from '../../utils/badgeEvaluator'
+import { useAuth } from '../../contexts/AuthContext'
+import { canTakeExam } from '../../utils/accessControl'
 
 interface ExamModalProps {
   isOpen: boolean
@@ -28,6 +30,8 @@ type ExamMode = 'Easy' | 'Medium' | 'Full'
 type Subject = 'Bahasa Melayu' | 'English' | 'Mathematics' | 'Science' | 'History'
 
 export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModalProps) {
+  const { user, dailyExamLimit } = useAuth()
+  
   // Initialize state from session storage if available
   const getInitialState = () => {
     try {
@@ -69,6 +73,10 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   const [totalQuestions, setTotalQuestions] = useState(initialState.totalQuestions)
   const [showSubmitWarning, setShowSubmitWarning] = useState(initialState.showSubmitWarning)
   
+  // Daily exam tracking state
+  const [dailyExamCount, setDailyExamCount] = useState<number>(0)
+  const [checkingLimits, setCheckingLimits] = useState(false)
+  
   // Matching question state
   const [matchingPairs, setMatchingPairs] = useState<MatchingPair[]>(initialState.matchingPairs)
   const [selectedLeftItem, setSelectedLeftItem] = useState<string | null>(initialState.selectedLeftItem)
@@ -81,6 +89,39 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   const [earnedBadges, setEarnedBadges] = useState<Array<{name: string, icon: string, color: string}>>([])
   const [showLevelUp, setShowLevelUp] = useState(false)
   const [isQuestionReviewExpanded, setIsQuestionReviewExpanded] = useState(false)
+
+  // Fetch daily exam count when modal opens
+  useEffect(() => {
+    if (isOpen && student?.id) {
+      fetchDailyExamCount()
+    }
+  }, [isOpen, student?.id])
+
+  // Function to fetch today's exam count for this student
+  const fetchDailyExamCount = async () => {
+    try {
+      const { data, error } = await supabase.rpc('get_daily_exam_count', {
+        student_id: student.id
+      })
+      
+      if (error) {
+        console.error('Error fetching daily exam count:', error)
+        setDailyExamCount(0) // Default to 0 if error
+      } else {
+        setDailyExamCount(data || 0)
+        console.log(`Student ${student.name} has taken ${data || 0} exams today`)
+      }
+    } catch (err) {
+      console.error('Failed to fetch daily exam count:', err)
+      setDailyExamCount(0)
+    }
+  }
+
+  // Check if user can take another exam
+  const canUserTakeExam = () => {
+    if (!user) return false
+    return canTakeExam(user, dailyExamCount)
+  }
 
   // Save state to session storage whenever important state changes
   const saveState = () => {
@@ -259,8 +300,18 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
   const startExam = async () => {
     setLoading(true)
     setError('')
+    setCheckingLimits(true)
 
     try {
+      // Check daily exam limits before starting
+      if (!canUserTakeExam()) {
+        const remainingExams = Math.max(0, dailyExamLimit - dailyExamCount)
+        throw new Error(
+          `Daily exam limit reached! You can take ${dailyExamLimit} exam${dailyExamLimit !== 1 ? 's' : ''} per day. ` +
+          `Today's count: ${dailyExamCount}/${dailyExamLimit}. ${remainingExams === 0 ? 'Try again tomorrow!' : `${remainingExams} remaining.`}`
+        )
+      }
+
       const config = getModeConfig(selectedMode)
       
       // Get allowed levels for this student
@@ -301,6 +352,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
       setError(err.message || 'Failed to start exam')
     } finally {
       setLoading(false)
+      setCheckingLimits(false)
     }
   }
 
@@ -721,6 +773,9 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
 
       if (xpError) throw xpError
 
+      // Refresh daily exam count after completing exam
+      await fetchDailyExamCount()
+
       // Evaluate and award badges BEFORE showing results
       console.log(`🎯 Starting badge evaluation for student ${student.name} (${student.id}) after exam completion`)
       try {
@@ -758,7 +813,7 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
             // Progressive perfect score badges
             { name: 'Perfect Score I', description: 'Get 1 perfect 100% score', icon: '🌟', condition_type: 'perfect_score', condition_value: 1 },
             { name: 'Perfect Score II', description: 'Get 3 perfect 100% scores', icon: '🌟🌟', condition_type: 'perfect_score', condition_value: 3 },
-            { name: 'Perfect Score III', description: 'Get 5 perfect 100% scores', icon: '�🌟🌟', condition_type: 'perfect_score', condition_value: 5 },
+            { name: 'Perfect Score III', description: 'Get 5 perfect 100% scores', icon: '🌟🌟', condition_type: 'perfect_score', condition_value: 5 },
             { name: 'Perfectionist', description: 'Get 10 perfect 100% scores', icon: '👑', condition_type: 'perfect_score', condition_value: 10 },
             
             // Progressive XP badges
@@ -1291,8 +1346,41 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                   </div>
                 </div>
 
+                {/* Daily Exam Limit Status */}
+                <div className={`rounded-lg p-3 shadow-md ${
+                  canUserTakeExam() 
+                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white' 
+                    : 'bg-gradient-to-r from-red-500 to-red-600 text-white'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Clock className="w-4 h-4 text-white mr-2" />
+                      <h3 className="text-sm font-bold">Daily Exam Status</h3>
+                    </div>
+                    <div className="flex items-center space-x-3 text-xs">
+                      <div className="text-center">
+                        <div className="font-bold">{dailyExamCount}</div>
+                        <div className="opacity-75">Completed</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold">{Math.max(0, dailyExamLimit - dailyExamCount)}</div>
+                        <div className="opacity-75">Remaining</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-bold">{dailyExamLimit === 999 ? '∞' : dailyExamLimit}</div>
+                        <div className="opacity-75">Daily Limit</div>
+                      </div>
+                    </div>
+                  </div>
+                  {!canUserTakeExam() && (
+                    <div className="mt-2 text-xs opacity-90 text-center">
+                      🚫 Daily limit reached! Try again tomorrow or upgrade for unlimited exams.
+                    </div>
+                  )}
+                </div>
+
                 {/* Compact Success Criteria */}
-                <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg p-3 shadow-md">
+                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg p-3 shadow-md">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <Target className="w-4 h-4 text-white mr-2" />
@@ -1461,12 +1549,18 @@ export function ExamModal({ isOpen, onClose, student, onExamComplete }: ExamModa
                   </Button>
                   <Button
                     onClick={startExam}
-                    className="w-full sm:flex-1 py-2.5 sm:py-2 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 hover:from-orange-600 hover:via-red-600 hover:to-pink-600 text-white font-bold text-sm sm:text-base transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl animate-pulse-glow min-h-[44px] touch-target"
-                    disabled={loading}
+                    className={`w-full sm:flex-1 py-2.5 sm:py-2 font-bold text-sm sm:text-base transform transition-all duration-200 shadow-lg min-h-[44px] touch-target ${
+                      !canUserTakeExam() 
+                        ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed opacity-60' 
+                        : 'bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 hover:from-orange-600 hover:via-red-600 hover:to-pink-600 hover:scale-105 hover:shadow-xl animate-pulse-glow'
+                    } text-white`}
+                    disabled={loading || !canUserTakeExam()}
                     loading={loading}
-                    icon={!loading ? <Zap className="w-4 h-4 sm:w-5 sm:h-5" /> : undefined}
+                    icon={!loading ? (
+                      !canUserTakeExam() ? <Lock className="w-4 h-4 sm:w-5 sm:h-5" /> : <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
+                    ) : undefined}
                   >
-                    {loading ? 'Loading...' : 'Start Exam!'}
+                    {loading ? 'Loading...' : !canUserTakeExam() ? 'Daily Limit Reached' : 'Start Exam!'}
                   </Button>
                 </div>
               </div>

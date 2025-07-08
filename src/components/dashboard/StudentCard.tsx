@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Student } from '../../lib/supabase'
-import { User, School, Star, Edit, Zap, Trophy, Sparkles, Heart } from 'lucide-react'
+import { User, School, Star, Edit, Zap, Trophy, Sparkles, Heart, Clock, Lock } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { calculateAgeInYearsAndMonths } from '../../utils/dateUtils'
+import { useAuth } from '../../contexts/AuthContext'
+import { supabase } from '../../lib/supabase'
+import { canTakeExam } from '../../utils/accessControl'
 
 interface StudentCardProps {
   student: Student
@@ -16,6 +19,51 @@ interface StudentCardProps {
 }
 
 export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStudentUpdated, onOpenExamModal, onOpenEditModal, onOpenProgressModal }: StudentCardProps) {
+  const { user, dailyExamLimit } = useAuth()
+  const [dailyExamCount, setDailyExamCount] = useState<number>(0)
+  const [loadingExamCount, setLoadingExamCount] = useState(false)
+
+  // Fetch daily exam count when component mounts
+  useEffect(() => {
+    if (student?.id) {
+      fetchDailyExamCount()
+    }
+  }, [student?.id])
+
+  // Function to fetch today's exam count for this student
+  const fetchDailyExamCount = async () => {
+    setLoadingExamCount(true)
+    try {
+      const { data, error } = await supabase.rpc('get_daily_exam_count', {
+        student_id: student.id
+      })
+      
+      if (error) {
+        console.error('Error fetching daily exam count:', error)
+        setDailyExamCount(0) // Default to 0 if error
+      } else {
+        setDailyExamCount(data || 0)
+      }
+    } catch (err) {
+      console.error('Failed to fetch daily exam count:', err)
+      setDailyExamCount(0)
+    } finally {
+      setLoadingExamCount(false)
+    }
+  }
+
+  // Check if user can take another exam
+  const canUserTakeExam = () => {
+    if (!user) return false
+    return canTakeExam(user, dailyExamCount)
+  }
+
+  // Handle exam button click with limit checking
+  const handleStartExam = () => {
+    if (canUserTakeExam()) {
+      onOpenExamModal?.(student)
+    }
+  }
 
   const getAgeDisplay = (dateOfBirth: string) => {
     return calculateAgeInYearsAndMonths(dateOfBirth)
@@ -161,16 +209,40 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
           </div>
         </div>
 
+        {/* Daily Exam Status Bar */}
+        {dailyExamLimit !== 999 && (
+          <div className={`mt-3 px-3 py-2 rounded-lg text-xs font-medium ${
+            canUserTakeExam() 
+              ? 'bg-green-50 text-green-700 border border-green-200' 
+              : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Clock className="w-3 h-3 mr-1" />
+                <span>Daily Exams: {dailyExamCount}/{dailyExamLimit}</span>
+              </div>
+              <span className="font-bold">
+                {Math.max(0, dailyExamLimit - dailyExamCount)} remaining
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Compact Action Buttons */}
         <div className="flex space-x-2 mt-3">
           <Button 
-            variant="gradient-primary"
+            variant={canUserTakeExam() ? "gradient-primary" : "outline"}
             size="sm" 
-            className="flex-1 text-sm py-2.5 shadow-md hover:shadow-lg transition-all duration-300"
-            onClick={() => onOpenExamModal?.(student)}
-            icon={<Zap className="w-4 h-4" />}
+            className={`flex-1 text-sm py-2.5 shadow-md transition-all duration-300 ${
+              canUserTakeExam() 
+                ? 'hover:shadow-lg' 
+                : 'opacity-60 cursor-not-allowed bg-gray-100 text-gray-500 border-gray-300'
+            }`}
+            onClick={handleStartExam}
+            disabled={!canUserTakeExam() || loadingExamCount}
+            icon={canUserTakeExam() ? <Zap className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
           >
-            Start Exam
+            {!canUserTakeExam() ? 'Limit Reached' : 'Start Exam'}
           </Button>
           <Button 
             variant="outline" 
