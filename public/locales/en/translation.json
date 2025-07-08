@@ -45,5 +45,219 @@
   "footer": {
     "copyright": "© 2025 Edventure+. All rights reserved.",
     "tagline": "Where Learning Becomes Adventure"
+  },
+  "auth": {
+    "backToHome": "Back to Home",
+    "branding": {
+      "tagline": "Where Learning Becomes Adventure!",
+      "description": "Transform exam practice into an engaging learning adventure for Malaysian students.",
+      "gamifiedTitle": "Gamified Learning",
+      "gamifiedDesc": "Earn XP, unlock badges, and level up your learning journey!",
+      "trackTitle": "Track Progress", 
+      "trackDesc": "Watch your skills grow and celebrate every achievement!",
+      "familyTitle": "Family Dashboard",
+      "familyDesc": "Parents and kids learning together as a team!",
+      "freeAccess": "FREE Premium Access during launch period!"
+    },
+    "login": {
+      "title": "Welcome Back!",
+      "subtitle": "Ready for another learning adventure?",
+      "emailPlaceholder": "Enter your email address",
+      "passwordPlaceholder": "Enter your password",
+      "submitButton": "Let's Go!",
+      "submitLoading": "Signing In...",
+      "forgotPassword": "Forgot your password?",
+      "noAccount": "New to Edventure+?",
+      "signUpLink": "Join the adventure here!"
+    },
+    "signup": {
+      "title": "Join Edventure+!",
+      "subtitle": "Create your family's learning adventure account",
+      "fullNamePlaceholder": "Enter your full name",
+      "emailPlaceholder": "Enter your email address", 
+      "passwordPlaceholder": "Create a strong password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "submitButton": "Create My Account!",
+      "submitLoading": "Creating Account...",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in here!",
+      "success": {
+        "title": "Account Created!",
+        "message": "Welcome to Edventure+! You're now part of our learning family. You're on the Free plan with limited features.",
+        "startFree": "Start with Free Plan",
+        "upgrade": "Upgrade to Premium"
+      },
+      "errors": {
+        "passwordMismatch": "Passwords do not match",
+        "passwordLength": "Password must be at least 6 characters long"
+      }
+    },
+    "forgot": {
+      "title": "Reset Password",
+      "subtitle": "Enter your email to receive reset instructions",
+      "emailPlaceholder": "Enter your email address",
+      "submitButton": "Send Reset Link",
+      "submitLoading": "Sending...",
+      "backToLogin": "Back to Login",
+      "success": "Password reset link sent to your email!"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}!",
+    "welcomeDefault": "Welcome, Parent!",
+    "subtitle": "Ready to level up your kids' learning adventure?",
+    "stats": {
+      "kids": "Kids",
+      "examsDone": "Exams Done",
+      "badges": "Badges",
+      "avgScore": "Avg Score",
+      "totalXP": "Total XP",
+      "questions": "Questions",
+      "earned": "earned",
+      "family": "family",
+      "unlimited": "∞",
+      "beta": "∞ beta",
+      "perDay": "/day",
+      "of": "of",
+      "points": "points",
+      "available": "available"
+    },
+    "buttons": {
+      "leaderboard": "Leaderboard",
+      "reports": "Reports",
+      "upgrade": "Upgrade",
+      "startExam": "Start Exam",
+      "progress": "Progress",
+      "edit": "Edit",
+      "addStudent": "Add Student",
+      "addKid": "Add Kid",
+      "retryConnection": "Retry Connection"
+    },
+    "student": {
+      "level": "Level",
+      "rookie": "Rookie Explorer",
+      "explorer": "Learning Explorer", 
+      "adventurer": "Knowledge Adventurer",
+      "scholar": "Brilliant Scholar",
+      "master": "Learning Master",
+      "legend": "Legend",
+      "next": "Next",
+      "totalXP": "XP"
+    },
+    "subscription": {
+      "freePlan": "Free Plan",
+      "premiumPlan": "Premium Plan",
+      "betaTester": "Beta Tester",
+      "premium": "Premium",
+      "upgradeToPremium": "Upgrade to Premium",
+      "upgradeDescription": "Unlock unlimited exams, multiple children, and advanced reports",
+      "upgradeNow": "Upgrade Now",
+      "upgradeShort": "Upgrade",
+      "childOnly": "child only",
+      "examsPerDay": "exams/day"
+    },
+    "loading": {
+      "students": "Loading students...",
+      "dashboard": "Loading dashboard..."
+    },
+    "errors": {
+      "connectionFailed": "Network connection failed. Please check your internet connection and ensure Supabase is accessible.",
+      "databaseConnection": "Database connection issue. Please try refreshing the page.",
+      "noDataFound": "No data found. This might be a permissions issue.",
+      "loadFailed": "Failed to load students. Please try again.",
+      "retry": "Retry",
+      "troubleshooting": "Troubleshooting steps:",
+      "checkInternet": "Check your internet connection",
+      "verifySupabase": "Verify Supabase configuration in .env file",
+      "ensureProject": "Ensure your Supabase project is active",
+      "tryRefresh": "Try refreshing the page"
+    },
+    "children": {
+      "title": "Your Amazing Kids",
+      "unlimitedBeta": "unlimited - beta",
+      "ofOne": "of 1",
+      "freeLimitMessage": "Free plan is limited to 1 child. Upgrade to Premium to add more children.",
+      "noKidsTitle": "No kids added yet!",
+      "noKidsDescription": "Start by adding your first kid to begin their epic learning adventure!",
+      "freePlanLimit": "You can add 1 child with your free plan!",
+      "premiumUnlimited": "You can add unlimited children with your premium plan!",
+      "addFirstKid": "Add Your First Kid!"
+    }
+  },
+  "modals": {
+    "addStudent": {
+      "title": "Add New Student",
+      "subtitle": "Add a child to your family learning adventure",
+      "form": {
+        "name": "Student Name",
+        "namePlaceholder": "Enter student's full name",
+        "dateOfBirth": "Date of Birth",
+        "school": "School Name",
+        "schoolPlaceholder": "Enter school name",
+        "level": "Education Level",
+        "levelPlaceholder": "Select education level"
+      },
+      "buttons": {
+        "submit": "Add Student",
+        "submitting": "Adding Student...",
+        "cancel": "Cancel"
+      },
+      "success": "Student added successfully!",
+      "errors": {
+        "nameRequired": "Student name is required",
+        "schoolRequired": "School name is required",
+        "levelRequired": "Education level is required"
+      }
+    },
+    "editStudent": {
+      "title": "Edit Student",
+      "subtitle": "Update student information",
+      "buttons": {
+        "submit": "Save Changes",
+        "submitting": "Saving...",
+        "cancel": "Cancel"
+      },
+      "success": "Student updated successfully!"
+    }
+  },
+  "levels": {
+    "darjah1": "Darjah 1",
+    "darjah2": "Darjah 2", 
+    "darjah3": "Darjah 3",
+    "darjah4": "Darjah 4",
+    "darjah5": "Darjah 5",
+    "darjah6": "Darjah 6",
+    "tingkatan1": "Tingkatan 1",
+    "tingkatan2": "Tingkatan 2",
+    "tingkatan3": "Tingkatan 3", 
+    "tingkatan4": "Tingkatan 4",
+    "tingkatan5": "Tingkatan 5"
+  },
+  "common": {
+    "signOut": "Sign Out",
+    "dashboard": "Dashboard",
+    "admin": "Admin",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish",
+    "submit": "Submit",
+    "retry": "Retry",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "required": "Required",
+    "optional": "Optional"
   }
 }

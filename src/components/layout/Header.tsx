@@ -122,7 +122,7 @@ export function Header() {
                 icon={<BarChart3 className="w-4 h-4" />}
                 className="text-slate-600 hover:text-indigo-600 px-3 py-2 touch-target rounded-xl hover:bg-indigo-50 transition-all duration-300"
               >
-                <span className="hidden sm:inline">Dashboard</span>
+                <span className="hidden sm:inline">{t('common.dashboard')}</span>
               </Button>
             )}
             

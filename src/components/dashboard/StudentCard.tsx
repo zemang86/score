@@ -3,6 +3,7 @@ import { Student } from '../../lib/supabase'
 import { User, School, Star, Edit, Zap, Trophy, Sparkles, Heart } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { calculateAgeInYearsAndMonths } from '../../utils/dateUtils'
+import { useTranslation } from 'react-i18next'
 
 interface StudentCardProps {
   student: Student
@@ -16,6 +17,7 @@ interface StudentCardProps {
 }
 
 export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStudentUpdated, onOpenExamModal, onOpenEditModal, onOpenProgressModal }: StudentCardProps) {
+  const { t } = useTranslation()
 
   const getAgeDisplay = (dateOfBirth: string) => {
     return calculateAgeInYearsAndMonths(dateOfBirth)
@@ -50,25 +52,25 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
     }
     
     // Get level theme
-    let theme = { name: "Rookie Explorer", emoji: "🌱", color: "text-green-600", gradient: "from-green-400 to-emerald-500" }
+    let theme = { name: t('dashboard.student.rookie'), emoji: "🌱", color: "text-green-600", gradient: "from-green-400 to-emerald-500" }
     
     if (currentLevel > 85) {
-      theme = { name: "Legend", emoji: "👑", color: "text-amber-600", gradient: "from-amber-400 to-yellow-500" }
+      theme = { name: t('dashboard.student.legend'), emoji: "👑", color: "text-amber-600", gradient: "from-amber-400 to-yellow-500" }
     } else if (currentLevel > 65) {
-      theme = { name: "Learning Master", emoji: "🎓", color: "text-indigo-600", gradient: "from-indigo-400 to-purple-500" }
+      theme = { name: t('dashboard.student.master'), emoji: "🎓", color: "text-indigo-600", gradient: "from-indigo-400 to-purple-500" }
     } else if (currentLevel > 45) {
-      theme = { name: "Brilliant Scholar", emoji: "📚", color: "text-orange-600", gradient: "from-orange-400 to-red-500" }
+      theme = { name: t('dashboard.student.scholar'), emoji: "📚", color: "text-orange-600", gradient: "from-orange-400 to-red-500" }
     } else if (currentLevel > 25) {
-      theme = { name: "Knowledge Adventurer", emoji: "⚔️", color: "text-purple-600", gradient: "from-purple-400 to-pink-500" }
+      theme = { name: t('dashboard.student.adventurer'), emoji: "⚔️", color: "text-purple-600", gradient: "from-purple-400 to-pink-500" }
     } else if (currentLevel > 10) {
-      theme = { name: "Learning Explorer", emoji: "🧭", color: "text-blue-600", gradient: "from-blue-400 to-cyan-500" }
+      theme = { name: t('dashboard.student.explorer'), emoji: "🧭", color: "text-blue-600", gradient: "from-blue-400 to-cyan-500" }
     }
     
     const milestones = [10, 20, 30, 40, 50, 60, 70, 80, 90, 99]
     const isMilestone = milestones.includes(currentLevel)
     
     return { 
-      text: `Level ${currentLevel} - ${theme.name}`, 
+      text: `${t('dashboard.student.level')} ${currentLevel} - ${theme.name}`, 
       level: currentLevel,
       color: theme.color, 
       emoji: theme.emoji, 
@@ -133,12 +135,12 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
                   </div>
                 )}
               </div>
-              <div>
-                <span className={`font-bold text-sm ${xpInfo.color}`}>
-                  Level {xpInfo.level} {xpInfo.isMilestone && '🏆'}
-                </span>
-                <p className="text-xs text-gray-600">{xpInfo.text.split(' - ')[1]}</p>
-              </div>
+                          <div>
+              <span className={`font-bold text-sm ${xpInfo.color}`}>
+                {t('dashboard.student.level')} {xpInfo.level} {xpInfo.isMilestone && '🏆'}
+              </span>
+              <p className="text-xs text-gray-600">{xpInfo.text.split(' - ')[1]}</p>
+            </div>
             </div>
             <div className="text-right">
               <p className={`font-bold text-lg ${xpInfo.color}`}>{xpInfo.emoji}</p>
@@ -149,8 +151,8 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
           {/* Compact Progress */}
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs text-gray-600">
-              <span>{xpInfo.totalXP} XP</span>
-              <span>Next: Lv{[10, 20, 30, 40, 50, 60, 70, 80, 90, 99].find((m) => m > xpInfo.level) || '99'}</span>
+              <span>{xpInfo.totalXP} {t('dashboard.student.totalXP')}</span>
+              <span>{t('dashboard.student.next')}: Lv{[10, 20, 30, 40, 50, 60, 70, 80, 90, 99].find((m) => m > xpInfo.level) || '99'}</span>
             </div>
             <div className="w-full h-2 bg-white/70 rounded-full overflow-hidden">
               <div 
@@ -170,7 +172,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
             onClick={() => onOpenExamModal?.(student)}
             icon={<Zap className="w-4 h-4" />}
           >
-            Start Exam
+            {t('dashboard.buttons.startExam')}
           </Button>
           <Button 
             variant="outline" 
@@ -179,7 +181,7 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
             onClick={() => onOpenProgressModal?.(student)}
             icon={<Trophy className="w-4 h-4" />}
           >
-            Progress
+            {t('dashboard.buttons.progress')}
           </Button>
         </div>
       </div>

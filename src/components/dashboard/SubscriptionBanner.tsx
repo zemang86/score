@@ -3,6 +3,7 @@ import { Button } from '../ui/Button'
 import { Crown, X, Zap, Users, BookOpen } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { PremiumUpgradeModal } from './PremiumUpgradeModal'
+import { useTranslation } from 'react-i18next'
 
 interface SubscriptionBannerProps {
   className?: string
@@ -10,6 +11,7 @@ interface SubscriptionBannerProps {
 
 export function SubscriptionBanner({ className = '' }: SubscriptionBannerProps) {
   const { subscriptionPlan, maxStudents, dailyExamLimit, isBetaTester, effectiveAccess } = useAuth()
+  const { t } = useTranslation()
   const [dismissed, setDismissed] = useState(false)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   
@@ -28,10 +30,10 @@ export function SubscriptionBanner({ className = '' }: SubscriptionBannerProps) 
             <div>
               <h3 className="text-sm font-bold text-amber-800 flex items-center">
                 <Crown className="w-4 h-4 mr-1 sm:hidden" />
-                Upgrade to Premium
+                {t('dashboard.subscription.upgradeToPremium')}
               </h3>
               <p className="text-xs text-amber-700 hidden sm:block">
-                Unlock unlimited exams, multiple children, and advanced reports
+                {t('dashboard.subscription.upgradeDescription')}
               </p>
             </div>
           </div>
@@ -43,8 +45,8 @@ export function SubscriptionBanner({ className = '' }: SubscriptionBannerProps) 
               className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs py-1.5 px-3"
               icon={<Zap className="w-3 h-3" />}
             >
-              <span className="hidden sm:inline">Upgrade Now</span>
-              <span className="sm:hidden">Upgrade</span>
+              <span className="hidden sm:inline">{t('dashboard.subscription.upgradeNow')}</span>
+              <span className="sm:hidden">{t('dashboard.subscription.upgradeShort')}</span>
             </Button>
             
             <button
@@ -61,11 +63,11 @@ export function SubscriptionBanner({ className = '' }: SubscriptionBannerProps) 
         <div className="mt-2 grid grid-cols-2 gap-2 sm:flex sm:space-x-4 sm:mt-3">
           <div className="flex items-center bg-white/50 rounded-lg px-2 py-1">
             <Users className="w-3 h-3 text-amber-700 mr-1" />
-            <span className="text-xs text-amber-800">{maxStudents} child only</span>
+            <span className="text-xs text-amber-800">{maxStudents} {t('dashboard.subscription.childOnly')}</span>
           </div>
           <div className="flex items-center bg-white/50 rounded-lg px-2 py-1">
             <BookOpen className="w-3 h-3 text-amber-700 mr-1" />
-            <span className="text-xs text-amber-800">{dailyExamLimit} exams/day</span>
+            <span className="text-xs text-amber-800">{dailyExamLimit} {t('dashboard.subscription.examsPerDay')}</span>
           </div>
         </div>
       </div>

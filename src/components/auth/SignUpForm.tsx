@@ -4,6 +4,7 @@ import { Button } from '../ui/Button'
 import { PremiumUpgradeModal } from '../dashboard/PremiumUpgradeModal'
 import { Input } from '../ui/Input'
 import { Mail, Lock, User, Eye, EyeOff, Sparkles, Star, Crown, Zap } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface SignUpFormProps {
   onToggleMode: () => void
@@ -11,6 +12,7 @@ interface SignUpFormProps {
 
 export function SignUpForm({ onToggleMode }: SignUpFormProps) {
   const { signUp } = useAuth()
+  const { t } = useTranslation()
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -27,13 +29,13 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
     setError('')
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError(t('auth.signup.errors.passwordMismatch'))
       setLoading(false)
       return
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters long')
+      setError(t('auth.signup.errors.passwordLength'))
       setLoading(false)
       return
     }
@@ -56,10 +58,9 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
           <div className="flex justify-center mb-4">
             <Star className="w-16 h-16 text-amber-500 animate-bounce-gentle" />
           </div>
-          <h2 className="text-3xl font-bold text-green-700 mb-4">Account Created!</h2>
+          <h2 className="text-3xl font-bold text-green-700 mb-4">{t('auth.signup.success.title')}</h2>
           <p className="text-green-600 text-lg mb-6">
-            Welcome to Edventure+! You're now part of our learning family. 
-            You're on the Free plan with limited features.
+            {t('auth.signup.success.message')}
           </p>
           <div className="space-y-3">
             <Button 
@@ -68,7 +69,7 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
               className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
               icon={<Zap className="w-5 h-5" />}
             >
-              Start with Free Plan
+              {t('auth.signup.success.startFree')}
             </Button>
             
             <Button 
@@ -77,7 +78,7 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
               className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
               icon={<Crown className="w-5 h-5" />}
             >
-              Upgrade to Premium
+              {t('auth.signup.success.upgrade')}
             </Button>
           </div>
         </div>
@@ -96,10 +97,10 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
       <div className="text-center mb-8">
         <div className="flex items-center justify-center mb-4">
           <Sparkles className="w-6 h-6 text-purple-500 mr-2 animate-pulse-soft" />
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Join Edventure+!</h1>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{t('auth.signup.title')}</h1>
           <Sparkles className="w-6 h-6 text-purple-500 ml-2 animate-pulse-soft" />
         </div>
-        <p className="text-slate-600 text-lg">Create your family's learning adventure account</p>
+        <p className="text-slate-600 text-lg">{t('auth.signup.subtitle')}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -111,7 +112,7 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
 
         <Input
           type="text"
-          placeholder="Enter your full name"
+          placeholder={t('auth.signup.fullNamePlaceholder')}
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           icon={<User className="w-5 h-5" />}
@@ -120,7 +121,7 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
 
         <Input
           type="email"
-          placeholder="Enter your email address"
+          placeholder={t('auth.signup.emailPlaceholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           icon={<Mail className="w-5 h-5" />}
@@ -130,7 +131,7 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
         <div className="relative">
           <Input
             type={showPassword ? 'text' : 'password'}
-            placeholder="Create a strong password"
+            placeholder={t('auth.signup.passwordPlaceholder')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             icon={<Lock className="w-5 h-5" />}
@@ -147,7 +148,7 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
 
         <Input
           type={showPassword ? 'text' : 'password'}
-          placeholder="Confirm your password"
+          placeholder={t('auth.signup.confirmPasswordPlaceholder')}
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           icon={<Lock className="w-5 h-5" />}
@@ -161,18 +162,18 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
           loading={loading}
           icon={!loading ? <Zap className="w-5 h-5" /> : undefined}
         >
-          {loading ? 'Creating Account...' : 'Create My Account!'}
+          {loading ? t('auth.signup.submitLoading') : t('auth.signup.submitButton')}
         </Button>
 
         <div className="text-center bg-slate-50 rounded-xl p-4 border border-slate-200">
           <p className="text-slate-700">
-            Already have an account?{' '}
+            {t('auth.signup.haveAccount')}{' '}
             <button
               type="button"
               onClick={onToggleMode}
               className="text-indigo-600 hover:text-indigo-700 font-semibold transition-colors hover:underline"
             >
-              Sign in here!
+              {t('auth.signup.signInLink')}
             </button>
           </p>
         </div>
