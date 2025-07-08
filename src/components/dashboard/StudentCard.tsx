@@ -216,14 +216,9 @@ export function StudentCard({ student, onEdit, onDelete, onExamComplete, onStude
               ? 'bg-green-50 text-green-700 border border-green-200' 
               : 'bg-red-50 text-red-700 border border-red-200'
           }`}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Clock className="w-3 h-3 mr-1" />
-                <span>Daily Exams: {dailyExamCount}/{dailyExamLimit}</span>
-              </div>
-              <span className="font-bold">
-                {Math.max(0, dailyExamLimit - dailyExamCount)} remaining
-              </span>
+            <div className="flex items-center">
+              <Clock className="w-3 h-3 mr-1" />
+              <span>Daily Exams: {dailyExamCount}/{dailyExamLimit}</span>
             </div>
           </div>
         )}
