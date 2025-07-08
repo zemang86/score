@@ -8,6 +8,7 @@ import { LeaderboardModal } from './LeaderboardModal'
 import { FamilyReportsModal } from './FamilyReportsModal'
 import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
 import { Button } from '../ui/Button'
+import { canAddStudent } from '../../utils/accessControl'
 
 // Memoized StatCard component to prevent unnecessary re-renders
 const StatCard = React.memo(({ 
@@ -126,7 +127,7 @@ const PlanCard = React.memo(({
 PlanCard.displayName = 'PlanCard'
 
 export function OptimizedParentDashboard() {
-  const { user, profile, subscriptionPlan, dailyExamLimit } = useAuth()
+  const { user, profile, subscriptionPlan, dailyExamLimit, isBetaTester } = useAuth()
   const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
@@ -143,7 +144,10 @@ export function OptimizedParentDashboard() {
 
   // Memoized computed values
   const isPremium = useMemo(() => subscriptionPlan === 'premium', [subscriptionPlan])
-  const canAddMoreStudents = subscriptionPlan === 'free' ? students.length < 1 : true
+  const canAddMoreStudents = useMemo(() => 
+    profile ? canAddStudent(profile, students.length) : false, 
+    [profile, students.length]
+  )
 
   // Optimized fetch function with parallel queries
   const fetchDashboardData = useCallback(async () => {
@@ -280,7 +284,7 @@ export function OptimizedParentDashboard() {
       icon: Users,
       title: 'Kids',
       value: students.length.toString(),
-      subtitle: subscriptionPlan === 'free' ? 'of 1' : '∞',
+      subtitle: isBetaTester ? '∞ beta' : subscriptionPlan === 'free' ? 'of 1' : '∞',
       gradient: 'bg-gradient-to-br from-indigo-500 to-purple-500'
     },
     {
@@ -304,7 +308,7 @@ export function OptimizedParentDashboard() {
       subtitle: isPremium ? 'Detailed' : 'Basic',
       gradient: 'bg-gradient-to-br from-red-500 to-pink-500'
     }
-  ], [students.length, dailyExamLimit, isPremium, dashboardStats])
+  ], [students.length, dailyExamLimit, isPremium, dashboardStats, subscriptionPlan, isBetaTester])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
