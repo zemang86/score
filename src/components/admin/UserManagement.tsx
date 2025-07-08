@@ -13,6 +13,7 @@ interface UserData {
   subscription_plan: 'free' | 'premium'
   max_students: number
   daily_exam_limit: number
+  beta_tester: boolean
   created_at: string
   updated_at: string
   student_count?: number
@@ -108,8 +109,11 @@ export function UserManagement() {
     })
   }
 
-  const getPlanBadge = (plan: string) => {
-    if (plan === 'premium') {
+  const getAccessBadge = (user: UserData) => {
+    if (user.beta_tester) {
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200"><Zap className="w-3 h-3 mr-1" />Beta Tester</span>
+    }
+    if (user.subscription_plan === 'premium') {
       return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200"><Crown className="w-3 h-3 mr-1" />Premium</span>
     } else {
       return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200"><User className="w-3 h-3 mr-1" />Free</span>
@@ -296,23 +300,27 @@ export function UserManagement() {
                       </div>
                     </div>
                     <div className="mt-1">
-                      {getPlanBadge(user.subscription_plan)}
+                      {getAccessBadge(user)}
                     </div>
                     <div className="text-xs text-gray-600">
                       <div className="flex items-center">
                         <Users className="w-3 h-3 mr-1" />
                         <span>
-                          {user.subscription_plan === 'free' 
-                            ? `${user.current_student_count || 0} of 1 kids` 
-                            : `${user.current_student_count || 0} kids (${user.max_students || 1} purchased)`}
+                          {user.beta_tester 
+                            ? `${user.current_student_count || 0} kids (unlimited - beta)`
+                            : user.subscription_plan === 'free' 
+                              ? `${user.current_student_count || 0} of 1 kids` 
+                              : `${user.current_student_count || 0} kids (${user.max_students || 1} purchased)`}
                         </span>
                       </div>
                       <div className="flex items-center mt-1">
                         <BookOpen className="w-3 h-3 mr-1" />
                         <span>
-                          {user.subscription_plan === 'free' 
-                            ? '3 exams/day' 
-                            : `${user.daily_exam_limit === 999 ? '∞' : user.daily_exam_limit} exams/day`}
+                          {user.beta_tester 
+                            ? 'Unlimited exams/day (beta)'
+                            : user.subscription_plan === 'free' 
+                              ? '3 exams/day' 
+                              : `${user.daily_exam_limit === 999 ? '∞' : user.daily_exam_limit} exams/day`}
                         </span>
                       </div>
                     </div>

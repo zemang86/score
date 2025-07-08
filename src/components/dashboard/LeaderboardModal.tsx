@@ -26,8 +26,8 @@ interface LeaderboardEntry {
 type LeaderboardType = 'xp' | 'exams' | 'scores'
 
 export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
-  const { user, subscriptionPlan } = useAuth()
-  const isPremium = subscriptionPlan === 'premium'
+  const { user, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
+  const isPremium = effectiveAccess?.hasUnlimitedAccess || subscriptionPlan === 'premium'
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [activeType, setActiveType] = useState<LeaderboardType>('xp')

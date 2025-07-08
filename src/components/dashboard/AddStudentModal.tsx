@@ -14,7 +14,7 @@ interface AddStudentModalProps {
 }
 
 export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentModalProps) {
-  const { user, subscriptionPlan } = useAuth()
+  const { user, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
   const [formData, setFormData] = useState({
     name: '',
     school: '',
@@ -58,8 +58,8 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
     }
   }
 
-  // Premium: 1 kid included, then pay for each additional
-  const needsToPurchaseSlot = subscriptionPlan === 'premium' && currentStudentCount >= 1
+  // Premium: 1 kid included, then pay for each additional (but beta testers get unlimited)
+  const needsToPurchaseSlot = !isBetaTester && subscriptionPlan === 'premium' && currentStudentCount >= 1
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -91,8 +91,8 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
         throw countError
       }
 
-      // Check subscription limits
-      if (subscriptionPlan === 'free' && existingStudents && existingStudents.length >= 1) {
+      // Check subscription limits (beta testers get unlimited access)
+      if (!isBetaTester && subscriptionPlan === 'free' && existingStudents && existingStudents.length >= 1) {
         setError(`Free plan is limited to 1 child. Upgrade to Premium to add more children.`)
         setLoading(false)
         return
@@ -202,7 +202,11 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
                 <X className="w-5 h-5" />
               </button>
             </div>
-            {subscriptionPlan === 'free' ? (
+            {isBetaTester ? (
+              <p className="text-purple-700 text-xs">
+                <strong>Beta Tester:</strong> Unlimited children and exams! 🚀
+              </p>
+            ) : subscriptionPlan === 'free' ? (
               <p className="text-indigo-700 text-xs">
                 Free plan: Limited to <strong>1 child</strong> and <strong>3 exams/day</strong>. <span className="font-semibold">Upgrade to Premium for more!</span>
               </p>
@@ -271,7 +275,11 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
                 <Sparkles className="w-4 h-4 text-indigo-600 mr-1.5" />
                 <p className="text-indigo-800 font-medium text-xs">Your Plan Info</p>
               </div>
-              {subscriptionPlan === 'free' ? (
+              {isBetaTester ? (
+                <p className="text-purple-700 text-xs">
+                  <strong>Beta Tester:</strong> Unlimited children and exams! 🚀
+                </p>
+              ) : subscriptionPlan === 'free' ? (
                 <p className="text-indigo-700 text-xs">
                   Free plan: Limited to <strong>1 child</strong> and <strong>3 exams/day</strong>. <span className="font-semibold">Upgrade to Premium for more!</span>
                 </p>

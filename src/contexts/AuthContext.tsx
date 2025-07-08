@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef, useMemo } from 'react'
 import { User, Session } from '@supabase/supabase-js'
-import { supabase, fetchUserProfile, testDatabaseConnection } from '../lib/supabase'
-import type { UserWithAdminStatus } from '../lib/supabase'
+import { supabase, fetchUserProfile, testDatabaseConnection, getEffectiveAccess } from '../lib/supabase'
+import type { UserWithAdminStatus, EffectiveAccess } from '../lib/supabase'
 
 interface AuthContextType {
   user: User | null
@@ -11,6 +11,8 @@ interface AuthContextType {
   maxStudents: number
   dailyExamLimit: number
   isAdmin: boolean
+  isBetaTester: boolean
+  effectiveAccess: EffectiveAccess
   loading: boolean
   profileLoading: boolean
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>
@@ -38,6 +40,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [maxStudents, setMaxStudents] = useState<number>(1) // Default to free limits
   const [dailyExamLimit, setDailyExamLimit] = useState<number>(3) // Default to free limits
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
+  const [isBetaTester, setIsBetaTester] = useState<boolean>(false)
+  const [effectiveAccess, setEffectiveAccess] = useState<EffectiveAccess>({
+    level: 'free',
+    maxStudents: 1,
+    dailyExamLimit: 3,
+    hasUnlimitedAccess: false
+  })
   const [loading, setLoading] = useState(true) // Auth loading
   const [profileLoading, setProfileLoading] = useState(false) // Separate profile loading state
   
@@ -86,12 +95,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('📝 AuthContext: Setting profile state')
         setProfile(userProfile)
         setSubscriptionPlan(userProfile.subscription_plan)
-        setMaxStudents(userProfile.max_students)
-        setDailyExamLimit(userProfile.daily_exam_limit)
         setIsAdmin(userProfile.isAdmin)
+        setIsBetaTester(userProfile.beta_tester || false)
+        
+        // Calculate effective access first
+        const access = getEffectiveAccess(userProfile)
+        setEffectiveAccess(access)
+        
+        // Use effective access values instead of raw database values
+        setMaxStudents(access.maxStudents)
+        setDailyExamLimit(access.dailyExamLimit)
       } else {
         console.log('⚠️ AuthContext: No profile found, keeping defaults')
         setProfile(null)
+        setIsBetaTester(false)
+        setEffectiveAccess({
+          level: 'free',
+          maxStudents: 1,
+          dailyExamLimit: 3,
+          hasUnlimitedAccess: false
+        })
         // Keep existing free defaults
       }
     } catch (error) {
@@ -115,6 +138,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setMaxStudents(1)
       setDailyExamLimit(3)
       setIsAdmin(false)
+      setIsBetaTester(false)
+      setEffectiveAccess({
+        level: 'free',
+        maxStudents: 1,
+        dailyExamLimit: 3,
+        hasUnlimitedAccess: false
+      })
     }
   }
 
@@ -163,6 +193,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setMaxStudents(1)
           setDailyExamLimit(3)
           setIsAdmin(false)
+          setIsBetaTester(false)
+          setEffectiveAccess({
+            level: 'free',
+            maxStudents: 1,
+            dailyExamLimit: 3,
+            hasUnlimitedAccess: false
+          })
         }
       } catch (error) {
         console.error('❌ AuthContext: Error in getInitialSession:', error)
@@ -221,6 +258,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setMaxStudents(1)
           setDailyExamLimit(3)
           setIsAdmin(false)
+          setIsBetaTester(false)
+          setEffectiveAccess({
+            level: 'free',
+            maxStudents: 1,
+            dailyExamLimit: 3,
+            hasUnlimitedAccess: false
+          })
         }
       } catch (error) {
         console.error('❌ AuthContext: Error processing auth state change:', error)
@@ -257,7 +301,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!error && data.user) {
       console.log('✅ AuthContext: User created, creating profile for:', data.user.id)
       
-      // Create user profile in our users table with premium defaults
+      // Create user profile in our users table with free defaults
       const { error: profileError } = await supabase
         .from('users')
         .insert([
@@ -268,6 +312,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             subscription_plan: 'free',
             max_students: 1,
             daily_exam_limit: 3,
+            beta_tester: false,
           },
         ])
 
@@ -279,6 +324,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setMaxStudents(1)
         setDailyExamLimit(3)
         setIsAdmin(false)
+        setIsBetaTester(false)
+        setEffectiveAccess({
+          level: 'free',
+          maxStudents: 1,
+          dailyExamLimit: 3,
+          hasUnlimitedAccess: false
+        })
       }
     } else if (error) {
       console.error('❌ AuthContext: Error during signUp:', error)
@@ -334,6 +386,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setMaxStudents(1)
     setDailyExamLimit(3)
     setIsAdmin(false)
+    setIsBetaTester(false)
+    setEffectiveAccess({
+      level: 'free',
+      maxStudents: 1,
+      dailyExamLimit: 3,
+      hasUnlimitedAccess: false
+    })
     setLoading(false)
     setProfileLoading(false)
     console.log('✅ AuthContext: Local signOut state cleared')
@@ -360,6 +419,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     maxStudents,
     dailyExamLimit,
     isAdmin,
+    isBetaTester,
+    effectiveAccess,
     loading,
     profileLoading,
     signUp,
@@ -375,6 +436,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     maxStudents,
     dailyExamLimit,
     isAdmin,
+    isBetaTester,
+    effectiveAccess,
     loading,
     profileLoading,
     signUp,
@@ -392,6 +455,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     maxStudents,
     dailyExamLimit,
     isAdmin,
+    isBetaTester,
+    effectiveAccess,
     loading,
     profileLoading,
     profileExists: !!profile

@@ -16,9 +16,10 @@ import { StudentProgressModal } from './StudentProgressModal'
 import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } from '../ui/SkeletonLoader'
+import { canAddStudent } from '../../utils/accessControl'
 
 export function ParentDashboard() {
-  const { user, profile, subscriptionPlan, dailyExamLimit } = useAuth()
+  const { user, profile, subscriptionPlan, maxStudents, dailyExamLimit, isBetaTester, effectiveAccess } = useAuth()
   const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
@@ -41,8 +42,8 @@ export function ParentDashboard() {
   })
   const [totalQuestions, setTotalQuestions] = useState<number>(0)
 
-  // Define isPremium based on subscriptionPlan
-  const isPremium = subscriptionPlan === 'premium'
+  // Define isPremium based on effective access (includes beta testers)
+  const isPremium = effectiveAccess?.hasUnlimitedAccess || subscriptionPlan === 'premium'
 
   useEffect(() => {
     if (user) {
@@ -335,8 +336,8 @@ export function ParentDashboard() {
     }
   }
 
-  // Subscription-based logic: Free = 1 kid max, Premium = unlimited (show as can always add)
-  const canAddMoreStudents = subscriptionPlan === 'free' ? students.length < 1 : true
+  // Use access control logic that considers beta testers
+  const canAddMoreStudents = profile ? canAddStudent(profile, students.length) : false
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -365,12 +366,17 @@ export function ParentDashboard() {
                 <div className="text-center sm:text-left">
                   <h1 className="text-xl sm:text-2xl font-bold text-slate-800 mb-0.5">
                     Welcome, {profile?.full_name || 'Parent'}!
-                    {subscriptionPlan === 'premium' && (
+                    {isBetaTester ? (
+                      <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
+                        <Zap className="w-3 h-3 mr-1" />
+                        <span>Beta Tester</span>
+                      </span>
+                    ) : subscriptionPlan === 'premium' ? (
                       <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
                         <Crown className="w-3 h-3 mr-1" />
                         <span className="cursor-pointer" onClick={() => setShowSubscriptionModal(true)}>Premium</span>
                       </span>
-                    )}
+                    ) : null}
                   </h1>
                   <p className="text-sm sm:text-base text-slate-600 mb-1">
                     Ready to level up your kids' learning adventure?
@@ -395,7 +401,7 @@ export function ParentDashboard() {
                 >
                   Reports
                 </Button>
-                {subscriptionPlan !== 'premium' && (
+                {!isPremium && (
                   <Button
                     onClick={() => setShowUpgradeModal(true)}
                     variant="warning"
@@ -416,6 +422,8 @@ export function ParentDashboard() {
 
 
 
+
+
         {/* Enhanced Stats Grid - 6 Cards */}
         {loading ? (
           <DashboardStatsSkeleton />
@@ -430,7 +438,9 @@ export function ParentDashboard() {
                     <p className="text-xs font-medium text-slate-600">Kids</p>
                     <div className="flex items-baseline">
                       <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{students.length}</p>
-                      {subscriptionPlan === 'free' ? (
+                      {isBetaTester ? (
+                        <p className="text-xs text-purple-500">∞ beta</p>
+                      ) : subscriptionPlan === 'free' ? (
                         <p className="text-xs text-slate-500">of 1</p>
                       ) : (
                         <p className="text-xs text-slate-500">∞</p>
@@ -533,9 +543,9 @@ export function ParentDashboard() {
                     <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg p-1.5 sm:p-2 mr-2 sm:mr-3 shadow-sm">
                       <Users className="w-5 h-5 sm:w-6 text-white" />
                     </div>
-                                          <h2 className="text-base sm:text-lg font-bold text-slate-800">
-                        Your Amazing Kids ({students.length}{subscriptionPlan === 'free' ? ' of 1' : ''})
-                      </h2>
+                                                              <h2 className="text-base sm:text-lg font-bold text-slate-800">
+                      Your Amazing Kids ({students.length}{isBetaTester ? ' (unlimited - beta)' : subscriptionPlan === 'free' ? ' of 1' : ''})
+                    </h2>
                   </div>
                   <Button 
                     variant="gradient-primary"
@@ -681,7 +691,7 @@ export function ParentDashboard() {
           isOpen={showProgressModal}
           onClose={handleCloseProgressModal}
           student={selectedStudent}
-          isPremium={subscriptionPlan === 'premium'}
+                        isPremium={isPremium}
         />
       )}
       
