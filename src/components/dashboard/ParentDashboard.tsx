@@ -420,24 +420,7 @@ export function ParentDashboard() {
         {/* Subscription Banner */}
         <SubscriptionBanner className="mb-4 sm:mb-6" />
 
-        {/* Temporary Debug Panel for Beta Tester */}
-        {isBetaTester && (
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
-            <h3 className="text-purple-800 font-semibold mb-2">🧪 Beta Tester Debug Info</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <div>📋 Plan: <strong>{subscriptionPlan}</strong></div>
-                <div>👥 Max Students: <strong>{maxStudents}</strong></div>
-                <div>📚 Daily Limit: <strong>{dailyExamLimit}</strong></div>
-              </div>
-              <div>
-                <div>🧪 Beta Tester: <strong>{isBetaTester ? 'YES' : 'NO'}</strong></div>
-                <div>♾️ Unlimited Access: <strong>{effectiveAccess?.hasUnlimitedAccess ? 'YES' : 'NO'}</strong></div>
-                <div>🎯 Premium UI: <strong>{isPremium ? 'YES' : 'NO'}</strong></div>
-              </div>
-            </div>
-          </div>
-        )}
+
 
 
 

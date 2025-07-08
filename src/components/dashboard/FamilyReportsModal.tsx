@@ -46,8 +46,8 @@ interface StudentComparison {
 }
 
 export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps) {
-  const { user, subscriptionPlan } = useAuth()
-  const isPremium = subscriptionPlan === 'premium'
+  const { user, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
+  const isPremium = effectiveAccess?.hasUnlimitedAccess || subscriptionPlan === 'premium'
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState<'overview' | 'subjects' | 'modes' | 'students'>('overview')

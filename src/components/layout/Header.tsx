@@ -7,7 +7,7 @@ import { EdventureLogo } from '../ui/EdventureLogo'
 import { useTranslation } from 'react-i18next'
 
 export function Header() {
-  const { user, isAdmin, signOut, subscriptionPlan, isBetaTester, refreshUserProfile } = useAuth()
+  const { user, isAdmin, signOut, subscriptionPlan, isBetaTester, effectiveAccess, refreshUserProfile } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
   const { t, i18n } = useTranslation()
@@ -46,7 +46,7 @@ export function Header() {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
   }
 
-  const isPremium = subscriptionPlan === 'premium'
+  const isPremium = effectiveAccess?.hasUnlimitedAccess || subscriptionPlan === 'premium'
   const currentLanguage = i18n.language || 'en'
 
   return (
