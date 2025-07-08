@@ -7,7 +7,7 @@ import { EdventureLogo } from '../ui/EdventureLogo'
 import { useTranslation } from 'react-i18next'
 
 export function Header() {
-  const { user, isAdmin, signOut, subscriptionPlan } = useAuth()
+  const { user, isAdmin, signOut, subscriptionPlan, isBetaTester, refreshUserProfile } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
   const { t, i18n } = useTranslation()
@@ -91,6 +91,7 @@ export function Header() {
                 <span className="font-semibold text-slate-700 text-sm flex items-center">
                   {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
                   {isPremium && <Crown className="w-4 h-4 text-amber-500 ml-2" />}
+                  {isBetaTester && <span className="ml-2 bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded-full font-bold">BETA</span>}
                 </span>
                 {isAdmin && (
                   <div className="flex items-center mt-1">
@@ -109,6 +110,19 @@ export function Header() {
                 <Crown className="w-3.5 h-3.5 text-amber-400 absolute -top-1 -right-1 drop-shadow-sm" />
               )}
             </div>
+
+            {/* Temporary Refresh Button for Beta Testing */}
+            {user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={refreshUserProfile}
+                className="text-purple-600 hover:text-purple-700 px-2 py-2 rounded-xl hover:bg-purple-50 transition-all duration-300"
+                title="Refresh Profile (Beta Testing)"
+              >
+                🔄
+              </Button>
+            )}
 
             {/* Navigation Buttons - Admin Only */}
             {user && !isAdminPage && isAdmin && (
