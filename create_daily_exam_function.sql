@@ -1,6 +1,7 @@
 -- Create the missing get_daily_exam_count function
--- Run this in your Supabase SQL editor to fix the 400 error
+-- Copy and paste ONLY the sections below, one at a time
 
+-- STEP 1: Create the function (copy and run this first)
 CREATE OR REPLACE FUNCTION get_daily_exam_count(student_id uuid, check_date date DEFAULT CURRENT_DATE)
 RETURNS integer AS $$
 DECLARE
@@ -15,10 +16,3 @@ BEGIN
   RETURN exam_count;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Test the function (replace with a real student ID)
--- SELECT get_daily_exam_count('your-student-id-here');
-
--- Grant execute permissions to authenticated users
-GRANT EXECUTE ON FUNCTION get_daily_exam_count(uuid, date) TO authenticated;
-GRANT EXECUTE ON FUNCTION get_daily_exam_count(uuid) TO authenticated;

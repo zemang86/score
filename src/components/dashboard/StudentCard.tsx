@@ -42,7 +42,7 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
     try {
       // First try the database function
       const { data, error } = await supabase.rpc('get_daily_exam_count', {
-        student_id: student.id
+        input_student_id: student.id
       })
       
       if (error) {
