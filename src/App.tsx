@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { OptimizedAuthProvider as AuthProvider, useAuth } from './contexts/OptimizedAuthContext'
 
 // Regular imports instead of lazy loading to prevent tab switching issues
 import { LandingPage } from './components/landing/LandingPage'
