@@ -36,16 +36,16 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<UserWithAdminStatus | null>(null)
-  const [subscriptionPlan, setSubscriptionPlan] = useState<'free' | 'premium' | null>('premium')
-  const [maxStudents, setMaxStudents] = useState<number>(3)
-  const [dailyExamLimit, setDailyExamLimit] = useState<number>(999)
+  const [subscriptionPlan, setSubscriptionPlan] = useState<'free' | 'premium' | null>('free')
+  const [maxStudents, setMaxStudents] = useState<number>(1)
+  const [dailyExamLimit, setDailyExamLimit] = useState<number>(3)
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
   const [isBetaTester, setIsBetaTester] = useState<boolean>(false)
   const [effectiveAccess, setEffectiveAccess] = useState<EffectiveAccess>({
-    level: 'premium',
-    maxStudents: 3,
-    dailyExamLimit: 999,
-    hasUnlimitedAccess: true
+    level: 'free',
+    maxStudents: 1,
+    dailyExamLimit: 3,
+    hasUnlimitedAccess: false
   })
   const [loading, setLoading] = useState(true)
   const [profileLoading, setProfileLoading] = useState(false)
@@ -125,10 +125,10 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
         setProfile(null)
         setIsBetaTester(false)
         setEffectiveAccess({
-          level: 'premium',
-          maxStudents: 3,
-          dailyExamLimit: 999,
-          hasUnlimitedAccess: true
+          level: 'free',
+          maxStudents: 1,
+          dailyExamLimit: 3,
+          hasUnlimitedAccess: false
         })
       }
     } catch (error) {
@@ -145,16 +145,16 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
       await getUserProfile(user.id)
     } else {
       setProfile(null)
-      setSubscriptionPlan('premium')
-      setMaxStudents(3)
-      setDailyExamLimit(999)
+      setSubscriptionPlan('free')
+      setMaxStudents(1)
+      setDailyExamLimit(3)
       setIsAdmin(false)
       setIsBetaTester(false)
       setEffectiveAccess({
-        level: 'premium',
-        maxStudents: 3,
-        dailyExamLimit: 999,
-        hasUnlimitedAccess: true
+        level: 'free',
+        maxStudents: 1,
+        dailyExamLimit: 3,
+        hasUnlimitedAccess: false
       })
     }
   }, [user, getUserProfile])
@@ -179,23 +179,23 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
             id: data.user.id,
             email: data.user.email,
             full_name: fullName,
-            subscription_plan: 'premium',
-            max_students: 3,
-            daily_exam_limit: 999,
+            subscription_plan: 'free',
+            max_students: 1,
+            daily_exam_limit: 3,
           },
         ])
 
       if (!profileError) {
-        setSubscriptionPlan('premium')
-        setMaxStudents(3)
-        setDailyExamLimit(999)
+        setSubscriptionPlan('free')
+        setMaxStudents(1)
+        setDailyExamLimit(3)
         setIsAdmin(false)
         setIsBetaTester(false)
         setEffectiveAccess({
-          level: 'premium',
-          maxStudents: 3,
-          dailyExamLimit: 999,
-          hasUnlimitedAccess: true
+          level: 'free',
+          maxStudents: 1,
+          dailyExamLimit: 3,
+          hasUnlimitedAccess: false
         })
       }
     }
@@ -241,16 +241,16 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
     
     // Reset state
     setProfile(null)
-    setSubscriptionPlan('premium')
-    setMaxStudents(3)
-    setDailyExamLimit(999)
+    setSubscriptionPlan('free')
+    setMaxStudents(1)
+    setDailyExamLimit(3)
     setIsAdmin(false)
     setIsBetaTester(false)
     setEffectiveAccess({
-      level: 'premium',
-      maxStudents: 3,
-      dailyExamLimit: 999,
-      hasUnlimitedAccess: true
+      level: 'free',
+      maxStudents: 1,
+      dailyExamLimit: 3,
+      hasUnlimitedAccess: false
     })
     setLoading(false)
     setProfileLoading(false)
@@ -329,16 +329,16 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
           
           setUser(null)
           setProfile(null)
-          setSubscriptionPlan('premium')
-          setMaxStudents(3)
-          setDailyExamLimit(999)
+          setSubscriptionPlan('free')
+          setMaxStudents(1)
+          setDailyExamLimit(3)
           setIsAdmin(false)
           setIsBetaTester(false)
           setEffectiveAccess({
-            level: 'premium',
-            maxStudents: 3,
-            dailyExamLimit: 999,
-            hasUnlimitedAccess: true
+            level: 'free',
+            maxStudents: 1,
+            dailyExamLimit: 3,
+            hasUnlimitedAccess: false
           })
         }
       } catch (error) {
