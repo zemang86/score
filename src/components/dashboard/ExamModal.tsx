@@ -1387,33 +1387,6 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
                 </div>
 
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 text-white mr-2" />
-                      <h3 className="text-sm font-bold">Daily Exam Status</h3>
-                    </div>
-                    <div className="flex items-center space-x-3 text-xs">
-                      <div className="text-center">
-                        <div className="font-bold">{dailyExamCount}</div>
-                        <div className="opacity-75">Completed</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-bold">{Math.max(0, dailyExamLimit - dailyExamCount)}</div>
-                        <div className="opacity-75">Remaining</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-bold">{dailyExamLimit === 999 ? '∞' : dailyExamLimit}</div>
-                        <div className="opacity-75">Daily Limit</div>
-                      </div>
-                    </div>
-                  </div>
-                  {!canUserTakeExam() && (
-                    <div className="mt-2 text-xs opacity-90 text-center">
-                      🚫 Daily limit reached! Try again tomorrow or upgrade for unlimited exams.
-                    </div>
-                  )}
-                </div>
-
                 {/* Compact Success Criteria */}
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg p-3 shadow-md">
                   <div className="flex items-center justify-between">
