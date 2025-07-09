@@ -20,14 +20,14 @@ export const SUBSCRIPTION_ENFORCEMENT = {
 }
 
 /**
- * Determines which students a free user can access for exams
+ * Determines which students a user can access for exams
  * @param students - Array of students ordered by preference
- * @param isFreePlan - Whether user is on free plan
+ * @param hasUnlimitedAccess - Whether user has unlimited access (premium/beta)
  * @returns Array of student IDs that can take exams
  */
 export const getAccessibleStudentsForExams = (
   students: Student[], 
-  isFreePlan: boolean
+  hasUnlimitedAccess: boolean
 ): string[] => {
   // Emergency rollback - allow all students
   if (!SUBSCRIPTION_ENFORCEMENT.ENABLE_ALL_RESTRICTIONS) {
@@ -39,8 +39,8 @@ export const getAccessibleStudentsForExams = (
     return students.map(s => s.id)
   }
 
-  // Premium users - allow all students
-  if (!isFreePlan) {
+  // Premium users OR beta testers - allow all students
+  if (hasUnlimitedAccess) {
     return students.map(s => s.id)
   }
 
@@ -62,15 +62,15 @@ export const getAccessibleStudentsForExams = (
  * Checks if a specific student can take exams
  * @param studentId - The student ID to check
  * @param students - All user's students
- * @param isFreePlan - Whether user is on free plan
+ * @param hasUnlimitedAccess - Whether user has unlimited access (premium/beta)
  * @returns Whether this student can take exams
  */
 export const canStudentTakeExam = (
   studentId: string,
   students: Student[],
-  isFreePlan: boolean
+  hasUnlimitedAccess: boolean
 ): boolean => {
-  const accessibleStudentIds = getAccessibleStudentsForExams(students, isFreePlan)
+  const accessibleStudentIds = getAccessibleStudentsForExams(students, hasUnlimitedAccess)
   return accessibleStudentIds.includes(studentId)
 }
 
@@ -78,13 +78,13 @@ export const canStudentTakeExam = (
  * Gets the restriction reason for a student
  * @param studentId - The student ID to check
  * @param students - All user's students
- * @param isFreePlan - Whether user is on free plan
+ * @param hasUnlimitedAccess - Whether user has unlimited access (premium/beta)
  * @returns Restriction reason or null if accessible
  */
 export const getStudentRestrictionReason = (
   studentId: string,
   students: Student[],
-  isFreePlan: boolean
+  hasUnlimitedAccess: boolean
 ): string | null => {
   // No restrictions if feature is disabled
   if (!SUBSCRIPTION_ENFORCEMENT.ENABLE_ALL_RESTRICTIONS || 
@@ -92,13 +92,13 @@ export const getStudentRestrictionReason = (
     return null
   }
 
-  // No restrictions for premium users
-  if (!isFreePlan) {
+  // No restrictions for premium users or beta testers
+  if (hasUnlimitedAccess) {
     return null
   }
 
   // Check if this student is accessible
-  if (canStudentTakeExam(studentId, students, isFreePlan)) {
+  if (canStudentTakeExam(studentId, students, hasUnlimitedAccess)) {
     return null
   }
 
@@ -113,16 +113,16 @@ export const getStudentRestrictionReason = (
  * Gets display status for a student card
  * @param studentId - The student ID
  * @param students - All user's students  
- * @param isFreePlan - Whether user is on free plan
+ * @param hasUnlimitedAccess - Whether user has unlimited access (premium/beta)
  * @returns Status object with UI indicators
  */
 export const getStudentDisplayStatus = (
   studentId: string,
   students: Student[],
-  isFreePlan: boolean
+  hasUnlimitedAccess: boolean
 ) => {
-  const canTakeExams = canStudentTakeExam(studentId, students, isFreePlan)
-  const restrictionReason = getStudentRestrictionReason(studentId, students, isFreePlan)
+  const canTakeExams = canStudentTakeExam(studentId, students, hasUnlimitedAccess)
+  const restrictionReason = getStudentRestrictionReason(studentId, students, hasUnlimitedAccess)
   
   const isFirstStudent = students.length > 0 && 
     [...students].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())[0]?.id === studentId
@@ -131,8 +131,8 @@ export const getStudentDisplayStatus = (
     canTakeExams,
     restrictionReason,
     isFirstStudent,
-    isRestricted: !canTakeExams && isFreePlan,
-    showUpgradePrompt: !canTakeExams && isFreePlan,
+    isRestricted: !canTakeExams && !hasUnlimitedAccess,
+    showUpgradePrompt: !canTakeExams && !hasUnlimitedAccess,
     displayMode: SUBSCRIPTION_ENFORCEMENT.SOFT_ENFORCEMENT_MODE ? 'warning' : 'disabled'
   }
 }

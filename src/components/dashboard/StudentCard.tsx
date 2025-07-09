@@ -26,8 +26,8 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
   const [loadingExamCount, setLoadingExamCount] = useState(false)
 
   // Get subscription enforcement status
-  const isFreePlan = subscriptionPlan === 'free'
-  const studentStatus = getStudentDisplayStatus(student.id, allStudents, isFreePlan)
+  const hasUnlimitedExams = effectiveAccess?.hasUnlimitedExams || isBetaTester || false
+  const studentStatus = getStudentDisplayStatus(student.id, allStudents, hasUnlimitedExams)
 
   // Fetch daily exam count when component mounts
   useEffect(() => {
@@ -40,15 +40,35 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
   const fetchDailyExamCount = async () => {
     setLoadingExamCount(true)
     try {
+      // First try the database function
       const { data, error } = await supabase.rpc('get_daily_exam_count', {
-        student_id: student.id
+        input_student_id: student.id
       })
       
       if (error) {
-        console.error('Error fetching daily exam count:', error)
-        setDailyExamCount(0) // Default to 0 if error
+        console.error('Error with get_daily_exam_count RPC:', error)
+        console.log('🔄 Falling back to direct query method...')
+        
+        // Fallback: Direct query if RPC function doesn't exist
+        const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+        const { count, error: fallbackError } = await supabase
+          .from('exams')
+          .select('*', { count: 'exact', head: true })
+          .eq('student_id', student.id)
+          .eq('completed', true)
+          .gte('created_at', `${today}T00:00:00.000Z`)
+          .lt('created_at', `${today}T23:59:59.999Z`)
+        
+        if (fallbackError) {
+          console.error('Fallback query also failed:', fallbackError)
+          setDailyExamCount(0)
+        } else {
+          setDailyExamCount(count || 0)
+          console.log(`📊 Student ${student.name} has taken ${count || 0} exams today (fallback method)`)
+        }
       } else {
         setDailyExamCount(data || 0)
+        console.log(`✅ Student ${student.name} has taken ${data || 0} exams today (RPC method)`)
       }
     } catch (err) {
       console.error('Failed to fetch daily exam count:', err)
@@ -68,7 +88,7 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
     }
     
     // Then check daily exam limits using effective access
-    return effectiveAccess?.hasUnlimitedAccess || 
+    return effectiveAccess?.hasUnlimitedExams || 
            isBetaTester || 
            user.isAdmin || 
            dailyExamLimit === 999 || 
@@ -163,7 +183,7 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
         )}
         
         {/* First student indicator */}
-        {studentStatus.isFirstStudent && isFreePlan && allStudents.length > 1 && (
+        {studentStatus.isFirstStudent && !effectiveAccess?.hasUnlimitedKids && allStudents.length > 1 && (
           <div className="absolute top-2 left-2 z-20">
             <div className="bg-green-100 border border-green-300 rounded-lg px-2 py-1 flex items-center">
               <Crown className="w-3 h-3 text-green-600 mr-1" />

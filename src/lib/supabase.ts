@@ -135,6 +135,8 @@ export interface EffectiveAccess {
   maxStudents: number
   dailyExamLimit: number
   hasUnlimitedAccess: boolean
+  hasUnlimitedExams: boolean
+  hasUnlimitedKids: boolean
 }
 
 export interface Student {
@@ -443,21 +445,75 @@ export const getUserAccessLevel = (user: UserWithAdminStatus): AccessLevel => {
   return user.subscription_plan
 }
 
-export const getEffectiveAccess = (user: UserWithAdminStatus): EffectiveAccess => {
+// Helper function to check if user has active Stripe subscription
+const checkActiveStripeSubscription = async (userId: string): Promise<boolean> => {
+  try {
+    // Try to query the stripe subscriptions view/table
+    const { data, error } = await supabase
+      .from('stripe_user_subscriptions')
+      .select('subscription_status')
+      .eq('user_id', userId)
+      .eq('subscription_status', 'active')
+      .maybeSingle()
+    
+    if (error) {
+      console.warn('Stripe subscription check failed (table may not exist):', error.message)
+      // During launch period, treat this as if they have an active subscription
+      // This is temporary until Stripe integration is fully set up
+      return true
+    }
+    
+    return !!data
+  } catch (error) {
+    console.warn('Error checking Stripe subscription:', error)
+    // During launch period, default to active subscription
+    return true
+  }
+}
+
+export const getEffectiveAccess = async (user: UserWithAdminStatus): Promise<EffectiveAccess> => {
+  console.log('🔍 getEffectiveAccess called for user:', user.email, {
+    subscription_plan: user.subscription_plan,
+    daily_exam_limit: user.daily_exam_limit,
+    beta_tester: user.beta_tester
+  })
+  
+  // Beta testers get unlimited access
   if (user.beta_tester) {
+    console.log('✅ User is beta tester - granting unlimited access')
     return {
       level: 'beta_tester',
       maxStudents: 999999,
       dailyExamLimit: 999,
-      hasUnlimitedAccess: true
+      hasUnlimitedAccess: true,
+      hasUnlimitedExams: true,
+      hasUnlimitedKids: true
     }
   }
   
+    // For users marked as premium, grant premium access (launch period)
+  if (user.subscription_plan === 'premium') {
+    console.log('✅ Premium user - granting unlimited exams with kid limits')
+    // Premium user model: unlimited exams + 1 kid included + can buy more kids
+    return {
+      level: 'premium',
+      maxStudents: user.max_students || 1, // Use database value (includes purchased additional kids)
+      dailyExamLimit: 999, // Unlimited exams for premium
+      hasUnlimitedAccess: false, // Not unlimited kids, just unlimited exams
+      hasUnlimitedExams: true, // Premium gets unlimited exams
+      hasUnlimitedKids: false // Premium gets limited kids (1 + purchased)
+    }
+  }
+  
+  // Free users get limited access
+  console.log('✅ Free user - applying 3 exam daily limit')
   return {
-    level: user.subscription_plan,
-    maxStudents: user.max_students,
-    dailyExamLimit: user.daily_exam_limit,
-    hasUnlimitedAccess: user.subscription_plan === 'premium'
+    level: 'free',
+    maxStudents: 1,
+    dailyExamLimit: 3,
+    hasUnlimitedAccess: false,
+    hasUnlimitedExams: false,
+    hasUnlimitedKids: false
   }
 }
 

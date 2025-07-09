@@ -102,16 +102,35 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
   // Function to fetch today's exam count for this student
   const fetchDailyExamCount = async () => {
     try {
+      // First try the database function
       const { data, error } = await supabase.rpc('get_daily_exam_count', {
-        student_id: student.id
+        input_student_id: student.id
       })
       
       if (error) {
-        console.error('Error fetching daily exam count:', error)
-        setDailyExamCount(0) // Default to 0 if error
+        console.error('Error with get_daily_exam_count RPC:', error)
+        console.log('🔄 Falling back to direct query method...')
+        
+        // Fallback: Direct query if RPC function doesn't exist
+        const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+        const { count, error: fallbackError } = await supabase
+          .from('exams')
+          .select('*', { count: 'exact', head: true })
+          .eq('student_id', student.id)
+          .eq('completed', true)
+          .gte('created_at', `${today}T00:00:00.000Z`)
+          .lt('created_at', `${today}T23:59:59.999Z`)
+        
+        if (fallbackError) {
+          console.error('Fallback query also failed:', fallbackError)
+          setDailyExamCount(0)
+        } else {
+          setDailyExamCount(count || 0)
+          console.log(`📊 Student ${student.name} has taken ${count || 0} exams today (fallback method)`)
+        }
       } else {
         setDailyExamCount(data || 0)
-        console.log(`Student ${student.name} has taken ${data || 0} exams today`)
+        console.log(`✅ Student ${student.name} has taken ${data || 0} exams today (RPC method)`)
       }
     } catch (err) {
       console.error('Failed to fetch daily exam count:', err)
@@ -124,13 +143,13 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
     if (!user) return false
     
     // First check subscription restrictions (multi-student limits)
-    const isFreePlan = subscriptionPlan === 'free'
-    if (!canStudentTakeExam(student.id, allStudents, isFreePlan)) {
+    const hasUnlimitedExams = effectiveAccess?.hasUnlimitedExams || isBetaTester || false
+    if (!canStudentTakeExam(student.id, allStudents, hasUnlimitedExams)) {
       return false
     }
     
     // Then check daily exam limits using effective access
-    return effectiveAccess?.hasUnlimitedAccess || 
+    return effectiveAccess?.hasUnlimitedExams || 
            isBetaTester || 
            user.isAdmin || 
            dailyExamLimit === 999 || 
@@ -317,12 +336,12 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
     setCheckingLimits(true)
 
     try {
-      // Check subscription restrictions first
-      const isFreePlan = subscriptionPlan === 'free'
-      if (!canStudentTakeExam(student.id, allStudents, isFreePlan)) {
-        const restrictionReason = getStudentRestrictionReason(student.id, allStudents, isFreePlan)
-        throw new Error(restrictionReason || 'This student is not available for exams.')
-      }
+          // Check subscription restrictions first
+    const hasUnlimitedExams = effectiveAccess?.hasUnlimitedExams || isBetaTester || false
+    if (!canStudentTakeExam(student.id, allStudents, hasUnlimitedExams)) {
+      const restrictionReason = getStudentRestrictionReason(student.id, allStudents, hasUnlimitedExams)
+      throw new Error(restrictionReason || 'This student is not available for exams.')
+    }
 
       // Check daily exam limits before starting
       if (!canUserTakeExam()) {
@@ -1367,38 +1386,6 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
                   </div>
                 </div>
 
-                {/* Daily Exam Limit Status */}
-                <div className={`rounded-lg p-3 shadow-md ${
-                  canUserTakeExam() 
-                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white' 
-                    : 'bg-gradient-to-r from-red-500 to-red-600 text-white'
-                }`}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 text-white mr-2" />
-                      <h3 className="text-sm font-bold">Daily Exam Status</h3>
-                    </div>
-                    <div className="flex items-center space-x-3 text-xs">
-                      <div className="text-center">
-                        <div className="font-bold">{dailyExamCount}</div>
-                        <div className="opacity-75">Completed</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-bold">{Math.max(0, dailyExamLimit - dailyExamCount)}</div>
-                        <div className="opacity-75">Remaining</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-bold">{dailyExamLimit === 999 ? '∞' : dailyExamLimit}</div>
-                        <div className="opacity-75">Daily Limit</div>
-                      </div>
-                    </div>
-                  </div>
-                  {!canUserTakeExam() && (
-                    <div className="mt-2 text-xs opacity-90 text-center">
-                      🚫 Daily limit reached! Try again tomorrow or upgrade for unlimited exams.
-                    </div>
-                  )}
-                </div>
 
                 {/* Compact Success Criteria */}
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg p-3 shadow-md">
