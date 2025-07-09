@@ -143,8 +143,8 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
     if (!user) return false
     
     // First check subscription restrictions (multi-student limits)
-    const isFreePlan = subscriptionPlan === 'free'
-    if (!canStudentTakeExam(student.id, allStudents, isFreePlan)) {
+    const hasUnlimitedAccess = effectiveAccess?.hasUnlimitedAccess || isBetaTester || false
+    if (!canStudentTakeExam(student.id, allStudents, hasUnlimitedAccess)) {
       return false
     }
     
@@ -336,12 +336,12 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
     setCheckingLimits(true)
 
     try {
-      // Check subscription restrictions first
-      const isFreePlan = subscriptionPlan === 'free'
-      if (!canStudentTakeExam(student.id, allStudents, isFreePlan)) {
-        const restrictionReason = getStudentRestrictionReason(student.id, allStudents, isFreePlan)
-        throw new Error(restrictionReason || 'This student is not available for exams.')
-      }
+          // Check subscription restrictions first
+    const hasUnlimitedAccess = effectiveAccess?.hasUnlimitedAccess || isBetaTester || false
+    if (!canStudentTakeExam(student.id, allStudents, hasUnlimitedAccess)) {
+      const restrictionReason = getStudentRestrictionReason(student.id, allStudents, hasUnlimitedAccess)
+      throw new Error(restrictionReason || 'This student is not available for exams.')
+    }
 
       // Check daily exam limits before starting
       if (!canUserTakeExam()) {
@@ -1386,12 +1386,7 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
                   </div>
                 </div>
 
-                {/* Daily Exam Limit Status */}
-                <div className={`rounded-lg p-3 shadow-md ${
-                  canUserTakeExam() 
-                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white' 
-                    : 'bg-gradient-to-r from-red-500 to-red-600 text-white'
-                }`}>
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <Clock className="w-4 h-4 text-white mr-2" />

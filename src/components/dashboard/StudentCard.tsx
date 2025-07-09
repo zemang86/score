@@ -26,8 +26,8 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
   const [loadingExamCount, setLoadingExamCount] = useState(false)
 
   // Get subscription enforcement status
-  const isFreePlan = subscriptionPlan === 'free'
-  const studentStatus = getStudentDisplayStatus(student.id, allStudents, isFreePlan)
+  const hasUnlimitedAccess = effectiveAccess?.hasUnlimitedAccess || isBetaTester || false
+  const studentStatus = getStudentDisplayStatus(student.id, allStudents, hasUnlimitedAccess)
 
   // Fetch daily exam count when component mounts
   useEffect(() => {
@@ -183,7 +183,7 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
         )}
         
         {/* First student indicator */}
-        {studentStatus.isFirstStudent && isFreePlan && allStudents.length > 1 && (
+        {studentStatus.isFirstStudent && !hasUnlimitedAccess && allStudents.length > 1 && (
           <div className="absolute top-2 left-2 z-20">
             <div className="bg-green-100 border border-green-300 rounded-lg px-2 py-1 flex items-center">
               <Crown className="w-3 h-3 text-green-600 mr-1" />
