@@ -73,24 +73,25 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
   const getUserProfile = useCallback(async (userId: string): Promise<void> => {
     console.log('🔄 OptimizedAuthContext: getUserProfile called for:', userId)
     
-    // Check cache first (cache for 5 minutes)
-    const cached = profileCache.current.get(userId)
-    if (cached && Date.now() - cached.timestamp < 5 * 60 * 1000) {
-      console.log('✅ Using cached profile for user:', userId)
-      setProfile(cached.profile)
-      setSubscriptionPlan(cached.profile.subscription_plan)
-      setIsAdmin(cached.profile.isAdmin)
-      setIsBetaTester(cached.profile.beta_tester || false)
-      
-      // Calculate effective access first
-      const access = await getEffectiveAccess(cached.profile)
-      setEffectiveAccess(access)
-      
-      // Use effective access values instead of raw database values
-      setMaxStudents(access.maxStudents)
-      setDailyExamLimit(access.dailyExamLimit)
-      return
-    }
+    // Temporarily disable cache to ensure daily limit fix takes effect immediately
+    // TODO: Re-enable cache after confirming fix works
+    // const cached = profileCache.current.get(userId)
+    // if (cached && Date.now() - cached.timestamp < 5 * 60 * 1000) {
+    //   console.log('✅ Using cached profile for user:', userId)
+    //   setProfile(cached.profile)
+    //   setSubscriptionPlan(cached.profile.subscription_plan)
+    //   setIsAdmin(cached.profile.isAdmin)
+    //   setIsBetaTester(cached.profile.beta_tester || false)
+    //   
+    //   // Calculate effective access first
+    //   const access = await getEffectiveAccess(cached.profile)
+    //   setEffectiveAccess(access)
+    //   
+    //   // Use effective access values instead of raw database values
+    //   setMaxStudents(access.maxStudents)
+    //   setDailyExamLimit(access.dailyExamLimit)
+    //   return
+    // }
 
     setProfileLoading(true)
     
@@ -115,12 +116,15 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
         setIsBetaTester(userProfile.beta_tester || false)
         
         // Calculate effective access first
+        console.log('🔄 Calculating effective access for user profile:', userProfile.email)
         const access = await getEffectiveAccess(userProfile)
+        console.log('📊 Effective access calculated:', access)
         setEffectiveAccess(access)
         
         // Use effective access values instead of raw database values
         setMaxStudents(access.maxStudents)
         setDailyExamLimit(access.dailyExamLimit)
+        console.log('✅ AuthContext updated - dailyExamLimit set to:', access.dailyExamLimit)
       } else {
         setProfile(null)
         setIsBetaTester(false)
