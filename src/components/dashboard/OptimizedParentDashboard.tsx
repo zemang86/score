@@ -7,7 +7,7 @@ import { StudentCard } from './StudentCard'
 import { LeaderboardModal } from './LeaderboardModal'
 import { FamilyReportsModal } from './FamilyReportsModal'
 import { UserProfileModal } from './UserProfileModal'
-import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle, Settings } from 'lucide-react'
+import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle, Settings, Lock } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { canAddStudent } from '../../utils/accessControl'
 
@@ -273,6 +273,47 @@ export function OptimizedParentDashboard() {
     }
   }, [canAddMoreStudents])
 
+  // Handle purchasing additional kid slot for premium users
+  const handlePurchaseAdditionalKid = useCallback(async () => {
+    try {
+      // Get the current user's session
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (!session) {
+        throw new Error('You must be logged in to purchase additional kids')
+      }
+
+      // Create a checkout session for additional kid
+      const response = await fetch(`${(import.meta as any).env.VITE_SUPABASE_URL}/functions/v1/stripe-checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({
+          price_id: 'price_additional_kid', // Replace with actual additional kid price ID
+          billing_cycle: 'monthly',
+          success_url: window.location.origin + '/dashboard?success=additional_kid',
+          cancel_url: window.location.origin + '/dashboard?canceled=true',
+          mode: 'subscription'
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to create checkout session')
+      }
+
+      const { url } = await response.json()
+      
+      // Redirect to Stripe Checkout
+      window.location.href = url
+    } catch (err: any) {
+      console.error('Error creating checkout session:', err)
+      setError(err.message || 'Failed to start purchase process')
+    }
+  }, [])
+
   // Fetch data when user changes
   useEffect(() => {
     if (user) {
@@ -408,24 +449,73 @@ export function OptimizedParentDashboard() {
                       Your Amazing Kids ({students.length})
                     </h2>
                   </div>
-                                      <Button 
+                  
+                  {/* Dynamic button based on user type and limits */}
+                  {canAddMoreStudents ? (
+                    <Button 
                       variant="gradient-primary"
                       size="sm" 
                       onClick={handleAddModalOpen}
-                      disabled={!canAddMoreStudents}
                       icon={<Plus className="w-3.5 h-3.5" />}
-                      className={`w-full sm:w-auto text-xs ${!canAddMoreStudents ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className="w-full sm:w-auto text-xs"
                     >
                       Add Kid
                     </Button>
-                  </div>
-                  {!canAddMoreStudents && !isBetaTester && !effectiveAccess?.hasUnlimitedKids && (
-                    <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
-                      <p className="text-amber-700 font-medium text-center text-xs">
-                        Free plan is limited to 1 child. Upgrade to Premium to add more children.
-                      </p>
-                    </div>
+                  ) : isBetaTester ? (
+                    <Button 
+                      variant="gradient-primary"
+                      size="sm" 
+                      onClick={handleAddModalOpen}
+                      icon={<Plus className="w-3.5 h-3.5" />}
+                      className="w-full sm:w-auto text-xs"
+                    >
+                      Add Kid
+                    </Button>
+                  ) : effectiveAccess?.hasUnlimitedExams ? (
+                    // Premium user who reached kid limit - show purchase button
+                    <Button 
+                      variant="outline"
+                      size="sm" 
+                      onClick={handlePurchaseAdditionalKid}
+                      icon={<Plus className="w-3.5 h-3.5" />}
+                      className="w-full sm:w-auto text-xs border-green-500 text-green-600 hover:bg-green-50"
+                    >
+                      Purchase 1 Kid - RM10/mo
+                    </Button>
+                  ) : (
+                    // Free user who reached limit - show disabled button
+                    <Button 
+                      variant="outline"
+                      size="sm" 
+                      disabled={true}
+                      icon={<Lock className="w-3.5 h-3.5" />}
+                      className="w-full sm:w-auto text-xs opacity-50 cursor-not-allowed"
+                    >
+                      Upgrade Required
+                    </Button>
                   )}
+                </div>
+                
+                {/* Messages based on user type and limits */}
+                {!canAddMoreStudents && !isBetaTester && (
+                  <div className="mt-2">
+                    {effectiveAccess?.hasUnlimitedExams ? (
+                      // Premium user message
+                      <div className="p-2 bg-green-50 border border-green-300 rounded-lg">
+                        <p className="text-green-700 font-medium text-center text-xs">
+                          Premium: {effectiveAccess?.maxStudents || 1} kid{(effectiveAccess?.maxStudents || 1) > 1 ? 's' : ''} included. Purchase additional kids for RM10/month each.
+                        </p>
+                      </div>
+                    ) : (
+                      // Free user message
+                      <div className="p-2 bg-amber-100 border border-amber-300 rounded-lg">
+                        <p className="text-amber-700 font-medium text-center text-xs">
+                          Free plan is limited to 1 child. Upgrade to Premium to add more children.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               
               <div className="p-3 sm:p-4">
