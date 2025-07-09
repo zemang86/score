@@ -2,12 +2,14 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 
-// Regular imports instead of lazy loading to prevent tab switching issues
-import { LandingPage } from './components/landing/LandingPage'
-import { AuthPage } from './components/auth/AuthPage'
-import { AdminLoginPage } from './components/admin/AdminLoginPage'
-import { ParentDashboard } from './components/dashboard/ParentDashboard'
-import { AdminDashboard } from './components/admin/AdminDashboard'
+// Lazy load components for better performance
+import { lazy, Suspense } from 'react'
+
+const LandingPage = lazy(() => import('./components/landing/LandingPage').then(module => ({ default: module.LandingPage })))
+const AuthPage = lazy(() => import('./components/auth/AuthPage').then(module => ({ default: module.AuthPage })))
+const AdminLoginPage = lazy(() => import('./components/admin/AdminLoginPage').then(module => ({ default: module.AdminLoginPage })))
+const ParentDashboard = lazy(() => import('./components/dashboard/ParentDashboard').then(module => ({ default: module.ParentDashboard })))
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(module => ({ default: module.AdminDashboard })))
 
 // Simplified loading component
 function LoadingSpinner() {
@@ -59,57 +61,59 @@ function AppContent() {
   // console.log('✅ AppContent: Loading complete, rendering routes')
 
   return (
-    <Routes>
-        <Route 
-          path="/" 
-          element={<LandingPage />}
-        />
-        <Route 
-          path="/auth" 
-          element={
-            user ? (
-              // Redirect authenticated users based on their role
-              isAdmin ? <Navigate to="/admin" replace /> : <Navigate to="/dashboard" replace />
-            ) : (
-              <AuthPage />
-            )
-          } 
-        />
-        <Route 
-          path="/admin-login" 
-          element={
-            user ? (
-              // Redirect authenticated users based on their role
-              isAdmin ? <Navigate to="/admin" replace /> : <Navigate to="/dashboard" replace />
-            ) : (
-              <AdminLoginPage />
-            )
-          } 
-        />
-        <Route 
-          path="/dashboard" 
-          element={
-            user ? (
-              // Only non-admin users can access parent dashboard
-              !isAdmin ? <ParentDashboard /> : <Navigate to="/admin" replace />
-            ) : (
-              <Navigate to="/" replace />
-            )
-          } 
-        />
-        <Route 
-          path="/admin" 
-          element={
-            user ? (
-              // Only admin users can access admin dashboard
-              isAdmin ? <AdminDashboard /> : <Navigate to="/dashboard" replace />
-            ) : (
-              // Redirect unauthenticated users to admin login instead of home
-              <Navigate to="/admin-login" replace />
-            )
-          } 
-        />
-      </Routes>
+    <Suspense fallback={<LoadingSpinner />}>
+      <Routes>
+          <Route 
+            path="/" 
+            element={<LandingPage />}
+          />
+          <Route 
+            path="/auth" 
+            element={
+              user ? (
+                // Redirect authenticated users based on their role
+                isAdmin ? <Navigate to="/admin" replace /> : <Navigate to="/dashboard" replace />
+              ) : (
+                <AuthPage />
+              )
+            } 
+          />
+          <Route 
+            path="/admin-login" 
+            element={
+              user ? (
+                // Redirect authenticated users based on their role
+                isAdmin ? <Navigate to="/admin" replace /> : <Navigate to="/dashboard" replace />
+              ) : (
+                <AdminLoginPage />
+              )
+            } 
+          />
+          <Route 
+            path="/dashboard" 
+            element={
+              user ? (
+                // Only non-admin users can access parent dashboard
+                !isAdmin ? <ParentDashboard /> : <Navigate to="/admin" replace />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } 
+          />
+          <Route 
+            path="/admin" 
+            element={
+              user ? (
+                // Only admin users can access admin dashboard
+                isAdmin ? <AdminDashboard /> : <Navigate to="/dashboard" replace />
+              ) : (
+                // Redirect unauthenticated users to admin login instead of home
+                <Navigate to="/admin-login" replace />
+              )
+            } 
+          />
+        </Routes>
+    </Suspense>
   )
 }
 

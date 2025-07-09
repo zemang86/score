@@ -13,8 +13,10 @@ import { EditStudentModal } from './EditStudentModal'
 import { CheckoutSuccessModal } from './CheckoutSuccessModal'
 import { SubscriptionManagementModal } from './SubscriptionManagementModal'
 import { StudentProgressModal } from './StudentProgressModal'
+
 import { UserProfileModal } from './UserProfileModal'
 import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle, Settings } from 'lucide-react'
+
 import { Button } from '../ui/Button'
 import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } from '../ui/SkeletonLoader'
 import { canAddStudent } from '../../utils/accessControl'
@@ -430,10 +432,6 @@ export function ParentDashboard() {
         
         {/* Subscription Banner */}
         <SubscriptionBanner className="mb-4 sm:mb-6" />
-
-
-
-
 
         {/* Enhanced Stats Grid - 6 Cards */}
         {loading ? (

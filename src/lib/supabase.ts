@@ -79,7 +79,7 @@ const testSupabaseConnection = async () => {
     }
 
     return { success: true }
-  } catch (error: any) {
+  } catch (error: Error | null) {
     console.error('❌ Connection test failed with error:', error)
     
     if (error.message === 'Connection timeout') {
@@ -402,7 +402,7 @@ export const testDatabaseConnection = async (): Promise<{ success: boolean; erro
     
     console.log('✅ Database connection test successful')
     return { success: true }
-  } catch (error: any) {
+  } catch (error: Error | null) {
     console.error('❌ Database connection test error:', error)
     
     if (error.message === 'Connection timeout') {
@@ -414,7 +414,7 @@ export const testDatabaseConnection = async (): Promise<{ success: boolean; erro
 }
 
 // Enhanced error handler for Supabase operations
-export const handleSupabaseError = (error: any, operation: string) => {
+export const handleSupabaseError = (error: Error | null, operation: string) => {
   console.error(`❌ Supabase ${operation} error:`, error)
   
   if (error.message === 'Failed to fetch') {
@@ -482,7 +482,7 @@ export const makeBetaTester = async (userId: string): Promise<{success: boolean,
     
     console.log('✅ makeBetaTester: User successfully made beta tester')
     return { success: true }
-  } catch (error: any) {
+  } catch (error: Error | null) {
     console.error('❌ makeBetaTester: Unexpected error:', error)
     return { success: false, error: error.message }
   }
@@ -508,7 +508,7 @@ export const removeBetaTester = async (userId: string): Promise<{success: boolea
     
     console.log('✅ removeBetaTester: Beta tester status successfully removed')
     return { success: true }
-  } catch (error: any) {
+  } catch (error: Error | null) {
     console.error('❌ removeBetaTester: Unexpected error:', error)
     return { success: false, error: error.message }
   }

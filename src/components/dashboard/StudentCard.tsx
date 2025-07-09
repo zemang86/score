@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Student } from '../../lib/supabase'
-import { User, School, Star, Edit, Zap, Trophy, Sparkles, Heart, Clock, Lock, Crown, AlertTriangle } from 'lucide-react'
+import { User, School, Star, Edit, Zap, Trophy, Clock, Lock, Crown, AlertTriangle } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { calculateAgeInYearsAndMonths } from '../../utils/dateUtils'
 import { useAuth } from '../../contexts/AuthContext'

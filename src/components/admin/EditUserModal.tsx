@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
-import { X, Save, User, Crown, Zap, Users, AlertTriangle } from 'lucide-react'
+import { X, Save, User, Crown, Zap, Users } from 'lucide-react'
 
 interface EditUserModalProps {
   isOpen: boolean
@@ -72,14 +72,14 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
         daily_exam_limit: userData.daily_exam_limit || 0,
         beta_tester: userData.beta_tester || false,
       })
-    } catch (err: any) {
+    } catch (err: Error | unknown) {
       setError(err.message || 'Failed to fetch user data')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleInputChange = (field: keyof UserFormData, value: any) => {
+  const handleInputChange = (field: keyof UserFormData, value: string | number | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     
     // Auto-adjust limits based on subscription plan
@@ -140,7 +140,7 @@ export function EditUserModal({ isOpen, onClose, userId, onUserUpdated }: EditUs
       setTimeout(() => {
         onClose()
       }, 1500)
-    } catch (err: any) {
+    } catch (err: Error | unknown) {
       setError(err.message || 'Failed to update user')
     } finally {
       setLoading(false)

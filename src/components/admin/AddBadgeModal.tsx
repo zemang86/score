@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
-import { X, Trophy, Plus, Edit, Trash2, Award, Star, Sparkles, Zap } from 'lucide-react'
+import { X, Trophy, Plus, Award, Sparkles, Zap } from 'lucide-react'
 
 interface AddBadgeModalProps {
   isOpen: boolean

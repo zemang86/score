@@ -16,7 +16,17 @@ export default defineConfig({
           supabase: ['@supabase/supabase-js'],
           ui: ['lucide-react'],
           router: ['react-router-dom'],
-          openai: ['openai']
+          openai: ['openai'],
+          // Split admin components
+          admin: [
+            './src/components/admin/AdminDashboard.tsx',
+            './src/components/admin/AdminLoginPage.tsx'
+          ],
+          // Split dashboard components
+          dashboard: [
+            './src/components/dashboard/ParentDashboard.tsx',
+            './src/components/dashboard/ExamModal.tsx'
+          ]
         }
       }
     },
@@ -33,7 +43,13 @@ export default defineConfig({
   // Dependency optimization
   optimizeDeps: {
     exclude: ['lucide-react'],
-    include: ['react', 'react-dom', '@supabase/supabase-js']
+    include: [
+      'react', 
+      'react-dom', 
+      '@supabase/supabase-js',
+      'react-router-dom',
+      'lucide-react'
+    ]
   },
 
   // Performance optimizations

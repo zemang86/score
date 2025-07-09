@@ -18,7 +18,7 @@ interface UseDashboardResult {
 }
 
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
-const cache = new Map<string, { data: any; timestamp: number }>()
+const cache = new Map<string, { data: unknown; timestamp: number }>()
 
 // Simple cache implementation
 const getCachedData = (key: string) => {
@@ -29,7 +29,7 @@ const getCachedData = (key: string) => {
   return null
 }
 
-const setCachedData = (key: string, data: any) => {
+const setCachedData = (key: string, data: unknown) => {
   cache.set(key, { data, timestamp: Date.now() })
 }
 
@@ -161,7 +161,7 @@ export function useOptimizedDashboard(userId: string | undefined): UseDashboardR
       // Cache the results
       setCachedData(cacheKey, { students: fetchedStudents, stats })
 
-    } catch (err: any) {
+    } catch (err: Error | unknown) {
       console.error('Error in fetchDashboardData:', err)
       
       // Enhanced error handling

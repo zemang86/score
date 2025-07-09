@@ -4,7 +4,6 @@ import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { Shield, Mail, Lock, Eye, EyeOff, ArrowLeft, Crown, Zap } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { EdventureLogo } from '../ui/EdventureLogo'
 
 export function AdminLoginPage() {
   const { signIn } = useAuth()

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { User, Search, Filter, MoreHorizontal, UserPlus, Calendar, Mail, Edit, Crown, Zap, Users, BookOpen } from 'lucide-react'
+import { User, Search, Filter, UserPlus, Calendar, Mail, Edit, Crown, Zap, Users, BookOpen } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { EditUserModal } from './EditUserModal'
@@ -232,7 +232,6 @@ export function UserManagement() {
             <p className="text-error-600 text-xs sm:text-sm">{error}</p>
           </div>
         )}
-
 
       {/* Edit User Modal */}
       {selectedUserId && (
