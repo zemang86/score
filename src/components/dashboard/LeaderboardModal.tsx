@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { Button } from '../ui/Button'
 import { PremiumUpgradeModal } from './PremiumUpgradeModal'
 import { X, Trophy, Crown, Star, Medal, Target, TrendingUp, Lock } from 'lucide-react'

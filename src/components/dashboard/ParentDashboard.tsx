@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { supabase, Student } from '../../lib/supabase'
 import { Header } from '../layout/Header'
 import { AddStudentModal } from './AddStudentModal'

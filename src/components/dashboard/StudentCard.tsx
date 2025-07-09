@@ -3,7 +3,7 @@ import { Student } from '../../lib/supabase'
 import { User, School, Star, Edit, Zap, Trophy, Sparkles, Heart, Clock, Lock, Crown, AlertTriangle } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { calculateAgeInYearsAndMonths } from '../../utils/dateUtils'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { supabase } from '../../lib/supabase'
 import { canTakeExam } from '../../utils/accessControl'
 import { getStudentDisplayStatus, canStudentTakeExam } from '../../utils/subscriptionEnforcement'
@@ -21,7 +21,7 @@ interface StudentCardProps {
 }
 
 export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComplete, onStudentUpdated, onOpenExamModal, onOpenEditModal, onOpenProgressModal }: StudentCardProps) {
-  const { user, dailyExamLimit, subscriptionPlan } = useAuth()
+  const { user, dailyExamLimit, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
   const [dailyExamCount, setDailyExamCount] = useState<number>(0)
   const [loadingExamCount, setLoadingExamCount] = useState(false)
 
@@ -67,8 +67,12 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
       return false
     }
     
-    // Then check daily exam limits
-    return canTakeExam(user, dailyExamCount)
+    // Then check daily exam limits using effective access
+    return effectiveAccess?.hasUnlimitedAccess || 
+           isBetaTester || 
+           user.isAdmin || 
+           dailyExamLimit === 999 || 
+           dailyExamCount < dailyExamLimit
   }
 
   // Handle exam button click with all limit checking

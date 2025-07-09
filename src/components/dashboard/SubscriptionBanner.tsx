@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button } from '../ui/Button'
 import { Crown, X, Zap, Users, BookOpen } from 'lucide-react'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { PremiumUpgradeModal } from './PremiumUpgradeModal'
 
 interface SubscriptionBannerProps {

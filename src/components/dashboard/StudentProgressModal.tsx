@@ -4,7 +4,7 @@ import { Student } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { X, TrendingUp, Trophy, Calendar, BookOpen, Target, Star, Award, BarChart3, ArrowLeft, Eye, CheckCircle, XCircle, Clock, Edit3, ArrowUpDown, BookOpenCheck, Lock, Crown } from 'lucide-react'
 import { BadgeEvaluator, type StudentBadge } from '../../utils/badgeEvaluator'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { PremiumUpgradeModal } from './PremiumUpgradeModal'
 
 interface StudentProgressModalProps {
