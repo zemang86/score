@@ -151,6 +151,24 @@ export function OptimizedParentDashboard() {
     [profile, students.length]
   )
 
+  // Debug logging for premium users
+  useEffect(() => {
+    if (subscriptionPlan === 'premium') {
+      console.log('🔍 PREMIUM USER DEBUG:', {
+        subscriptionPlan,
+        studentsCount: students.length,
+        canAddMoreStudents,
+        effectiveAccess,
+        profile: profile ? {
+          subscription_plan: profile.subscription_plan,
+          max_students: profile.max_students,
+          daily_exam_limit: profile.daily_exam_limit,
+          beta_tester: profile.beta_tester
+        } : null
+      })
+    }
+  }, [subscriptionPlan, students.length, canAddMoreStudents, effectiveAccess, profile])
+
   // Optimized fetch function with parallel queries
   const fetchDashboardData = useCallback(async () => {
     if (!user) return
@@ -451,7 +469,8 @@ export function OptimizedParentDashboard() {
                   </div>
                   
                   {/* Dynamic button based on user type and limits */}
-                  {canAddMoreStudents ? (
+                  {isBetaTester ? (
+                    // Beta testers get unlimited everything
                     <Button 
                       variant="gradient-primary"
                       size="sm" 
@@ -461,45 +480,61 @@ export function OptimizedParentDashboard() {
                     >
                       Add Kid
                     </Button>
-                  ) : isBetaTester ? (
-                    <Button 
-                      variant="gradient-primary"
-                      size="sm" 
-                      onClick={handleAddModalOpen}
-                      icon={<Plus className="w-3.5 h-3.5" />}
-                      className="w-full sm:w-auto text-xs"
-                    >
-                      Add Kid
-                    </Button>
-                  ) : effectiveAccess?.hasUnlimitedExams ? (
-                    // Premium user who reached kid limit - show purchase button
-                    <Button 
-                      variant="outline"
-                      size="sm" 
-                      onClick={handlePurchaseAdditionalKid}
-                      icon={<Plus className="w-3.5 h-3.5" />}
-                      className="w-full sm:w-auto text-xs border-green-500 text-green-600 hover:bg-green-50"
-                    >
-                      Purchase 1 Kid - RM10/mo
-                    </Button>
+                  ) : subscriptionPlan === 'premium' ? (
+                    // Premium users: if they can add more within current limit OR they can purchase more
+                    canAddMoreStudents ? (
+                      <Button 
+                        variant="gradient-primary"
+                        size="sm" 
+                        onClick={handleAddModalOpen}
+                        icon={<Plus className="w-3.5 h-3.5" />}
+                        className="w-full sm:w-auto text-xs"
+                      >
+                        Add Kid
+                      </Button>
+                    ) : (
+                      // Premium user reached limit - show purchase button
+                      <Button 
+                        variant="outline"
+                        size="sm" 
+                        onClick={handlePurchaseAdditionalKid}
+                        icon={<Plus className="w-3.5 h-3.5" />}
+                        className="w-full sm:w-auto text-xs border-green-500 text-green-600 hover:bg-green-50"
+                      >
+                        Purchase 1 Kid - RM10/mo
+                      </Button>
+                    )
                   ) : (
-                    // Free user who reached limit - show disabled button
-                    <Button 
-                      variant="outline"
-                      size="sm" 
-                      disabled={true}
-                      icon={<Lock className="w-3.5 h-3.5" />}
-                      className="w-full sm:w-auto text-xs opacity-50 cursor-not-allowed"
-                    >
-                      Upgrade Required
-                    </Button>
+                    // Free users
+                    canAddMoreStudents ? (
+                      <Button 
+                        variant="gradient-primary"
+                        size="sm" 
+                        onClick={handleAddModalOpen}
+                        icon={<Plus className="w-3.5 h-3.5" />}
+                        className="w-full sm:w-auto text-xs"
+                      >
+                        Add Kid
+                      </Button>
+                    ) : (
+                      // Free user reached limit - show disabled button
+                      <Button 
+                        variant="outline"
+                        size="sm" 
+                        disabled={true}
+                        icon={<Lock className="w-3.5 h-3.5" />}
+                        className="w-full sm:w-auto text-xs opacity-50 cursor-not-allowed"
+                      >
+                        Upgrade Required
+                      </Button>
+                    )
                   )}
                 </div>
                 
                 {/* Messages based on user type and limits */}
                 {!canAddMoreStudents && !isBetaTester && (
                   <div className="mt-2">
-                    {effectiveAccess?.hasUnlimitedExams ? (
+                    {subscriptionPlan === 'premium' ? (
                       // Premium user message
                       <div className="p-2 bg-green-50 border border-green-300 rounded-lg">
                         <p className="text-green-700 font-medium text-center text-xs">
