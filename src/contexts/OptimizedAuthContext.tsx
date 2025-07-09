@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { User, Session } from '@supabase/supabase-js'
-import { supabase, fetchUserProfile, testDatabaseConnection } from '../lib/supabase'
-import type { UserWithAdminStatus } from '../lib/supabase'
+import { supabase, fetchUserProfile, testDatabaseConnection, getEffectiveAccess } from '../lib/supabase'
+import type { UserWithAdminStatus, EffectiveAccess } from '../lib/supabase'
 
 interface AuthContextType {
   user: User | null
@@ -11,6 +11,8 @@ interface AuthContextType {
   maxStudents: number
   dailyExamLimit: number
   isAdmin: boolean
+  isBetaTester: boolean
+  effectiveAccess: EffectiveAccess
   loading: boolean
   profileLoading: boolean
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>
@@ -38,6 +40,13 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
   const [maxStudents, setMaxStudents] = useState<number>(3)
   const [dailyExamLimit, setDailyExamLimit] = useState<number>(999)
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
+  const [isBetaTester, setIsBetaTester] = useState<boolean>(false)
+  const [effectiveAccess, setEffectiveAccess] = useState<EffectiveAccess>({
+    level: 'premium',
+    maxStudents: 3,
+    dailyExamLimit: 999,
+    hasUnlimitedAccess: true
+  })
   const [loading, setLoading] = useState(true)
   const [profileLoading, setProfileLoading] = useState(false)
   
@@ -70,9 +79,16 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
       console.log('✅ Using cached profile for user:', userId)
       setProfile(cached.profile)
       setSubscriptionPlan(cached.profile.subscription_plan)
-      setMaxStudents(cached.profile.max_students)
-      setDailyExamLimit(cached.profile.daily_exam_limit)
       setIsAdmin(cached.profile.isAdmin)
+      setIsBetaTester(cached.profile.beta_tester || false)
+      
+      // Calculate effective access first
+      const access = getEffectiveAccess(cached.profile)
+      setEffectiveAccess(access)
+      
+      // Use effective access values instead of raw database values
+      setMaxStudents(access.maxStudents)
+      setDailyExamLimit(access.dailyExamLimit)
       return
     }
 
@@ -95,11 +111,25 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
 
         setProfile(userProfile)
         setSubscriptionPlan(userProfile.subscription_plan)
-        setMaxStudents(userProfile.max_students)
-        setDailyExamLimit(userProfile.daily_exam_limit)
         setIsAdmin(userProfile.isAdmin)
+        setIsBetaTester(userProfile.beta_tester || false)
+        
+        // Calculate effective access first
+        const access = getEffectiveAccess(userProfile)
+        setEffectiveAccess(access)
+        
+        // Use effective access values instead of raw database values
+        setMaxStudents(access.maxStudents)
+        setDailyExamLimit(access.dailyExamLimit)
       } else {
         setProfile(null)
+        setIsBetaTester(false)
+        setEffectiveAccess({
+          level: 'premium',
+          maxStudents: 3,
+          dailyExamLimit: 999,
+          hasUnlimitedAccess: true
+        })
       }
     } catch (error) {
       console.error('❌ OptimizedAuthContext: Error in getUserProfile:', error)
@@ -119,6 +149,13 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
       setMaxStudents(3)
       setDailyExamLimit(999)
       setIsAdmin(false)
+      setIsBetaTester(false)
+      setEffectiveAccess({
+        level: 'premium',
+        maxStudents: 3,
+        dailyExamLimit: 999,
+        hasUnlimitedAccess: true
+      })
     }
   }, [user, getUserProfile])
 
@@ -153,6 +190,13 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
         setMaxStudents(3)
         setDailyExamLimit(999)
         setIsAdmin(false)
+        setIsBetaTester(false)
+        setEffectiveAccess({
+          level: 'premium',
+          maxStudents: 3,
+          dailyExamLimit: 999,
+          hasUnlimitedAccess: true
+        })
       }
     }
 
@@ -201,6 +245,13 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
     setMaxStudents(3)
     setDailyExamLimit(999)
     setIsAdmin(false)
+    setIsBetaTester(false)
+    setEffectiveAccess({
+      level: 'premium',
+      maxStudents: 3,
+      dailyExamLimit: 999,
+      hasUnlimitedAccess: true
+    })
     setLoading(false)
     setProfileLoading(false)
   }, [clearLoadingTimeout])
@@ -282,6 +333,13 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
           setMaxStudents(3)
           setDailyExamLimit(999)
           setIsAdmin(false)
+          setIsBetaTester(false)
+          setEffectiveAccess({
+            level: 'premium',
+            maxStudents: 3,
+            dailyExamLimit: 999,
+            hasUnlimitedAccess: true
+          })
         }
       } catch (error) {
         console.error('❌ OptimizedAuthContext: Error processing auth state change:', error)
@@ -309,6 +367,8 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
     maxStudents,
     dailyExamLimit,
     isAdmin,
+    isBetaTester,
+    effectiveAccess,
     loading,
     profileLoading,
     signUp,
@@ -324,6 +384,8 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
     maxStudents,
     dailyExamLimit,
     isAdmin,
+    isBetaTester,
+    effectiveAccess,
     loading,
     profileLoading,
     signUp,
