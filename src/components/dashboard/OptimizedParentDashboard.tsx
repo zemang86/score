@@ -155,7 +155,8 @@ export function OptimizedParentDashboard() {
   useEffect(() => {
     if (profile) {
       console.log('🔍 ALL USER DEBUG:', {
-        subscriptionPlan,
+        contextSubscriptionPlan: subscriptionPlan,
+        profileSubscriptionPlan: profile.subscription_plan,
         studentsCount: students.length,
         canAddMoreStudents,
         isBetaTester,
@@ -481,7 +482,7 @@ export function OptimizedParentDashboard() {
                     >
                       Add Kid
                     </Button>
-                  ) : subscriptionPlan === 'premium' ? (
+                  ) : profile?.subscription_plan === 'premium' ? (
                     // Premium users: if they can add more within current limit OR they can purchase more
                     canAddMoreStudents ? (
                       <Button 
@@ -535,7 +536,7 @@ export function OptimizedParentDashboard() {
                 {/* Messages based on user type and limits */}
                 {!canAddMoreStudents && !isBetaTester && (
                   <div className="mt-2">
-                    {subscriptionPlan === 'premium' ? (
+                    {profile?.subscription_plan === 'premium' ? (
                       // Premium user message
                       <div className="p-2 bg-green-50 border border-green-300 rounded-lg">
                         <p className="text-green-700 font-medium text-center text-xs">
@@ -549,7 +550,7 @@ export function OptimizedParentDashboard() {
                           Free plan is limited to 1 child. Upgrade to Premium to add more children.
                         </p>
                         <p className="text-amber-600 font-mono text-xs mt-1">
-                          DEBUG: subscriptionPlan="{subscriptionPlan}" canAdd={canAddMoreStudents ? 'true' : 'false'} isBeta={isBetaTester ? 'true' : 'false'}
+                          DEBUG: profile.subscription_plan="{profile?.subscription_plan}" canAdd={canAddMoreStudents ? 'true' : 'false'} isBeta={isBetaTester ? 'true' : 'false'}
                         </p>
                       </div>
                     )}

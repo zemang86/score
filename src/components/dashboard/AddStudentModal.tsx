@@ -14,7 +14,7 @@ interface AddStudentModalProps {
 }
 
 export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentModalProps) {
-  const { user, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
+  const { user, profile, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
   const [formData, setFormData] = useState({
     name: '',
     school: '',
@@ -59,7 +59,7 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
   }
 
   // Premium: 1 kid included, then pay for each additional (but beta testers get unlimited)
-  const needsToPurchaseSlot = !isBetaTester && subscriptionPlan === 'premium' && currentStudentCount >= 1
+  const needsToPurchaseSlot = !isBetaTester && profile?.subscription_plan === 'premium' && currentStudentCount >= 1
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
