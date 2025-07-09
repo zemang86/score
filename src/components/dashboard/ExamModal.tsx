@@ -32,7 +32,7 @@ type ExamMode = 'Easy' | 'Medium' | 'Full'
 type Subject = 'Bahasa Melayu' | 'English' | 'Mathematics' | 'Science' | 'History'
 
 export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplete }: ExamModalProps) {
-  const { user, dailyExamLimit, subscriptionPlan } = useAuth()
+  const { user, dailyExamLimit, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
   
   // Initialize state from session storage if available
   const getInitialState = () => {
@@ -129,8 +129,12 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
       return false
     }
     
-    // Then check daily exam limits
-    return canTakeExam(user, dailyExamCount)
+    // Then check daily exam limits using effective access
+    return effectiveAccess?.hasUnlimitedAccess || 
+           isBetaTester || 
+           user.isAdmin || 
+           dailyExamLimit === 999 || 
+           dailyExamCount < dailyExamLimit
   }
 
   // Save state to session storage whenever important state changes
