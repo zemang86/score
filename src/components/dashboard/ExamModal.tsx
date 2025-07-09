@@ -143,13 +143,13 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
     if (!user) return false
     
     // First check subscription restrictions (multi-student limits)
-    const hasUnlimitedAccess = effectiveAccess?.hasUnlimitedAccess || isBetaTester || false
-    if (!canStudentTakeExam(student.id, allStudents, hasUnlimitedAccess)) {
+    const hasUnlimitedExams = effectiveAccess?.hasUnlimitedExams || isBetaTester || false
+    if (!canStudentTakeExam(student.id, allStudents, hasUnlimitedExams)) {
       return false
     }
     
     // Then check daily exam limits using effective access
-    return effectiveAccess?.hasUnlimitedAccess || 
+    return effectiveAccess?.hasUnlimitedExams || 
            isBetaTester || 
            user.isAdmin || 
            dailyExamLimit === 999 || 
@@ -337,9 +337,9 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
 
     try {
           // Check subscription restrictions first
-    const hasUnlimitedAccess = effectiveAccess?.hasUnlimitedAccess || isBetaTester || false
-    if (!canStudentTakeExam(student.id, allStudents, hasUnlimitedAccess)) {
-      const restrictionReason = getStudentRestrictionReason(student.id, allStudents, hasUnlimitedAccess)
+    const hasUnlimitedExams = effectiveAccess?.hasUnlimitedExams || isBetaTester || false
+    if (!canStudentTakeExam(student.id, allStudents, hasUnlimitedExams)) {
+      const restrictionReason = getStudentRestrictionReason(student.id, allStudents, hasUnlimitedExams)
       throw new Error(restrictionReason || 'This student is not available for exams.')
     }
 

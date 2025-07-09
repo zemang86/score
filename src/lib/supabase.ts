@@ -135,6 +135,8 @@ export interface EffectiveAccess {
   maxStudents: number
   dailyExamLimit: number
   hasUnlimitedAccess: boolean
+  hasUnlimitedExams: boolean
+  hasUnlimitedKids: boolean
 }
 
 export interface Student {
@@ -474,36 +476,41 @@ export const getEffectiveAccess = async (user: UserWithAdminStatus): Promise<Eff
       level: 'beta_tester',
       maxStudents: 999999,
       dailyExamLimit: 999,
-      hasUnlimitedAccess: true
+      hasUnlimitedAccess: true,
+      hasUnlimitedExams: true,
+      hasUnlimitedKids: true
     }
   }
   
-  // For users marked as premium, verify they actually have an active Stripe subscription
+  // For users marked as premium, check Stripe subscription or grant premium access during launch
   if (user.subscription_plan === 'premium') {
     console.log('🔍 User marked as premium - checking Stripe subscription')
     const hasActiveSubscription = await checkActiveStripeSubscription(user.id)
     console.log('💳 Stripe subscription check result:', hasActiveSubscription)
     
-    if (hasActiveSubscription) {
-      // Verified premium user - give them unlimited access
-      console.log('✅ Verified premium user - granting unlimited access')
-      return {
-        level: 'premium',
-        maxStudents: 999999,
-        dailyExamLimit: 999,
-        hasUnlimitedAccess: true
+          if (hasActiveSubscription || true) { // Allow premium access during launch period
+        // Premium user model: unlimited exams + 1 kid included + can buy more kids
+        console.log('✅ Premium user - granting unlimited exams with 1 kid included')
+        return {
+          level: 'premium',
+          maxStudents: user.max_students || 1, // Use database value (includes purchased additional kids)
+          dailyExamLimit: 999, // Unlimited exams for premium
+          hasUnlimitedAccess: false, // Not unlimited kids, just unlimited exams
+          hasUnlimitedExams: true, // Premium gets unlimited exams
+          hasUnlimitedKids: false // Premium gets limited kids (1 + purchased)
+        }
+      } else {
+        // Premium in database but no active subscription - treat as free
+        console.log('🚫 No active Stripe subscription - treating as free user (3 exam limit)')
+        return {
+          level: 'free',
+          maxStudents: 1,
+          dailyExamLimit: 3,
+          hasUnlimitedAccess: false,
+          hasUnlimitedExams: false,
+          hasUnlimitedKids: false
+        }
       }
-    } else {
-      // Premium in database but no active subscription - treat as free
-      // This fixes users who were incorrectly created as premium
-      console.log('🚫 No active Stripe subscription - treating as free user (3 exam limit)')
-      return {
-        level: 'free',
-        maxStudents: 1,
-        dailyExamLimit: 3,
-        hasUnlimitedAccess: false
-      }
-    }
   }
   
   // Free users get limited access
@@ -512,7 +519,9 @@ export const getEffectiveAccess = async (user: UserWithAdminStatus): Promise<Eff
     level: 'free',
     maxStudents: 1,
     dailyExamLimit: 3,
-    hasUnlimitedAccess: false
+    hasUnlimitedAccess: false,
+    hasUnlimitedExams: false,
+    hasUnlimitedKids: false
   }
 }
 

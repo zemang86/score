@@ -145,7 +145,7 @@ export function OptimizedParentDashboard() {
   })
 
   // Memoized computed values
-  const isPremium = useMemo(() => effectiveAccess?.hasUnlimitedAccess || subscriptionPlan === 'premium', [effectiveAccess, subscriptionPlan])
+  const isPremium = useMemo(() => effectiveAccess?.hasUnlimitedExams || subscriptionPlan === 'premium', [effectiveAccess, subscriptionPlan])
   const canAddMoreStudents = useMemo(() => 
     profile ? canAddStudent(profile, students.length) : false, 
     [profile, students.length]
@@ -286,7 +286,7 @@ export function OptimizedParentDashboard() {
       icon: Users,
       title: 'Kids',
       value: students.length.toString(),
-      subtitle: isBetaTester ? '∞ beta' : effectiveAccess?.hasUnlimitedAccess ? '∞' : 'of 1',
+      subtitle: isBetaTester ? '∞ beta' : effectiveAccess?.hasUnlimitedKids ? '∞' : `of ${effectiveAccess?.maxStudents || 1}`,
       gradient: 'bg-gradient-to-br from-indigo-500 to-purple-500'
     },
     {
@@ -419,7 +419,7 @@ export function OptimizedParentDashboard() {
                       Add Kid
                     </Button>
                   </div>
-                  {!canAddMoreStudents && !isBetaTester && !effectiveAccess?.hasUnlimitedAccess && (
+                  {!canAddMoreStudents && !isBetaTester && !effectiveAccess?.hasUnlimitedKids && (
                     <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
                       <p className="text-amber-700 font-medium text-center text-xs">
                         Free plan is limited to 1 child. Upgrade to Premium to add more children.

@@ -91,8 +91,8 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
         throw countError
       }
 
-      // Check subscription limits (beta testers and premium users get unlimited access)
-      if (!isBetaTester && !effectiveAccess?.hasUnlimitedAccess && existingStudents && existingStudents.length >= 1) {
+      // Check subscription limits (beta testers get unlimited kids, premium users are limited)
+      if (!isBetaTester && !effectiveAccess?.hasUnlimitedKids && existingStudents && existingStudents.length >= effectiveAccess?.maxStudents) {
         setError(`Free plan is limited to 1 child. Upgrade to Premium to add more children.`)
         setLoading(false)
         return
@@ -206,9 +206,9 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
               <p className="text-purple-700 text-xs">
                 <strong>Beta Tester:</strong> Unlimited children and exams! 🚀
               </p>
-            ) : effectiveAccess?.hasUnlimitedAccess ? (
+            ) : effectiveAccess?.hasUnlimitedExams ? (
               <p className="text-indigo-700 text-xs">
-                Premium plan: <strong>Unlimited children</strong> and <strong>unlimited exams</strong>!
+                Premium plan: <strong>{effectiveAccess?.maxStudents || 1} child{(effectiveAccess?.maxStudents || 1) > 1 ? 'ren' : ''}</strong> and <strong>unlimited exams</strong>!
               </p>
             ) : (
               <p className="text-indigo-700 text-xs">
@@ -279,9 +279,9 @@ export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentM
                 <p className="text-purple-700 text-xs">
                   <strong>Beta Tester:</strong> Unlimited children and exams! 🚀
                 </p>
-              ) : effectiveAccess?.hasUnlimitedAccess ? (
+              ) : effectiveAccess?.hasUnlimitedExams ? (
                 <p className="text-indigo-700 text-xs">
-                  Premium plan: <strong>Unlimited children</strong> and <strong>unlimited exams</strong>!
+                  Premium plan: <strong>{effectiveAccess?.maxStudents || 1} child{(effectiveAccess?.maxStudents || 1) > 1 ? 'ren' : ''}</strong> and <strong>unlimited exams</strong>!
                 </p>
               ) : (
                 <p className="text-indigo-700 text-xs">

@@ -45,7 +45,9 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
     level: 'free',
     maxStudents: 1,
     dailyExamLimit: 3,
-    hasUnlimitedAccess: false
+    hasUnlimitedAccess: false,
+    hasUnlimitedExams: false,
+    hasUnlimitedKids: false
   })
   const [loading, setLoading] = useState(true)
   const [profileLoading, setProfileLoading] = useState(false)
@@ -131,7 +133,9 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
           level: 'free',
           maxStudents: 1,
           dailyExamLimit: 3,
-          hasUnlimitedAccess: false
+          hasUnlimitedAccess: false,
+          hasUnlimitedExams: false,
+          hasUnlimitedKids: false
         })
       }
     } catch (error) {
@@ -157,7 +161,9 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
         level: 'free',
         maxStudents: 1,
         dailyExamLimit: 3,
-        hasUnlimitedAccess: false
+        hasUnlimitedAccess: false,
+        hasUnlimitedExams: false,
+        hasUnlimitedKids: false
       })
     }
   }, [user, getUserProfile])
@@ -198,7 +204,9 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
           level: 'free',
           maxStudents: 1,
           dailyExamLimit: 3,
-          hasUnlimitedAccess: false
+          hasUnlimitedAccess: false,
+          hasUnlimitedExams: false,
+          hasUnlimitedKids: false
         })
       }
     }
@@ -253,7 +261,9 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
       level: 'free',
       maxStudents: 1,
       dailyExamLimit: 3,
-      hasUnlimitedAccess: false
+      hasUnlimitedAccess: false,
+      hasUnlimitedExams: false,
+      hasUnlimitedKids: false
     })
     setLoading(false)
     setProfileLoading(false)
@@ -341,7 +351,9 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
             level: 'free',
             maxStudents: 1,
             dailyExamLimit: 3,
-            hasUnlimitedAccess: false
+            hasUnlimitedAccess: false,
+            hasUnlimitedExams: false,
+            hasUnlimitedKids: false
           })
         }
       } catch (error) {

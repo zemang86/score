@@ -26,8 +26,8 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
   const [loadingExamCount, setLoadingExamCount] = useState(false)
 
   // Get subscription enforcement status
-  const hasUnlimitedAccess = effectiveAccess?.hasUnlimitedAccess || isBetaTester || false
-  const studentStatus = getStudentDisplayStatus(student.id, allStudents, hasUnlimitedAccess)
+  const hasUnlimitedExams = effectiveAccess?.hasUnlimitedExams || isBetaTester || false
+  const studentStatus = getStudentDisplayStatus(student.id, allStudents, hasUnlimitedExams)
 
   // Fetch daily exam count when component mounts
   useEffect(() => {
@@ -88,7 +88,7 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
     }
     
     // Then check daily exam limits using effective access
-    return effectiveAccess?.hasUnlimitedAccess || 
+    return effectiveAccess?.hasUnlimitedExams || 
            isBetaTester || 
            user.isAdmin || 
            dailyExamLimit === 999 || 
