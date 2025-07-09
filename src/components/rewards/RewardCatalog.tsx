@@ -2,20 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Student } from '../../lib/supabase'
 import { TokenService, Reward, RewardClaim } from '../../services/tokenService'
 import { Button } from '../ui/Button'
-import { 
-  Coins, 
-  Gift, 
-  Trophy, 
-  BookOpen, 
-  Gamepad2, 
-  Ticket, 
-  ShoppingCart,
-  Star,
-  Clock,
-  Check,
-  X,
-  Loader2
-} from 'lucide-react'
+import { Coins, Gift, Trophy, Gamepad2, Ticket, ShoppingCart, Star, Clock, X, Loader2 } from 'lucide-react'
 
 interface RewardCatalogProps {
   student: Student

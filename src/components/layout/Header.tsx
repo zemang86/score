@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
-import { LogOut, User, Crown, BarChart3, Home } from 'lucide-react'
+import { LogOut, User, Crown, BarChart3 } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { EdventureLogo } from '../ui/EdventureLogo'
 import { useTranslation } from 'react-i18next'
@@ -110,8 +110,6 @@ export function Header() {
                 <Crown className="w-3.5 h-3.5 text-amber-400 absolute -top-1 -right-1 drop-shadow-sm" />
               )}
             </div>
-
-
 
             {/* Navigation Buttons - Admin Only */}
             {user && !isAdminPage && isAdmin && (

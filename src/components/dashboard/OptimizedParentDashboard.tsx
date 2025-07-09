@@ -6,7 +6,7 @@ import { AddStudentModal } from './AddStudentModal'
 import { StudentCard } from './StudentCard'
 import { LeaderboardModal } from './LeaderboardModal'
 import { FamilyReportsModal } from './FamilyReportsModal'
-import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
+import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, AlertCircle } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { canAddStudent } from '../../utils/accessControl'
 

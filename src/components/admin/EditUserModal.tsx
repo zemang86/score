@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
-import { X, Save, User, Crown, Zap, Users, AlertTriangle } from 'lucide-react'
+import { X, Save, User, Crown, Zap, Users } from 'lucide-react'
 
 interface EditUserModalProps {
   isOpen: boolean

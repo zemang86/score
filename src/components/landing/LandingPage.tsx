@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Star, Trophy, Users, BookOpen, Target, Award, TrendingUp, ArrowRight, Play, CheckCircle, XCircle, DollarSign, Crown, Shield, Sparkles, Heart, Zap, Monitor, Smartphone, Rocket, Brain, Globe, ChevronDown, Lightbulb, Gamepad2, BarChart3, Clock, Gift } from 'lucide-react'
+import { Star, Trophy, Users, BookOpen, Target, Award, TrendingUp, ArrowRight, Play, Crown, Sparkles, Heart, Monitor, Smartphone, Rocket, Brain, ChevronDown, Lightbulb, Gamepad2, BarChart3 } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { RevealOnScroll } from '../animations/RevealOnScroll'
 import { EdventureLogo } from '../ui/EdventureLogo'

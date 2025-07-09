@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { Question } from '../../lib/supabase'
-import { BookOpen, Search, Filter, Plus, Edit, Trash2, Upload, FileText, CheckCircle, AlertCircle, ArrowUpDown, Edit3, ChevronLeft, ChevronRight, Eye, RotateCcw } from 'lucide-react'
+import { BookOpen, Search, Plus, Trash2, Upload, CheckCircle, AlertCircle, Edit3, ChevronLeft, ChevronRight, Eye, RotateCcw } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { EditQuestionModal } from './EditQuestionModal'
@@ -117,7 +117,6 @@ export function QuestionManagement() {
   const initializeSubjects = () => {
     setAllSubjects(predefinedSubjects)
   }
-
 
   const handleDeleteQuestion = async (questionId: string) => {
     if (!confirm('Are you sure you want to delete this question?')) {

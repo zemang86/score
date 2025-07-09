@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
 import { PremiumUpgradeModal } from './PremiumUpgradeModal'
-import { X, BarChart3, Users, BookOpen, Trophy, TrendingUp, Calendar, Target, Star, Award, Crown, Zap, Lock } from 'lucide-react'
+import { X, BarChart3, Users, BookOpen, Trophy, TrendingUp, Calendar, Target, Star, Award, Crown, Lock } from 'lucide-react'
 
 interface FamilyReportsModalProps {
   isOpen: boolean
