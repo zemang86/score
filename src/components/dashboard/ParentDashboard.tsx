@@ -13,7 +13,8 @@ import { EditStudentModal } from './EditStudentModal'
 import { CheckoutSuccessModal } from './CheckoutSuccessModal'
 import { SubscriptionManagementModal } from './SubscriptionManagementModal'
 import { StudentProgressModal } from './StudentProgressModal'
-import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle } from 'lucide-react'
+import { UserProfileModal } from './UserProfileModal'
+import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle, Settings } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { StudentCardSkeleton, DashboardStatsSkeleton, QuickActionsSkeleton } from '../ui/SkeletonLoader'
 import { canAddStudent } from '../../utils/accessControl'
@@ -31,6 +32,7 @@ export function ParentDashboard() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false)
   const [showCheckoutSuccessModal, setShowCheckoutSuccessModal] = useState(false)
+  const [showUserProfile, setShowUserProfile] = useState(false)
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
   const [error, setError] = useState('')
   const [connectionError, setConnectionError] = useState(false)
@@ -385,6 +387,15 @@ export function ParentDashboard() {
               </div>
               <div className="flex gap-2">
                 <Button
+                  onClick={() => setShowUserProfile(true)}
+                  variant="outline"
+                  size="sm"
+                  icon={<Settings className="w-4 h-4" />}
+                  className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
+                >
+                  Profile
+                </Button>
+                <Button
                   onClick={() => setShowLeaderboard(true)}
                   variant="gradient-primary"
                   size="sm"
@@ -713,6 +724,12 @@ export function ParentDashboard() {
       <SubscriptionManagementModal
         isOpen={showSubscriptionModal}
         onClose={() => setShowSubscriptionModal(false)}
+      />
+      
+      {/* User Profile Modal */}
+      <UserProfileModal
+        isOpen={showUserProfile}
+        onClose={() => setShowUserProfile(false)}
       />
     </div>
   )
