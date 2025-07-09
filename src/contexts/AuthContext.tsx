@@ -313,6 +313,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             max_students: 1,
             daily_exam_limit: 3,
             beta_tester: false,
+            language: 'en',
+            state: '',
           },
         ])
 

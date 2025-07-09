@@ -6,7 +6,10 @@ import { AddStudentModal } from './AddStudentModal'
 import { StudentCard } from './StudentCard'
 import { LeaderboardModal } from './LeaderboardModal'
 import { FamilyReportsModal } from './FamilyReportsModal'
-import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, AlertCircle } from 'lucide-react'
+
+import { UserProfileModal } from './UserProfileModal'
+import { Users, Plus, BookOpen, Trophy, TrendingUp, Crown, Star, Sparkles, Heart, Zap, Target, AlertCircle, Settings } from 'lucide-react'
+
 import { Button } from '../ui/Button'
 import { canAddStudent } from '../../utils/accessControl'
 
@@ -133,6 +136,7 @@ export function OptimizedParentDashboard() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [showFamilyReports, setShowFamilyReports] = useState(false)
+  const [showUserProfile, setShowUserProfile] = useState(false)
   const [error, setError] = useState('')
   const [connectionError, setConnectionError] = useState(false)
   const [dashboardStats, setDashboardStats] = useState({
@@ -351,7 +355,16 @@ export function OptimizedParentDashboard() {
                   <p className="text-sm sm:text-lg text-slate-600 font-medium">Ready to level up your kids' learning adventure?</p>
                 </div>
               </div>
-              <div className="hidden lg:block">
+              <div className="hidden lg:flex lg:space-x-3">
+                <Button
+                  onClick={() => setShowUserProfile(true)}
+                  variant="outline"
+                  size="md"
+                  icon={<Settings className="w-5 h-5" />}
+                  className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                >
+                  Edit Profile
+                </Button>
                 <Button
                   onClick={() => setShowLeaderboard(true)}
                   variant="gradient-primary"
@@ -484,6 +497,26 @@ export function OptimizedParentDashboard() {
 
           {/* Sidebar */}
           <div className="space-y-4 sm:space-y-6">
+            {/* User Profile */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-md">
+              <h3 className="text-lg font-bold text-slate-800 mb-3 flex items-center">
+                <Settings className="w-5 h-5 mr-2 text-indigo-500" />
+                Your Profile
+              </h3>
+              <p className="text-slate-600 text-sm mb-4">
+                Update your name, state, and preferred language settings.
+              </p>
+              <Button
+                onClick={() => setShowUserProfile(true)}
+                variant="outline"
+                size="sm"
+                className="w-full"
+                icon={<Settings className="w-4 h-4" />}
+              >
+                Edit Profile
+              </Button>
+            </div>
+
             {/* Family Reports */}
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-md">
               <h3 className="text-lg font-bold text-slate-800 mb-3 flex items-center">
@@ -547,6 +580,13 @@ export function OptimizedParentDashboard() {
         <FamilyReportsModal
           isOpen={showFamilyReports}
           onClose={() => setShowFamilyReports(false)}
+        />
+      )}
+
+      {showUserProfile && (
+        <UserProfileModal
+          isOpen={showUserProfile}
+          onClose={() => setShowUserProfile(false)}
         />
       )}
     </div>

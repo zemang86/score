@@ -117,6 +117,8 @@ export interface User {
   max_students: number
   daily_exam_limit: number
   beta_tester: boolean
+  language: string
+  state: string
   created_at: string
   updated_at: string
 }
