@@ -286,7 +286,7 @@ export function OptimizedParentDashboard() {
       icon: Users,
       title: 'Kids',
       value: students.length.toString(),
-      subtitle: isBetaTester ? '∞ beta' : subscriptionPlan === 'free' ? 'of 1' : '∞',
+      subtitle: isBetaTester ? '∞ beta' : effectiveAccess?.hasUnlimitedAccess ? '∞' : 'of 1',
       gradient: 'bg-gradient-to-br from-indigo-500 to-purple-500'
     },
     {
@@ -379,11 +379,11 @@ export function OptimizedParentDashboard() {
 
         {/* Plan Details Section */}
                   <div className="mb-4 sm:mb-6">
-            <PlanCard 
-              subscriptionPlan={subscriptionPlan}
-              maxStudents={subscriptionPlan === 'free' ? 1 : 999}
-              dailyExamLimit={dailyExamLimit}
-            />
+                              <PlanCard 
+            subscriptionPlan={subscriptionPlan}
+            maxStudents={effectiveAccess?.maxStudents || 1}
+            dailyExamLimit={effectiveAccess?.dailyExamLimit || 3}
+          />
           </div>
 
         {/* Quick Stats */}
@@ -419,7 +419,7 @@ export function OptimizedParentDashboard() {
                       Add Kid
                     </Button>
                   </div>
-                  {!canAddMoreStudents && (
+                  {!canAddMoreStudents && !isBetaTester && !effectiveAccess?.hasUnlimitedAccess && (
                     <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
                       <p className="text-amber-700 font-medium text-center text-xs">
                         Free plan is limited to 1 child. Upgrade to Premium to add more children.

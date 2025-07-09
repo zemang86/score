@@ -489,7 +489,7 @@ export const getEffectiveAccess = async (user: UserWithAdminStatus): Promise<Eff
       console.log('✅ Verified premium user - granting unlimited access')
       return {
         level: 'premium',
-        maxStudents: user.max_students,
+        maxStudents: 999999,
         dailyExamLimit: 999,
         hasUnlimitedAccess: true
       }
