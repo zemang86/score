@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useRef, useMemo } from 'react'
+import React, { createContext, useContext, useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase, fetchUserProfile, testDatabaseConnection, getEffectiveAccess } from '../lib/supabase'
 import type { UserWithAdminStatus, EffectiveAccess } from '../lib/supabase'
@@ -15,10 +15,10 @@ interface AuthContextType {
   effectiveAccess: EffectiveAccess
   loading: boolean
   profileLoading: boolean
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>
-  signIn: (email: string, password: string) => Promise<{ error: any }>
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>
   signOut: () => Promise<void>
-  resetPassword: (email: string) => Promise<{ error: any }>
+  resetPassword: (email: string) => Promise<{ error: Error | null }>
   refreshUserProfile: () => Promise<void>
 }
 
@@ -285,7 +285,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []) // Empty dependency array
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = useCallback(async (email: string, password: string, fullName: string) => {
     console.log('📝 AuthContext: signUp called for:', email)
     
     const { data, error } = await supabase.auth.signUp({
@@ -337,9 +337,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     return { error }
-  }
+  }, [])
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     console.log('🔐 AuthContext: signIn called for:', email)
     
     const { error } = await supabase.auth.signInWithPassword({
@@ -354,9 +354,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     
     return { error }
-  }
+  }, [])
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     console.log('🚪 AuthContext: signOut called')
     
     clearLoadingTimeout()
@@ -396,9 +396,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(false)
     setProfileLoading(false)
     console.log('✅ AuthContext: Local signOut state cleared')
-  }
+  }, [clearLoadingTimeout])
 
-  const resetPassword = async (email: string) => {
+  const resetPassword = useCallback(async (email: string) => {
     console.log('🔑 AuthContext: resetPassword called for:', email)
     const { error } = await supabase.auth.resetPasswordForEmail(email)
     
@@ -409,7 +409,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     
     return { error }
-  }
+  }, [])
 
   const value = useMemo(() => ({
     user,

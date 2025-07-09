@@ -365,7 +365,7 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
       
       // Initialize matching pairs for the first question if it's a matching type
       initializeMatchingQuestion(finalQuestions[0])
-    } catch (err: any) {
+    } catch (err: Error | unknown) {
       setError(err.message || 'Failed to start exam')
     } finally {
       setLoading(false)
@@ -809,7 +809,7 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
         
         // Check if we have progressive badges, if not create them
         const hasProgressiveBadges = availableBadges && availableBadges.some(
-          (badge: any) => badge.name.includes('Quick Learner I') || badge.name.includes('Perfect Score I')
+          (badge: React.FormEvent | React.MouseEvent) => badge.name.includes('Quick Learner I') || badge.name.includes('Perfect Score I')
         )
         
         if (!availableBadges || availableBadges.length === 0 || !hasProgressiveBadges) {
@@ -953,7 +953,7 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
         newXP: student.xp + xpGained
       })
 
-    } catch (err: any) {
+    } catch (err: Error | unknown) {
       console.error('Error saving exam:', err)
       setError('Failed to save exam results')
     }
