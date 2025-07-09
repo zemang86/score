@@ -183,7 +183,7 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
         )}
         
         {/* First student indicator */}
-        {studentStatus.isFirstStudent && !hasUnlimitedAccess && allStudents.length > 1 && (
+        {studentStatus.isFirstStudent && !effectiveAccess?.hasUnlimitedKids && allStudents.length > 1 && (
           <div className="absolute top-2 left-2 z-20">
             <div className="bg-green-100 border border-green-300 rounded-lg px-2 py-1 flex items-center">
               <Crown className="w-3 h-3 text-green-600 mr-1" />
