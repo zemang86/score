@@ -151,23 +151,24 @@ export function OptimizedParentDashboard() {
     [profile, students.length]
   )
 
-  // Debug logging for premium users
+  // Debug logging for ALL users to troubleshoot
   useEffect(() => {
-    if (subscriptionPlan === 'premium') {
-      console.log('🔍 PREMIUM USER DEBUG:', {
+    if (profile) {
+      console.log('🔍 ALL USER DEBUG:', {
         subscriptionPlan,
         studentsCount: students.length,
         canAddMoreStudents,
+        isBetaTester,
         effectiveAccess,
-        profile: profile ? {
+        profile: {
           subscription_plan: profile.subscription_plan,
           max_students: profile.max_students,
           daily_exam_limit: profile.daily_exam_limit,
           beta_tester: profile.beta_tester
-        } : null
+        }
       })
     }
-  }, [subscriptionPlan, students.length, canAddMoreStudents, effectiveAccess, profile])
+  }, [subscriptionPlan, students.length, canAddMoreStudents, effectiveAccess, profile, isBetaTester])
 
   // Optimized fetch function with parallel queries
   const fetchDashboardData = useCallback(async () => {
@@ -542,10 +543,13 @@ export function OptimizedParentDashboard() {
                         </p>
                       </div>
                     ) : (
-                      // Free user message
+                      // Free user message  
                       <div className="p-2 bg-amber-100 border border-amber-300 rounded-lg">
                         <p className="text-amber-700 font-medium text-center text-xs">
                           Free plan is limited to 1 child. Upgrade to Premium to add more children.
+                        </p>
+                        <p className="text-amber-600 font-mono text-xs mt-1">
+                          DEBUG: subscriptionPlan="{subscriptionPlan}" canAdd={canAddMoreStudents ? 'true' : 'false'} isBeta={isBetaTester ? 'true' : 'false'}
                         </p>
                       </div>
                     )}
