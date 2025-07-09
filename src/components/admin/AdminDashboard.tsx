@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { Navigate } from 'react-router-dom'
 import { AdminSidebar } from './AdminSidebar'
 import { UserManagement } from './UserManagement'

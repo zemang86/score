@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { Button } from '../ui/Button'
 import { PremiumUpgradeModal } from '../dashboard/PremiumUpgradeModal'
 import { Input } from '../ui/Input'

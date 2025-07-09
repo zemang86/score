@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../contexts/OptimizedAuthContext'
 import { checkAdminRole, hasRole } from '../lib/roleHelpers'
 
 interface ProtectedRouteProps {

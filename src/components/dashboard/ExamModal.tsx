@@ -5,7 +5,7 @@ import { Button } from '../ui/Button'
 import { X, BookOpen, Clock, Target, Star, Zap, Trophy, CheckCircle, AlertCircle, ArrowUpDown, Edit3, Lock, BookOpenCheck, XCircle, MapPin } from 'lucide-react'
 import { checkShortAnswer } from '../../utils/answerChecker'
 import { BadgeEvaluator } from '../../utils/badgeEvaluator'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { canTakeExam } from '../../utils/accessControl'
 import { canStudentTakeExam, getStudentRestrictionReason } from '../../utils/subscriptionEnforcement'
 

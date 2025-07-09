@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { useAuth } from '../../contexts/AuthContext' 
+import { useAuth } from '../../contexts/OptimizedAuthContext' 
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { X, User, School, Calendar, GraduationCap, Sparkles, Star, Zap, CreditCard } from 'lucide-react'

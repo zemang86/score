@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { supabase } from '../../lib/supabase'
 import { Button } from '../ui/Button'
 import { X, User, MapPin, Languages, Save } from 'lucide-react'

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Button } from '../ui/Button'
 import { X, CheckCircle, Crown, Zap, Users, BookOpen, Trophy } from 'lucide-react'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../contexts/OptimizedAuthContext'
 
 interface CheckoutSuccessModalProps {
   isOpen: boolean
