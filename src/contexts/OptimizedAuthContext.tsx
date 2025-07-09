@@ -83,7 +83,7 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
       setIsBetaTester(cached.profile.beta_tester || false)
       
       // Calculate effective access first
-      const access = getEffectiveAccess(cached.profile)
+      const access = await getEffectiveAccess(cached.profile)
       setEffectiveAccess(access)
       
       // Use effective access values instead of raw database values
@@ -115,7 +115,7 @@ export function OptimizedAuthProvider({ children }: { children: React.ReactNode 
         setIsBetaTester(userProfile.beta_tester || false)
         
         // Calculate effective access first
-        const access = getEffectiveAccess(userProfile)
+        const access = await getEffectiveAccess(userProfile)
         setEffectiveAccess(access)
         
         // Use effective access values instead of raw database values

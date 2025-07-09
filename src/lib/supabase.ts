@@ -443,7 +443,25 @@ export const getUserAccessLevel = (user: UserWithAdminStatus): AccessLevel => {
   return user.subscription_plan
 }
 
-export const getEffectiveAccess = (user: UserWithAdminStatus): EffectiveAccess => {
+// Helper function to check if user has active Stripe subscription
+const checkActiveStripeSubscription = async (userId: string): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase
+      .from('stripe_user_subscriptions')
+      .select('subscription_status')
+      .eq('user_id', userId)
+      .eq('subscription_status', 'active')
+      .maybeSingle()
+    
+    return !error && !!data
+  } catch (error) {
+    console.error('Error checking Stripe subscription:', error)
+    return false
+  }
+}
+
+export const getEffectiveAccess = async (user: UserWithAdminStatus): Promise<EffectiveAccess> => {
+  // Beta testers get unlimited access
   if (user.beta_tester) {
     return {
       level: 'beta_tester',
@@ -453,11 +471,36 @@ export const getEffectiveAccess = (user: UserWithAdminStatus): EffectiveAccess =
     }
   }
   
+  // For users marked as premium, verify they actually have an active Stripe subscription
+  if (user.subscription_plan === 'premium') {
+    const hasActiveSubscription = await checkActiveStripeSubscription(user.id)
+    
+    if (hasActiveSubscription) {
+      // Verified premium user - give them unlimited access
+      return {
+        level: 'premium',
+        maxStudents: user.max_students,
+        dailyExamLimit: 999,
+        hasUnlimitedAccess: true
+      }
+    } else {
+      // Premium in database but no active subscription - treat as free
+      // This fixes users who were incorrectly created as premium
+      return {
+        level: 'free',
+        maxStudents: 1,
+        dailyExamLimit: 3,
+        hasUnlimitedAccess: false
+      }
+    }
+  }
+  
+  // Free users get limited access
   return {
-    level: user.subscription_plan,
-    maxStudents: user.max_students,
-    dailyExamLimit: user.daily_exam_limit,
-    hasUnlimitedAccess: user.subscription_plan === 'premium'
+    level: 'free',
+    maxStudents: 1,
+    dailyExamLimit: 3,
+    hasUnlimitedAccess: false
   }
 }
 
