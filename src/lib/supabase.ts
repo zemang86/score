@@ -467,64 +467,53 @@ export const getEffectiveAccess = async (user: UserWithAdminStatus): Promise<Eff
     beta_tester: user.beta_tester
   })
   
-  // TEMPORARY: Force everyone to have 3-exam limit to test the system
-  console.log('🧪 TEMPORARY: Forcing all users to 3-exam limit for testing')
+  // Beta testers get unlimited access
+  if (user.beta_tester) {
+    console.log('✅ User is beta tester - granting unlimited access')
+    return {
+      level: 'beta_tester',
+      maxStudents: 999999,
+      dailyExamLimit: 999,
+      hasUnlimitedAccess: true
+    }
+  }
+  
+  // For users marked as premium, verify they actually have an active Stripe subscription
+  if (user.subscription_plan === 'premium') {
+    console.log('🔍 User marked as premium - checking Stripe subscription')
+    const hasActiveSubscription = await checkActiveStripeSubscription(user.id)
+    console.log('💳 Stripe subscription check result:', hasActiveSubscription)
+    
+    if (hasActiveSubscription) {
+      // Verified premium user - give them unlimited access
+      console.log('✅ Verified premium user - granting unlimited access')
+      return {
+        level: 'premium',
+        maxStudents: user.max_students,
+        dailyExamLimit: 999,
+        hasUnlimitedAccess: true
+      }
+    } else {
+      // Premium in database but no active subscription - treat as free
+      // This fixes users who were incorrectly created as premium
+      console.log('🚫 No active Stripe subscription - treating as free user (3 exam limit)')
+      return {
+        level: 'free',
+        maxStudents: 1,
+        dailyExamLimit: 3,
+        hasUnlimitedAccess: false
+      }
+    }
+  }
+  
+  // Free users get limited access
+  console.log('✅ Free user - applying 3 exam daily limit')
   return {
     level: 'free',
     maxStudents: 1,
     dailyExamLimit: 3,
     hasUnlimitedAccess: false
   }
-  
-  // TODO: Remove the above temporary override and uncomment below after testing
-  
-  // // Beta testers get unlimited access
-  // if (user.beta_tester) {
-  //   console.log('✅ User is beta tester - granting unlimited access')
-  //   return {
-  //     level: 'beta_tester',
-  //     maxStudents: 999999,
-  //     dailyExamLimit: 999,
-  //     hasUnlimitedAccess: true
-  //   }
-  // }
-  // 
-  // // For users marked as premium, verify they actually have an active Stripe subscription
-  // if (user.subscription_plan === 'premium') {
-  //   console.log('🔍 User marked as premium - checking Stripe subscription')
-  //   const hasActiveSubscription = await checkActiveStripeSubscription(user.id)
-  //   console.log('💳 Stripe subscription check result:', hasActiveSubscription)
-  //   
-  //   if (hasActiveSubscription) {
-  //     // Verified premium user - give them unlimited access
-  //     console.log('✅ Verified premium user - granting unlimited access')
-  //     return {
-  //       level: 'premium',
-  //       maxStudents: user.max_students,
-  //       dailyExamLimit: 999,
-  //       hasUnlimitedAccess: true
-  //     }
-  //   } else {
-  //     // Premium in database but no active subscription - treat as free
-  //     // This fixes users who were incorrectly created as premium
-  //     console.log('🚫 No active Stripe subscription - treating as free user (3 exam limit)')
-  //     return {
-  //       level: 'free',
-  //       maxStudents: 1,
-  //       dailyExamLimit: 3,
-  //       hasUnlimitedAccess: false
-  //     }
-  //   }
-  // }
-  // 
-  // // Free users get limited access
-  // console.log('✅ Free user - applying 3 exam daily limit')
-  // return {
-  //   level: 'free',
-  //   maxStudents: 1,
-  //   dailyExamLimit: 3,
-  //   hasUnlimitedAccess: false
-  // }
 }
 
 // Add beta tester management functions
