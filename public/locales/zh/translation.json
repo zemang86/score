@@ -35,6 +35,50 @@
     "subtitleHighlight": "全覆盖",
     "description": "从小学一年级到中学五年级，我们涵盖了所有核心科目，拥有数千道题目"
   },
+  "mockup": {
+    "welcomeBack": "欢迎回来，Sarah！",
+    "readyAdventure": "准备好今天的冒险了吗？",
+    "xpProgress": "经验值进度",
+    "perfectScore": "满分！",
+    "mathematicsExam": "数学考试",
+    "weeklyProgress": "周进度"
+  },
+  "featureCards": {
+    "gamifiedTitle": "游戏化学习体验",
+    "gamifiedDescription": "赚取经验值，解锁成就徽章，庆祝里程碑。学习变成冒险，而不是苦差事。",
+    "questionBankTitle": "全面题库",
+    "questionBankDescription": "访问各级别的马来语、英语、数学、科学和历史数千道往年题目。",
+    "adaptiveTitle": "自适应练习模式",
+    "adaptiveDescription": "根据您孩子的准备情况，选择简单模式（10道选择题）、中等模式（20-30道混合题）或完整模式（完整试卷）。",
+    "trackingTitle": "高级进度跟踪",
+    "trackingDescription": "通过详细分析、性能报告和改进见解监控您孩子的学习旅程。",
+    "familyTitle": "家庭仪表板",
+    "familyDescription": "从一个家长账户管理多个孩子。一目了然地查看每个人的进度并一起庆祝。",
+    "achievementTitle": "成就系统",
+    "achievementDescription": "解锁\"首次满分\"、\"5天连胜\"和\"科目大师\"等里程碑徽章，保持高度积极性。"
+  },
+  "steps": {
+    "step1Title": "创建并添加孩子",
+    "step1Description": "作为家长注册，添加您孩子的个人资料，包括他们的学校年级和科目。设置只需不到2分钟。",
+    "step2Title": "选择练习模式",
+    "step2Description": "选择科目和难度级别。我们的智能系统根据您孩子的水平生成来自往年试卷的随机题目。",
+    "step3Title": "练习与进步",
+    "step3Description": "完成练习，赚取经验值，解锁徽章，通过详细报告和分析随时间跟踪改进情况。"
+  },
+  "subjectNames": {
+    "bahasaMelayu": "马来语",
+    "english": "英语",
+    "mathematics": "数学",
+    "science": "科学",
+    "history": "历史"
+  },
+  "footnote": {
+    "desktopTitle": "桌面端最佳体验！",
+    "desktopSubtitle": "为大屏幕和更好的学习而优化",
+    "mobileTitle": "手机应用即将推出！",
+    "mobileSubtitle": "随时随地的学习冒险等待着！",
+    "tagline": "现在，拿起您的笔记本电脑，让我们一起让学习变得神奇！"
+  },
   "cta": {
     "badge": "准备好改变学习了吗？",
     "title": "开始您家庭的",
@@ -73,7 +117,13 @@
       "button": "创建账户",
       "loading": "正在创建账户...",
       "hasAccount": "已经有账户？",
-      "signInLink": "在这里登录"
+      "signInLink": "在这里登录",
+      "passwordsNoMatch": "密码不匹配",
+      "passwordTooShort": "密码必须至少6个字符",
+      "accountCreated": "账户创建成功！",
+      "welcomeMessage": "欢迎来到Edventure+！您现在是我们学习家庭的一员。您目前使用的是免费计划，功能有限。",
+      "startFreePlan": "使用免费计划开始",
+      "upgradePremium": "升级到高级版"
     },
     "signIn": {
       "title": "欢迎回来！",
@@ -96,7 +146,10 @@
       "button": "发送重置链接",
       "loading": "正在发送...",
       "backToSignIn": "返回登录",
-      "success": "重置链接已发送！请检查您的电子邮箱。"
+      "success": "重置链接已发送！请检查您的电子邮箱。",
+      "checkEmailTitle": "请检查您的邮箱！",
+      "checkEmailMessage": "我们已经向{email}发送了密码重置链接。请检查您的邮箱并按照说明操作以返回学习！",
+      "dontWorry": "别担心！我们会帮您重新开始学习"
     }
   },
   "dashboard": {

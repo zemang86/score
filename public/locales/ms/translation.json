@@ -35,6 +35,50 @@
     "subtitleHighlight": "Diliputi",
     "description": "Dari Darjah 1 hingga Tingkatan 5, kami mempunyai semua subjek teras yang dilengkapi dengan ribuan soalan"
   },
+  "mockup": {
+    "welcomeBack": "Selamat kembali, Sarah!",
+    "readyAdventure": "Bersedia untuk petualangan hari ini?",
+    "xpProgress": "Kemajuan XP",
+    "perfectScore": "Markah Sempurna!",
+    "mathematicsExam": "Peperiksaan Matematik",
+    "weeklyProgress": "Kemajuan Mingguan"
+  },
+  "featureCards": {
+    "gamifiedTitle": "Pengalaman Pembelajaran Gamifikasi",
+    "gamifiedDescription": "Dapatkan mata XP, buka lencana pencapaian, dan rayakan pencapaian. Pembelajaran menjadi petualangan, bukan kerja keras.",
+    "questionBankTitle": "Bank Soalan Komprehensif",
+    "questionBankDescription": "Akses ribuan soalan tahun lepas merentasi BM, BI, Matematik, Sains, dan Sejarah untuk semua tahap.",
+    "adaptiveTitle": "Mod Latihan Adaptif",
+    "adaptiveDescription": "Pilih daripada Mod Mudah (10 MCQ), Sederhana (20-30 campuran), atau Mod Penuh (kertas lengkap) berdasarkan kesediaan anak anda.",
+    "trackingTitle": "Pengesanan Kemajuan Lanjutan",
+    "trackingDescription": "Pantau perjalanan pembelajaran anak-anak anda dengan analitik terperinci, laporan prestasi, dan pandangan peningkatan.",
+    "familyTitle": "Panel Keluarga",
+    "familyDescription": "Urus berbilang anak dari satu akaun ibu bapa. Lihat kemajuan semua orang sekilas pandang dan rayakan bersama.",
+    "achievementTitle": "Sistem Pencapaian",
+    "achievementDescription": "Buka lencana untuk pencapaian seperti \"Markah Sempurna Pertama\", \"Rekod 5 Hari\", dan \"Master Subjek\" untuk mengekalkan motivasi tinggi."
+  },
+  "steps": {
+    "step1Title": "Cipta & Tambah Anak-anak",
+    "step1Description": "Daftar sebagai ibu bapa dan tambah profil anak-anak anda dengan tahap sekolah dan subjek mereka. Persediaan mengambil masa kurang dari 2 minit.",
+    "step2Title": "Pilih Mod Latihan",
+    "step2Description": "Pilih subjek dan tahap kesukaran. Sistem pintar kami menghasilkan soalan rawak dari kertas tahun lepas yang disesuaikan dengan tahap anak anda.",
+    "step3Title": "Latihan & Kemajuan",
+    "step3Description": "Lengkapkan latihan, dapatkan XP, buka lencana, dan jejaki peningkatan dari semasa ke semasa dengan laporan dan analitik terperinci."
+  },
+  "subjectNames": {
+    "bahasaMelayu": "Bahasa Melayu",
+    "english": "Bahasa Inggeris",
+    "mathematics": "Matematik",
+    "science": "Sains",
+    "history": "Sejarah"
+  },
+  "footnote": {
+    "desktopTitle": "Pengalaman Terbaik di Desktop!",
+    "desktopSubtitle": "Dioptimumkan untuk skrin besar & pembelajaran lebih baik",
+    "mobileTitle": "Aplikasi Mudah Alih Akan Datang!",
+    "mobileSubtitle": "Petualangan pembelajaran mudah alih menanti!",
+    "tagline": "Buat masa ini, ambil laptop anda dan mari kita jadikan pembelajaran ajaib bersama!"
+  },
   "cta": {
     "badge": "Bersedia Untuk Mengubah Pembelajaran?",
     "title": "Mulakan Petualangan",
@@ -73,7 +117,13 @@
       "button": "Cipta Akaun",
       "loading": "Mencipta akaun...",
       "hasAccount": "Sudah mempunyai akaun?",
-      "signInLink": "Log masuk di sini"
+      "signInLink": "Log masuk di sini",
+      "passwordsNoMatch": "Kata laluan tidak sepadan",
+      "passwordTooShort": "Kata laluan mestilah sekurang-kurangnya 6 aksara",
+      "accountCreated": "Akaun Dicipta!",
+      "welcomeMessage": "Selamat datang ke Edventure+! Anda kini sebahagian daripada keluarga pembelajaran kami. Anda berada dalam pelan Percuma dengan ciri terhad.",
+      "startFreePlan": "Mulakan dengan Pelan Percuma",
+      "upgradePremium": "Naik Taraf ke Premium"
     },
     "signIn": {
       "title": "Selamat Kembali!",
@@ -96,7 +146,10 @@
       "button": "Hantar Pautan Set Semula",
       "loading": "Menghantar...",
       "backToSignIn": "Kembali ke Log Masuk",
-      "success": "Pautan set semula dihantar! Semak e-mel anda."
+      "success": "Pautan set semula dihantar! Semak e-mel anda.",
+      "checkEmailTitle": "Semak E-mel Anda!",
+      "checkEmailMessage": "Kami telah menghantar pautan set semula kata laluan ke {email}. Semak e-mel anda dan ikuti arahan untuk kembali belajar!",
+      "dontWorry": "Jangan risau! Kami akan bantu anda kembali belajar"
     }
   },
   "dashboard": {

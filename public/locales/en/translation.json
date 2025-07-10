@@ -35,6 +35,50 @@
     "subtitleHighlight": "Covered",
     "description": "From Darjah 1 to Tingkatan 5, we've got all core subjects covered with thousands of questions"
   },
+  "mockup": {
+    "welcomeBack": "Welcome back, Sarah!",
+    "readyAdventure": "Ready for today's adventure?",
+    "xpProgress": "XP Progress",
+    "perfectScore": "Perfect Score!",
+    "mathematicsExam": "Mathematics Exam",
+    "weeklyProgress": "Weekly Progress"
+  },
+  "featureCards": {
+    "gamifiedTitle": "Gamified Learning Experience",
+    "gamifiedDescription": "Earn XP points, unlock achievement badges, and celebrate milestones. Learning becomes an adventure, not a chore.",
+    "questionBankTitle": "Comprehensive Question Bank", 
+    "questionBankDescription": "Access thousands of past year questions across BM, BI, Mathematics, Science, and History for all levels.",
+    "adaptiveTitle": "Adaptive Practice Modes",
+    "adaptiveDescription": "Choose from Easy (10 MCQs), Medium (20-30 mixed), or Full Mode (complete papers) based on your child's readiness.",
+    "trackingTitle": "Advanced Progress Tracking",
+    "trackingDescription": "Monitor your children's learning journey with detailed analytics, performance reports, and improvement insights.",
+    "familyTitle": "Family Dashboard",
+    "familyDescription": "Manage multiple children from one parent account. See everyone's progress at a glance and celebrate together.",
+    "achievementTitle": "Achievement System",
+    "achievementDescription": "Unlock badges for milestones like \"First Perfect Score\", \"5-Day Streak\", and \"Subject Master\" to keep motivation high."
+  },
+  "steps": {
+    "step1Title": "Create & Add Children",
+    "step1Description": "Sign up as a parent and add your children's profiles with their school level and subjects. Set up takes less than 2 minutes.",
+    "step2Title": "Choose Practice Mode",
+    "step2Description": "Select subject and difficulty level. Our smart system generates randomized questions from past year papers tailored to your child's level.",
+    "step3Title": "Practice & Progress",
+    "step3Description": "Complete exercises, earn XP, unlock badges, and track improvement over time with detailed reports and analytics."
+  },
+  "subjectNames": {
+    "bahasaMelayu": "Bahasa Melayu",
+    "english": "English",
+    "mathematics": "Mathematics",
+    "science": "Science",
+    "history": "History"
+  },
+  "footnote": {
+    "desktopTitle": "Best Experience on Desktop!",
+    "desktopSubtitle": "Optimized for bigger screens & better learning",
+    "mobileTitle": "Mobile App Coming Soon!",
+    "mobileSubtitle": "Learning adventures on-the-go await!",
+    "tagline": "For now, grab your laptop and let's make learning magical together!"
+  },
   "cta": {
     "badge": "Ready to Transform Learning?",
     "title": "Start Your Family's",
@@ -73,7 +117,13 @@
       "button": "Create Account",
       "loading": "Creating account...",
       "hasAccount": "Already have an account?",
-      "signInLink": "Sign in here"
+      "signInLink": "Sign in here",
+      "passwordsNoMatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 6 characters long",
+      "accountCreated": "Account Created!",
+      "welcomeMessage": "Welcome to Edventure+! You're now part of our learning family. You're on the Free plan with limited features.",
+      "startFreePlan": "Start with Free Plan",
+      "upgradePremium": "Upgrade to Premium"
     },
     "signIn": {
       "title": "Welcome Back!",
@@ -96,7 +146,10 @@
       "button": "Send Reset Link",
       "loading": "Sending...",
       "backToSignIn": "Back to Sign In",
-      "success": "Reset link sent! Check your email."
+      "success": "Reset link sent! Check your email.",
+      "checkEmailTitle": "Check Your Email!",
+      "checkEmailMessage": "We've sent a password reset link to {email}. Check your email and follow the instructions to get back to learning!",
+      "dontWorry": "Don't worry! We'll help you get back to learning"
     }
   },
   "dashboard": {
