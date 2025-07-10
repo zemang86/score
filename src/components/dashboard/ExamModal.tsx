@@ -8,6 +8,7 @@ import { BadgeEvaluator } from '../../utils/badgeEvaluator'
 import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { canTakeExam } from '../../utils/accessControl'
 import { canStudentTakeExam, getStudentRestrictionReason } from '../../utils/subscriptionEnforcement'
+import { useTranslation } from 'react-i18next'
 
 interface ExamModalProps {
   isOpen: boolean
