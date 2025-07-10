@@ -45,5 +45,97 @@
   "footer": {
     "copyright": "© 2025 Edventure+. Hak cipta terpelihara.",
     "tagline": "Di Mana Pembelajaran Menjadi Petualangan"
+  },
+  "dashboard": {
+    "welcome": "Selamat datang, {{name}}!",
+    "subtitle": "Bersedia untuk meningkatkan petualangan pembelajaran anak-anak anda?",
+    "stats": {
+      "kids": "Anak-anak",
+      "examsDone": "Peperiksaan Selesai",
+      "badges": "Lencana",
+      "earned": "diperoleh",
+      "perDay": "/hari",
+      "average": "Purata",
+      "totalXP": "Jumlah XP"
+    },
+    "buttons": {
+      "profile": "Profil",
+      "leaderboard": "Papan Pendahulu",
+      "reports": "Laporan", 
+      "upgrade": "Naik Taraf"
+    }
+  },
+  "leaderboard": {
+    "title": "Papan Pendahulu Global",
+    "subtitle": "Lihat kedudukan anda di kalangan pelajar seluruh dunia",
+    "premiumFeature": "Ciri Premium",
+    "premiumDescription": "Naik taraf ke Premium untuk mengakses ciri papan pendahulu lanjutan!",
+    "upgradeButton": "Naik Taraf ke Premium",
+    "closeButton": "Tutup Papan Pendahulu", 
+    "loading": "Memuatkan papan pendahulu global...",
+    "noData": "Tiada data tersedia lagi!",
+    "noDataSubtitle": "Pelajar perlu menyelesaikan peperiksaan untuk muncul di papan pendahulu!",
+    "topStudents": "Pelajar Terbaik mengikut {{type}}",
+    "studentsCompeting": "{{count}} pelajar bersaing {{scope}}",
+    "worldwide": "di seluruh dunia",
+    "inLevel": "di {{level}}",
+    "yourKid": "(Anak Anda)",
+    "types": {
+      "xp": "Mata Pengalaman",
+      "exams": "Peperiksaan Selesai",
+      "scores": "Skor Purata"
+    },
+    "values": {
+      "xp": "{{value}} XP",
+      "exams": "{{value}} peperiksaan",
+      "scores": "{{value}}%"
+    },
+    "filters": {
+      "global": "Global",
+      "darjah1": "Darjah 1",
+      "darjah2": "Darjah 2", 
+      "darjah3": "Darjah 3",
+      "darjah4": "Darjah 4",
+      "darjah5": "Darjah 5",
+      "darjah6": "Darjah 6"
+    },
+    "errorTitle": "Ralat Memuatkan Papan Pendahulu",
+    "tryAgain": "Cuba Lagi"
+  },
+  "premium": {
+    "upgradeTitle": "Naik Taraf ke Premium",
+    "unlockExperience": "Buka kunci pengalaman pembelajaran penuh",
+    "whatYouGet": "Apa Yang Anda Dapat",
+    "features": {
+      "unlimitedExams": "Peperiksaan tanpa had (berbanding 3/hari had percuma)",
+      "multipleChildren": "Beberapa anak (berbanding 1 anak had percuma)",
+      "advancedReports": "Laporan lanjutan & analitik terperinci", 
+      "prioritySupport": "Sokongan keutamaan & ciri baharu dahulu"
+    },
+    "pricing": {
+      "perMonth": "/bulan",
+      "perYear": "/tahun", 
+      "annualBilling": "Pengebilan Tahunan",
+      "billedAnnually": "Dibilkan setiap tahun",
+      "billedMonthly": "Dibilkan setiap bulan",
+      "savePercent": "Jimat 16% berbanding bulanan"
+    },
+    "children": {
+      "title": "Anak-anak",
+      "included": "1 anak disertakan",
+      "additional": "+{{count}} tambahan", 
+      "addMore": "Tambah lebih banyak anak selepas checkout sebagai langganan bulanan berasingan (RM10/bulan setiap satu)"
+    },
+    "upgrade": "👑 Naik Taraf Sekarang • RM{{price}}{{period}}",
+    "secure": "🔒 Pembayaran selamat oleh Stripe • Batal bila-bila masa"
+  },
+  "common": {
+    "close": "Tutup",
+    "save": "Simpan",
+    "cancel": "Batal", 
+    "loading": "Memuatkan...",
+    "error": "Ralat",
+    "tryAgain": "Cuba Lagi",
+    "processing": "Memproses..."
   }
 }

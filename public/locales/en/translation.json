@@ -45,5 +45,97 @@
   "footer": {
     "copyright": "© 2025 Edventure+. All rights reserved.",
     "tagline": "Where Learning Becomes Adventure"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}!",
+    "subtitle": "Ready to level up your kids' learning adventure?",
+    "stats": {
+      "kids": "Kids",
+      "examsDone": "Exams Done",
+      "badges": "Badges",
+      "earned": "earned",
+      "perDay": "/day",
+      "average": "Average",
+      "totalXP": "Total XP"
+    },
+    "buttons": {
+      "profile": "Profile",
+      "leaderboard": "Leaderboard", 
+      "reports": "Reports",
+      "upgrade": "Upgrade"
+    }
+  },
+  "leaderboard": {
+    "title": "Global Leaderboard",
+    "subtitle": "See how you rank among students worldwide",
+    "premiumFeature": "Premium Feature",
+    "premiumDescription": "Upgrade to Premium to access advanced leaderboard features!",
+    "upgradeButton": "Upgrade to Premium",
+    "closeButton": "Close Leaderboard",
+    "loading": "Loading global leaderboard...",
+    "noData": "No data available yet!",
+    "noDataSubtitle": "Students need to complete exams to appear on the leaderboard!",
+    "topStudents": "Top Students by {{type}}",
+    "studentsCompeting": "{{count}} students competing {{scope}}",
+    "worldwide": "worldwide",
+    "inLevel": "in {{level}}",
+    "yourKid": "(Your Kid)",
+    "types": {
+      "xp": "Experience Points",
+      "exams": "Exams Completed", 
+      "scores": "Average Score"
+    },
+    "values": {
+      "xp": "{{value}} XP",
+      "exams": "{{value}} exams",
+      "scores": "{{value}}%"
+    },
+    "filters": {
+      "global": "Global",
+      "darjah1": "Darjah 1",
+      "darjah2": "Darjah 2",
+      "darjah3": "Darjah 3",
+      "darjah4": "Darjah 4",
+      "darjah5": "Darjah 5",
+      "darjah6": "Darjah 6"
+    },
+    "errorTitle": "Error Loading Leaderboard",
+    "tryAgain": "Try Again"
+  },
+  "premium": {
+    "upgradeTitle": "Upgrade to Premium",
+    "unlockExperience": "Unlock the full learning experience",
+    "whatYouGet": "What You Get",
+    "features": {
+      "unlimitedExams": "Unlimited exams (vs 3/day free limit)",
+      "multipleChildren": "Multiple children (vs 1 child free limit)", 
+      "advancedReports": "Advanced reports & detailed analytics",
+      "prioritySupport": "Priority support & new features first"
+    },
+    "pricing": {
+      "perMonth": "/month",
+      "perYear": "/year",
+      "annualBilling": "Annual Billing",
+      "billedAnnually": "Billed annually",
+      "billedMonthly": "Billed monthly",
+      "savePercent": "Save 16% vs monthly"
+    },
+    "children": {
+      "title": "Children",
+      "included": "1 child included",
+      "additional": "+{{count}} additional",
+      "addMore": "Add more children after checkout as separate monthly subscriptions (RM10/month each)"
+    },
+    "upgrade": "👑 Upgrade Now • RM{{price}}{{period}}",
+    "secure": "🔒 Secure payment by Stripe • Cancel anytime"
+  },
+  "common": {
+    "close": "Close",
+    "save": "Save", 
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "error": "Error",
+    "tryAgain": "Try Again",
+    "processing": "Processing..."
   }
 }
