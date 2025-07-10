@@ -1,17 +1,18 @@
 /**
  * Calculate age in years and months from date of birth
  * @param dateOfBirth - Date string in YYYY-MM-DD format
+ * @param t - Translation function (optional)
  * @returns Formatted age string like "X years Y months old"
  */
-export function calculateAgeInYearsAndMonths(dateOfBirth: string): string {
-  if (!dateOfBirth) return 'Age not available'
+export function calculateAgeInYearsAndMonths(dateOfBirth: string, t?: any): string {
+  if (!dateOfBirth) return t ? t('age.notAvailable') : 'Age not available'
   
   const birthDate = new Date(dateOfBirth)
   const today = new Date()
   
   // Check if the date is valid
   if (isNaN(birthDate.getTime())) {
-    return 'Invalid date'
+    return t ? t('age.invalidDate') : 'Invalid date'
   }
   
   // Calculate the difference
