@@ -1,7 +1,8 @@
 {
   "nav": {
     "signIn": "Sign In",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "backToHome": "Back to Home"
   },
   "hero": {
     "badge": "Transforming Education in Malaysia",
@@ -45,5 +46,295 @@
   "footer": {
     "copyright": "© 2025 Edventure+. All rights reserved.",
     "tagline": "Where Learning Becomes Adventure"
+  },
+  "auth": {
+    "welcomeTitle": "Where Learning Becomes Adventure!",
+    "welcomeSubtitle": "Transform exam practice into an engaging learning adventure for Malaysian students.",
+    "gamifiedLearning": "Gamified Learning",
+    "gamifiedDescription": "Earn XP, unlock badges, and level up your learning journey!",
+    "trackProgress": "Track Progress",
+    "trackProgressDescription": "Watch your skills grow and celebrate every achievement!",
+    "familyDashboard": "Family Dashboard",
+    "familyDashboardDescription": "Parents and kids learning together as a team!",
+    "freeAccess": "FREE Premium Access during launch period!",
+    "signUp": {
+      "title": "Join the Adventure",
+      "subtitle": "Create your family account to get started",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Create a strong password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "parentConsent": "I consent to creating accounts for my children under 13",
+      "terms": "I agree to the Terms of Service and Privacy Policy",
+      "button": "Create Account",
+      "loading": "Creating account...",
+      "hasAccount": "Already have an account?",
+      "signInLink": "Sign in here"
+    },
+    "signIn": {
+      "title": "Welcome Back!",
+      "subtitle": "Continue your learning adventure",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "forgotPassword": "Forgot your password?",
+      "button": "Sign In",
+      "loading": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Create one here"
+    },
+    "forgotPassword": {
+      "title": "Reset Password",
+      "subtitle": "We'll send you a link to reset your password",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "button": "Send Reset Link",
+      "loading": "Sending...",
+      "backToSignIn": "Back to Sign In",
+      "success": "Reset link sent! Check your email."
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}!",
+    "welcomeMessage": "Ready to level up your kids' learning adventure?",
+    "profile": "Profile",
+    "leaderboard": "Leaderboard",
+    "reports": "Reports",
+    "upgrade": "Upgrade",
+    "stats": {
+      "kids": "Kids",
+      "examsDone": "Exams Done",
+      "badges": "Badges",
+      "averageScore": "Avg Score",
+      "totalXP": "Total XP",
+      "questions": "Questions",
+      "earned": "earned",
+      "perDay": "/day",
+      "ofOne": "of 1",
+      "unlimited": "∞",
+      "beta": "∞ beta"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "addStudent": "Add Child",
+      "practiceNow": "Practice Now",
+      "viewReports": "View Reports",
+      "managePlans": "Manage Plans"
+    },
+    "students": {
+      "title": "Your Children",
+      "noStudents": "No children added yet",
+      "addFirstChild": "Add your first child to get started",
+      "addButton": "Add Child",
+      "limitReached": "Student limit reached",
+      "upgradeMessage": "Upgrade to premium to add more children"
+    },
+    "student": {
+      "level": "Level {{level}}",
+      "xp": "XP",
+      "examsCompleted": "Exams Completed",
+      "currentStreak": "Current Streak",
+      "badges": "Badges",
+      "lastActive": "Last Active",
+      "never": "Never",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "daysAgo": "{{days}} days ago",
+      "actions": {
+        "startExam": "Start Exam",
+        "viewProgress": "View Progress",
+        "edit": "Edit",
+        "examHistory": "Exam History"
+      }
+    }
+  },
+  "exam": {
+    "setup": {
+      "title": "Exam Setup",
+      "selectSubject": "Select Subject",
+      "selectLevel": "Select Level",
+      "selectMode": "Select Mode",
+      "modes": {
+        "easy": "Easy Mode",
+        "easyDescription": "10 Multiple Choice Questions",
+        "medium": "Medium Mode", 
+        "mediumDescription": "20-30 Mixed Questions",
+        "full": "Full Mode",
+        "fullDescription": "Complete Past Year Paper"
+      },
+      "startExam": "Start Exam",
+      "loading": "Loading questions..."
+    },
+    "progress": {
+      "question": "Question {{current}} of {{total}}",
+      "timeRemaining": "Time Remaining",
+      "submit": "Submit Answer",
+      "next": "Next Question",
+      "previous": "Previous Question",
+      "finish": "Finish Exam"
+    },
+    "results": {
+      "congratulations": "Congratulations!",
+      "score": "Your Score",
+      "timeCompleted": "Completed in {{time}}",
+      "xpEarned": "XP Earned",
+      "badgesUnlocked": "Badges Unlocked",
+      "viewProgress": "View Progress",
+      "tryAgain": "Try Again",
+      "backToDashboard": "Back to Dashboard"
+    }
+  },
+  "subjects": {
+    "mathematics": "Mathematics",
+    "science": "Science", 
+    "bahasaMalaysia": "Bahasa Malaysia",
+    "bahasaInggeris": "Bahasa Inggeris",
+    "history": "History",
+    "geography": "Geography",
+    "pendidikanMoral": "Pendidikan Moral",
+    "pendidikanIslam": "Pendidikan Islam",
+    "chinese": "Chinese",
+    "tamil": "Tamil"
+  },
+  "levels": {
+    "darjah1": "Darjah 1",
+    "darjah2": "Darjah 2", 
+    "darjah3": "Darjah 3",
+    "darjah4": "Darjah 4",
+    "darjah5": "Darjah 5",
+    "darjah6": "Darjah 6",
+    "tingkatan1": "Tingkatan 1",
+    "tingkatan2": "Tingkatan 2",
+    "tingkatan3": "Tingkatan 3",
+    "tingkatan4": "Tingkatan 4",
+    "tingkatan5": "Tingkatan 5"
+  },
+  "modal": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "addStudent": {
+    "title": "Add New Child",
+    "studentName": "Child's Name",
+    "studentNamePlaceholder": "Enter child's full name",
+    "schoolLevel": "School Level", 
+    "selectLevel": "Select school level",
+    "subjects": "Subjects",
+    "selectSubjects": "Select subjects to practice",
+    "button": "Add Child",
+    "loading": "Adding child...",
+    "success": "Child added successfully!",
+    "limitReached": "You've reached your student limit. Upgrade to premium to add more children."
+  },
+  "subscription": {
+    "current": "Current Plan",
+    "free": "Free Plan",
+    "premium": "Premium Plan",
+    "features": {
+      "students": "Students",
+      "dailyExams": "Daily Exams",
+      "subjects": "All Subjects",
+      "analytics": "Detailed Analytics",
+      "support": "Priority Support"
+    },
+    "upgrade": {
+      "title": "Upgrade to Premium",
+      "subtitle": "Unlock unlimited learning potential",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "save": "Save 20%",
+      "upgradeButton": "Upgrade Now",
+      "features": [
+        "Unlimited children",
+        "Unlimited daily exams", 
+        "Advanced progress tracking",
+        "Detailed performance analytics",
+        "Priority customer support",
+        "Early access to new features"
+      ]
+    }
+  },
+  "leaderboard": {
+    "title": "Family Leaderboard",
+    "subtitle": "See how your children are performing",
+    "rank": "Rank",
+    "student": "Student", 
+    "level": "Level",
+    "xp": "XP",
+    "badges": "Badges",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "allTime": "All Time"
+  },
+  "reports": {
+    "title": "Family Progress Reports",
+    "subtitle": "Track your children's learning journey",
+    "overview": "Overview",
+    "detailed": "Detailed Analysis",
+    "exportPDF": "Export PDF",
+    "performance": "Performance Trends",
+    "strengths": "Strengths",
+    "improvements": "Areas for Improvement",
+    "recommendations": "Recommendations"
+  },
+  "badges": {
+    "firstExam": "First Exam",
+    "firstExamDescription": "Completed your first exam",
+    "perfectScore": "Perfect Score",
+    "perfectScoreDescription": "Scored 100% on an exam",
+    "weekStreak": "Week Streak",
+    "weekStreakDescription": "Practiced for 7 days straight",
+    "subjectMaster": "Subject Master",
+    "subjectMasterDescription": "Completed 10 exams in one subject",
+    "speedDemon": "Speed Demon",
+    "speedDemonDescription": "Completed an exam in record time",
+    "dedicated": "Dedicated Learner",
+    "dedicatedDescription": "Practiced for 30 days total"
+  },
+  "errors": {
+    "networkError": "Network error. Please check your connection.",
+    "serverError": "Server error. Please try again later.",
+    "notFound": "Page not found.",
+    "unauthorized": "You are not authorized to access this page.",
+    "validationError": "Please check your input and try again.",
+    "unknownError": "An unexpected error occurred."
+  },
+  "loading": {
+    "default": "Loading...",
+    "questions": "Loading questions...",
+    "students": "Loading students...",
+    "dashboard": "Loading dashboard...",
+    "settingUp": "Setting up your learning adventure..."
+  },
+  "time": {
+    "seconds": "seconds",
+    "minutes": "minutes", 
+    "hours": "hours",
+    "days": "days",
+    "weeks": "weeks",
+    "months": "months"
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "continue": "Continue",
+    "finish": "Finish",
+    "retry": "Retry",
+    "refresh": "Refresh"
   }
 }

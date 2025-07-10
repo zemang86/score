@@ -1,0 +1,340 @@
+{
+  "nav": {
+    "signIn": "登录",
+    "getStarted": "开始",
+    "backToHome": "返回主页"
+  },
+  "hero": {
+    "badge": "改变马来西亚的教育",
+    "title": "让学习",
+    "titleHighlight": "成为冒险",
+    "subtitle": "将考试准备转化为引人入胜的旅程。从小学一年级到中学五年级，跟踪进度并一起庆祝成就。",
+    "startButton": "开始您的冒险",
+    "watchDemo": "观看演示"
+  },
+  "stats": {
+    "questions": "题目",
+    "subjects": "科目",
+    "levels": "年级"
+  },
+  "features": {
+    "title": "为什么选择Edventure+？",
+    "subtitle": "学习的",
+    "subtitleHighlight": "未来就在这里",
+    "description": "我们重新构想了考试准备，使其对父母和孩子都具有吸引力、有效性和愉悦性。"
+  },
+  "howItWorks": {
+    "title": "如何运作",
+    "subtitle": "简单步骤",
+    "subtitleHighlight": "学习成功",
+    "description": "用三个简单步骤改变您孩子的考试准备"
+  },
+  "subjects": {
+    "title": "全面覆盖",
+    "subtitle": "所有核心科目",
+    "subtitleHighlight": "全覆盖",
+    "description": "从小学一年级到中学五年级，我们涵盖了所有核心科目，拥有数千道题目"
+  },
+  "cta": {
+    "badge": "准备好改变学习了吗？",
+    "title": "开始您家庭的",
+    "titleHighlight": "学习冒险",
+    "description": "加入成千上万的马来西亚家庭，让考试准备与Edventure+变得有趣和有效。",
+    "button": "今天免费开始",
+    "note": "无需信用卡 • 2分钟设置 • 包含高级访问权限"
+  },
+  "footer": {
+    "copyright": "© 2025 Edventure+. 版权所有。",
+    "tagline": "让学习成为冒险"
+  },
+  "auth": {
+    "welcomeTitle": "让学习成为冒险！",
+    "welcomeSubtitle": "将考试练习转化为马来西亚学生引人入胜的学习冒险。",
+    "gamifiedLearning": "游戏化学习",
+    "gamifiedDescription": "赚取经验值，解锁徽章，在学习旅程中升级！",
+    "trackProgress": "跟踪进度",
+    "trackProgressDescription": "观看您的技能成长并庆祝每一个成就！",
+    "familyDashboard": "家庭仪表板",
+    "familyDashboardDescription": "父母和孩子作为一个团队一起学习！",
+    "freeAccess": "启动期间免费高级访问权限！",
+    "signUp": {
+      "title": "加入冒险",
+      "subtitle": "创建您的家庭账户开始",
+      "fullName": "全名",
+      "fullNamePlaceholder": "输入您的全名",
+      "email": "电子邮箱地址",
+      "emailPlaceholder": "输入您的电子邮箱",
+      "password": "密码",
+      "passwordPlaceholder": "创建一个强密码",
+      "confirmPassword": "确认密码",
+      "confirmPasswordPlaceholder": "确认您的密码",
+      "parentConsent": "我同意为我13岁以下的孩子创建账户",
+      "terms": "我同意服务条款和隐私政策",
+      "button": "创建账户",
+      "loading": "正在创建账户...",
+      "hasAccount": "已经有账户？",
+      "signInLink": "在这里登录"
+    },
+    "signIn": {
+      "title": "欢迎回来！",
+      "subtitle": "继续您的学习冒险",
+      "email": "电子邮箱地址",
+      "emailPlaceholder": "输入您的电子邮箱",
+      "password": "密码",
+      "passwordPlaceholder": "输入您的密码",
+      "forgotPassword": "忘记密码？",
+      "button": "登录",
+      "loading": "正在登录...",
+      "noAccount": "没有账户？",
+      "signUpLink": "在这里创建一个"
+    },
+    "forgotPassword": {
+      "title": "重置密码",
+      "subtitle": "我们将向您发送重置密码的链接",
+      "email": "电子邮箱地址",
+      "emailPlaceholder": "输入您的电子邮箱",
+      "button": "发送重置链接",
+      "loading": "正在发送...",
+      "backToSignIn": "返回登录",
+      "success": "重置链接已发送！请检查您的电子邮箱。"
+    }
+  },
+  "dashboard": {
+    "welcome": "欢迎，{{name}}！",
+    "welcomeMessage": "准备好提升您孩子的学习冒险了吗？",
+    "profile": "个人资料",
+    "leaderboard": "排行榜",
+    "reports": "报告",
+    "upgrade": "升级",
+    "stats": {
+      "kids": "孩子",
+      "examsDone": "已完成考试",
+      "badges": "徽章",
+      "averageScore": "平均分数",
+      "totalXP": "总经验值",
+      "questions": "题目",
+      "earned": "已获得",
+      "perDay": "/天",
+      "ofOne": "/ 1",
+      "unlimited": "∞",
+      "beta": "∞ 测试版"
+    },
+    "quickActions": {
+      "title": "快速操作",
+      "addStudent": "添加孩子",
+      "practiceNow": "现在练习",
+      "viewReports": "查看报告",
+      "managePlans": "管理计划"
+    },
+    "students": {
+      "title": "您的孩子",
+      "noStudents": "还没有添加孩子",
+      "addFirstChild": "添加您的第一个孩子开始",
+      "addButton": "添加孩子",
+      "limitReached": "学生数量已达上限",
+      "upgradeMessage": "升级到高级版可添加更多孩子"
+    },
+    "student": {
+      "level": "等级 {{level}}",
+      "xp": "经验值",
+      "examsCompleted": "已完成考试",
+      "currentStreak": "当前连胜",
+      "badges": "徽章",
+      "lastActive": "最后活跃",
+      "never": "从未",
+      "today": "今天",
+      "yesterday": "昨天",
+      "daysAgo": "{{days}} 天前",
+      "actions": {
+        "startExam": "开始考试",
+        "viewProgress": "查看进度",
+        "edit": "编辑",
+        "examHistory": "考试历史"
+      }
+    }
+  },
+  "exam": {
+    "setup": {
+      "title": "考试设置",
+      "selectSubject": "选择科目",
+      "selectLevel": "选择年级",
+      "selectMode": "选择模式",
+      "modes": {
+        "easy": "简单模式",
+        "easyDescription": "10道选择题",
+        "medium": "中等模式",
+        "mediumDescription": "20-30道混合题",
+        "full": "完整模式",
+        "fullDescription": "完整往年试卷"
+      },
+      "startExam": "开始考试",
+      "loading": "正在加载题目..."
+    },
+    "progress": {
+      "question": "第 {{current}} 题，共 {{total}} 题",
+      "timeRemaining": "剩余时间",
+      "submit": "提交答案",
+      "next": "下一题",
+      "previous": "上一题",
+      "finish": "完成考试"
+    },
+    "results": {
+      "congratulations": "恭喜！",
+      "score": "您的分数",
+      "timeCompleted": "完成时间 {{time}}",
+      "xpEarned": "获得经验值",
+      "badgesUnlocked": "解锁徽章",
+      "viewProgress": "查看进度",
+      "tryAgain": "再试一次",
+      "backToDashboard": "返回仪表板"
+    }
+  },
+  "subjects": {
+    "mathematics": "数学",
+    "science": "科学",
+    "bahasaMalaysia": "马来语",
+    "bahasaInggeris": "英语",
+    "history": "历史",
+    "geography": "地理",
+    "pendidikanMoral": "道德教育",
+    "pendidikanIslam": "伊斯兰教育",
+    "chinese": "华语",
+    "tamil": "淡米尔语"
+  },
+  "levels": {
+    "darjah1": "小学一年级",
+    "darjah2": "小学二年级",
+    "darjah3": "小学三年级",
+    "darjah4": "小学四年级",
+    "darjah5": "小学五年级",
+    "darjah6": "小学六年级",
+    "tingkatan1": "中学一年级",
+    "tingkatan2": "中学二年级",
+    "tingkatan3": "中学三年级",
+    "tingkatan4": "中学四年级",
+    "tingkatan5": "中学五年级"
+  },
+  "modal": {
+    "close": "关闭",
+    "cancel": "取消",
+    "save": "保存",
+    "delete": "删除",
+    "confirm": "确认",
+    "loading": "正在加载...",
+    "error": "错误",
+    "success": "成功"
+  },
+  "addStudent": {
+    "title": "添加新孩子",
+    "studentName": "孩子姓名",
+    "studentNamePlaceholder": "输入孩子的全名",
+    "schoolLevel": "学校年级",
+    "selectLevel": "选择学校年级",
+    "subjects": "科目",
+    "selectSubjects": "选择练习科目",
+    "button": "添加孩子",
+    "loading": "正在添加孩子...",
+    "success": "孩子添加成功！",
+    "limitReached": "您已达到学生数量上限。升级到高级版可添加更多孩子。"
+  },
+  "subscription": {
+    "current": "当前计划",
+    "free": "免费计划",
+    "premium": "高级计划",
+    "features": {
+      "students": "学生",
+      "dailyExams": "每日考试",
+      "subjects": "所有科目",
+      "analytics": "详细分析",
+      "support": "优先支持"
+    },
+    "upgrade": {
+      "title": "升级到高级版",
+      "subtitle": "解锁无限学习潜力",
+      "monthly": "月付",
+      "yearly": "年付",
+      "save": "节省 20%",
+      "upgradeButton": "立即升级",
+      "features": [
+        "无限孩子数量",
+        "无限每日考试",
+        "高级进度跟踪",
+        "详细性能分析",
+        "优先客户支持",
+        "新功能抢先体验"
+      ]
+    }
+  },
+  "leaderboard": {
+    "title": "家庭排行榜",
+    "subtitle": "查看您的孩子表现如何",
+    "rank": "排名",
+    "student": "学生",
+    "level": "等级",
+    "xp": "经验值",
+    "badges": "徽章",
+    "thisWeek": "本周",
+    "thisMonth": "本月",
+    "allTime": "历史总计"
+  },
+  "reports": {
+    "title": "家庭进度报告",
+    "subtitle": "跟踪您孩子的学习旅程",
+    "overview": "概览",
+    "detailed": "详细分析",
+    "exportPDF": "导出PDF",
+    "performance": "表现趋势",
+    "strengths": "优势",
+    "improvements": "待改进区域",
+    "recommendations": "建议"
+  },
+  "badges": {
+    "firstExam": "首次考试",
+    "firstExamDescription": "完成您的第一次考试",
+    "perfectScore": "满分",
+    "perfectScoreDescription": "在考试中获得100%分数",
+    "weekStreak": "周连胜",
+    "weekStreakDescription": "连续练习7天",
+    "subjectMaster": "科目大师",
+    "subjectMasterDescription": "在一个科目完成10次考试",
+    "speedDemon": "速度之星",
+    "speedDemonDescription": "在创纪录时间内完成考试",
+    "dedicated": "专注学习者",
+    "dedicatedDescription": "总共练习30天"
+  },
+  "errors": {
+    "networkError": "网络错误。请检查您的连接。",
+    "serverError": "服务器错误。请稍后再试。",
+    "notFound": "页面未找到。",
+    "unauthorized": "您无权访问此页面。",
+    "validationError": "请检查您的输入并重试。",
+    "unknownError": "发生了意外错误。"
+  },
+  "loading": {
+    "default": "正在加载...",
+    "questions": "正在加载题目...",
+    "students": "正在加载学生...",
+    "dashboard": "正在加载仪表板...",
+    "settingUp": "正在设置您的学习冒险..."
+  },
+  "time": {
+    "seconds": "秒",
+    "minutes": "分钟",
+    "hours": "小时",
+    "days": "天",
+    "weeks": "周",
+    "months": "月"
+  },
+  "common": {
+    "yes": "是",
+    "no": "否",
+    "ok": "确定",
+    "back": "返回",
+    "next": "下一个",
+    "previous": "上一个",
+    "continue": "继续",
+    "finish": "完成",
+    "retry": "重试",
+    "refresh": "刷新"
+  }
+}

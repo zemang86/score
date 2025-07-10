@@ -1,7 +1,8 @@
 {
   "nav": {
     "signIn": "Log Masuk",
-    "getStarted": "Mulakan"
+    "getStarted": "Mulakan",
+    "backToHome": "Kembali ke Laman Utama"
   },
   "hero": {
     "badge": "Mengubah Pendidikan di Malaysia",
@@ -45,5 +46,295 @@
   "footer": {
     "copyright": "© 2025 Edventure+. Hak cipta terpelihara.",
     "tagline": "Di Mana Pembelajaran Menjadi Petualangan"
+  },
+  "auth": {
+    "welcomeTitle": "Di Mana Pembelajaran Menjadi Petualangan!",
+    "welcomeSubtitle": "Ubah latihan peperiksaan menjadi petualangan pembelajaran yang menarik untuk pelajar Malaysia.",
+    "gamifiedLearning": "Pembelajaran Gamifikasi",
+    "gamifiedDescription": "Dapatkan XP, buka lencana, dan naik tahap dalam perjalanan pembelajaran anda!",
+    "trackProgress": "Jejaki Kemajuan",
+    "trackProgressDescription": "Saksikan kemahiran anda berkembang dan rayakan setiap pencapaian!",
+    "familyDashboard": "Panel Keluarga",
+    "familyDashboardDescription": "Ibu bapa dan anak-anak belajar bersama sebagai satu pasukan!",
+    "freeAccess": "Akses Premium PERCUMA semasa tempoh pelancaran!",
+    "signUp": {
+      "title": "Sertai Petualangan",
+      "subtitle": "Cipta akaun keluarga anda untuk bermula",
+      "fullName": "Nama Penuh",
+      "fullNamePlaceholder": "Masukkan nama penuh anda",
+      "email": "Alamat E-mel",
+      "emailPlaceholder": "Masukkan e-mel anda",
+      "password": "Kata Laluan",
+      "passwordPlaceholder": "Cipta kata laluan yang kuat",
+      "confirmPassword": "Sahkan Kata Laluan",
+      "confirmPasswordPlaceholder": "Sahkan kata laluan anda",
+      "parentConsent": "Saya bersetuju mencipta akaun untuk anak-anak saya di bawah umur 13 tahun",
+      "terms": "Saya bersetuju dengan Terma Perkhidmatan dan Dasar Privasi",
+      "button": "Cipta Akaun",
+      "loading": "Mencipta akaun...",
+      "hasAccount": "Sudah mempunyai akaun?",
+      "signInLink": "Log masuk di sini"
+    },
+    "signIn": {
+      "title": "Selamat Kembali!",
+      "subtitle": "Teruskan petualangan pembelajaran anda",
+      "email": "Alamat E-mel",
+      "emailPlaceholder": "Masukkan e-mel anda",
+      "password": "Kata Laluan",
+      "passwordPlaceholder": "Masukkan kata laluan anda",
+      "forgotPassword": "Terlupa kata laluan anda?",
+      "button": "Log Masuk",
+      "loading": "Sedang log masuk...",
+      "noAccount": "Tiada akaun?",
+      "signUpLink": "Cipta satu di sini"
+    },
+    "forgotPassword": {
+      "title": "Set Semula Kata Laluan",
+      "subtitle": "Kami akan hantar pautan untuk set semula kata laluan anda",
+      "email": "Alamat E-mel",
+      "emailPlaceholder": "Masukkan e-mel anda",
+      "button": "Hantar Pautan Set Semula",
+      "loading": "Menghantar...",
+      "backToSignIn": "Kembali ke Log Masuk",
+      "success": "Pautan set semula dihantar! Semak e-mel anda."
+    }
+  },
+  "dashboard": {
+    "welcome": "Selamat datang, {{name}}!",
+    "welcomeMessage": "Bersedia untuk meningkatkan petualangan pembelajaran anak-anak anda?",
+    "profile": "Profil",
+    "leaderboard": "Papan Pendahulu",
+    "reports": "Laporan",
+    "upgrade": "Naik Taraf",
+    "stats": {
+      "kids": "Anak-anak",
+      "examsDone": "Peperiksaan Selesai",
+      "badges": "Lencana",
+      "averageScore": "Purata Markah",
+      "totalXP": "Jumlah XP",
+      "questions": "Soalan",
+      "earned": "diperoleh",
+      "perDay": "/hari",
+      "ofOne": "daripada 1",
+      "unlimited": "∞",
+      "beta": "∞ beta"
+    },
+    "quickActions": {
+      "title": "Tindakan Pantas",
+      "addStudent": "Tambah Anak",
+      "practiceNow": "Berlatih Sekarang",
+      "viewReports": "Lihat Laporan",
+      "managePlans": "Urus Pelan"
+    },
+    "students": {
+      "title": "Anak-anak Anda",
+      "noStudents": "Tiada anak ditambah lagi",
+      "addFirstChild": "Tambah anak pertama anda untuk bermula",
+      "addButton": "Tambah Anak",
+      "limitReached": "Had pelajar dicapai",
+      "upgradeMessage": "Naik taraf ke premium untuk menambah lebih banyak anak"
+    },
+    "student": {
+      "level": "Tahap {{level}}",
+      "xp": "XP",
+      "examsCompleted": "Peperiksaan Selesai",
+      "currentStreak": "Rekod Berturut-turut Semasa",
+      "badges": "Lencana",
+      "lastActive": "Aktif Terakhir",
+      "never": "Tidak Pernah",
+      "today": "Hari Ini",
+      "yesterday": "Semalam",
+      "daysAgo": "{{days}} hari lalu",
+      "actions": {
+        "startExam": "Mula Peperiksaan",
+        "viewProgress": "Lihat Kemajuan",
+        "edit": "Edit",
+        "examHistory": "Sejarah Peperiksaan"
+      }
+    }
+  },
+  "exam": {
+    "setup": {
+      "title": "Persediaan Peperiksaan",
+      "selectSubject": "Pilih Subjek",
+      "selectLevel": "Pilih Tahap",
+      "selectMode": "Pilih Mod",
+      "modes": {
+        "easy": "Mod Mudah",
+        "easyDescription": "10 Soalan Aneka Pilihan",
+        "medium": "Mod Sederhana",
+        "mediumDescription": "20-30 Soalan Campuran",
+        "full": "Mod Penuh",
+        "fullDescription": "Kertas Lepas Lengkap"
+      },
+      "startExam": "Mula Peperiksaan",
+      "loading": "Memuatkan soalan..."
+    },
+    "progress": {
+      "question": "Soalan {{current}} daripada {{total}}",
+      "timeRemaining": "Masa Berbaki",
+      "submit": "Hantar Jawapan",
+      "next": "Soalan Seterusnya",
+      "previous": "Soalan Sebelumnya",
+      "finish": "Tamatkan Peperiksaan"
+    },
+    "results": {
+      "congratulations": "Tahniah!",
+      "score": "Markah Anda",
+      "timeCompleted": "Selesai dalam {{time}}",
+      "xpEarned": "XP Diperoleh",
+      "badgesUnlocked": "Lencana Dibuka",
+      "viewProgress": "Lihat Kemajuan",
+      "tryAgain": "Cuba Lagi",
+      "backToDashboard": "Kembali ke Panel"
+    }
+  },
+  "subjects": {
+    "mathematics": "Matematik",
+    "science": "Sains",
+    "bahasaMalaysia": "Bahasa Malaysia",
+    "bahasaInggeris": "Bahasa Inggeris",
+    "history": "Sejarah",
+    "geography": "Geografi",
+    "pendidikanMoral": "Pendidikan Moral",
+    "pendidikanIslam": "Pendidikan Islam",
+    "chinese": "Bahasa Cina",
+    "tamil": "Bahasa Tamil"
+  },
+  "levels": {
+    "darjah1": "Darjah 1",
+    "darjah2": "Darjah 2",
+    "darjah3": "Darjah 3",
+    "darjah4": "Darjah 4",
+    "darjah5": "Darjah 5",
+    "darjah6": "Darjah 6",
+    "tingkatan1": "Tingkatan 1",
+    "tingkatan2": "Tingkatan 2",
+    "tingkatan3": "Tingkatan 3",
+    "tingkatan4": "Tingkatan 4",
+    "tingkatan5": "Tingkatan 5"
+  },
+  "modal": {
+    "close": "Tutup",
+    "cancel": "Batal",
+    "save": "Simpan",
+    "delete": "Padam",
+    "confirm": "Sahkan",
+    "loading": "Memuatkan...",
+    "error": "Ralat",
+    "success": "Berjaya"
+  },
+  "addStudent": {
+    "title": "Tambah Anak Baru",
+    "studentName": "Nama Anak",
+    "studentNamePlaceholder": "Masukkan nama penuh anak",
+    "schoolLevel": "Tahap Sekolah",
+    "selectLevel": "Pilih tahap sekolah",
+    "subjects": "Subjek",
+    "selectSubjects": "Pilih subjek untuk berlatih",
+    "button": "Tambah Anak",
+    "loading": "Menambah anak...",
+    "success": "Anak berjaya ditambah!",
+    "limitReached": "Anda telah mencapai had pelajar. Naik taraf ke premium untuk menambah lebih banyak anak."
+  },
+  "subscription": {
+    "current": "Pelan Semasa",
+    "free": "Pelan Percuma",
+    "premium": "Pelan Premium",
+    "features": {
+      "students": "Pelajar",
+      "dailyExams": "Peperiksaan Harian",
+      "subjects": "Semua Subjek",
+      "analytics": "Analitik Terperinci",
+      "support": "Sokongan Keutamaan"
+    },
+    "upgrade": {
+      "title": "Naik Taraf ke Premium",
+      "subtitle": "Buka potensi pembelajaran tanpa had",
+      "monthly": "Bulanan",
+      "yearly": "Tahunan",
+      "save": "Jimat 20%",
+      "upgradeButton": "Naik Taraf Sekarang",
+      "features": [
+        "Anak-anak tanpa had",
+        "Peperiksaan harian tanpa had",
+        "Pengesanan kemajuan lanjutan",
+        "Analitik prestasi terperinci",
+        "Sokongan pelanggan keutamaan",
+        "Akses awal kepada ciri baharu"
+      ]
+    }
+  },
+  "leaderboard": {
+    "title": "Papan Pendahulu Keluarga",
+    "subtitle": "Lihat prestasi anak-anak anda",
+    "rank": "Kedudukan",
+    "student": "Pelajar",
+    "level": "Tahap",
+    "xp": "XP",
+    "badges": "Lencana",
+    "thisWeek": "Minggu Ini",
+    "thisMonth": "Bulan Ini",
+    "allTime": "Sepanjang Masa"
+  },
+  "reports": {
+    "title": "Laporan Kemajuan Keluarga",
+    "subtitle": "Jejaki perjalanan pembelajaran anak-anak anda",
+    "overview": "Gambaran Keseluruhan",
+    "detailed": "Analisis Terperinci",
+    "exportPDF": "Eksport PDF",
+    "performance": "Aliran Prestasi",
+    "strengths": "Kekuatan",
+    "improvements": "Bidang Untuk Diperbaiki",
+    "recommendations": "Cadangan"
+  },
+  "badges": {
+    "firstExam": "Peperiksaan Pertama",
+    "firstExamDescription": "Selesaikan peperiksaan pertama anda",
+    "perfectScore": "Markah Sempurna",
+    "perfectScoreDescription": "Mendapat markah 100% dalam peperiksaan",
+    "weekStreak": "Rekod Mingguan",
+    "weekStreakDescription": "Berlatih selama 7 hari berturut-turut",
+    "subjectMaster": "Master Subjek",
+    "subjectMasterDescription": "Selesaikan 10 peperiksaan dalam satu subjek",
+    "speedDemon": "Demons Pantas",
+    "speedDemonDescription": "Selesaikan peperiksaan dalam masa rekod",
+    "dedicated": "Pembelajar Berdedikasi",
+    "dedicatedDescription": "Berlatih selama 30 hari jumlah"
+  },
+  "errors": {
+    "networkError": "Ralat rangkaian. Sila semak sambungan anda.",
+    "serverError": "Ralat pelayan. Sila cuba lagi kemudian.",
+    "notFound": "Halaman tidak dijumpai.",
+    "unauthorized": "Anda tidak diberi kebenaran untuk mengakses halaman ini.",
+    "validationError": "Sila semak input anda dan cuba lagi.",
+    "unknownError": "Ralat yang tidak dijangka berlaku."
+  },
+  "loading": {
+    "default": "Memuatkan...",
+    "questions": "Memuatkan soalan...",
+    "students": "Memuatkan pelajar...",
+    "dashboard": "Memuatkan panel...",
+    "settingUp": "Menyediakan petualangan pembelajaran anda..."
+  },
+  "time": {
+    "seconds": "saat",
+    "minutes": "minit",
+    "hours": "jam",
+    "days": "hari",
+    "weeks": "minggu",
+    "months": "bulan"
+  },
+  "common": {
+    "yes": "Ya",
+    "no": "Tidak",
+    "ok": "OK",
+    "back": "Kembali",
+    "next": "Seterusnya",
+    "previous": "Sebelumnya",
+    "continue": "Teruskan",
+    "finish": "Selesai",
+    "retry": "Cuba Semula",
+    "refresh": "Muat Semula"
   }
 }

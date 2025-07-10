@@ -144,6 +144,16 @@ export function LandingPage() {
                   >
                     MS
                   </button>
+                  <button 
+                    onClick={() => changeLanguage('zh')} 
+                    className={`px-2 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
+                      i18n.language === 'zh' 
+                        ? 'bg-indigo-500 text-white shadow-sm' 
+                        : 'text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    中文
+                  </button>
                 </div>
                 
                 {/* Get Started Button - Always Visible */}
