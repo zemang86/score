@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { Button } from '../ui/Button'
 import { PremiumUpgradeModal } from './PremiumUpgradeModal'
 import { X, BarChart3, Users, BookOpen, Trophy, TrendingUp, Calendar, Target, Star, Award, Crown, Zap, Lock } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface FamilyReportsModalProps {
   isOpen: boolean
@@ -48,6 +49,7 @@ interface StudentComparison {
 
 export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps) {
   const { user, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
+  const { t } = useTranslation()
   const isPremium = effectiveAccess?.hasUnlimitedAccess || subscriptionPlan === 'premium'
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')

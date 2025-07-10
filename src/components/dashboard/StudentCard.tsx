@@ -105,7 +105,7 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
   }
 
   const getAgeDisplay = (dateOfBirth: string) => {
-    return calculateAgeInYearsAndMonths(dateOfBirth)
+    return calculateAgeInYearsAndMonths(dateOfBirth, t)
   }
 
   const getLevelColor = (level: string) => {

@@ -492,19 +492,39 @@
     },
     "upgrade": {
       "title": "Upgrade to Premium",
-      "subtitle": "Unlock unlimited learning potential",
+      "subtitle": "Unlock the full learning experience",
       "monthly": "Monthly",
       "yearly": "Yearly",
-      "save": "Save 20%",
+      "annual": "Annual Billing",
+      "save": "Save 16% vs monthly",
+      "billedMonthly": "Billed monthly",
+      "billedAnnually": "Billed annually",
       "upgradeButton": "Upgrade Now",
-      "features": [
-        "Unlimited children",
-        "Unlimited daily exams", 
-        "Advanced progress tracking",
-        "Detailed performance analytics",
-        "Priority customer support",
-        "Early access to new features"
-      ]
+      "whatYouGet": "What You Get",
+      "unlimitedExams": "Unlimited exams (vs 3/day free limit)",
+      "multipleChildren": "Multiple children (vs 1 child free limit)",
+      "advancedReports": "Advanced reports & detailed analytics",
+      "prioritySupport": "Priority support & new features first",
+      "children": "Children",
+      "childIncluded": "1 child included with annual plan",
+      "additionalChildrenNote": "Add more children after checkout as separate monthly subscriptions (RM10/month each)",
+      "additionalChildrenMonthly": "1 child included + RM10/month per additional child",
+      "additionalChildren": "Additional Children",
+      "premiumPlan": "Premium Plan",
+      "processing": "Processing...",
+      "upgradeNow": "👑 Upgrade Now",
+      "securePayment": "🔒 Secure payment by Stripe • Cancel anytime",
+      "perMonth": "/month",
+      "perYear": "/year",
+      "total": "total",
+      "childOnly": "child only",
+      "examsPerDay": "exams/day"
+    },
+    "banner": {
+      "title": "Upgrade to Premium",
+      "subtitle": "Unlock unlimited exams, multiple children, and advanced reports",
+      "upgradeNow": "Upgrade Now",
+      "upgrade": "Upgrade"
     }
   },
   "leaderboard": {
@@ -520,15 +540,73 @@
     "allTime": "All Time"
   },
   "reports": {
-    "title": "Family Progress Reports",
-    "subtitle": "Track your children's learning journey",
-    "overview": "Overview",
-    "detailed": "Detailed Analysis",
-    "exportPDF": "Export PDF",
-    "performance": "Performance Trends",
-    "strengths": "Strengths",
-    "improvements": "Areas for Improvement",
-    "recommendations": "Recommendations"
+    "title": "Family Learning Reports",
+    "subtitle": "Comprehensive insights into your family's progress",
+    "close": "Close Reports",
+    "tabs": {
+      "overview": "Overview",
+      "subjects": "Subjects", 
+      "difficulty": "Difficulty",
+      "students": "Students"
+    },
+    "loading": "Loading family reports...",
+    "errorTitle": "Error Loading Reports",
+    "tryAgain": "Try Again",
+    "familySummary": {
+      "title": "Family Learning Summary",
+      "subtitle": "Collective achievements across all your children",
+      "totalXP": "Total XP",
+      "examsCompleted": "Exams Completed",
+      "familyAverage": "Family Average",
+      "badgesEarned": "Badges Earned"
+    },
+    "metrics": {
+      "activeLearners": "Active Learners",
+      "childrenInFamily": "Children in your family",
+      "completionRate": "Completion Rate",
+      "examsFinished": "Exams finished vs started",
+      "avgPerChild": "Avg per Child",
+      "examsPerChild": "Exams per child"
+    },
+    "insights": {
+      "title": "Quick Insights",
+      "topSubject": "Top Subject",
+      "bestPerformance": "Best Performance",
+      "noDataYet": "No data yet",
+      "exams": "exams"
+    },
+    "subjects": {
+      "title": "Performance by Subject",
+      "premiumFeature": "Premium Feature",
+      "premiumTitle": "Premium Feature",
+      "premiumMessage": "Upgrade to Premium to unlock detailed subject performance analytics!",
+      "upgradeToPremium": "Upgrade to Premium",
+      "noSubjectData": "No subject data available yet!",
+      "completeExams": "Complete some exams to see subject breakdowns.",
+      "children": "children",
+      "exams": "Exams",
+      "average": "Average",
+      "best": "Best"
+    },
+    "difficulty": {
+      "title": "Performance by Difficulty Level",
+      "premiumMessage": "Upgrade to Premium to unlock detailed difficulty level analytics!",
+      "noModeData": "No difficulty data available yet!",
+      "completeExamsModes": "Complete some exams to see difficulty breakdowns.",
+      "easyMode": "Easy Mode",
+      "mediumMode": "Medium Mode",
+      "fullMode": "Full Mode"
+    },
+    "studentComparison": {
+      "title": "Student Comparison",
+      "premiumMessage": "Upgrade to Premium to unlock detailed student comparison analytics!",
+      "noStudents": "No students found!",
+      "addChildren": "Add some children to see their comparison.",
+      "xp": "XP",
+      "exams": "Exams",
+      "average": "Average",
+      "badges": "Badges"
+    }
   },
   "badges": {
     "firstExam": "First Exam",
@@ -566,6 +644,26 @@
     "days": "days",
     "weeks": "weeks",
     "months": "months"
+  },
+  "age": {
+    "notAvailable": "Age not available",
+    "invalidDate": "Invalid date",
+    "lessThanOneMonth": "Less than 1 month old",
+    "oneMonth": "1 month old",
+    "monthsOld": "{{months}} months old",
+    "oneYear": "1 year old",
+    "oneYearOneMonth": "1 year 1 month old",
+    "oneYearMonths": "1 year {{months}} months old",
+    "yearsOld": "{{years}} years old",
+    "yearsOneMonth": "{{years}} years 1 month old",
+    "yearsMonthsOld": "{{years}} years {{months}} months old"
+  },
+  "validation": {
+    "dateRequired": "Date of birth is required",
+    "invalidDate": "Please enter a valid date",
+    "futureDate": "Date of birth cannot be in the future",
+    "tooOld": "Age cannot be more than 25 years",
+    "tooYoung": "Age must be at least 3 years"
   },
   "common": {
     "yes": "Yes",

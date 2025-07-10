@@ -567,6 +567,26 @@
     "weeks": "minggu",
     "months": "bulan"
   },
+  "age": {
+    "notAvailable": "Umur tidak tersedia",
+    "invalidDate": "Tarikh tidak sah",
+    "lessThanOneMonth": "Kurang dari 1 bulan",
+    "oneMonth": "1 bulan",
+    "monthsOld": "{{months}} bulan",
+    "oneYear": "1 tahun",
+    "oneYearOneMonth": "1 tahun 1 bulan",
+    "oneYearMonths": "1 tahun {{months}} bulan",
+    "yearsOld": "{{years}} tahun",
+    "yearsOneMonth": "{{years}} tahun 1 bulan",
+    "yearsMonthsOld": "{{years}} tahun {{months}} bulan"
+  },
+  "validation": {
+    "dateRequired": "Tarikh lahir diperlukan",
+    "invalidDate": "Sila masukkan tarikh yang sah",
+    "futureDate": "Tarikh lahir tidak boleh pada masa hadapan",
+    "tooOld": "Umur tidak boleh lebih dari 25 tahun",
+    "tooYoung": "Umur mestilah sekurang-kurangnya 3 tahun"
+  },
   "common": {
     "yes": "Ya",
     "no": "Tidak",

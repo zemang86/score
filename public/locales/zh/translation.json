@@ -567,6 +567,26 @@
     "weeks": "周",
     "months": "月"
   },
+  "age": {
+    "notAvailable": "年龄信息不可用",
+    "invalidDate": "无效日期",
+    "lessThanOneMonth": "不到1个月",
+    "oneMonth": "1个月",
+    "monthsOld": "{{months}}个月",
+    "oneYear": "1岁",
+    "oneYearOneMonth": "1岁1个月",
+    "oneYearMonths": "1岁{{months}}个月",
+    "yearsOld": "{{years}}岁",
+    "yearsOneMonth": "{{years}}岁1个月",
+    "yearsMonthsOld": "{{years}}岁{{months}}个月"
+  },
+  "validation": {
+    "dateRequired": "出生日期是必需的",
+    "invalidDate": "请输入有效日期",
+    "futureDate": "出生日期不能是未来日期",
+    "tooOld": "年龄不能超过25岁",
+    "tooYoung": "年龄必须至少3岁"
+  },
   "common": {
     "yes": "是",
     "no": "否",
