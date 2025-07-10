@@ -292,7 +292,7 @@
       "backToDashboard": "返回仪表板"
     }
   },
-  "subjects": {
+  "subjectsList": {
     "mathematics": "数学",
     "science": "科学",
     "bahasaMalaysia": "马来语",

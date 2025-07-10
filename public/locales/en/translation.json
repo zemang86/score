@@ -292,7 +292,7 @@
       "backToDashboard": "Back to Dashboard"
     }
   },
-  "subjects": {
+  "subjectsList": {
     "mathematics": "Mathematics",
     "science": "Science", 
     "bahasaMalaysia": "Bahasa Malaysia",
