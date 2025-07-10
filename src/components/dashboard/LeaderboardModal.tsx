@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { Button } from '../ui/Button'
 import { PremiumUpgradeModal } from './PremiumUpgradeModal'
 import { X, Trophy, Crown, Star, Medal, Target, TrendingUp, Lock } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface LeaderboardModalProps {
   isOpen: boolean
@@ -27,6 +28,7 @@ type LeaderboardType = 'xp' | 'exams' | 'scores'
 
 export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   const { user, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
+  const { t } = useTranslation()
   const isPremium = effectiveAccess?.hasUnlimitedAccess || subscriptionPlan === 'premium'
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [loading, setLoading] = useState(true)
@@ -159,22 +161,22 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   const getTypeLabel = (type: LeaderboardType) => {
     switch (type) {
       case 'xp':
-        return 'Experience Points'
+        return t('leaderboard.types.xp')
       case 'exams':
-        return 'Exams Completed'
+        return t('leaderboard.types.exams')
       case 'scores':
-        return 'Average Score'
+        return t('leaderboard.types.scores')
     }
   }
 
   const getTypeValue = (entry: LeaderboardEntry, type: LeaderboardType) => {
     switch (type) {
       case 'xp':
-        return `${entry.total_xp} XP`
+        return t('leaderboard.values.xp', { value: entry.total_xp })
       case 'exams':
-        return `${entry.total_exams} exams`
+        return t('leaderboard.values.exams', { value: entry.total_exams })
       case 'scores':
-        return `${entry.average_score}%`
+        return t('leaderboard.values.scores', { value: entry.average_score })
     }
   }
 
@@ -191,8 +193,8 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                   <Trophy className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-slate-800">Global Leaderboard</h2>
-                  <p className="text-sm text-slate-600 hidden sm:block">See how you rank among students worldwide</p>
+                  <h2 className="text-xl font-bold text-slate-800">{t('leaderboard.title')}</h2>
+                  <p className="text-sm text-slate-600 hidden sm:block">{t('leaderboard.subtitle')}</p>
                 </div>
               </div>
               
@@ -204,22 +206,22 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                       onChange={(e) => setLevelFilter(e.target.value)}
                       className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-3 py-2 text-sm font-medium hover:bg-white/30 transition-all duration-200 appearance-none pr-8"
                     >
-                      <option value="Global" className="bg-blue-600 text-white">Global</option>
-                      <option value="Darjah 1" className="bg-blue-600 text-white">Darjah 1</option>
-                      <option value="Darjah 2" className="bg-blue-600 text-white">Darjah 2</option>
-                      <option value="Darjah 3" className="bg-blue-600 text-white">Darjah 3</option>
-                      <option value="Darjah 4" className="bg-blue-600 text-white">Darjah 4</option>
-                      <option value="Darjah 5" className="bg-blue-600 text-white">Darjah 5</option>
-                      <option value="Darjah 6" className="bg-blue-600 text-white">Darjah 6</option>
+                      <option value="Global" className="bg-blue-600 text-white">{t('leaderboard.filters.global')}</option>
+                      <option value="Darjah 1" className="bg-blue-600 text-white">{t('leaderboard.filters.darjah1')}</option>
+                      <option value="Darjah 2" className="bg-blue-600 text-white">{t('leaderboard.filters.darjah2')}</option>
+                      <option value="Darjah 3" className="bg-blue-600 text-white">{t('leaderboard.filters.darjah3')}</option>
+                      <option value="Darjah 4" className="bg-blue-600 text-white">{t('leaderboard.filters.darjah4')}</option>
+                      <option value="Darjah 5" className="bg-blue-600 text-white">{t('leaderboard.filters.darjah5')}</option>
+                      <option value="Darjah 6" className="bg-blue-600 text-white">{t('leaderboard.filters.darjah6')}</option>
                     </select>
                   ) : (
                     <div className="text-center py-8 bg-amber-50 border-2 border-amber-200 rounded-lg">
                       <div className="bg-amber-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                         <Lock className="w-8 h-8 text-amber-600" />
                       </div>
-                      <h3 className="text-xl font-bold text-amber-800 mb-2">Premium Feature</h3>
+                      <h3 className="text-xl font-bold text-amber-800 mb-2">{t('leaderboard.premiumFeature')}</h3>
                       <p className="text-amber-700 text-base mb-2">
-                        Upgrade to Premium to access advanced leaderboard features!
+                        {t('leaderboard.premiumDescription')}
                       </p>
                       <p className="text-amber-600 text-sm mb-6">
                         View rankings by exams completed, scores, and filter by education level.
@@ -230,7 +232,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                         icon={<Crown className="w-5 h-5" />}
                         onClick={() => setShowUpgradeModal(true)}
                       >
-                        Upgrade to Premium
+                        {t('leaderboard.upgradeButton')}
                       </Button>
                     </div>
                   )}
@@ -258,9 +260,9 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
         <div className="border-b border-slate-200 bg-slate-50">
           <div className="flex">
             {[
-              { id: 'xp', label: 'XP Points', icon: Star, premium: false },
-              { id: 'exams', label: 'Exams', icon: Target, premium: true },
-              { id: 'scores', label: 'Scores', icon: TrendingUp, premium: true }
+              { id: 'xp', label: t('leaderboard.types.xp'), icon: Star, premium: false },
+              { id: 'exams', label: t('leaderboard.types.exams'), icon: Target, premium: true },
+              { id: 'scores', label: t('leaderboard.types.scores'), icon: TrendingUp, premium: true }
             ].map((type) => {
               const Icon = type.icon
               const isLocked = type.premium && !isPremium
@@ -302,27 +304,30 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
             {loading ? (
               <div className="text-center py-6">
                 <div className="animate-spin rounded-full h-10 w-10 border-4 border-amber-200 border-t-amber-500 mx-auto mb-3"></div>
-                <p className="text-amber-600 font-medium text-sm">Loading global leaderboard...</p>
+                <p className="text-amber-600 font-medium text-sm">{t('leaderboard.loading')}</p>
               </div>
             ) : error ? (
               <div className="text-center py-6">
                 <div className="bg-red-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-3">
                   <X className="w-5 h-5 text-red-600" />
                 </div>
-                <h3 className="text-base font-medium text-red-800 mb-1">Error Loading Leaderboard</h3>
+                <h3 className="text-base font-medium text-red-800 mb-1">{t('leaderboard.errorTitle')}</h3>
                 <p className="text-red-600 text-sm mb-3">{error}</p>
                 <Button onClick={fetchLeaderboard} variant="error" size="sm">
-                  Try Again
+                  {t('leaderboard.tryAgain')}
                 </Button>
               </div>
             ) : (
               <>
                 <div className="mb-3">
                   <h3 className="text-base font-bold text-center bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
-                    Top Students by {getTypeLabel(activeType)}
+                    {t('leaderboard.topStudents', { type: getTypeLabel(activeType) })}
                   </h3>
                   <p className="text-xs text-blue-600 text-center mt-1">
-                    {leaderboard.length} students competing {levelFilter === 'Global' ? 'worldwide' : `in ${levelFilter}`}
+                    {t('leaderboard.studentsCompeting', { 
+                      count: leaderboard.length, 
+                      scope: levelFilter === 'Global' ? t('leaderboard.worldwide') : t('leaderboard.inLevel', { level: levelFilter })
+                    })}
                   </p>
                 </div>
 
@@ -376,7 +381,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                   isUserStudent ? 'text-indigo-700' : 'text-gray-800'
                                 }`}>
                                   <span className="truncate">{entry.student_name}</span>
-                                  {isUserStudent && <span className="ml-1 sm:ml-2 text-indigo-500 flex-shrink-0 text-xs">(Your Kid)</span>}
+                                  {isUserStudent && <span className="ml-1 sm:ml-2 text-indigo-500 flex-shrink-0 text-xs">{t('leaderboard.yourKid')}</span>}
                                 </div>
                                 <div className={`text-[10px] sm:text-xs ${
                                   entry.rank === 1 ? 'text-yellow-600' :
@@ -419,8 +424,8 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                     <div className="bg-amber-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
                       <Trophy className="w-6 h-6 text-amber-600" />
                     </div>
-                    <p className="text-amber-600 text-base">No data available yet!</p>
-                    <p className="text-amber-500 text-xs">Students need to complete exams to appear on the leaderboard!</p>
+                    <p className="text-amber-600 text-base">{t('leaderboard.noData')}</p>
+                    <p className="text-amber-500 text-xs">{t('leaderboard.noDataSubtitle')}</p>
                   </div>
                 )}
               </>
@@ -433,7 +438,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
             onClick={onClose}
             className="w-full bg-amber-600 hover:bg-amber-700 text-white text-sm py-3 font-medium transition-colors"
           >
-            Close Leaderboard
+            {t('leaderboard.closeButton')}
           </Button>
         </div>
       </div>
