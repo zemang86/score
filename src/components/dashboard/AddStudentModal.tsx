@@ -6,6 +6,7 @@ import { Input } from '../ui/Input'
 import { X, User, School, Calendar, GraduationCap, Sparkles, Star, Zap, CreditCard } from 'lucide-react'
 import { validateDateOfBirth } from '../../utils/dateUtils'
 import { PRODUCTS, CHECKOUT_CONFIG } from '../../stripe-config'
+import { useTranslation } from 'react-i18next'
 
 interface AddStudentModalProps {
   isOpen: boolean
@@ -15,6 +16,7 @@ interface AddStudentModalProps {
 
 export function AddStudentModal({ isOpen, onClose, onStudentAdded }: AddStudentModalProps) {
   const { user, profile, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     name: '',
     school: '',

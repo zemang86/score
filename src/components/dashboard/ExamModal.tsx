@@ -34,6 +34,7 @@ type Subject = 'Bahasa Melayu' | 'English' | 'Mathematics' | 'Science' | 'Histor
 
 export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplete }: ExamModalProps) {
   const { user, dailyExamLimit, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
+  const { t } = useTranslation()
   
   // Initialize state from session storage if available
   const getInitialState = () => {
