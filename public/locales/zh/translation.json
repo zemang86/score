@@ -4,6 +4,9 @@
     "getStarted": "开始",
     "backToHome": "返回主页"
   },
+  "navigation": {
+    "dashboard": "仪表板"
+  },
   "hero": {
     "badge": "改变马来西亚的教育",
     "title": "让学习",
@@ -159,6 +162,11 @@
     "leaderboard": "排行榜",
     "reports": "报告",
     "upgrade": "升级",
+    "betaTester": "测试用户",
+    "premium": "高级版",
+    "freePlan": "免费计划",
+    "premiumPlan": "高级计划",
+    "unknownPlan": "未知计划",
     "stats": {
       "kids": "孩子",
       "examsDone": "已完成考试",
@@ -170,7 +178,10 @@
       "perDay": "/天",
       "ofOne": "/ 1",
       "unlimited": "∞",
-      "beta": "∞ 测试版"
+      "beta": "∞ 测试版",
+      "family": "家庭",
+      "points": "积分",
+      "available": "可用"
     },
     "quickActions": {
       "title": "快速操作",
@@ -180,12 +191,17 @@
       "managePlans": "管理计划"
     },
     "students": {
-      "title": "您的孩子",
-      "noStudents": "还没有添加孩子",
-      "addFirstChild": "添加您的第一个孩子开始",
+      "title": "您出色的孩子们",
+      "titleWithCount": "您出色的孩子们 ({{count}}{{limit}})",
+      "unlimitedBeta": " (无限制 - 测试版)",
+      "noStudents": "还没有添加孩子！",
+      "addFirstChild": "先添加您的第一个孩子来开始他们的史诗学习冒险！",
+      "addFirstButton": "添加您的第一个孩子！",
       "addButton": "添加孩子",
       "limitReached": "学生数量已达上限",
-      "upgradeMessage": "升级到高级版可添加更多孩子"
+      "upgradeMessage": "免费计划限制为1个孩子。升级到高级版可添加更多孩子。",
+      "freeMessage": "您可以在免费计划中添加1个孩子！",
+      "premiumMessage": "您可以在高级计划中添加无限个孩子！"
     },
     "student": {
       "level": "等级 {{level}}",
@@ -198,12 +214,46 @@
       "today": "今天",
       "yesterday": "昨天",
       "daysAgo": "{{days}} 天前",
+      "status": {
+        "restricted": "受限制",
+        "active": "活跃",
+        "upgradeNeeded": "需要升级",
+        "limitReached": "已达上限"
+      },
+      "themes": {
+        "rookieExplorer": "新手探索者",
+        "learningExplorer": "学习探索者",
+        "knowledgeAdventurer": "知识冒险家",
+        "brilliantScholar": "优秀学者",
+        "learningMaster": "学习大师",
+        "legend": "传奇"
+      },
       "actions": {
         "startExam": "开始考试",
         "viewProgress": "查看进度",
         "edit": "编辑",
-        "examHistory": "考试历史"
-      }
+        "examHistory": "考试历史",
+        "progress": "进度"
+      },
+      "restrictions": {
+        "freePlanFirstChild": "免费计划：仅限第一个孩子",
+        "upgradePremiumAllChildren": "升级到高级版享受所有孩子"
+      },
+      "dailyExams": "每日考试：{{current}}/{{limit}}",
+      "nextLevel": "下一级：Lv{{level}}"
+    },
+    "errors": {
+      "connectionError": "无法连接到数据库。请检查您的互联网连接并重试。",
+      "networkConnection": "网络连接失败。请检查您的互联网连接并确保可以访问Supabase。",
+      "databaseConnection": "数据库连接问题。请尝试刷新页面。",
+      "noDataFound": "未找到数据。这可能是权限问题。",
+      "loadStudents": "加载学生失败。请重试。",
+      "troubleshooting": "故障排除步骤：",
+      "checkInternet": "检查您的互联网连接",
+      "verifyConfig": "验证.env文件中的Supabase配置",
+      "ensureActive": "确保您的Supabase项目处于活动状态",
+      "tryRefresh": "尝试刷新页面",
+      "retryConnection": "重试连接"
     }
   },
   "exam": {

@@ -7,6 +7,7 @@ import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { supabase } from '../../lib/supabase'
 import { canTakeExam } from '../../utils/accessControl'
 import { getStudentDisplayStatus, canStudentTakeExam } from '../../utils/subscriptionEnforcement'
+import { useTranslation } from 'react-i18next'
 
 interface StudentCardProps {
   student: Student
@@ -22,6 +23,7 @@ interface StudentCardProps {
 
 export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComplete, onStudentUpdated, onOpenExamModal, onOpenEditModal, onOpenProgressModal }: StudentCardProps) {
   const { user, dailyExamLimit, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
+  const { t } = useTranslation()
   const [dailyExamCount, setDailyExamCount] = useState<number>(0)
   const [loadingExamCount, setLoadingExamCount] = useState(false)
 
@@ -135,18 +137,18 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
     }
     
     // Get level theme
-    let theme = { name: "Rookie Explorer", emoji: "🌱", color: "text-green-600", gradient: "from-green-400 to-emerald-500" }
+    let theme = { name: t('dashboard.student.themes.rookieExplorer'), emoji: "🌱", color: "text-green-600", gradient: "from-green-400 to-emerald-500" }
     
     if (currentLevel > 85) {
-      theme = { name: "Legend", emoji: "👑", color: "text-amber-600", gradient: "from-amber-400 to-yellow-500" }
+      theme = { name: t('dashboard.student.themes.legend'), emoji: "👑", color: "text-amber-600", gradient: "from-amber-400 to-yellow-500" }
     } else if (currentLevel > 65) {
-      theme = { name: "Learning Master", emoji: "🎓", color: "text-indigo-600", gradient: "from-indigo-400 to-purple-500" }
+      theme = { name: t('dashboard.student.themes.learningMaster'), emoji: "🎓", color: "text-indigo-600", gradient: "from-indigo-400 to-purple-500" }
     } else if (currentLevel > 45) {
-      theme = { name: "Brilliant Scholar", emoji: "📚", color: "text-orange-600", gradient: "from-orange-400 to-red-500" }
+      theme = { name: t('dashboard.student.themes.brilliantScholar'), emoji: "📚", color: "text-orange-600", gradient: "from-orange-400 to-red-500" }
     } else if (currentLevel > 25) {
-      theme = { name: "Knowledge Adventurer", emoji: "⚔️", color: "text-purple-600", gradient: "from-purple-400 to-pink-500" }
+      theme = { name: t('dashboard.student.themes.knowledgeAdventurer'), emoji: "⚔️", color: "text-purple-600", gradient: "from-purple-400 to-pink-500" }
     } else if (currentLevel > 10) {
-      theme = { name: "Learning Explorer", emoji: "🧭", color: "text-blue-600", gradient: "from-blue-400 to-cyan-500" }
+      theme = { name: t('dashboard.student.themes.learningExplorer'), emoji: "🧭", color: "text-blue-600", gradient: "from-blue-400 to-cyan-500" }
     }
     
     const milestones = [10, 20, 30, 40, 50, 60, 70, 80, 90, 99]
@@ -177,7 +179,7 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
           <div className="absolute top-2 right-2 z-20">
             <div className="bg-amber-100 border border-amber-300 rounded-lg px-2 py-1 flex items-center">
               <Lock className="w-3 h-3 text-amber-600 mr-1" />
-              <span className="text-xs font-medium text-amber-700">Restricted</span>
+              <span className="text-xs font-medium text-amber-700">{t('dashboard.student.status.restricted')}</span>
             </div>
           </div>
         )}
@@ -187,7 +189,7 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
           <div className="absolute top-2 left-2 z-20">
             <div className="bg-green-100 border border-green-300 rounded-lg px-2 py-1 flex items-center">
               <Crown className="w-3 h-3 text-green-600 mr-1" />
-              <span className="text-xs font-medium text-green-700">Active</span>
+              <span className="text-xs font-medium text-green-700">{t('dashboard.student.status.active')}</span>
             </div>
           </div>
         )}
@@ -217,7 +219,7 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
               className="text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 p-1.5 rounded-lg" 
               icon={<Edit className="w-3.5 h-3.5" />}
               onClick={() => onOpenEditModal?.(student)}
-              title="Edit"
+              title={t('dashboard.student.actions.edit')}
             />
           </div>
         </div>
@@ -256,10 +258,10 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
           </div>
           
           {/* Compact Progress */}
-          <div className="space-y-1">
+                      <div className="space-y-1">
             <div className="flex items-center justify-between text-xs text-gray-600">
-              <span>{xpInfo.totalXP} XP</span>
-              <span>Next: Lv{[10, 20, 30, 40, 50, 60, 70, 80, 90, 99].find((m) => m > xpInfo.level) || '99'}</span>
+              <span>{xpInfo.totalXP} {t('dashboard.student.xp')}</span>
+              <span>{t('dashboard.student.nextLevel', { level: [10, 20, 30, 40, 50, 60, 70, 80, 90, 99].find((m) => m > xpInfo.level) || '99' })}</span>
             </div>
             <div className="w-full h-2 bg-white/70 rounded-full overflow-hidden">
               <div 
@@ -275,10 +277,10 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
           <div className="mt-3 px-3 py-2 rounded-lg text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
             <div className="flex items-center">
               <AlertTriangle className="w-3 h-3 mr-1" />
-              <span>Free plan: First child only</span>
+              <span>{t('dashboard.student.restrictions.freePlanFirstChild')}</span>
             </div>
             <div className="mt-1 text-xs text-amber-600">
-              Upgrade to Premium for all children
+              {t('dashboard.student.restrictions.upgradePremiumAllChildren')}
             </div>
           </div>
         )}
@@ -292,7 +294,7 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
           }`}>
             <div className="flex items-center">
               <Clock className="w-3 h-3 mr-1" />
-              <span>Daily Exams: {dailyExamCount}/{dailyExamLimit}</span>
+              <span>{t('dashboard.student.dailyExams', { current: dailyExamCount, limit: dailyExamLimit })}</span>
             </div>
           </div>
         )}
@@ -315,10 +317,10 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
             }
           >
             {studentStatus.isRestricted 
-              ? 'Upgrade Needed' 
+              ? t('dashboard.student.status.upgradeNeeded')
               : !canUserTakeExam() 
-                ? 'Limit Reached' 
-                : 'Start Exam'
+                ? t('dashboard.student.status.limitReached')
+                : t('dashboard.student.actions.startExam')
             }
           </Button>
           <Button 
@@ -328,7 +330,7 @@ export function StudentCard({ student, allStudents, onEdit, onDelete, onExamComp
             onClick={() => onOpenProgressModal?.(student)}
             icon={<Trophy className="w-4 h-4" />}
           >
-            Progress
+            {t('dashboard.student.actions.progress')}
           </Button>
         </div>
       </div>

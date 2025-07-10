@@ -142,7 +142,7 @@ export function LandingPage() {
                         : 'text-slate-600 hover:bg-slate-100'
                     }`}
                   >
-                    MS
+                    BM
                   </button>
                   <button 
                     onClick={() => changeLanguage('zh')} 

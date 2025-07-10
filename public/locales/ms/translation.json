@@ -4,6 +4,9 @@
     "getStarted": "Mulakan",
     "backToHome": "Kembali ke Laman Utama"
   },
+  "navigation": {
+    "dashboard": "Papan Pemuka"
+  },
   "hero": {
     "badge": "Mengubah Pendidikan di Malaysia",
     "title": "Di Mana Pembelajaran",
@@ -159,6 +162,11 @@
     "leaderboard": "Papan Pendahulu",
     "reports": "Laporan",
     "upgrade": "Naik Taraf",
+    "betaTester": "Penguji Beta",
+    "premium": "Premium",
+    "freePlan": "Pelan Percuma",
+    "premiumPlan": "Pelan Premium",
+    "unknownPlan": "Pelan Tidak Diketahui",
     "stats": {
       "kids": "Anak-anak",
       "examsDone": "Peperiksaan Selesai",
@@ -170,7 +178,10 @@
       "perDay": "/hari",
       "ofOne": "daripada 1",
       "unlimited": "∞",
-      "beta": "∞ beta"
+      "beta": "∞ beta",
+      "family": "keluarga",
+      "points": "mata",
+      "available": "tersedia"
     },
     "quickActions": {
       "title": "Tindakan Pantas",
@@ -180,12 +191,17 @@
       "managePlans": "Urus Pelan"
     },
     "students": {
-      "title": "Anak-anak Anda",
-      "noStudents": "Tiada anak ditambah lagi",
-      "addFirstChild": "Tambah anak pertama anda untuk bermula",
+      "title": "Anak-anak Hebat Anda",
+      "titleWithCount": "Anak-anak Hebat Anda ({{count}}{{limit}})",
+      "unlimitedBeta": " (tanpa had - beta)",
+      "noStudents": "Tiada anak ditambah lagi!",
+      "addFirstChild": "Mulakan dengan menambah anak pertama anda untuk memulakan petualangan pembelajaran yang epik!",
+      "addFirstButton": "Tambah Anak Pertama Anda!",
       "addButton": "Tambah Anak",
       "limitReached": "Had pelajar dicapai",
-      "upgradeMessage": "Naik taraf ke premium untuk menambah lebih banyak anak"
+      "upgradeMessage": "Pelan percuma terhad kepada 1 anak. Naik taraf ke Premium untuk menambah lebih banyak anak.",
+      "freeMessage": "Anda boleh menambah 1 anak dengan pelan percuma anda!",
+      "premiumMessage": "Anda boleh menambah anak tanpa had dengan pelan premium anda!"
     },
     "student": {
       "level": "Tahap {{level}}",
@@ -198,12 +214,46 @@
       "today": "Hari Ini",
       "yesterday": "Semalam",
       "daysAgo": "{{days}} hari lalu",
+      "status": {
+        "restricted": "Terhad",
+        "active": "Aktif",
+        "upgradeNeeded": "Perlu Naik Taraf",
+        "limitReached": "Had Dicapai"
+      },
+      "themes": {
+        "rookieExplorer": "Penjelajah Baru",
+        "learningExplorer": "Penjelajah Pembelajaran",
+        "knowledgeAdventurer": "Pengembara Ilmu",
+        "brilliantScholar": "Sarjana Cemerlang",
+        "learningMaster": "Guru Pembelajaran",
+        "legend": "Legenda"
+      },
       "actions": {
         "startExam": "Mula Peperiksaan",
         "viewProgress": "Lihat Kemajuan",
         "edit": "Edit",
-        "examHistory": "Sejarah Peperiksaan"
-      }
+        "examHistory": "Sejarah Peperiksaan",
+        "progress": "Kemajuan"
+      },
+      "restrictions": {
+        "freePlanFirstChild": "Pelan percuma: Anak pertama sahaja",
+        "upgradePremiumAllChildren": "Naik taraf ke Premium untuk semua anak"
+      },
+      "dailyExams": "Peperiksaan Harian: {{current}}/{{limit}}",
+      "nextLevel": "Seterusnya: Lv{{level}}"
+    },
+    "errors": {
+      "connectionError": "Tidak dapat menyambung ke pangkalan data. Sila semak sambungan internet anda dan cuba lagi.",
+      "networkConnection": "Sambungan rangkaian gagal. Sila semak sambungan internet anda dan pastikan Supabase boleh diakses.",
+      "databaseConnection": "Masalah sambungan pangkalan data. Sila cuba muat semula halaman.",
+      "noDataFound": "Tiada data dijumpai. Ini mungkin isu kebenaran.",
+      "loadStudents": "Gagal memuatkan pelajar. Sila cuba lagi.",
+      "troubleshooting": "Langkah penyelesaian masalah:",
+      "checkInternet": "Semak sambungan internet anda",
+      "verifyConfig": "Sahkan konfigurasi Supabase dalam fail .env",
+      "ensureActive": "Pastikan projek Supabase anda aktif",
+      "tryRefresh": "Cuba muat semula halaman",
+      "retryConnection": "Cuba Sambung Semula"
     }
   },
   "exam": {

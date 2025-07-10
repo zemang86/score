@@ -4,6 +4,9 @@
     "getStarted": "Get Started",
     "backToHome": "Back to Home"
   },
+  "navigation": {
+    "dashboard": "Dashboard"
+  },
   "hero": {
     "badge": "Transforming Education in Malaysia",
     "title": "Where Learning",
@@ -159,6 +162,11 @@
     "leaderboard": "Leaderboard",
     "reports": "Reports",
     "upgrade": "Upgrade",
+    "betaTester": "Beta Tester",
+    "premium": "Premium",
+    "freePlan": "Free Plan",
+    "premiumPlan": "Premium Plan",
+    "unknownPlan": "Unknown Plan",
     "stats": {
       "kids": "Kids",
       "examsDone": "Exams Done",
@@ -170,7 +178,10 @@
       "perDay": "/day",
       "ofOne": "of 1",
       "unlimited": "∞",
-      "beta": "∞ beta"
+      "beta": "∞ beta",
+      "family": "family",
+      "points": "points",
+      "available": "available"
     },
     "quickActions": {
       "title": "Quick Actions",
@@ -180,12 +191,17 @@
       "managePlans": "Manage Plans"
     },
     "students": {
-      "title": "Your Children",
-      "noStudents": "No children added yet",
-      "addFirstChild": "Add your first child to get started",
-      "addButton": "Add Child",
+      "title": "Your Amazing Kids",
+      "titleWithCount": "Your Amazing Kids ({{count}}{{limit}})",
+      "unlimitedBeta": " (unlimited - beta)",
+      "noStudents": "No kids added yet!",
+      "addFirstChild": "Start by adding your first kid to begin their epic learning adventure!",
+      "addFirstButton": "Add Your First Kid!",
+      "addButton": "Add Kid",
       "limitReached": "Student limit reached",
-      "upgradeMessage": "Upgrade to premium to add more children"
+      "upgradeMessage": "Free plan is limited to 1 child. Upgrade to Premium to add more children.",
+      "freeMessage": "You can add 1 child with your free plan!",
+      "premiumMessage": "You can add unlimited children with your premium plan!"
     },
     "student": {
       "level": "Level {{level}}",
@@ -198,12 +214,46 @@
       "today": "Today",
       "yesterday": "Yesterday",
       "daysAgo": "{{days}} days ago",
+      "status": {
+        "restricted": "Restricted",
+        "active": "Active",
+        "upgradeNeeded": "Upgrade Needed",
+        "limitReached": "Limit Reached"
+      },
+      "themes": {
+        "rookieExplorer": "Rookie Explorer",
+        "learningExplorer": "Learning Explorer",
+        "knowledgeAdventurer": "Knowledge Adventurer",
+        "brilliantScholar": "Brilliant Scholar",
+        "learningMaster": "Learning Master",
+        "legend": "Legend"
+      },
       "actions": {
         "startExam": "Start Exam",
         "viewProgress": "View Progress",
         "edit": "Edit",
-        "examHistory": "Exam History"
-      }
+        "examHistory": "Exam History",
+        "progress": "Progress"
+      },
+      "restrictions": {
+        "freePlanFirstChild": "Free plan: First child only",
+        "upgradePremiumAllChildren": "Upgrade to Premium for all children"
+      },
+      "dailyExams": "Daily Exams: {{current}}/{{limit}}",
+      "nextLevel": "Next: Lv{{level}}"
+    },
+    "errors": {
+      "connectionError": "Unable to connect to the database. Please check your internet connection and try again.",
+      "networkConnection": "Network connection failed. Please check your internet connection and ensure Supabase is accessible.",
+      "databaseConnection": "Database connection issue. Please try refreshing the page.",
+      "noDataFound": "No data found. This might be a permissions issue.",
+      "loadStudents": "Failed to load students. Please try again.",
+      "troubleshooting": "Troubleshooting steps:",
+      "checkInternet": "Check your internet connection",
+      "verifyConfig": "Verify Supabase configuration in .env file",
+      "ensureActive": "Ensure your Supabase project is active",
+      "tryRefresh": "Try refreshing the page",
+      "retryConnection": "Retry Connection"
     }
   },
   "exam": {
