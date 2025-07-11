@@ -1,17 +1,18 @@
 /**
  * Calculate age in years and months from date of birth
  * @param dateOfBirth - Date string in YYYY-MM-DD format
+ * @param t - Translation function (optional)
  * @returns Formatted age string like "X years Y months old"
  */
-export function calculateAgeInYearsAndMonths(dateOfBirth: string): string {
-  if (!dateOfBirth) return 'Age not available'
+export function calculateAgeInYearsAndMonths(dateOfBirth: string, t?: any): string {
+  if (!dateOfBirth) return t ? t('age.notAvailable') : 'Age not available'
   
   const birthDate = new Date(dateOfBirth)
   const today = new Date()
   
   // Check if the date is valid
   if (isNaN(birthDate.getTime())) {
-    return 'Invalid date'
+    return t ? t('age.invalidDate') : 'Invalid date'
   }
   
   // Calculate the difference
@@ -36,27 +37,27 @@ export function calculateAgeInYearsAndMonths(dateOfBirth: string): string {
   // Format the output
   if (years === 0) {
     if (months === 0) {
-      return 'Less than 1 month old'
+      return t ? t('age.lessThanOneMonth') : 'Less than 1 month old'
     } else if (months === 1) {
-      return '1 month old'
+      return t ? t('age.oneMonth') : '1 month old'
     } else {
-      return `${months} months old`
+      return t ? t('age.monthsOld', { months }) : `${months} months old`
     }
   } else if (years === 1) {
     if (months === 0) {
-      return '1 year old'
+      return t ? t('age.oneYear') : '1 year old'
     } else if (months === 1) {
-      return '1 year 1 month old'
+      return t ? t('age.oneYearOneMonth') : '1 year 1 month old'
     } else {
-      return `1 year ${months} months old`
+      return t ? t('age.oneYearMonths', { months }) : `1 year ${months} months old`
     }
   } else {
     if (months === 0) {
-      return `${years} years old`
+      return t ? t('age.yearsOld', { years }) : `${years} years old`
     } else if (months === 1) {
-      return `${years} years 1 month old`
+      return t ? t('age.yearsOneMonth', { years }) : `${years} years 1 month old`
     } else {
-      return `${years} years ${months} months old`
+      return t ? t('age.yearsMonthsOld', { years, months }) : `${years} years ${months} months old`
     }
   }
 }
@@ -109,32 +110,33 @@ export function formatDate(dateString: string): string {
 /**
  * Validate if a date string is a valid date and not in the future
  * @param dateString - Date string to validate
+ * @param t - Translation function (optional)
  * @returns Object with validation result and error message
  */
-export function validateDateOfBirth(dateString: string): { isValid: boolean; error?: string } {
+export function validateDateOfBirth(dateString: string, t?: any): { isValid: boolean; error?: string } {
   if (!dateString) {
-    return { isValid: false, error: 'Date of birth is required' }
+    return { isValid: false, error: t ? t('validation.dateRequired') : 'Date of birth is required' }
   }
   
   const date = new Date(dateString)
   const today = new Date()
   
   if (isNaN(date.getTime())) {
-    return { isValid: false, error: 'Please enter a valid date' }
+    return { isValid: false, error: t ? t('validation.invalidDate') : 'Please enter a valid date' }
   }
   
   if (date > today) {
-    return { isValid: false, error: 'Date of birth cannot be in the future' }
+    return { isValid: false, error: t ? t('validation.futureDate') : 'Date of birth cannot be in the future' }
   }
   
   // Check if the person would be too old (over 25 years) or too young (under 3 years)
   const age = calculateAgeInYears(dateString)
   if (age > 25) {
-    return { isValid: false, error: 'Age cannot be more than 25 years' }
+    return { isValid: false, error: t ? t('validation.tooOld') : 'Age cannot be more than 25 years' }
   }
   
   if (age < 3) {
-    return { isValid: false, error: 'Age must be at least 3 years' }
+    return { isValid: false, error: t ? t('validation.tooYoung') : 'Age must be at least 3 years' }
   }
   
   return { isValid: true }

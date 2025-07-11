@@ -28,7 +28,7 @@ i18n
     defaultNS: 'translation',
     
     // Available languages
-    supportedLngs: ['en', 'ms'],
+    supportedLngs: ['en', 'ms', 'zh'],
   });
 
 export default i18n;

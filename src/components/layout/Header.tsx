@@ -78,7 +78,17 @@ export function Header() {
                     : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                MS
+                BM
+              </button>
+              <button 
+                onClick={() => changeLanguage('zh')} 
+                className={`px-2 py-1 text-xs font-medium rounded-md ${
+                  currentLanguage === 'zh' 
+                    ? 'bg-indigo-100 text-indigo-700' 
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                中文
               </button>
             </div>
 
@@ -122,7 +132,7 @@ export function Header() {
                 icon={<BarChart3 className="w-4 h-4" />}
                 className="text-slate-600 hover:text-indigo-600 px-3 py-2 touch-target rounded-xl hover:bg-indigo-50 transition-all duration-300"
               >
-                <span className="hidden sm:inline">Dashboard</span>
+                <span className="hidden sm:inline">{t('navigation.dashboard')}</span>
               </Button>
             )}
             

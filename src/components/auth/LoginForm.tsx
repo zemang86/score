@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
 import { Mail, Lock, Eye, EyeOff, Sparkles, Zap } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface LoginFormProps {
   onToggleMode: () => void
@@ -11,6 +12,7 @@ interface LoginFormProps {
 
 export function LoginForm({ onToggleMode, onForgotPassword }: LoginFormProps) {
   const { signIn } = useAuth()
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -36,10 +38,10 @@ export function LoginForm({ onToggleMode, onForgotPassword }: LoginFormProps) {
       <div className="text-center mb-8">
         <div className="flex items-center justify-center mb-4">
           <Sparkles className="w-6 h-6 text-indigo-500 mr-2 animate-pulse-soft" />
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Welcome Back!</h1>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{t('auth.signIn.title')}</h1>
           <Sparkles className="w-6 h-6 text-indigo-500 ml-2 animate-pulse-soft" />
         </div>
-        <p className="text-slate-600 text-lg">Ready for another learning adventure?</p>
+        <p className="text-slate-600 text-lg">{t('auth.signIn.subtitle')}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -51,7 +53,7 @@ export function LoginForm({ onToggleMode, onForgotPassword }: LoginFormProps) {
 
         <Input
           type="email"
-          placeholder="Enter your email address"
+          placeholder={t('auth.signIn.emailPlaceholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           icon={<Mail className="w-5 h-5" />}
@@ -61,7 +63,7 @@ export function LoginForm({ onToggleMode, onForgotPassword }: LoginFormProps) {
         <div className="relative">
           <Input
             type={showPassword ? 'text' : 'password'}
-            placeholder="Enter your password"
+            placeholder={t('auth.signIn.passwordPlaceholder')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             icon={<Lock className="w-5 h-5" />}
@@ -83,7 +85,7 @@ export function LoginForm({ onToggleMode, onForgotPassword }: LoginFormProps) {
           loading={loading}
           icon={!loading ? <Zap className="w-5 h-5" /> : undefined}
         >
-          {loading ? 'Signing In...' : "Let's Go!"}
+          {loading ? t('auth.signIn.loading') : t('auth.signIn.button')}
         </Button>
 
         <div className="text-center">
@@ -92,19 +94,19 @@ export function LoginForm({ onToggleMode, onForgotPassword }: LoginFormProps) {
             onClick={onForgotPassword}
             className="text-indigo-600 hover:text-indigo-700 font-medium transition-colors hover:underline"
           >
-            Forgot your password?
+            {t('auth.signIn.forgotPassword')}
           </button>
         </div>
 
         <div className="text-center bg-slate-50 rounded-xl p-4 border border-slate-200">
           <p className="text-slate-700">
-            New to Edventure+?{' '}
+            {t('auth.signIn.noAccount')}{' '}
             <button
               type="button"
               onClick={onToggleMode}
               className="text-indigo-600 hover:text-indigo-700 font-semibold transition-colors hover:underline"
             >
-              Join the adventure here!
+              {t('auth.signIn.signUpLink')}
             </button>
           </p>
         </div>

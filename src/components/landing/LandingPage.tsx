@@ -142,7 +142,17 @@ export function LandingPage() {
                         : 'text-slate-600 hover:bg-slate-100'
                     }`}
                   >
-                    MS
+                    BM
+                  </button>
+                  <button 
+                    onClick={() => changeLanguage('zh')} 
+                    className={`px-2 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
+                      i18n.language === 'zh' 
+                        ? 'bg-indigo-500 text-white shadow-sm' 
+                        : 'text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    中文
                   </button>
                 </div>
                 
@@ -265,8 +275,8 @@ export function LandingPage() {
                           <Crown className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-slate-800 text-sm sm:text-base lg:text-lg">Welcome back, Sarah!</h3>
-                          <p className="text-slate-500 text-xs sm:text-sm">Ready for today's adventure?</p>
+                          <h3 className="font-bold text-slate-800 text-sm sm:text-base lg:text-lg">{t('mockup.welcomeBack')}</h3>
+                          <p className="text-slate-500 text-xs sm:text-sm">{t('mockup.readyAdventure')}</p>
                         </div>
                       </div>
                       <div className="flex space-x-1 sm:space-x-2">
@@ -291,7 +301,7 @@ export function LandingPage() {
                         </div>
                         <div className="space-y-2">
                           <div className="flex justify-between text-xs sm:text-sm">
-                            <span className="text-slate-600">XP Progress</span>
+                            <span className="text-slate-600">{t('mockup.xpProgress')}</span>
                             <span className="font-semibold text-indigo-600">850 XP</span>
                           </div>
                           <div className="w-full bg-slate-200 rounded-full h-1.5 sm:h-2">
@@ -306,8 +316,8 @@ export function LandingPage() {
                           <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-r from-amber-400 to-orange-400 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
                             <Trophy className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" />
                           </div>
-                          <h4 className="font-semibold text-slate-800 text-xs sm:text-sm lg:text-base mb-1">Perfect Score!</h4>
-                          <p className="text-slate-500 text-xs">Mathematics Exam</p>
+                          <h4 className="font-semibold text-slate-800 text-xs sm:text-sm lg:text-base mb-1">{t('mockup.perfectScore')}</h4>
+                          <p className="text-slate-500 text-xs">{t('mockup.mathematicsExam')}</p>
                         </div>
                       </div>
                     </div>
@@ -315,7 +325,7 @@ export function LandingPage() {
                     {/* Progress Chart */}
                     <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg border border-slate-100">
                       <div className="flex items-center justify-between mb-3 sm:mb-4">
-                        <h4 className="font-semibold text-slate-800 text-xs sm:text-sm lg:text-base">Weekly Progress</h4>
+                        <h4 className="font-semibold text-slate-800 text-xs sm:text-sm lg:text-base">{t('mockup.weeklyProgress')}</h4>
                         <div className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">95%</div>
                       </div>
                       <div className="space-y-2 sm:space-y-3">
@@ -388,48 +398,48 @@ export function LandingPage() {
             {[
               {
                 icon: Gamepad2,
-                title: "Gamified Learning Experience",
-                description: "Earn XP points, unlock achievement badges, and celebrate milestones. Learning becomes an adventure, not a chore.",
+                titleKey: "featureCards.gamifiedTitle",
+                descriptionKey: "featureCards.gamifiedDescription",
                 color: "from-indigo-500 to-purple-500",
                 delay: 200,
                 accent: "indigo"
               },
               {
                 icon: BookOpen,
-                title: "Comprehensive Question Bank",
-                description: "Access thousands of past year questions across BM, BI, Mathematics, Science, and History for all levels.",
+                titleKey: "featureCards.questionBankTitle",
+                descriptionKey: "featureCards.questionBankDescription",
                 color: "from-purple-500 to-pink-500",
                 delay: 300,
                 accent: "purple"
               },
               {
                 icon: Target,
-                title: "Adaptive Practice Modes",
-                description: "Choose from Easy (10 MCQs), Medium (20-30 mixed), or Full Mode (complete papers) based on your child's readiness.",
+                titleKey: "featureCards.adaptiveTitle",
+                descriptionKey: "featureCards.adaptiveDescription",
                 color: "from-pink-500 to-rose-500",
                 delay: 400,
                 accent: "pink"
               },
               {
                 icon: BarChart3,
-                title: "Advanced Progress Tracking",
-                description: "Monitor your children's learning journey with detailed analytics, performance reports, and improvement insights.",
+                titleKey: "featureCards.trackingTitle",
+                descriptionKey: "featureCards.trackingDescription",
                 color: "from-amber-500 to-orange-500",
                 delay: 500,
                 accent: "amber"
               },
               {
                 icon: Users,
-                title: "Family Dashboard",
-                description: "Manage multiple children from one parent account. See everyone's progress at a glance and celebrate together.",
+                titleKey: "featureCards.familyTitle",
+                descriptionKey: "featureCards.familyDescription",
                 color: "from-green-500 to-emerald-500",
                 delay: 600,
                 accent: "green"
               },
               {
                 icon: Award,
-                title: "Achievement System",
-                description: "Unlock badges for milestones like \"First Perfect Score\", \"5-Day Streak\", and \"Subject Master\" to keep motivation high.",
+                titleKey: "featureCards.achievementTitle",
+                descriptionKey: "featureCards.achievementDescription",
                 color: "from-blue-500 to-indigo-500",
                 delay: 700,
                 accent: "blue"
@@ -440,9 +450,9 @@ export function LandingPage() {
                   <div className={`w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg flex-shrink-0`}>
                     <feature.icon className="w-7 h-7 sm:w-10 sm:h-10 text-white" />
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4 flex-shrink-0">{feature.title}</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4 flex-shrink-0">{t(feature.titleKey)}</h3>
                   <p className="text-slate-600 leading-relaxed text-sm sm:text-lg flex-grow">
-                    {feature.description}
+                    {t(feature.descriptionKey)}
                   </p>
                   <div className={`mt-4 sm:mt-6 w-full h-1 bg-gradient-to-r ${feature.color} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0`}></div>
                 </div>
@@ -476,22 +486,22 @@ export function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 auto-rows-fr">
             {[
               {
-                title: "Create & Add Children",
-                description: "Sign up as a parent and add your children's profiles with their school level and subjects. Set up takes less than 2 minutes.",
+                titleKey: "steps.step1Title",
+                descriptionKey: "steps.step1Description",
                 bgColor: "from-indigo-500 to-purple-500",
                 delay: 200,
                 icon: Users
               },
               {
-                title: "Choose Practice Mode",
-                description: "Select subject and difficulty level. Our smart system generates randomized questions from past year papers tailored to your child's level.",
+                titleKey: "steps.step2Title",
+                descriptionKey: "steps.step2Description",
                 bgColor: "from-purple-500 to-pink-500",
                 delay: 300,
                 icon: Target
               },
               {
-                title: "Practice & Progress",
-                description: "Complete exercises, earn XP, unlock badges, and track improvement over time with detailed reports and analytics.",
+                titleKey: "steps.step3Title",
+                descriptionKey: "steps.step3Description",
                 bgColor: "from-pink-500 to-amber-500",
                 delay: 400,
                 icon: TrendingUp
@@ -503,9 +513,9 @@ export function LandingPage() {
                     <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br ${item.bgColor} rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 flex-shrink-0`}>
                       <item.icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4 flex-shrink-0">{item.title}</h3>
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4 flex-shrink-0">{t(item.titleKey)}</h3>
                     <p className="text-slate-600 leading-relaxed text-sm sm:text-base flex-grow">
-                      {item.description}
+                      {t(item.descriptionKey)}
                     </p>
                   </div>
                 </div>
@@ -538,18 +548,18 @@ export function LandingPage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 sm:gap-8">
             {[
-              { name: 'Bahasa Melayu', icon: '🇲🇾', color: 'from-red-500 to-pink-500', delay: 200 },
-              { name: 'English', icon: '🇬🇧', color: 'from-blue-500 to-indigo-500', delay: 300 },
-              { name: 'Mathematics', icon: '🔢', color: 'from-green-500 to-emerald-500', delay: 400 },
-              { name: 'Science', icon: '🔬', color: 'from-purple-500 to-violet-500', delay: 500 },
-              { name: 'History', icon: '📚', color: 'from-amber-500 to-orange-500', delay: 600 }
+              { nameKey: 'subjectNames.bahasaMelayu', icon: '🇲🇾', color: 'from-red-500 to-pink-500', delay: 200 },
+              { nameKey: 'subjectNames.english', icon: '🇬🇧', color: 'from-blue-500 to-indigo-500', delay: 300 },
+              { nameKey: 'subjectNames.mathematics', icon: '🔢', color: 'from-green-500 to-emerald-500', delay: 400 },
+              { nameKey: 'subjectNames.science', icon: '🔬', color: 'from-purple-500 to-violet-500', delay: 500 },
+              { nameKey: 'subjectNames.history', icon: '📚', color: 'from-amber-500 to-orange-500', delay: 600 }
             ].map((subject, index) => (
               <RevealOnScroll key={index} animationType="bounce-in" delay={subject.delay}>
                 <div className="group bg-white/80 backdrop-blur-xl rounded-xl sm:rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 p-4 sm:p-6 text-center border border-white/50 hover:border-white/80 hover:scale-105">
                   <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br ${subject.color} flex items-center justify-center text-xl sm:text-3xl mx-auto mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                     {subject.icon}
                   </div>
-                  <h3 className="font-bold text-slate-900 text-sm sm:text-base">{subject.name}</h3>
+                  <h3 className="font-bold text-slate-900 text-sm sm:text-base">{t(subject.nameKey)}</h3>
                   <div className={`mt-2 sm:mt-4 w-full h-1 bg-gradient-to-r ${subject.color} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
                 </div>
               </RevealOnScroll>
@@ -618,8 +628,8 @@ export function LandingPage() {
                     <Monitor className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                   </div>
                   <div className="text-center md:text-left">
-                    <div className="text-lg sm:text-xl font-bold text-slate-800">Best Experience on Desktop! 🖥️</div>
-                    <div className="text-slate-600 text-sm">Optimized for bigger screens & better learning</div>
+                    <div className="text-lg sm:text-xl font-bold text-slate-800">{t('footnote.desktopTitle')} 🖥️</div>
+                    <div className="text-slate-600 text-sm">{t('footnote.desktopSubtitle')}</div>
                   </div>
                 </div>
 
@@ -633,8 +643,8 @@ export function LandingPage() {
                     <Smartphone className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                   </div>
                   <div className="text-center md:text-left">
-                    <div className="text-lg sm:text-xl font-bold text-slate-800">Mobile App Coming Soon! 📱</div>
-                    <div className="text-slate-600 text-sm">Learning adventures on-the-go await!</div>
+                    <div className="text-lg sm:text-xl font-bold text-slate-800">{t('footnote.mobileTitle')} 📱</div>
+                    <div className="text-slate-600 text-sm">{t('footnote.mobileSubtitle')}</div>
                   </div>
                 </div>
               </div>
@@ -642,7 +652,7 @@ export function LandingPage() {
               {/* Fun tagline */}
               <div className="mt-6 sm:mt-8 text-center">
                 <p className="text-slate-600 text-sm sm:text-base italic">
-                  ✨ For now, grab your laptop and let's make learning magical together! ✨
+                  ✨ {t('footnote.tagline')} ✨
                 </p>
               </div>
             </div>

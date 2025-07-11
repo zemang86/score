@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { supabase, Student } from '../../lib/supabase'
 import { Header } from '../layout/Header'
+import { useTranslation } from 'react-i18next'
 import { AddStudentModal } from './AddStudentModal'
 import { StudentCard } from './StudentCard'
 import { LeaderboardModal } from './LeaderboardModal'
@@ -21,6 +22,7 @@ import { canAddStudent } from '../../utils/accessControl'
 
 export function ParentDashboard() {
   const { user, profile, subscriptionPlan, maxStudents, dailyExamLimit, isBetaTester, effectiveAccess } = useAuth()
+  const { t } = useTranslation()
   const [students, setStudents] = useState<Student[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
@@ -127,8 +129,8 @@ export function ParentDashboard() {
       // First test the connection
       const connectionOk = await testConnection()
       if (!connectionOk) {
-        setConnectionError(true)
-        setError('Unable to connect to the database. Please check your internet connection and try again.')
+              setConnectionError(true)
+      setError(t('dashboard.errors.connectionError'))
         return
       }
 
@@ -170,13 +172,13 @@ export function ParentDashboard() {
       // Check if it's a network error
       if (err.message === 'Failed to fetch' || err.name === 'TypeError') {
         setConnectionError(true)
-        setError('Network connection failed. Please check your internet connection and ensure Supabase is accessible.')
+        setError(t('dashboard.errors.networkConnection'))
       } else if (err.code === 'PGRST301') {
-        setError('Database connection issue. Please try refreshing the page.')
+        setError(t('dashboard.errors.databaseConnection'))
       } else if (err.code === 'PGRST116') {
-        setError('No data found. This might be a permissions issue.')
+        setError(t('dashboard.errors.noDataFound'))
       } else {
-        setError(err.message || 'Failed to load students. Please try again.')
+        setError(err.message || t('dashboard.errors.loadStudents'))
       }
     } finally {
       setLoading(false)
@@ -324,9 +326,9 @@ export function ParentDashboard() {
 
   const getPlanDisplayName = (plan: string | null) => {
     switch (plan) {
-      case 'free': return 'Free Plan'
-      case 'premium': return 'Premium Plan'
-      default: return 'Unknown Plan'
+      case 'free': return t('dashboard.freePlan')
+      case 'premium': return t('dashboard.premiumPlan')
+      default: return t('dashboard.unknownPlan')
     }
   }
 
@@ -367,21 +369,21 @@ export function ParentDashboard() {
                 </div>
                 <div className="text-center sm:text-left">
                   <h1 className="text-xl sm:text-2xl font-bold text-slate-800 mb-0.5">
-                    Welcome, {profile?.full_name || 'Parent'}!
+                    {t('dashboard.welcome', { name: profile?.full_name || 'Parent' })}
                     {isBetaTester ? (
                       <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
                         <Zap className="w-3 h-3 mr-1" />
-                        <span>Beta Tester</span>
+                        <span>{t('dashboard.betaTester')}</span>
                       </span>
                     ) : subscriptionPlan === 'premium' ? (
                       <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
                         <Crown className="w-3 h-3 mr-1" />
-                        <span className="cursor-pointer" onClick={() => setShowSubscriptionModal(true)}>Premium</span>
+                        <span className="cursor-pointer" onClick={() => setShowSubscriptionModal(true)}>{t('dashboard.premium')}</span>
                       </span>
                     ) : null}
                   </h1>
                   <p className="text-sm sm:text-base text-slate-600 mb-1">
-                    Ready to level up your kids' learning adventure?
+                    {t('dashboard.welcomeMessage')}
                   </p>
                 </div>
               </div>
@@ -393,7 +395,7 @@ export function ParentDashboard() {
                   icon={<Settings className="w-4 h-4" />}
                   className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
                 >
-                  Profile
+                  {t('dashboard.profile')}
                 </Button>
                 <Button
                   onClick={() => setShowLeaderboard(true)}
@@ -401,7 +403,7 @@ export function ParentDashboard() {
                   size="sm"
                   icon={<Trophy className="w-4 h-4" />}
                 >
-                  Leaderboard
+                  {t('dashboard.leaderboard')}
                 </Button>
                 <Button
                   onClick={() => setShowFamilyReports(true)}
@@ -410,7 +412,7 @@ export function ParentDashboard() {
                   icon={<TrendingUp className="w-4 h-4" />}
                   className="border-blue-300 text-blue-700 hover:bg-blue-50"
                 >
-                  Reports
+                  {t('dashboard.reports')}
                 </Button>
                 {!isPremium && (
                   <Button
@@ -420,7 +422,7 @@ export function ParentDashboard() {
                     icon={<Crown className="w-4 h-4" />}
                     className="bg-gradient-to-r from-amber-500 to-orange-500"
                   >
-                    Upgrade
+                    {t('dashboard.upgrade')}
                   </Button>
                 )}
               </div>
@@ -446,15 +448,15 @@ export function ParentDashboard() {
                     <Users className="w-4 h-4 sm:w-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-slate-600">Kids</p>
+                    <p className="text-xs font-medium text-slate-600">{t('dashboard.stats.kids')}</p>
                     <div className="flex items-baseline">
                       <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{students.length}</p>
                       {isBetaTester ? (
-                        <p className="text-xs text-purple-500">∞ beta</p>
+                        <p className="text-xs text-purple-500">{t('dashboard.stats.beta')}</p>
                       ) : subscriptionPlan === 'free' ? (
-                        <p className="text-xs text-slate-500">of 1</p>
+                        <p className="text-xs text-slate-500">{t('dashboard.stats.ofOne')}</p>
                       ) : (
-                        <p className="text-xs text-slate-500">∞</p>
+                        <p className="text-xs text-slate-500">{t('dashboard.stats.unlimited')}</p>
                       )}
                     </div>
                   </div>
@@ -467,11 +469,11 @@ export function ParentDashboard() {
                   <BookOpen className="w-4 h-4 sm:w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-slate-600">Exams Done</p>
+                  <p className="text-xs font-medium text-slate-600">{t('dashboard.stats.examsDone')}</p>
                   <div className="flex items-baseline">
                     <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{dashboardStats.totalExams}</p>
                     <p className="text-xs text-slate-500">
-                      {dailyExamLimit === 999 ? '∞/day' : `${dailyExamLimit}/day`}
+                      {dailyExamLimit === 999 ? `${t('dashboard.stats.unlimited')}${t('dashboard.stats.perDay')}` : `${dailyExamLimit}${t('dashboard.stats.perDay')}`}
                     </p>
                   </div>
                 </div>
@@ -484,10 +486,10 @@ export function ParentDashboard() {
                   <Trophy className="w-4 h-4 sm:w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-slate-600">Badges</p>
+                  <p className="text-xs font-medium text-slate-600">{t('dashboard.stats.badges')}</p>
                   <div className="flex items-baseline">
                     <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{dashboardStats.totalBadges}</p>
-                    <p className="text-xs text-slate-500">earned</p>
+                    <p className="text-xs text-slate-500">{t('dashboard.stats.earned')}</p>
                   </div>
                 </div>
               </div>
@@ -499,12 +501,12 @@ export function ParentDashboard() {
                   <TrendingUp className="w-4 h-4 sm:w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-slate-600">Avg Score</p>
+                  <p className="text-xs font-medium text-slate-600">{t('dashboard.stats.averageScore')}</p>
                   <div className="flex items-baseline">
                     <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">
                       {dashboardStats.averageScore > 0 ? `${dashboardStats.averageScore}%` : '-'}
                     </p>
-                    <p className="text-xs text-slate-500">family</p>
+                    <p className="text-xs text-slate-500">{t('dashboard.stats.family')}</p>
                   </div>
                 </div>
               </div>
@@ -516,10 +518,10 @@ export function ParentDashboard() {
                   <Zap className="w-4 h-4 sm:w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-slate-600">Total XP</p>
+                  <p className="text-xs font-medium text-slate-600">{t('dashboard.stats.totalXP')}</p>
                   <div className="flex items-baseline">
                     <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">{dashboardStats.totalXP}</p>
-                    <p className="text-xs text-slate-500">points</p>
+                    <p className="text-xs text-slate-500">{t('dashboard.stats.points')}</p>
                   </div>
                 </div>
               </div>
@@ -531,12 +533,12 @@ export function ParentDashboard() {
                   <BookOpen className="w-4 h-4 sm:w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-slate-600">Questions</p>
+                  <p className="text-xs font-medium text-slate-600">{t('dashboard.stats.questions')}</p>
                   <div className="flex items-baseline">
                     <p className="text-lg sm:text-xl font-bold text-slate-800 mr-1.5">
                       {totalQuestions >= 1000 ? `${Math.floor(totalQuestions / 1000)}k+` : totalQuestions}
                     </p>
-                    <p className="text-xs text-slate-500">available</p>
+                    <p className="text-xs text-slate-500">{t('dashboard.stats.available')}</p>
                   </div>
                 </div>
               </div>
@@ -555,7 +557,10 @@ export function ParentDashboard() {
                       <Users className="w-5 h-5 sm:w-6 text-white" />
                     </div>
                                                               <h2 className="text-base sm:text-lg font-bold text-slate-800">
-                      Your Amazing Kids ({students.length}{isBetaTester ? ' (unlimited - beta)' : subscriptionPlan === 'free' ? ' of 1' : ''})
+                      {t('dashboard.students.titleWithCount', { 
+                        count: students.length, 
+                        limit: isBetaTester ? t('dashboard.students.unlimitedBeta') : subscriptionPlan === 'free' ? ` ${t('dashboard.stats.ofOne')}` : ''
+                      })}
                     </h2>
                   </div>
                   <Button 
@@ -566,13 +571,13 @@ export function ParentDashboard() {
                     icon={<Plus className="w-3.5 h-3.5" />}
                     className={`w-full sm:w-auto text-xs ${!canAddMoreStudents ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    Add Kid
+                    {t('dashboard.students.addButton')}
                   </Button>
                 </div>
                                   {!canAddMoreStudents && (
                     <div className="mt-2 p-2 bg-amber-100 border border-amber-300 rounded-lg">
                       <p className="text-amber-700 font-medium text-center text-xs">
-                        Free plan is limited to 1 child. Upgrade to Premium to add more children.
+                        {t('dashboard.students.upgradeMessage')}
                       </p>
                     </div>
                   )}
@@ -588,13 +593,13 @@ export function ParentDashboard() {
                         {connectionError && (
                           <div className="space-y-2">
                             <p className="text-red-600 text-xs">
-                              Troubleshooting steps:
+                              {t('dashboard.errors.troubleshooting')}
                             </p>
                             <ul className="text-red-600 text-xs space-y-1 ml-4">
-                              <li>• Check your internet connection</li>
-                              <li>• Verify Supabase configuration in .env file</li>
-                              <li>• Ensure your Supabase project is active</li>
-                              <li>• Try refreshing the page</li>
+                              <li>• {t('dashboard.errors.checkInternet')}</li>
+                              <li>• {t('dashboard.errors.verifyConfig')}</li>
+                              <li>• {t('dashboard.errors.ensureActive')}</li>
+                              <li>• {t('dashboard.errors.tryRefresh')}</li>
                             </ul>
                             <Button
                               onClick={handleRetry}
@@ -602,7 +607,7 @@ export function ParentDashboard() {
                               size="sm"
                               className="mt-2 text-xs border-red-300 text-red-700 hover:bg-red-50"
                             >
-                              Retry Connection
+                              {t('dashboard.errors.retryConnection')}
                             </Button>
                           </div>
                         )}
@@ -621,14 +626,14 @@ export function ParentDashboard() {
                     <div className="bg-indigo-100 rounded-full w-14 h-14 flex items-center justify-center mx-auto mb-3">
                       <Users className="w-8 h-8 text-indigo-500" />
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-indigo-600 mb-2">No kids added yet!</h3>
+                    <h3 className="text-lg sm:text-xl font-bold text-indigo-600 mb-2">{t('dashboard.students.noStudents')}</h3>
                     <p className="text-slate-600 text-sm mb-3">
-                      Start by adding your first kid to begin their epic learning adventure!
+                      {t('dashboard.students.addFirstChild')}
                     </p>
                                           <p className="text-indigo-500 mb-3 text-xs">
                         {subscriptionPlan === 'free' 
-                          ? 'You can add 1 child with your free plan!' 
-                          : 'You can add unlimited children with your premium plan!'}
+                          ? t('dashboard.students.freeMessage') 
+                          : t('dashboard.students.premiumMessage')}
                       </p>
                     <Button 
                       onClick={() => setShowAddModal(true)}
@@ -637,7 +642,7 @@ export function ParentDashboard() {
                       icon={<Plus className="w-4 h-4" />}
                       className="w-full sm:w-auto"
                     >
-                      Add Your First Kid!
+                      {t('dashboard.students.addFirstButton')}
                     </Button>
                   </div>
                 ) : (

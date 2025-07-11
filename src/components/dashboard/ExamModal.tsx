@@ -8,6 +8,7 @@ import { BadgeEvaluator } from '../../utils/badgeEvaluator'
 import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { canTakeExam } from '../../utils/accessControl'
 import { canStudentTakeExam, getStudentRestrictionReason } from '../../utils/subscriptionEnforcement'
+import { useTranslation } from 'react-i18next'
 
 interface ExamModalProps {
   isOpen: boolean
@@ -33,6 +34,7 @@ type Subject = 'Bahasa Melayu' | 'English' | 'Mathematics' | 'Science' | 'Histor
 
 export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplete }: ExamModalProps) {
   const { user, dailyExamLimit, subscriptionPlan, isBetaTester, effectiveAccess } = useAuth()
+  const { t } = useTranslation()
   
   // Initialize state from session storage if available
   const getInitialState = () => {
