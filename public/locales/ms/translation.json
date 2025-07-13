@@ -528,7 +528,39 @@
     "performance": "Aliran Prestasi",
     "strengths": "Kekuatan",
     "improvements": "Bidang Untuk Diperbaiki",
-    "recommendations": "Cadangan"
+    "recommendations": "Cadangan",
+    "subjects": {
+      "title": "Prestasi mengikut Subjek",
+      "premiumFeature": "Ciri Premium",
+      "premiumTitle": "Ciri Premium",
+      "premiumMessage": "Naik taraf ke Premium untuk membuka analitik prestasi subjek terperinci!",
+      "upgradeToPremium": "Naik taraf ke Premium",
+      "noSubjectData": "Tiada data subjek tersedia lagi!",
+      "completeExams": "Lengkapkan beberapa peperiksaan untuk melihat pecahan subjek.",
+      "children": "anak-anak",
+      "exams": "Peperiksaan",
+      "average": "Purata",
+      "best": "Terbaik"
+    },
+    "difficulty": {
+      "title": "Prestasi mengikut Tahap Kesukaran",
+      "premiumMessage": "Naik taraf ke Premium untuk membuka analitik tahap kesukaran terperinci!",
+      "noModeData": "Tiada data kesukaran tersedia lagi!",
+      "completeExamsModes": "Lengkapkan beberapa peperiksaan untuk melihat pecahan kesukaran.",
+      "easyMode": "Mod Mudah",
+      "mediumMode": "Mod Sederhana",
+      "fullMode": "Mod Penuh"
+    },
+    "studentComparison": {
+      "title": "Perbandingan Pelajar",
+      "premiumMessage": "Naik taraf ke Premium untuk membuka analitik perbandingan pelajar terperinci!",
+      "noStudents": "Tiada pelajar dijumpai!",
+      "addChildren": "Tambah beberapa anak untuk melihat perbandingan mereka.",
+      "xp": "XP",
+      "exams": "Peperiksaan",
+      "average": "Purata",
+      "badges": "Lencana"
+    }
   },
   "badges": {
     "firstExam": "Peperiksaan Pertama",

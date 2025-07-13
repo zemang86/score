@@ -528,7 +528,39 @@
     "performance": "表现趋势",
     "strengths": "优势",
     "improvements": "待改进区域",
-    "recommendations": "建议"
+    "recommendations": "建议",
+    "subjects": {
+      "title": "按科目表现",
+      "premiumFeature": "高级功能",
+      "premiumTitle": "高级功能",
+      "premiumMessage": "升级到高级版以解锁详细的科目表现分析！",
+      "upgradeToPremium": "升级到高级版",
+      "noSubjectData": "暂无科目数据！",
+      "completeExams": "完成一些考试以查看科目细分。",
+      "children": "孩子",
+      "exams": "考试",
+      "average": "平均",
+      "best": "最佳"
+    },
+    "difficulty": {
+      "title": "按难度等级表现",
+      "premiumMessage": "升级到高级版以解锁详细的难度等级分析！",
+      "noModeData": "暂无难度数据！",
+      "completeExamsModes": "完成一些考试以查看难度细分。",
+      "easyMode": "简单模式",
+      "mediumMode": "中等模式",
+      "fullMode": "完整模式"
+    },
+    "studentComparison": {
+      "title": "学生对比",
+      "premiumMessage": "升级到高级版以解锁详细的学生对比分析！",
+      "noStudents": "未找到学生！",
+      "addChildren": "添加一些孩子以查看他们的对比。",
+      "xp": "经验值",
+      "exams": "考试",
+      "average": "平均",
+      "badges": "徽章"
+    }
   },
   "badges": {
     "firstExam": "首次考试",
