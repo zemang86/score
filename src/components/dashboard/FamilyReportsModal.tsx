@@ -290,8 +290,8 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
                    <BarChart3 className="w-6 h-6 text-white" />
                  </div>
                  <div>
-                   <h2 className="text-xl font-bold text-slate-800">Family Learning Reports</h2>
-                   <p className="text-sm text-slate-600">Comprehensive insights into your family's progress</p>
+                   <h2 className="text-xl font-bold text-slate-800">{t('reports.title')}</h2>
+                   <p className="text-sm text-slate-600">{t('reports.subtitle')}</p>
                  </div>
                </div>
                <button
@@ -309,10 +309,10 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
         <div className="border-b border-slate-200 bg-slate-50">
           <div className="flex">
             {[
-              { id: 'overview', label: 'Overview', icon: BarChart3 },
-              { id: 'subjects', label: 'Subjects', icon: BookOpen },
-              { id: 'modes', label: 'Difficulty', icon: Target },
-              { id: 'students', label: 'Students', icon: Users }
+              { id: 'overview', label: t('reports.tabs.overview'), icon: BarChart3 },
+              { id: 'subjects', label: t('reports.tabs.subjects'), icon: BookOpen },
+              { id: 'modes', label: t('reports.tabs.difficulty'), icon: Target },
+              { id: 'students', label: t('reports.tabs.students'), icon: Users }
             ].map((tab) => {
               const Icon = tab.icon
               return (
@@ -341,17 +341,17 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
             {loading ? (
               <div className="text-center py-6">
                 <div className="animate-spin rounded-full h-10 w-10 border-4 border-indigo-200 border-t-indigo-500 mx-auto mb-3"></div>
-                <p className="text-indigo-600 font-medium text-sm">Loading family reports...</p>
+                <p className="text-indigo-600 font-medium text-sm">{t('reports.loading')}</p>
               </div>
             ) : error ? (
               <div className="text-center py-6">
                 <div className="bg-red-100 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-3">
                   <X className="w-5 h-5 text-red-600" />
                 </div>
-                <h3 className="text-base font-medium text-red-800 mb-1">Error Loading Reports</h3>
+                <h3 className="text-base font-medium text-red-800 mb-1">{t('reports.errorTitle')}</h3>
                 <p className="text-red-600 text-sm mb-3">{error}</p>
                 <Button onClick={fetchFamilyReports} variant="error" size="sm">
-                  Try Again
+                  {t('reports.tryAgain')}
                 </Button>
               </div>
             ) : (
@@ -362,28 +362,28 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
                     {/* Family Summary */}
                     <div className="bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 rounded-lg p-3 sm:p-4 shadow-md">
                       <div className="text-center mb-2">
-                        <h3 className="text-base sm:text-lg font-bold text-amber-800 mb-1">Family Learning Summary</h3>
-                        <p className="text-amber-700 text-xs">Collective achievements across all your children</p>
+                                        <h3 className="text-base sm:text-lg font-bold text-amber-800 mb-1">{t('reports.familySummary.title')}</h3>
+                <p className="text-amber-700 text-xs">{t('reports.familySummary.subtitle')}</p>
                       </div>
                       
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                         <div className="text-center">
                           <div className="text-lg sm:text-xl font-bold text-amber-800">{familyStats.totalXP.toLocaleString()}</div>
-                          <div className="text-xs text-amber-700">Total XP</div>
+                          <div className="text-xs text-amber-700">{t('reports.familySummary.totalXP')}</div>
                         </div>
                         <div className="text-center">
                           <div className="text-lg sm:text-xl font-bold text-amber-800">{familyStats.totalExams}</div>
-                          <div className="text-xs text-amber-700">Exams Completed</div>
+                          <div className="text-xs text-amber-700">{t('reports.familySummary.examsCompleted')}</div>
                         </div>
                         <div className="text-center">
                           <div className={`text-lg sm:text-xl font-bold ${getScoreColor(familyStats.averageScore)}`}>
                             {familyStats.averageScore}%
                           </div>
-                          <div className="text-xs text-amber-700">Family Average</div>
+                          <div className="text-xs text-amber-700">{t('reports.familySummary.familyAverage')}</div>
                         </div>
                         <div className="text-center">
                           <div className="text-lg sm:text-xl font-bold text-amber-800">{familyStats.totalBadges}</div>
-                          <div className="text-xs text-amber-700">Badges Earned</div>
+                          <div className="text-xs text-amber-700">{t('reports.familySummary.badgesEarned')}</div>
                         </div>
                       </div>
                     </div>
@@ -396,11 +396,11 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
                             <Users className="w-4 h-4 sm:w-5 text-white" />
                           </div>
                           <div>
-                            <h4 className="font-bold text-indigo-700 text-xs">Active Learners</h4>
+                            <h4 className="font-bold text-indigo-700 text-xs">{t('reports.metrics.activeLearners')}</h4>
                             <p className="text-lg font-bold text-gray-800">{familyStats.totalStudents}</p>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-600 mt-1">Children in your family</p>
+                        <p className="text-xs text-gray-600 mt-1">{t('reports.metrics.childrenInFamily')}</p>
                       </div>
 
                       <div className="bg-white p-2.5 sm:p-3 rounded-lg shadow-sm border border-gray-200">
@@ -409,11 +409,11 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
                             <TrendingUp className="w-4 h-4 sm:w-5 text-white" />
                           </div>
                           <div>
-                            <h4 className="font-bold text-green-700 text-xs">Completion Rate</h4>
+                            <h4 className="font-bold text-green-700 text-xs">{t('reports.metrics.completionRate')}</h4>
                             <p className="text-lg font-bold text-gray-800">{familyStats.completionRate}%</p>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-600 mt-1">Exams finished vs started</p>
+                        <p className="text-xs text-gray-600 mt-1">{t('reports.metrics.examsFinished')}</p>
                       </div>
 
                       <div className="bg-white p-2.5 sm:p-3 rounded-lg shadow-sm border border-gray-200">
@@ -422,30 +422,30 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
                             <Calendar className="w-4 h-4 sm:w-5 text-white" />
                           </div>
                           <div>
-                            <h4 className="font-bold text-amber-700 text-xs">Avg per Child</h4>
+                            <h4 className="font-bold text-amber-700 text-xs">{t('reports.metrics.avgPerChild')}</h4>
                             <p className="text-lg font-bold text-gray-800">
                               {familyStats.totalStudents > 0 ? Math.round(familyStats.totalExams / familyStats.totalStudents) : 0}
                             </p>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-600 mt-1">Exams per child</p>
+                        <p className="text-xs text-gray-600 mt-1">{t('reports.metrics.examsPerChild')}</p>
                       </div>
                     </div>
 
                     {/* Quick Insights */}
                     <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-                      <h3 className="text-base font-bold text-indigo-700 mb-2">Quick Insights</h3>
+                      <h3 className="text-base font-bold text-indigo-700 mb-2">{t('reports.insights.title')}</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-2">
                           <div className="flex items-center mb-1">
                             <Star className="w-4 h-4 text-indigo-600 mr-1" />
-                            <span className="font-medium text-indigo-800 text-xs">Top Subject</span>
+                            <span className="font-medium text-indigo-800 text-xs">{t('reports.insights.topSubject')}</span>
                           </div>
                           <p className="text-indigo-700 text-xs">
-                            {subjectBreakdown.length > 0 ? subjectBreakdown[0].subject : 'No data yet'}
+                            {subjectBreakdown.length > 0 ? subjectBreakdown[0].subject : t('reports.insights.noDataYet')}
                             {subjectBreakdown.length > 0 && (
                               <span className="text-indigo-600 ml-1">
-                                ({subjectBreakdown[0].totalExams} exams)
+                                ({subjectBreakdown[0].totalExams} {t('reports.insights.exams')})
                               </span>
                             )}
                           </p>
@@ -454,12 +454,12 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
                         <div className="bg-green-50 border border-green-200 rounded-lg p-2">
                           <div className="flex items-center mb-1">
                             <Trophy className="w-4 h-4 text-green-600 mr-1" />
-                            <span className="font-medium text-green-800 text-xs">Best Performance</span>
+                            <span className="font-medium text-green-800 text-xs">{t('reports.insights.bestPerformance')}</span>
                           </div>
                           <p className="text-green-700 text-xs">
                             {subjectBreakdown.length > 0 
                               ? `${Math.max(...subjectBreakdown.map(s => s.bestScore))}% in ${subjectBreakdown.find(s => s.bestScore === Math.max(...subjectBreakdown.map(sb => sb.bestScore)))?.subject}`
-                              : 'No data yet'
+                              : t('reports.insights.noDataYet')
                             }
                           </p>
                         </div>
@@ -727,7 +727,7 @@ export function FamilyReportsModal({ isOpen, onClose }: FamilyReportsModalProps)
             onClick={onClose}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 font-medium transition-colors"
           >
-            Close Reports
+            {t('reports.close')}
           </Button>
         </div>
       </div>

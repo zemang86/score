@@ -520,15 +520,41 @@
     "allTime": "历史总计"
   },
   "reports": {
-    "title": "家庭进度报告",
-    "subtitle": "跟踪您孩子的学习旅程",
-    "overview": "概览",
-    "detailed": "详细分析",
-    "exportPDF": "导出PDF",
-    "performance": "表现趋势",
-    "strengths": "优势",
-    "improvements": "待改进区域",
-    "recommendations": "建议",
+    "title": "家庭学习报告",
+    "subtitle": "全面了解您家庭的进展",
+    "close": "关闭报告",
+    "tabs": {
+      "overview": "概览",
+      "subjects": "科目",
+      "difficulty": "难度",
+      "students": "学生"
+    },
+    "loading": "正在加载家庭报告...",
+    "errorTitle": "加载报告时出错",
+    "tryAgain": "重试",
+    "familySummary": {
+      "title": "家庭学习摘要",
+      "subtitle": "您所有孩子的集体成就",
+      "totalXP": "总经验值",
+      "examsCompleted": "完成的考试",
+      "familyAverage": "家庭平均",
+      "badgesEarned": "获得的徽章"
+    },
+    "metrics": {
+      "activeLearners": "活跃学习者",
+      "childrenInFamily": "您家庭中的孩子",
+      "completionRate": "完成率",
+      "examsFinished": "已完成 vs 已开始的考试",
+      "avgPerChild": "每个孩子的平均",
+      "examsPerChild": "每个孩子的考试"
+    },
+    "insights": {
+      "title": "快速洞察",
+      "topSubject": "最佳科目",
+      "bestPerformance": "最佳表现",
+      "noDataYet": "暂无数据",
+      "exams": "考试"
+    },
     "subjects": {
       "title": "按科目表现",
       "premiumFeature": "高级功能",

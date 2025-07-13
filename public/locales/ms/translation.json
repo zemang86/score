@@ -520,15 +520,41 @@
     "allTime": "Sepanjang Masa"
   },
   "reports": {
-    "title": "Laporan Kemajuan Keluarga",
-    "subtitle": "Jejaki perjalanan pembelajaran anak-anak anda",
-    "overview": "Gambaran Keseluruhan",
-    "detailed": "Analisis Terperinci",
-    "exportPDF": "Eksport PDF",
-    "performance": "Aliran Prestasi",
-    "strengths": "Kekuatan",
-    "improvements": "Bidang Untuk Diperbaiki",
-    "recommendations": "Cadangan",
+    "title": "Laporan Pembelajaran Keluarga",
+    "subtitle": "Pandangan komprehensif tentang kemajuan keluarga anda",
+    "close": "Tutup Laporan",
+    "tabs": {
+      "overview": "Gambaran Keseluruhan",
+      "subjects": "Subjek",
+      "difficulty": "Kesukaran",
+      "students": "Pelajar"
+    },
+    "loading": "Memuatkan laporan keluarga...",
+    "errorTitle": "Ralat Memuatkan Laporan",
+    "tryAgain": "Cuba Lagi",
+    "familySummary": {
+      "title": "Ringkasan Pembelajaran Keluarga",
+      "subtitle": "Pencapaian kolektif semua anak-anak anda",
+      "totalXP": "Jumlah XP",
+      "examsCompleted": "Peperiksaan Selesai",
+      "familyAverage": "Purata Keluarga",
+      "badgesEarned": "Lencana Diperolehi"
+    },
+    "metrics": {
+      "activeLearners": "Pembelajar Aktif",
+      "childrenInFamily": "Anak-anak dalam keluarga anda",
+      "completionRate": "Kadar Penyiapan",
+      "examsFinished": "Peperiksaan selesai vs dimulakan",
+      "avgPerChild": "Purata per Anak",
+      "examsPerChild": "Peperiksaan per anak"
+    },
+    "insights": {
+      "title": "Pandangan Pantas",
+      "topSubject": "Subjek Teratas",
+      "bestPerformance": "Prestasi Terbaik",
+      "noDataYet": "Tiada data lagi",
+      "exams": "peperiksaan"
+    },
     "subjects": {
       "title": "Prestasi mengikut Subjek",
       "premiumFeature": "Ciri Premium",
