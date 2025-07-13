@@ -520,15 +520,73 @@
     "allTime": "历史总计"
   },
   "reports": {
-    "title": "家庭进度报告",
-    "subtitle": "跟踪您孩子的学习旅程",
-    "overview": "概览",
-    "detailed": "详细分析",
-    "exportPDF": "导出PDF",
-    "performance": "表现趋势",
-    "strengths": "优势",
-    "improvements": "待改进区域",
-    "recommendations": "建议"
+    "title": "家庭学习报告",
+    "subtitle": "全面了解您家庭的进展",
+    "close": "关闭报告",
+    "tabs": {
+      "overview": "概览",
+      "subjects": "科目",
+      "difficulty": "难度",
+      "students": "学生"
+    },
+    "loading": "正在加载家庭报告...",
+    "errorTitle": "加载报告时出错",
+    "tryAgain": "重试",
+    "familySummary": {
+      "title": "家庭学习摘要",
+      "subtitle": "您所有孩子的集体成就",
+      "totalXP": "总经验值",
+      "examsCompleted": "完成的考试",
+      "familyAverage": "家庭平均",
+      "badgesEarned": "获得的徽章"
+    },
+    "metrics": {
+      "activeLearners": "活跃学习者",
+      "childrenInFamily": "您家庭中的孩子",
+      "completionRate": "完成率",
+      "examsFinished": "已完成 vs 已开始的考试",
+      "avgPerChild": "每个孩子的平均",
+      "examsPerChild": "每个孩子的考试"
+    },
+    "insights": {
+      "title": "快速洞察",
+      "topSubject": "最佳科目",
+      "bestPerformance": "最佳表现",
+      "noDataYet": "暂无数据",
+      "exams": "考试"
+    },
+    "subjects": {
+      "title": "按科目表现",
+      "premiumFeature": "高级功能",
+      "premiumTitle": "高级功能",
+      "premiumMessage": "升级到高级版以解锁详细的科目表现分析！",
+      "upgradeToPremium": "升级到高级版",
+      "noSubjectData": "暂无科目数据！",
+      "completeExams": "完成一些考试以查看科目细分。",
+      "children": "孩子",
+      "exams": "考试",
+      "average": "平均",
+      "best": "最佳"
+    },
+    "difficulty": {
+      "title": "按难度等级表现",
+      "premiumMessage": "升级到高级版以解锁详细的难度等级分析！",
+      "noModeData": "暂无难度数据！",
+      "completeExamsModes": "完成一些考试以查看难度细分。",
+      "easyMode": "简单模式",
+      "mediumMode": "中等模式",
+      "fullMode": "完整模式"
+    },
+    "studentComparison": {
+      "title": "学生对比",
+      "premiumMessage": "升级到高级版以解锁详细的学生对比分析！",
+      "noStudents": "未找到学生！",
+      "addChildren": "添加一些孩子以查看他们的对比。",
+      "xp": "经验值",
+      "exams": "考试",
+      "average": "平均",
+      "badges": "徽章"
+    }
   },
   "badges": {
     "firstExam": "首次考试",
