@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/OptimizedAuthContext'
 import { Button } from '../ui/Button'
 import { PremiumUpgradeModal } from '../dashboard/PremiumUpgradeModal'
 import { Input } from '../ui/Input'
+import WaitlistComponent from '../ui/waiting-list'
 import { Mail, Lock, User, Eye, EyeOff, Sparkles, Star, Crown, Zap } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
@@ -40,55 +41,25 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
       return
     }
 
-    const { error } = await signUp(email, password, fullName)
-    
-    if (error) {
-      setError(error.message)
-    } else {
-      setSuccess(true)
-    }
-    
+    // Instead of creating the account immediately, redirect to waitlist
+    // The admin will manually approve beta testers later
     setLoading(false)
+    setSuccess(true)
   }
 
   if (success) {
     return (
-      <div className="w-full max-w-md mx-auto text-center">
-        <div className="bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 rounded-3xl p-8 animate-scale-in">
-          <div className="flex justify-center mb-4">
-            <Star className="w-16 h-16 text-amber-500 animate-bounce-gentle" />
-          </div>
-          <h2 className="text-3xl font-bold text-green-700 mb-4">{t('auth.signUp.accountCreated')}</h2>
-          <p className="text-green-600 text-lg mb-6">
-            {t('auth.signUp.welcomeMessage')}
-          </p>
-          <div className="space-y-3">
-            <Button 
-              onClick={onToggleMode} 
-              size="lg"
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
-              icon={<Zap className="w-5 h-5" />}
-            >
-              {t('auth.signUp.startFreePlan')}
-            </Button>
-            
-            <Button 
-              onClick={() => setShowUpgradeModal(true)} 
-              size="lg"
-              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
-              icon={<Crown className="w-5 h-5" />}
-            >
-              {t('auth.signUp.upgradePremium')}
-            </Button>
-          </div>
-        </div>
-        
-        {/* Upgrade Modal */}
-        <PremiumUpgradeModal
-          isOpen={showUpgradeModal}
-          onClose={() => setShowUpgradeModal(false)}
-        />
-      </div>
+      <WaitlistComponent
+        title="Join Our Beta Program"
+        subtitle="Be the first to experience our revolutionary learning platform for kids"
+        placeholder="Enter your email address"
+        buttonText={{
+          idle: "Join Beta Waitlist",
+          loading: "Joining...",
+          success: "Welcome to Beta!",
+        }}
+        theme="system"
+      />
     )
   }
 
