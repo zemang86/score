@@ -14,6 +14,7 @@ interface WaitlistComponentProps {
     success: string
   }
   theme?: 'light' | 'dark' | 'system'
+  userEmail?: string // Optional prop for when email is already provided
 }
 
 export default function WaitlistComponent({
@@ -21,7 +22,8 @@ export default function WaitlistComponent({
   subtitle,
   placeholder,
   buttonText,
-  theme = 'system'
+  theme = 'system',
+  userEmail
 }: WaitlistComponentProps) {
   const { t } = useTranslation()
   const [email, setEmail] = useState('')
@@ -30,22 +32,29 @@ export default function WaitlistComponent({
   const [queuePosition, setQueuePosition] = useState<number>(0)
   const [showForm, setShowForm] = useState(false)
 
-  // Generate random queue position starting from 100+
+  // Generate random queue position starting from 100-200 for more believability
   useEffect(() => {
-    const randomPosition = Math.floor(Math.random() * 500) + 100
+    const randomPosition = Math.floor(Math.random() * 101) + 100 // 100-200 range
     setQueuePosition(randomPosition)
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
     setLoading(true)
 
-    // Simulate API call
+    // Simulate API call to add to waitlist
     await new Promise(resolve => setTimeout(resolve, 1500))
     
     setLoading(false)
     setSuccess(true)
   }
+
+  // Auto-submit if userEmail is provided (coming from signup flow)
+  useEffect(() => {
+    if (userEmail && !success) {
+      handleSubmit()
+    }
+  }, [userEmail, success])
 
   const handlePriorityAccess = () => {
     // TODO: Replace with your actual Google Form URL for beta testing priority access
@@ -109,27 +118,46 @@ export default function WaitlistComponent({
                 <p className="text-indigo-600 text-sm">You're in line for early access!</p>
               </div>
 
-              {/* Email Form */}
-              <form onSubmit={handleSubmit} className="space-y-6 mb-6">
-                <Input
-                  type="email"
-                  placeholder={placeholder}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  icon={<Mail className="w-5 h-5" />}
-                  required
-                />
+              {/* Show email form only if userEmail is not provided */}
+              {!userEmail ? (
+                <form onSubmit={handleSubmit} className="space-y-6 mb-6">
+                  <Input
+                    type="email"
+                    placeholder={placeholder}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    icon={<Mail className="w-5 h-5" />}
+                    required
+                  />
 
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
-                  loading={loading}
-                  disabled={loading || !email}
-                >
-                  {getButtonState()}
-                </Button>
-              </form>
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+                    loading={loading}
+                    disabled={loading || !email}
+                  >
+                    {getButtonState()}
+                  </Button>
+                </form>
+              ) : (
+                /* Show user's email and automatic waitlist joining */
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 mb-6 text-center">
+                  <div className="flex items-center justify-center mb-2">
+                    <Mail className="w-5 h-5 text-blue-600 mr-2" />
+                    <span className="text-blue-800 font-semibold">Your Email</span>
+                  </div>
+                  <p className="text-blue-700 font-medium mb-3">{userEmail}</p>
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 mr-2"></div>
+                      <span className="text-blue-600">Adding you to the waitlist...</span>
+                    </div>
+                  ) : (
+                    <p className="text-blue-600 text-sm">✅ You're being added to our exclusive beta waitlist!</p>
+                  )}
+                </div>
+              )}
 
               {/* Priority Access CTA */}
               <div className="bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-200 rounded-xl p-6">
@@ -139,7 +167,7 @@ export default function WaitlistComponent({
                     <span className="text-emerald-800 font-semibold">Want Priority Access?</span>
                   </div>
                   <p className="text-emerald-700 text-sm mb-4">
-                    Get priority beta access for your kids by filling out our detailed form. Skip the queue and get access faster!
+                    Get priority beta access for your kids by filling out our detailed questionnaire. Skip the queue and get access faster!
                   </p>
                 </div>
                 
@@ -149,7 +177,7 @@ export default function WaitlistComponent({
                   className="w-full bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white"
                   icon={<ExternalLink className="w-5 h-5" />}
                 >
-                  Get Priority Beta Access
+                  Fill Priority Questionnaire
                 </Button>
               </div>
             </>
@@ -161,6 +189,9 @@ export default function WaitlistComponent({
                   <Trophy className="w-16 h-16 text-amber-500 animate-bounce-gentle" />
                 </div>
                 <h2 className="text-2xl font-bold text-green-700 mb-2">Welcome to the Waitlist!</h2>
+                <p className="text-green-600 mb-2">
+                  <strong>{userEmail || email}</strong>
+                </p>
                 <p className="text-green-600 mb-4">
                   You're now #{queuePosition} in line for beta access. We'll notify you when it's your turn!
                 </p>

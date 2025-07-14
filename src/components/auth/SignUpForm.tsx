@@ -4,6 +4,7 @@ import { Button } from '../ui/Button'
 import { PremiumUpgradeModal } from '../dashboard/PremiumUpgradeModal'
 import { Input } from '../ui/Input'
 import WaitlistComponent from '../ui/waiting-list'
+import { PhoneVerification } from './PhoneVerification'
 import { Mail, Lock, User, Eye, EyeOff, Sparkles, Star, Crown, Zap } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
@@ -22,7 +23,7 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
-  const [success, setSuccess] = useState(false)
+  const [step, setStep] = useState<'signup' | 'phone-verification' | 'waitlist'>('signup')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -41,24 +42,37 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
       return
     }
 
-    // Instead of creating the account immediately, redirect to waitlist
-    // The admin will manually approve beta testers later
+    // Instead of creating the account immediately, go to phone verification
+    // The admin will manually approve beta testers after verification
     setLoading(false)
-    setSuccess(true)
+    setStep('phone-verification')
   }
 
-  if (success) {
+  // Phone Verification Step
+  if (step === 'phone-verification') {
+    return (
+      <PhoneVerification
+        email={email}
+        onVerificationComplete={() => setStep('waitlist')}
+        onBack={() => setStep('signup')}
+      />
+    )
+  }
+
+  // Beta Waitlist Step
+  if (step === 'waitlist') {
     return (
       <WaitlistComponent
         title="Join Our Beta Program"
         subtitle="Be the first to experience our revolutionary learning platform for kids"
-        placeholder="Enter your email address"
+        placeholder="" // No email input needed since already provided
         buttonText={{
           idle: "Join Beta Waitlist",
           loading: "Joining...",
           success: "Welcome to Beta!",
         }}
         theme="system"
+        userEmail={email} // Pass the email to the component
       />
     )
   }
