@@ -7,6 +7,7 @@ import { EdventureLogo } from '../ui/EdventureLogo'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/Button'
 import { useTranslation } from 'react-i18next'
+import WaitlistComponent from '../ui/waiting-list'
 
 type AuthMode = 'login' | 'signup' | 'forgot'
 
@@ -30,7 +31,33 @@ export function AuthPage() {
           />
         )
       case 'signup':
-        return <SignUpForm onToggleMode={() => setMode('login')} />
+        return (
+          <div className="space-y-4">
+            <WaitlistComponent
+              title="Join Our Beta Program"
+              subtitle="Our platform is currently in beta and only accessible to approved testers"
+              placeholder="Enter your email address"
+              buttonText={{
+                idle: "Join Beta Waitlist",
+                loading: "Joining...",
+                success: "Welcome to the waitlist!",
+              }}
+              theme="system"
+            />
+            <div className="text-center bg-slate-50 rounded-xl p-4 border border-slate-200">
+              <p className="text-slate-700">
+                Already have beta access?{' '}
+                <button
+                  type="button"
+                  onClick={() => setMode('login')}
+                  className="text-indigo-600 hover:text-indigo-700 font-semibold transition-colors hover:underline"
+                >
+                  Sign in here
+                </button>
+              </p>
+            </div>
+          </div>
+        )
       case 'forgot':
         return <ForgotPasswordForm onBack={() => setMode('login')} />
     }
