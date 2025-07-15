@@ -1,55 +1,120 @@
-# WhatsApp OTP Test Page
+# WhatsApp OTP Test
 
-A simple test page to verify WhatsApp OTP functionality using Supabase authentication.
+A comprehensive test suite for verifying WhatsApp OTP functionality using Supabase authentication. Available in both HTML and React versions.
 
-## How to Use
+## 🚀 Quick Setup
 
-1. **Start your development server:**
+1. **Update your `.env` file** with your Supabase credentials:
+   ```env
+   VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+   ```
+
+2. **Start your development server:**
    ```bash
    npm run dev
    ```
 
-2. **Access the test page:**
-   Open your browser and go to: `http://localhost:5173/whatsapp-otp-test.html`
+## 📱 Two Ways to Test
 
-3. **Fill in the required fields:**
-   - **Supabase URL**: Your Supabase project URL (format: `https://YOUR_PROJECT.supabase.co`)
-   - **Supabase Anon Key**: Your Supabase anonymous key
-   - **Phone Number**: Pre-filled with `+60164446716` (as specified in your code)
-   - **OTP Token**: Enter the 6-digit OTP you received via WhatsApp
+### Option 1: React Component (Recommended)
+**URL**: `http://localhost:5173/whatsapp-otp-test`
 
-4. **Click "Verify OTP"** to test the verification
+- ✅ **Automatically uses your `.env` configuration**
+- ✅ **Two-step process: Send OTP → Verify OTP**
+- ✅ **Real-time configuration validation**
+- ✅ **Integrated with your existing Supabase setup**
 
-## Features
+### Option 2: Standalone HTML Page
+**URL**: `http://localhost:5173/whatsapp-otp-test.html`
 
-- ✅ Clean, responsive UI using Tailwind CSS
-- ✅ Form validation (checks for required fields and 6-digit OTP)
-- ✅ Loading indicator during verification
-- ✅ Color-coded results (green for success, red for errors)
-- ✅ Detailed JSON response display
-- ✅ Console logging for debugging
-- ✅ Enter key support for quick testing
+- ✅ **Works independently of your React app**
+- ✅ **Manual configuration input**
+- ✅ **Useful for debugging**
 
-## Expected Response
+## 🔧 Features
 
-**Success Response:**
+### Send OTP Step
+- **Phone number validation** (must include country code)
+- **WhatsApp channel specification** (`options: { channel: 'whatsapp' }`)
+- **Loading states** with progress indicators
+- **Error handling** with detailed messages
+
+### Verify OTP Step
+- **6-digit OTP validation**
+- **Automatic phone number matching**
+- **Session data display** on successful verification
+- **Detailed error reporting**
+
+### UI/UX Features
+- **Step-by-step process** with visual feedback
+- **Color-coded results** (green for success, red for errors)
+- **Reset functionality** to start over
+- **Keyboard shortcuts** (Enter key support)
+- **Responsive design** works on mobile and desktop
+
+## 📋 Step-by-Step Usage
+
+### 1. Send OTP
+1. Enter your phone number (e.g., `+60164446716`)
+2. Click "📱 Send WhatsApp OTP"
+3. Wait for the success message
+4. Check your WhatsApp for the 6-digit code
+
+### 2. Verify OTP
+1. Enter the 6-digit OTP from WhatsApp
+2. Click "✅ Verify OTP"
+3. Review the verification result
+4. Check console for session details
+
+### 3. Reset (if needed)
+1. Click "🔄 Reset & Send New OTP"
+2. Start over with a new OTP request
+
+## 🔍 Expected Responses
+
+### Send OTP Success
 ```json
 {
   "success": true,
+  "phone": "+60164446716",
   "data": {
-    "user": { ... },
-    "session": { ... }
+    "user": null,
+    "session": null
+  },
+  "timestamp": "2024-01-01T12:00:00.000Z"
+}
+```
+
+### Verify OTP Success
+```json
+{
+  "success": true,
+  "phone": "+60164446716",
+  "data": {
+    "user": {
+      "id": "user-id",
+      "phone": "+60164446716",
+      "email": null,
+      "created_at": "2024-01-01T12:00:00.000Z"
+    },
+    "session": {
+      "access_token": "jwt-token",
+      "refresh_token": "refresh-token",
+      "expires_in": 3600,
+      "token_type": "bearer"
+    }
   },
   "error": null,
   "timestamp": "2024-01-01T12:00:00.000Z"
 }
 ```
 
-**Error Response:**
+### Error Response
 ```json
 {
   "success": false,
-  "data": null,
+  "phone": "+60164446716",
   "error": {
     "message": "Token has expired or is invalid",
     "status": 400
@@ -58,20 +123,85 @@ A simple test page to verify WhatsApp OTP functionality using Supabase authentic
 }
 ```
 
-## Notes
+## ⚙️ Configuration Requirements
 
-- The phone number is set to `+60164446716` as specified in your code
-- The OTP type is set to `'sms'` even though it's WhatsApp (as per Supabase documentation)
-- Make sure your Supabase project is configured for phone authentication
-- Ensure Twilio WhatsApp integration is properly set up in your Supabase dashboard
+### Supabase Setup
+1. **Enable Phone Authentication** in your Supabase dashboard
+2. **Configure Twilio** for WhatsApp messaging
+3. **Set up WhatsApp Business API** (if required)
+4. **Update RLS policies** for authentication
 
-## Troubleshooting
+### Environment Variables
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key_here
+```
 
-- **"Please fill in all fields"**: Make sure all required fields are completed
-- **"OTP must be 6 digits"**: Ensure the OTP token is exactly 6 digits
-- **Network errors**: Check your Supabase URL and key are correct
-- **Token expired**: Request a new OTP and try again quickly
+## 🛠️ Implementation Details
 
-## File Location
+### Send OTP Code
+```javascript
+const { data, error } = await supabase.auth.signInWithOtp({
+  phone: '+60164446716',
+  options: { 
+    channel: 'whatsapp' // ✅ WhatsApp channel
+  }
+});
+```
 
-The test page is located at: `public/whatsapp-otp-test.html`
+### Verify OTP Code
+```javascript
+const { data, error } = await supabase.auth.verifyOtp({
+  phone: '+60164446716',
+  token: '123456',
+  type: 'sms' // ✅ Always 'sms' for phone OTPs (even WhatsApp)
+});
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**❌ "Please update your .env file"**
+- Check that `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set
+- Restart your development server after updating `.env`
+
+**❌ "Phone number must include country code"**
+- Use international format: `+60164446716`
+- Don't use local format: `0164446716`
+
+**❌ "OTP must be 6 digits"**
+- Enter exactly 6 digits
+- No spaces or special characters
+
+**❌ "Token has expired or is invalid"**
+- Request a new OTP (tokens expire quickly)
+- Check the OTP code carefully
+
+**❌ "Error sending OTP"**
+- Verify Twilio WhatsApp configuration
+- Check Supabase auth settings
+- Ensure phone number is valid
+
+### Debug Steps
+1. **Check browser console** for detailed error messages
+2. **Verify Supabase configuration** in the dashboard
+3. **Test with Supabase CLI** if available
+4. **Check Twilio logs** for delivery issues
+
+## 📁 File Locations
+
+- **React Component**: `src/components/WhatsAppOTPTest.tsx`
+- **HTML Version**: `public/whatsapp-otp-test.html`
+- **Route**: `/whatsapp-otp-test` (React app)
+- **Environment**: `.env` (create if not exists)
+
+## 🔗 Related Documentation
+
+- [Supabase Auth Documentation](https://supabase.com/docs/guides/auth)
+- [Twilio WhatsApp API](https://www.twilio.com/docs/whatsapp)
+- [Supabase Phone Auth](https://supabase.com/docs/guides/auth/phone-login)
+
+---
+
+**Note**: This test page is for development and testing purposes. Ensure proper security measures are in place before using in production.

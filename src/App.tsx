@@ -8,6 +8,7 @@ import { AuthPage } from './components/auth/AuthPage'
 import { AdminLoginPage } from './components/admin/AdminLoginPage'
 import { ParentDashboard } from './components/dashboard/ParentDashboard'
 import { AdminDashboard } from './components/admin/AdminDashboard'
+import WhatsAppOTPTest from './components/WhatsAppOTPTest'
 
 // Simplified loading component
 function LoadingSpinner() {
@@ -63,6 +64,10 @@ function AppContent() {
         <Route 
           path="/" 
           element={<LandingPage />}
+        />
+        <Route 
+          path="/whatsapp-otp-test" 
+          element={<WhatsAppOTPTest />}
         />
         <Route 
           path="/auth" 

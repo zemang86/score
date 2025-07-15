@@ -11,62 +11,147 @@
     <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
         <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">WhatsApp OTP Test</h1>
         
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Supabase URL</label>
-            <input type="text" id="supabaseUrl" 
-                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   placeholder="https://YOUR_PROJECT.supabase.co">
+        <!-- Configuration Section -->
+        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+            <h3 class="font-semibold text-gray-700 mb-2">Configuration</h3>
+            <div class="space-y-2">
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <span class="text-sm text-gray-600">Update your .env file with Supabase credentials</span>
+                </div>
+                <div class="text-xs text-gray-500 bg-gray-100 p-2 rounded">
+                    <div>VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co</div>
+                    <div>VITE_SUPABASE_ANON_KEY=YOUR_ANON_KEY</div>
+                </div>
+            </div>
         </div>
 
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Supabase Anon Key</label>
-            <input type="text" id="supabaseKey" 
-                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-2 focus:ring-blue-500"
-                   placeholder="YOUR_ANON_KEY">
+        <!-- Step 1: Send OTP -->
+        <div id="sendOtpSection" class="mb-6">
+            <h3 class="font-semibold text-gray-700 mb-4">Step 1: Send OTP</h3>
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                <input type="text" id="phoneNumber" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       value="+60164446716" placeholder="Enter your phone number (+60123456789)">
+            </div>
+
+            <button id="sendOtpBtn" onclick="sendOTP()" 
+                    class="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition duration-200">
+                📱 Send WhatsApp OTP
+            </button>
         </div>
 
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-            <input type="text" id="phoneNumber" 
-                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   value="+60164446716" readonly>
+        <!-- Step 2: Verify OTP -->
+        <div id="verifyOtpSection" class="mb-6 opacity-50 pointer-events-none">
+            <h3 class="font-semibold text-gray-700 mb-4">Step 2: Verify OTP</h3>
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">OTP Token</label>
+                <input type="text" id="otpToken" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="Enter the 6-digit OTP from WhatsApp">
+            </div>
+
+            <button id="verifyOtpBtn" onclick="verifyOTP()" 
+                    class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200">
+                ✅ Verify OTP
+            </button>
         </div>
 
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">OTP Token</label>
-            <input type="text" id="otpToken" 
-                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   placeholder="Enter the 6-digit OTP you received">
+        <!-- Loading indicator -->
+        <div id="loading" class="mt-4 text-center hidden">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <p class="text-gray-600 mt-2" id="loadingText">Processing...</p>
         </div>
 
-        <button onclick="verifyOTP()" 
-                class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200">
-            Verify OTP
-        </button>
-
+        <!-- Results -->
         <div id="result" class="mt-6 p-4 rounded-md hidden">
             <h3 class="font-semibold mb-2">Result:</h3>
             <pre id="resultContent" class="text-sm bg-gray-50 p-2 rounded overflow-auto"></pre>
         </div>
 
-        <div id="loading" class="mt-4 text-center hidden">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-            <p class="text-gray-600 mt-2">Verifying OTP...</p>
+        <!-- Reset button -->
+        <div id="resetSection" class="mt-4 hidden">
+            <button onclick="resetForm()" 
+                    class="w-full bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition duration-200">
+                🔄 Reset & Send New OTP
+            </button>
         </div>
     </div>
 
     <script>
+        // Configuration - These should match your .env file
+        const SUPABASE_URL = import.meta?.env?.VITE_SUPABASE_URL || 'https://YOUR_PROJECT.supabase.co';
+        const SUPABASE_ANON_KEY = import.meta?.env?.VITE_SUPABASE_ANON_KEY || 'YOUR_ANON_KEY';
+        
         let supabase;
+        let currentPhoneNumber = '';
+
+        // Initialize Supabase client
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase client initialized');
+        } catch (error) {
+            console.error('❌ Failed to initialize Supabase client:', error);
+            showResult('Failed to initialize Supabase client. Please check your configuration.', 'error');
+        }
+
+        async function sendOTP() {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+
+            // Validation
+            if (!phoneNumber) {
+                showResult('Please enter a phone number', 'error');
+                return;
+            }
+
+            if (!phoneNumber.startsWith('+')) {
+                showResult('Phone number must include country code (e.g., +60123456789)', 'error');
+                return;
+            }
+
+            try {
+                // Show loading
+                showLoading('Sending OTP to WhatsApp...');
+                
+                // Send OTP via WhatsApp
+                const { data, error } = await supabase.auth.signInWithOtp({
+                    phone: phoneNumber,
+                    options: { 
+                        channel: 'whatsapp' // ✅ WhatsApp channel
+                    }
+                });
+
+                hideLoading();
+
+                if (error) {
+                    console.error('Error sending OTP:', error);
+                    showResult(`Error sending OTP: ${error.message}`, 'error');
+                } else {
+                    console.log('OTP sent:', data);
+                    currentPhoneNumber = phoneNumber;
+                    
+                    // Enable verify section
+                    enableVerifySection();
+                    
+                    showResult('✅ OTP sent successfully! Check your WhatsApp for the 6-digit code.', 'success');
+                }
+
+            } catch (err) {
+                hideLoading();
+                showResult(`Exception: ${err.message}`, 'error');
+                console.error('Exception:', err);
+            }
+        }
 
         async function verifyOTP() {
-            const supabaseUrl = document.getElementById('supabaseUrl').value;
-            const supabaseKey = document.getElementById('supabaseKey').value;
-            const phoneNumber = document.getElementById('phoneNumber').value;
             const otpToken = document.getElementById('otpToken').value;
 
             // Validation
-            if (!supabaseUrl || !supabaseKey || !otpToken) {
-                showResult('Please fill in all fields', 'error');
+            if (!otpToken) {
+                showResult('Please enter the OTP token', 'error');
                 return;
             }
 
@@ -76,26 +161,22 @@
             }
 
             try {
-                // Initialize Supabase client
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
                 // Show loading
-                document.getElementById('loading').classList.remove('hidden');
-                document.getElementById('result').classList.add('hidden');
-
+                showLoading('Verifying OTP...');
+                
                 // Verify OTP
                 const { data, error } = await supabase.auth.verifyOtp({
-                    phone: phoneNumber,
+                    phone: currentPhoneNumber,
                     token: otpToken,
-                    type: 'sms'
+                    type: 'sms' // ✅ Always 'sms' for phone OTPs (even WhatsApp)
                 });
 
-                // Hide loading
-                document.getElementById('loading').classList.add('hidden');
+                hideLoading();
 
                 // Show result
                 const result = {
                     success: !error,
+                    phone: currentPhoneNumber,
                     data: data,
                     error: error,
                     timestamp: new Date().toISOString()
@@ -104,14 +185,68 @@
                 showResult(JSON.stringify(result, null, 2), error ? 'error' : 'success');
 
                 // Log to console as well
-                console.log('Session:', data);
-                console.log('Error:', error);
+                console.log('Verification result:', result);
+
+                if (!error) {
+                    console.log('✅ User session:', data.session);
+                    console.log('✅ User info:', data.user);
+                    
+                    // Show reset button after successful verification
+                    document.getElementById('resetSection').classList.remove('hidden');
+                }
 
             } catch (err) {
-                document.getElementById('loading').classList.add('hidden');
+                hideLoading();
                 showResult(`Exception: ${err.message}`, 'error');
                 console.error('Exception:', err);
             }
+        }
+
+        function enableVerifySection() {
+            const verifySection = document.getElementById('verifyOtpSection');
+            verifySection.classList.remove('opacity-50', 'pointer-events-none');
+            verifySection.classList.add('opacity-100');
+            
+            // Disable send section
+            const sendSection = document.getElementById('sendOtpSection');
+            sendSection.classList.add('opacity-50', 'pointer-events-none');
+            
+            // Focus on OTP input
+            document.getElementById('otpToken').focus();
+        }
+
+        function resetForm() {
+            // Reset all inputs
+            document.getElementById('otpToken').value = '';
+            currentPhoneNumber = '';
+            
+            // Enable send section
+            const sendSection = document.getElementById('sendOtpSection');
+            sendSection.classList.remove('opacity-50', 'pointer-events-none');
+            
+            // Disable verify section
+            const verifySection = document.getElementById('verifyOtpSection');
+            verifySection.classList.add('opacity-50', 'pointer-events-none');
+            verifySection.classList.remove('opacity-100');
+            
+            // Hide reset button
+            document.getElementById('resetSection').classList.add('hidden');
+            
+            // Clear results
+            document.getElementById('result').classList.add('hidden');
+            
+            // Focus on phone input
+            document.getElementById('phoneNumber').focus();
+        }
+
+        function showLoading(message) {
+            document.getElementById('loadingText').textContent = message;
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('result').classList.add('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
         }
 
         function showResult(content, type) {
@@ -135,9 +270,23 @@
         }
 
         // Allow Enter key to submit
+        document.getElementById('phoneNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendOTP();
+            }
+        });
+
         document.getElementById('otpToken').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 verifyOTP();
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we're running in development mode
+            if (SUPABASE_URL === 'https://YOUR_PROJECT.supabase.co' || SUPABASE_ANON_KEY === 'YOUR_ANON_KEY') {
+                showResult('⚠️ Please update your .env file with your actual Supabase credentials before testing.', 'error');
             }
         });
     </script>
