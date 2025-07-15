@@ -22,8 +22,8 @@ const WhatsAppOTPTest: React.FC = () => {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   const isConfigured = supabaseUrl && supabaseKey && 
-    supabaseUrl !== 'https://YOUR_PROJECT.supabase.co' && 
-    supabaseKey !== 'YOUR_ANON_KEY';
+    supabaseUrl !== 'https://cifrsbtpzbwfqvouorce.supabase.co' && 
+    supabaseKey.startsWith('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9');
 
   useEffect(() => {
     if (!isConfigured) {
@@ -202,12 +202,12 @@ const WhatsAppOTPTest: React.FC = () => {
                 {isConfigured ? 'Supabase configured' : 'Update your .env file with Supabase credentials'}
               </span>
             </div>
-            {!isConfigured && (
-              <div className="text-xs text-gray-500 bg-gray-100 p-2 rounded">
-                <div>VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co</div>
-                <div>VITE_SUPABASE_ANON_KEY=YOUR_ANON_KEY</div>
-              </div>
-            )}
+                         {!isConfigured && (
+               <div className="text-xs text-gray-500 bg-gray-100 p-2 rounded">
+                 <div>VITE_SUPABASE_URL=https://cifrsbtpzbwfqvouorce.supabase.co</div>
+                 <div>VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</div>
+               </div>
+             )}
           </div>
         </div>
 

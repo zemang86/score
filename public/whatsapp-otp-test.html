@@ -21,8 +21,8 @@
                 </div>
                 <div class="text-xs text-gray-500 bg-gray-100 p-2 rounded">
                     <div>Edit lines 84-85 in this file:</div>
-                    <div>const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';</div>
-                    <div>const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';</div>
+                    <div>const SUPABASE_URL = 'https://cifrsbtpzbwfqvouorce.supabase.co';</div>
+                    <div>const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';</div>
                 </div>
             </div>
         </div>
@@ -286,7 +286,9 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             // Check if configuration is set
-            if (SUPABASE_URL === 'https://YOUR_PROJECT.supabase.co' || SUPABASE_ANON_KEY === 'YOUR_ANON_KEY') {
+            if (SUPABASE_URL === 'https://cifrsbtpzbwfqvouorce.supabase.co' && SUPABASE_ANON_KEY.startsWith('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9')) {
+                showResult('✅ Supabase credentials are configured. Ready to test WhatsApp OTP!', 'success');
+            } else {
                 showResult('⚠️ Please update the SUPABASE_URL and SUPABASE_ANON_KEY constants in this HTML file with your actual Supabase credentials before testing.', 'error');
             }
         });
