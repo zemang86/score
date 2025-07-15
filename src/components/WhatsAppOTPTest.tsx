@@ -59,11 +59,11 @@ const WhatsAppOTPTest: React.FC = () => {
       setLoadingText('Sending OTP to WhatsApp...');
       setResult(null);
 
-      // Send OTP via WhatsApp
+      // Send OTP via SMS (change to 'whatsapp' when WhatsApp is configured)
       const { data, error } = await supabase.auth.signInWithOtp({
         phone: phoneNumber,
         options: { 
-          channel: 'whatsapp' // ✅ WhatsApp channel
+          channel: 'sms' // 🔄 Using SMS for testing - change to 'whatsapp' when ready
         }
       });
 
