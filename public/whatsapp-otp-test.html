@@ -17,11 +17,12 @@
             <div class="space-y-2">
                 <div class="flex items-center space-x-2">
                     <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                    <span class="text-sm text-gray-600">Update your .env file with Supabase credentials</span>
+                    <span class="text-sm text-gray-600">Update the constants in this HTML file with your Supabase credentials</span>
                 </div>
                 <div class="text-xs text-gray-500 bg-gray-100 p-2 rounded">
-                    <div>VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co</div>
-                    <div>VITE_SUPABASE_ANON_KEY=YOUR_ANON_KEY</div>
+                    <div>Edit lines 84-85 in this file:</div>
+                    <div>const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';</div>
+                    <div>const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';</div>
                 </div>
             </div>
         </div>
@@ -82,9 +83,9 @@
     </div>
 
     <script>
-        // Configuration - These should match your .env file
-        const SUPABASE_URL = import.meta?.env?.VITE_SUPABASE_URL || 'https://YOUR_PROJECT.supabase.co';
-        const SUPABASE_ANON_KEY = import.meta?.env?.VITE_SUPABASE_ANON_KEY || 'YOUR_ANON_KEY';
+        // Configuration - Update these with your actual Supabase credentials
+        const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
         
         let supabase;
         let currentPhoneNumber = '';
@@ -284,9 +285,9 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if we're running in development mode
+            // Check if configuration is set
             if (SUPABASE_URL === 'https://YOUR_PROJECT.supabase.co' || SUPABASE_ANON_KEY === 'YOUR_ANON_KEY') {
-                showResult('⚠️ Please update your .env file with your actual Supabase credentials before testing.', 'error');
+                showResult('⚠️ Please update the SUPABASE_URL and SUPABASE_ANON_KEY constants in this HTML file with your actual Supabase credentials before testing.', 'error');
             }
         });
     </script>

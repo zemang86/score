@@ -29,8 +29,9 @@ A comprehensive test suite for verifying WhatsApp OTP functionality using Supaba
 **URL**: `http://localhost:5173/whatsapp-otp-test.html`
 
 - ✅ **Works independently of your React app**
-- ✅ **Manual configuration input**
+- ✅ **Manual configuration** (edit the HTML file directly)
 - ✅ **Useful for debugging**
+- ⚠️ **Requires manual credential setup** (edit lines 84-85 in the HTML file)
 
 ## 🔧 Features
 
@@ -131,10 +132,19 @@ A comprehensive test suite for verifying WhatsApp OTP functionality using Supaba
 3. **Set up WhatsApp Business API** (if required)
 4. **Update RLS policies** for authentication
 
-### Environment Variables
+### React Component Configuration
 ```env
+# .env file
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your_anon_key_here
+```
+
+### HTML File Configuration
+Edit `public/whatsapp-otp-test.html` around lines 84-85:
+```javascript
+// Replace these with your actual credentials
+const SUPABASE_URL = 'https://your-project.supabase.co';
+const SUPABASE_ANON_KEY = 'your_anon_key_here';
 ```
 
 ## 🛠️ Implementation Details
@@ -162,7 +172,12 @@ const { data, error } = await supabase.auth.verifyOtp({
 
 ### Common Issues
 
-**❌ "Please update your .env file"**
+**❌ "sendOTP is not defined" (HTML version)**
+- This happens when there's a JavaScript error in the HTML file
+- Make sure you've updated the `SUPABASE_URL` and `SUPABASE_ANON_KEY` constants
+- Check the browser console for any JavaScript errors
+
+**❌ "Please update your .env file" (React version)**
 - Check that `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set
 - Restart your development server after updating `.env`
 
