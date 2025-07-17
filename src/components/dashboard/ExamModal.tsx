@@ -1783,8 +1783,8 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
                      </p>
                      <Button
                        onClick={handleResultsComplete}
-                       className="bg-white text-blue-700 hover:bg-blue-50 hover:text-blue-800 font-bold py-2 px-4 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 border-2 border-white"
-                       size="sm"
+                       className="bg-yellow-400 text-gray-900 hover:bg-yellow-300 hover:text-gray-800 font-bold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 border-2 border-yellow-400 hover:border-yellow-300"
+                       size="lg"
                      >
                        Continue Adventure! 🎮
                      </Button>
