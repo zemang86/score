@@ -164,6 +164,7 @@ export interface Question {
   created_at: string
   image_url?: string
   explanation?: string
+  syllabus_reference?: string
 }
 
 export interface Exam {
