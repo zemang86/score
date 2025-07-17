@@ -1587,9 +1587,19 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
                     {/* Question Content with Animation */}
                     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-4 sm:p-6 shadow-lg animate-slide-in">
                       <div className="flex items-start justify-between mb-4">
-                        <h3 className="text-lg sm:text-xl font-bold text-blue-800 leading-tight flex-1">
-                          {questions[currentQuestionIndex].question_text}
-                        </h3>
+                        <div className="flex-1">
+                          <h3 className="text-lg sm:text-xl font-bold text-blue-800 leading-tight">
+                            {questions[currentQuestionIndex].question_text}
+                          </h3>
+                          {questions[currentQuestionIndex].syllabus_reference && (
+                            <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-lg">
+                              <p className="text-xs text-amber-800 font-medium">
+                                <BookOpen className="inline w-3 h-3 mr-1" />
+                                Syllabus Reference: {questions[currentQuestionIndex].syllabus_reference}
+                              </p>
+                            </div>
+                          )}
+                        </div>
                         <div className="ml-4 flex-shrink-0">
                           <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">
                             {questions[currentQuestionIndex].type}
@@ -1854,6 +1864,14 @@ export function ExamModal({ isOpen, onClose, student, allStudents, onExamComplet
                                }}>
                                  {question.question_text}
                                </p>
+                               {question.syllabus_reference && (
+                                 <div className="mt-1 p-1 bg-amber-50 border border-amber-200 rounded text-xs">
+                                   <span className="text-amber-800 font-medium">
+                                     <BookOpen className="inline w-3 h-3 mr-1" />
+                                     {question.syllabus_reference}
+                                   </span>
+                                 </div>
+                               )}
                              </div>
                              
                              {/* Compact Answer Section */}

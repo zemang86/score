@@ -482,6 +482,12 @@ export function QuestionManagement() {
                         {question.topic && (
                           <p className="text-xs text-gray-500">{question.topic}</p>
                         )}
+                        {question.syllabus_reference && (
+                          <div className="flex items-center mt-1">
+                            <BookOpen className="h-3 w-3 text-amber-600 mr-1" />
+                            <span className="text-xs text-amber-600">{question.syllabus_reference}</span>
+                          </div>
+                        )}
                         {question.image_url && (
                           <div className="flex items-center mt-1">
                             <Eye className="h-3 w-3 text-blue-500 mr-1" />

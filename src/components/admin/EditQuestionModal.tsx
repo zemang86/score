@@ -22,6 +22,7 @@ interface QuestionFormData {
   options: string[]
   correct_answer: string
   image_url: string
+  syllabus_reference: string
 }
 
 export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated }: EditQuestionModalProps) {
@@ -34,7 +35,8 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
     question_text: '',
     options: [],
     correct_answer: '',
-    image_url: ''
+    image_url: '',
+    syllabus_reference: ''
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -70,7 +72,8 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
         question_text: question.question_text,
         options: questionOptions,
         correct_answer: question.correct_answer,
-        image_url: question.image_url || ''
+        image_url: question.image_url || '',
+        syllabus_reference: question.syllabus_reference || ''
       })
       
       // Convert options array to text for editing
@@ -176,7 +179,8 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
         question_text: formData.question_text.trim(),
         options: formData.options,
         correct_answer: formData.correct_answer.trim(),
-        image_url: formData.image_url.trim() || null
+        image_url: formData.image_url.trim() || null,
+        syllabus_reference: formData.syllabus_reference.trim() || null
       }
 
       const { error: updateError } = await supabase
@@ -444,6 +448,21 @@ export function EditQuestionModal({ isOpen, onClose, question, onQuestionUpdated
                     className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm resize-none"
                     required
                   />
+                </div>
+
+                {/* Syllabus Reference */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Syllabus Reference</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., Chapter 5: Fractions (5.1.2)"
+                    value={formData.syllabus_reference}
+                    onChange={(e) => handleInputChange('syllabus_reference', e.target.value)}
+                    className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Short, readable reference to help students identify the topic (optional)
+                  </p>
                 </div>
 
                 {/* Image URL */}
